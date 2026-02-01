@@ -8,6 +8,7 @@ from typing import Dict, Optional, Tuple
 import torch
 from PIL import Image
 from diffusers import ZImagePipeline
+from transformers import Qwen2VLForConditionalGeneration
 from .base import BaseModel
 
 
@@ -30,10 +31,24 @@ class ZImageTurboModel(BaseModel):
 
             # Check if loading from local file or HuggingFace
             if self.model_path.endswith(".safetensors"):
-                # Load from single file with config from HuggingFace
+                # Load text encoder separately (required for single file loading)
+                if progress_callback:
+                    progress_callback(0.4, desc="Loading text encoder...")
+
+                from transformers import Qwen2VLForConditionalGeneration
+                text_encoder = Qwen2VLForConditionalGeneration.from_pretrained(
+                    "Tongyi-MAI/Z-Image-Turbo",
+                    subfolder="text_encoder",
+                    torch_dtype=self.dtype,
+                )
+
+                if progress_callback:
+                    progress_callback(0.6, desc="Loading pipeline from single file...")
+
+                # Load from single file with pre-loaded text encoder
                 self.pipeline = ZImagePipeline.from_single_file(
                     self.model_path,
-                    config="Tongyi-MAI/Z-Image-Turbo",
+                    text_encoder=text_encoder,
                     torch_dtype=self.dtype,
                     low_cpu_mem_usage=False,
                 )
