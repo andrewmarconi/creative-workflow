@@ -1,0 +1,8 @@
+{
+  "count": 2,
+  "prompts": {
+    "test_sunset": "A beautiful sunset over the ocean, vibrant colors, high detail",
+    "test_mountain": "A serene mountain landscape with snow-capped peaks"
+  },
+  "output_dir": "./outputs/test"
+}

@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Output directories
+outputs/
+*.jpg
+*.jpeg
+*.png
+
+# Checkpoint files
+.checkpoint.json
+
+# HuggingFace cache (optional - uncomment if you want to exclude)
+# .cache/
+
+# Logs
+*.log
