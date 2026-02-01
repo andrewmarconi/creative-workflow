@@ -191,9 +191,8 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
         # Don't move to device yet - let CPU offload handle it
         pipeline = FluxPipeline.from_pretrained(
             Config.FLUX2_MODEL_ID,
-            torch_dtype=Config.DTYPE_BF16,  # Using bf16 for now, fp8 may need additional setup
+            torch_dtype=Config.DTYPE_BF16,
             low_cpu_mem_usage=True,
-            variant="fp16",  # Use fp16 variant if available to save memory
         )
 
         # Configure scheduler (FlowMatchEulerDiscreteScheduler is default for Flux)
