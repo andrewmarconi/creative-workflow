@@ -10,7 +10,7 @@ import os
 import random
 import sys
 import warnings
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 import torch
@@ -191,11 +191,8 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
             low_cpu_mem_usage=True,
         )
 
-        # TODO: Verify the correct scheduler for ZImageTurbo
-        # Turbo models often use EulerAncestralDiscreteScheduler
-        pipeline.scheduler = EulerAncestralDiscreteScheduler.from_config(
-            pipeline.scheduler.config
-        )
+        # Use the default scheduler that comes with Z-Image-Turbo
+        # (it has custom parameters that standard schedulers don't support)
 
         print(f"✓ ZImageTurbo loaded")
 
@@ -365,7 +362,7 @@ def save_checkpoint(output_dir: Path, completed_images: List[str], total_expecte
 
     checkpoint_data = {
         "completed_images": completed_images,
-        "last_updated": datetime.utcnow().isoformat() + "Z",
+        "last_updated": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         "total_expected": total_expected
     }
 
@@ -482,7 +479,7 @@ def process_prompts(
                     "filename": filename,
                     "prompt": full_prompt,
                     "seed": seed,
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                     "status": "skipped"
                 }
                 generation_metadata.append(metadata)
@@ -508,7 +505,7 @@ def process_prompts(
                     "filename": filename,
                     "prompt": full_prompt,
                     "seed": seed,
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                     "status": "success"
                 }
                 generation_metadata.append(metadata)
@@ -528,7 +525,7 @@ def process_prompts(
                     "filename": filename,
                     "prompt": full_prompt,
                     "seed": seed,
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                     "status": "failed",
                     "error": str(e)
                 }
