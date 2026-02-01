@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 import torch
 from PIL import Image
-from diffusers import StableDiffusionXLPipeline  # More specific than Auto to avoid import issues
+from diffusers import StableDiffusionPipeline  # Z-Image-Turbo uses SD 1.5/2.1 architecture
 from diffusers.schedulers import EulerAncestralDiscreteScheduler
 from tqdm import tqdm
 
@@ -184,10 +184,8 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
     print(f"Loading ZImageTurbo pipeline...")
 
     try:
-        # TODO: Verify the correct pipeline class for ZImageTurbo
-        # Using StableDiffusionXLPipeline as a starting point
-        # Common alternatives: StableDiffusionPipeline, KandinskyPipeline, etc.
-        pipeline = StableDiffusionXLPipeline.from_pretrained(
+        # Z-Image-Turbo uses Stable Diffusion 1.5/2.1 architecture
+        pipeline = StableDiffusionPipeline.from_pretrained(
             Config.MODEL_ID,
             torch_dtype=Config.DTYPE_FP16,
             low_cpu_mem_usage=True,
@@ -257,7 +255,7 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
 
 
 def generate_image(
-    pipeline: StableDiffusionXLPipeline,
+    pipeline: StableDiffusionPipeline,
     prompt: str,
     seed: int,
     device: torch.device
