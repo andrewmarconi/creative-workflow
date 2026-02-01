@@ -219,7 +219,13 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
                     raise FileNotFoundError(f"LoRA file not found: {lora_name}")
 
                 print(f"Loading LoRA from local file: {lora_name}")
-                pipeline.load_lora_weights(lora_name)
+
+                # For local files, split into directory and filename
+                lora_path = Path(lora_name)
+                lora_dir = str(lora_path.parent)
+                lora_file = lora_path.name
+
+                pipeline.load_lora_weights(lora_dir, weight_name=lora_file)
                 print(f"✓ LoRA loaded from: {lora_name}")
             else:
                 # Load from HuggingFace Hub

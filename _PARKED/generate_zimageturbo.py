@@ -93,6 +93,11 @@ def validate_json_schema(data: Dict[str, Any]) -> None:
     if not isinstance(data['output_dir'], str):
         raise ValueError(f"'output_dir' must be a string, got: {type(data['output_dir'])}")
 
+    # Validate optional steps field
+    if 'steps' in data:
+        if not isinstance(data['steps'], int) or data['steps'] <= 0:
+            raise ValueError(f"'steps' must be a positive integer, got: {data['steps']}")
+
     # Validate optional lora field
     if 'lora' in data:
         if not isinstance(data['lora'], dict):
@@ -261,7 +266,8 @@ def generate_image(
     pipeline: ZImagePipeline,
     prompt: str,
     seed: int,
-    device: torch.device
+    device: torch.device,
+    steps: int = None
 ) -> Image.Image:
     """
     Generate a single image from a prompt
@@ -271,6 +277,7 @@ def generate_image(
         prompt: Text prompt for generation
         seed: Random seed for reproducibility
         device: Torch device
+        steps: Number of inference steps (defaults to Config.STEPS if not provided)
 
     Returns:
         Generated PIL Image
@@ -280,10 +287,13 @@ def generate_image(
     generator = torch.Generator(device="cpu")
     generator.manual_seed(seed)
 
+    # Use provided steps or default to Config.STEPS
+    num_steps = steps if steps is not None else Config.STEPS
+
     # Generate image with best practice parameters
     image = pipeline(
         prompt=prompt,
-        num_inference_steps=Config.STEPS,
+        num_inference_steps=num_steps,
         guidance_scale=Config.GUIDANCE_SCALE,
         height=Config.RESOLUTION,
         width=Config.RESOLUTION,
@@ -382,7 +392,8 @@ def save_checkpoint(output_dir: Path, completed_images: List[str], total_expecte
 def save_metadata(
     config: Dict[str, Any],
     generation_metadata: List[Dict[str, Any]],
-    output_dir: Path
+    output_dir: Path,
+    batch_seed: int
 ) -> None:
     """
     Save generation metadata to JSON file
@@ -391,14 +402,19 @@ def save_metadata(
         config: Input configuration
         generation_metadata: List of metadata for each generated image
         output_dir: Output directory path
+        batch_seed: The batch-level seed used for folder naming
     """
+    # Get steps from config or use default
+    steps = config.get('steps', Config.STEPS)
+
     metadata = {
         "batch_config": {
             "count": config['count'],
+            "batch_seed": batch_seed,
         },
         "model_config": {
             "diffusion_model": Config.MODEL_ID,
-            "steps": Config.STEPS,
+            "steps": steps,
             "guidance_scale": Config.GUIDANCE_SCALE,
             "scheduler": "EulerAncestralDiscreteScheduler"
         },
@@ -419,7 +435,8 @@ def save_metadata(
 
 def process_prompts(
     config: Dict[str, Any],
-    models: Dict[str, Any]
+    models: Dict[str, Any],
+    batch_seed: int
 ) -> List[Dict[str, Any]]:
     """
     Process all prompts and generate images
@@ -427,6 +444,7 @@ def process_prompts(
     Args:
         config: Input configuration
         models: Loaded models dictionary
+        batch_seed: The batch-level seed for this run
 
     Returns:
         List of generation metadata for each image
@@ -435,6 +453,9 @@ def process_prompts(
     lora_info = models['lora_info']
     device = models['device']
     output_dir = Path(config['output_dir'])
+
+    # Get steps from config or use default
+    steps = config.get('steps', Config.STEPS)
 
     # Create output directory
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -501,7 +522,7 @@ def process_prompts(
 
             try:
                 # Generate image
-                image = generate_image(pipeline, full_prompt, seed, device)
+                image = generate_image(pipeline, full_prompt, seed, device, steps)
 
                 # Save as JPG
                 save_image_as_jpg(image, output_path)
@@ -568,6 +589,16 @@ def main():
         print(f"Loading input from: {args.input_file}")
         config = load_input_json(args.input_file)
 
+        # Generate batch-level seed for folder naming
+        batch_seed = random.randint(0, 2**32 - 1)
+
+        # Modify output_dir to include batch seed
+        original_output_dir = config['output_dir']
+        config['output_dir'] = f"{original_output_dir}_{batch_seed}"
+
+        # Get steps from config or use default
+        steps = config.get('steps', Config.STEPS)
+
         # Setup device (Apple Silicon optimization)
         device, device_name = setup_device()
 
@@ -581,17 +612,19 @@ def main():
         print(f"Prompts to process: {len(config['prompts'])}")
         print(f"Images per prompt: {config['count']}")
         print(f"Total images: {len(config['prompts']) * config['count']}")
+        print(f"Steps: {steps}")
+        print(f"Batch seed: {batch_seed}")
         print(f"Output directory: {config['output_dir']}")
         if models['lora_info']:
             print(f"LoRA: {models['lora_info']['name']}")
         print(f"{'='*60}\n")
 
         # Process prompts and generate images
-        generation_metadata = process_prompts(config, models)
+        generation_metadata = process_prompts(config, models, batch_seed)
 
         # Save metadata
         output_dir = Path(config['output_dir'])
-        save_metadata(config, generation_metadata, output_dir)
+        save_metadata(config, generation_metadata, output_dir, batch_seed)
 
         # Summary
         success_count = sum(1 for m in generation_metadata if m['status'] == 'success')

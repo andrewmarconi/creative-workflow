@@ -1,9 +1,0 @@
-{
-  "count": 5,
-  "prompts": {
-    "test1": "First test prompt for resume functionality",
-    "test2": "Second test prompt for resume functionality",
-    "test3": "Third test prompt for resume functionality"
-  },
-  "output_dir": "./outputs/test_resume"
-}

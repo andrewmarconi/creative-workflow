@@ -4,151 +4,299 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-QueerChaos 2 is a Python-based batch image generation tool using Flux2 diffusion models, optimized for Apple Silicon (M4 Mac with 48GB RAM). The project processes JSON input files containing multiple text prompts and generates high-quality images with resume capability and comprehensive metadata tracking.
+QueerChaos 2 is a modular image generation application supporting multiple diffusion models (Z-Image Turbo, Flux.1-dev, Qwen-Image-2512) with a Gradio web interface. Optimized for Apple Silicon (M4 Mac with 48GB RAM) with dynamic LoRA filtering, model-specific optimal settings, and comprehensive metadata tracking.
 
 ## Environment & Dependencies
 
 ### Python Environment: uv (not conda or venv)
 - Use `uv` for all Python environment management
 - Install dependencies: `uv add <package>`
-- When running Python from terminal, it should use the uv environment automatically
+- Sync environment: `uv sync`
+- Python 3.12+ required
 
 ### Core Dependencies
-- HuggingFace Diffusers (model loading)
-- PyTorch with MPS backend OR MLX (Apple Silicon optimization)
-- tqdm (progress tracking)
-- Python 3.10+
+- **Gradio**: Web UI framework
+- **HuggingFace Diffusers**: Model pipelines (ZImagePipeline, FluxPipeline, QwenImagePipeline)
+- **PyTorch**: MPS backend for Apple Silicon
+- **PEFT**: LoRA adapter support
+- **Pillow, transformers, safetensors, accelerate**
 
 ### HuggingFace Authentication
-The local machine should already have HuggingFace CLI authentication configured. The script relies on cached credentials.
+The local machine has HuggingFace CLI authentication configured. For new setups: `huggingface-cli login`
 
-## Architecture & Key Design Decisions
+## Architecture Overview
 
-### Model Architecture
-- **Diffusion Model**: `flux2_dev_fp8mixed` (fp8 quantization for memory efficiency)
-- **Text Encoder**: `mistral_3_small_flux2_bf16` (bf16 precision)
-- **LoRA**: Optional, can be HuggingFace ID or local `.safetensors` file path
+### Modular Design Pattern
 
-### Apple Silicon Optimization Strategy
-1. Prioritize MLX if diffusers supports it (native Apple Silicon)
-2. Fallback to PyTorch with MPS backend
-3. Use `torch.mps.set_per_process_memory_fraction(0.9)` for memory management
-4. Clear cache between generations: `torch.mps.empty_cache()`
-5. Load models once at startup, reuse for all generations (critical for performance)
+The application uses a **factory pattern** with model-specific implementations:
 
-### Flux2 Dev Best Practices (hardcoded)
-- Resolution: 1024x1024
-- Steps: 28 (speed) to 50 (quality) - recommend 28
-- Guidance Scale: 3.5 (Flux2 Dev optimal)
-- Scheduler: FlowMatchEulerDiscreteScheduler
-- **No negative prompts** - Flux2 does not support them
-
-## Data Flow & File Structure
-
-### Input Flow
 ```
-input.json → JSON Parser → Model Loader → Checkpoint Check → Generation Loop → Output Files
+main.py (Gradio UI)
+    ↓
+config.py (Loads presets.json)
+    ↓
+ModelFactory → creates model instances based on pipeline type
+    ↓
+models/base.py (Abstract BaseModel)
+    ├── models/zimageturbo.py (Z-Image implementation)
+    ├── models/flux.py (Flux.1-dev implementation)
+    └── models/qwen.py (Qwen-Image implementation)
+
+loras/manager.py (LoRA filtering by compatibility)
 ```
 
-### Key Files
-- `generate.py`: Main entry point
-- `input.json`: Default input config (can override via CLI arg)
-- Output directory structure:
-  - `{prefix}_{001..count}.jpg`: Generated images
-  - `generation_metadata.json`: All generation params, seeds, timestamps, errors
-  - `.checkpoint.json`: Resume state tracking
+### Key Components
 
-### JSON Schema
-Input requires `count`, `prompts`, `output_dir`. Optional: `lora` object.
+**[config.py](config.py)**:
+- Loads and validates `presets.json`
+- Handles both local `.safetensors` files and HuggingFace Hub IDs
+- Provides model/LoRA lookup utilities
+- Path resolution (local vs. HuggingFace)
+
+**[models/base.py](models/base.py)**:
+- Abstract base class for all models
+- Common functionality: device setup, LoRA loading/unloading, cache management
+- Defines interface: `load_pipeline()`, `generate()`
+
+**[models/zimageturbo.py](models/zimageturbo.py)**, **[models/flux.py](models/flux.py)**, **[models/qwen.py](models/qwen.py)**:
+- Model-specific implementations
+- Encapsulate pipeline loading from `.safetensors` or HuggingFace
+- Apply model-specific optimal settings
+- Handle model-specific generation parameters
+
+**[loras/manager.py](loras/manager.py)**:
+- Filters LoRAs by model compatibility
+- Resolves LoRA paths (relative to `base_model_path`)
+- Provides strength and prompt suffix utilities
+
+**[main.py](main.py)**:
+- Gradio web interface
+- ImageGenerator class manages model lifecycle
+- Dynamic UI updates based on loaded model capabilities
+
+**[presets.json](presets.json)**:
+- Centralized configuration for all models and LoRAs
+- Model-specific optimal settings (steps, guidance, scheduler, etc.)
+- LoRA compatibility mappings
+
+## Running the Application
+
+### Start Gradio Web Interface
+```bash
+python main.py
+```
+
+The app will:
+1. Load presets from `presets.json`
+2. Display model selector dropdown
+3. Auto-load default model (Z-Image Turbo) on startup
+4. Launch Gradio UI at http://localhost:7860
+
+### Workflow
+1. Select model from dropdown
+2. Click "Load Model" (or wait for auto-load)
+3. LoRA dropdown auto-filters to compatible LoRAs
+4. UI controls auto-configure for model capabilities
+5. Generate images
+
+## Model-Specific Settings (Research-Based)
+
+### Z-Image Turbo
+- **Pipeline**: `ZImagePipeline`
+- **Steps**: 9 (results in 8 NFEs, optimal for turbo model)
+- **Guidance Scale**: 0.0 (turbo model has internalized CFG)
+- **Scheduler**: FlowMatchEulerDiscreteScheduler
+- **Resolution**: 1024×1024
+- **Negative Prompts**: NOT supported (distilled model)
+- **Loading**: Local `.safetensors` via `from_single_file()`
+
+### Flux.1-dev FP8 Mixed
+- **Pipeline**: `FluxPipeline`
+- **Steps**: 28 (optimal quality/speed balance)
+- **Guidance Scale**: 3.5 (distilled CFG guidance)
+- **Max Sequence Length**: 512
+- **Resolution**: 1024×1024 (variable supported)
+- **Negative Prompts**: NOT natively supported (distilled model)
+- **Loading**: Local `.safetensors` via `from_single_file()`
+
+### Qwen-Image-2512
+- **Pipeline**: `QwenImagePipeline`
+- **Steps**: 50 (CFG 4.5 + 50 steps is "golden config")
+- **Guidance Scale**: 4.5 (`true_cfg_scale` in API)
+- **Scheduler**: FlowMatchEulerDiscreteScheduler
+- **Resolution**: Variable
+- **Negative Prompts**: SUPPORTED (increases quality ~15%)
+- **Loading**: HuggingFace Hub via `from_pretrained("Qwen/Qwen-Image-2512")`
+
+## Apple Silicon Optimization Strategy
+
+1. **Device Detection**: Auto-detect MPS (Apple Silicon), CUDA, or CPU
+2. **Memory Management**:
+   - `enable_sequential_cpu_offload()` for MPS
+   - `enable_attention_slicing()` for all devices
+   - `torch.mps.empty_cache()` after each generation
+3. **Single Model Loading**: Load pipeline once, reuse for all generations
+4. **bf16 Precision**: All models use `torch.bfloat16` for optimal Apple Silicon performance
+
+## Adding New Models
+
+Edit `presets.json`:
 
 ```json
 {
-  "count": 3,
-  "lora": {"name": "HF_ID or ./path/file.safetensors", "prompt": "suffix text"},
-  "prompts": {"file_prefix": "prompt text", "prefix2": "prompt2"},
-  "output_dir": "./outputs/batch"
+  "label": "Model Display Name",
+  "slug": "unique_slug",
+  "path": "local/path.safetensors" or "Hugginface:org/model-id",
+  "pipeline": "PipelineClassName",
+  "settings": {
+    "steps": 30,
+    "guidance_scale": 7.0,
+    "resolution": 1024,
+    "scheduler": "SchedulerName" or null,
+    "dtype": "bfloat16",
+    "supports_negative_prompt": true,
+    "max_sequence_length": 512 or null
+  }
 }
 ```
 
-## Resume & Checkpoint System
+If the pipeline class doesn't exist in `models/`, create a new implementation:
 
-The checkpoint system enables interruption recovery:
+1. Create `models/newmodel.py` inheriting from `BaseModel`
+2. Implement `load_pipeline()` and `generate()`
+3. Add to `models/__init__.py` exports
+4. Update `ModelFactory.create_model()` in `main.py`
 
-1. Before generation, check `{output_dir}/.checkpoint.json`
-2. If exists, load `completed_images` list
-3. Skip images already in checkpoint
-4. Update checkpoint after EACH successful generation
-5. On errors: log in metadata but continue with other images
+## Adding New LoRAs
 
-**To force regeneration**: Delete `.checkpoint.json`
+Edit `presets.json`:
 
-## Critical Implementation Details
-
-### LoRA Loading Logic
-Detect local vs HuggingFace by checking:
-- Path ends with `.safetensors`, OR
-- File exists on filesystem
-→ Load locally if true, else load from HuggingFace Hub
-
-### Seed Management
-- Generate random seed per image: `random.randint(0, 2**32 - 1)`
-- Seeds NOT in filename (keeps names clean)
-- Seeds saved in `generation_metadata.json` for reproducibility
-
-### Error Handling Philosophy
-- **Fatal errors** (exit code 1): Model loading, JSON validation
-- **Non-fatal errors** (continue): Individual generation failures (OOM, invalid prompt)
-- Log all errors in `generation_metadata.json` with status: "failed"
-- Final exit code 2 if partial success (some failed, some succeeded)
-
-### Image Naming Convention
-- Format: `{file_prefix}_{index}.jpg`
-- Index starts at 1
-- Zero-pad to 3 digits if count > 99 (e.g., `portrait_001.jpg`)
-
-## Running the Script
-
-```bash
-# Default (uses ./input.json)
-python generate.py
-
-# Custom input file
-python generate.py configs/my_batch.json
+```json
+{
+  "label": "LoRA Display Name",
+  "path": "loras/filename.safetensors",
+  "compatibility": ["zimageturbo", "flux1_dev"],
+  "prompt": "trigger words, style description",
+  "settings": {"strength": 0.8},
+  "air": "urn:air:optional:identifier"
+}
 ```
 
-## Memory Optimization Notes
+LoRAs are stored relative to `base_model_path` from config.
 
-M4 Mac has 48GB unified RAM, but models are large:
-- Load models once at startup (not per-image)
-- Use `low_cpu_mem_usage=True` when loading models
-- Process prompts sequentially (no parallel batching to avoid OOM)
-- fp8 quantization for diffusion model reduces memory footprint
-- Cache models in HuggingFace cache directory (~/.cache/huggingface)
+## LoRA Compatibility System
 
-## Testing Checklist (from PRD)
+- Each LoRA has a `compatibility` array listing model slugs
+- `LoRAManager.get_compatible_loras(model_slug)` filters by compatibility
+- UI dropdown auto-updates when model changes
+- Only compatible LoRAs are shown/loadable
 
-When implementing or debugging, test these scenarios:
-- Single prompt
-- Multiple prompts
-- With HuggingFace LoRA
-- With local `.safetensors` LoRA
-- Without LoRA
-- Resume after interruption (Ctrl+C, then rerun)
-- Error handling (invalid prompt, OOM simulation)
+## Path Resolution Logic
 
-## Progress Display Format
+**Local Models/LoRAs**:
+- Path ends with `.safetensors`
+- Resolved as: `{base_model_path}/{path}`
+- Loaded via: `Pipeline.from_single_file(full_path)`
 
-Uses tqdm with custom postfix showing Success/Failed/Skipped counts:
+**HuggingFace Models**:
+- Path starts with `Hugginface:` or `Huggingface:` prefix
+- OR path contains `/` without `.safetensors` extension
+- Prefix stripped, used directly as HF model ID
+- Loaded via: `Pipeline.from_pretrained(model_id)`
+
+## UI Behavior
+
+### Dynamic Controls
+- **Model Selector**: Dropdown populated from `presets.json` models
+- **LoRA Selector**: Auto-filters to show only compatible LoRAs for selected model
+- **Negative Prompt Field**: Shown only for models with `supports_negative_prompt: true`
+- **Sliders**: Auto-update to model-specific default values on load
+
+### Model Loading
+- Click "Load Model" button or auto-loads on startup
+- Progress bar shows: device setup → pipeline loading → optimization
+- Status updates in real-time
+- UI controls update automatically after load
+
+### Generation
+- Supports batch generation (count slider 1-10)
+- Progress tracking per image and per step
+- Metadata display shows all generation parameters
+- Images saved to `{base_output_path}/{output_dir}/`
+
+## Output Structure
 
 ```
-Processing: 45%|████████████          | 9/20 [02:15<02:45, Success: 8, Failed: 1, Skipped: 0]
+outputs/{output_dir}/
+├── {model_slug}_{timestamp}_{seed}_{001..count}.jpg
 ```
 
-## Implementation Reference
+Filename format: `{model_slug}_{YYYYMMDD_HHMMSS}_{seed}_{index:03d}.jpg`
 
-See [prd.md](prd.md) for complete specification including:
-- Detailed JSON schemas
-- Full metadata file formats
-- Example input/output
-- Complete error handling matrix
-- Performance optimization strategies
+**Metadata Display** (in UI):
+- Model name
+- Full prompt (with LoRA suffix if applicable)
+- Negative prompt (if used)
+- Steps, guidance scale, resolution
+- LoRA name (if applied)
+
+## Configuration File: presets.json
+
+**Structure**:
+```json
+{
+  "config": {
+    "base_model_path": "/path/to/models/",
+    "base_output_path": "./outputs"
+  },
+  "models": [...],
+  "loras": [...]
+}
+```
+
+**Critical**:
+- `base_model_path` must end with `/`
+- Local model/LoRA paths are relative to this base
+- All model settings are research-backed optimal defaults
+
+## Error Handling
+
+- **Model Loading Failures**: Display error in status, allow retry
+- **LoRA Loading Failures**: Display error, continue without LoRA
+- **Generation Failures**: Log error, continue with next image
+- **Partial Success**: Report count of successful/failed generations
+
+## Memory Considerations
+
+M4 Mac with 48GB RAM:
+- Load one model at a time (no parallel model loading)
+- Sequential generation (no batching across prompts)
+- Clear MPS cache after each generation
+- FP8/bf16 quantization for memory efficiency
+- Models cached in `~/.cache/huggingface/`
+
+## Development Notes
+
+### Model Implementation Checklist
+When adding a new model class:
+1. Inherit from `BaseModel`
+2. Call `super().__init__(model_config, model_path)`
+3. Implement `load_pipeline()`: handle both `.safetensors` and HuggingFace paths
+4. Implement `generate()`: use model-specific parameters
+5. Apply device-specific optimizations (MPS/CUDA/CPU)
+6. Handle negative prompts correctly (check `supports_negative_prompt`)
+7. Clear cache after generation
+
+### LoRA Loading
+- Use `BaseModel.load_lora()` for standard loading
+- Strength is applied via `set_adapters()` if pipeline supports it
+- Prompt suffix automatically appended during generation
+- Unload previous LoRA before loading new one
+
+### Testing Strategy
+- Test model loading (local + HuggingFace)
+- Test LoRA filtering (compatibility logic)
+- Test generation with/without LoRA
+- Test negative prompts (supported models only)
+- Test batch generation
+- Test UI state updates on model change

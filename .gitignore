@@ -4,6 +4,11 @@ __pycache__/
 *$py.class
 *.so
 .Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ipynb_checkpoints/
 
 # Virtual environments
 .venv/
@@ -26,12 +31,18 @@ outputs/
 *.jpg
 *.jpeg
 *.png
+*.webp
 
 # Checkpoint files
 .checkpoint.json
+generation_metadata.json
 
 # HuggingFace cache (optional - uncomment if you want to exclude)
 # .cache/
 
 # Logs
 *.log
+
+# Gradio
+gradio_cached_examples/
+flagged/

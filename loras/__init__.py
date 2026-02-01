@@ -1,0 +1,8 @@
+"""
+QueerChaos 2 - LoRA Management
+LoRA filtering and loading utilities
+"""
+
+from .manager import LoRAManager
+
+__all__ = ["LoRAManager"]

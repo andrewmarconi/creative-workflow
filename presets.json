@@ -1,0 +1,131 @@
+{
+  "config": {
+    "base_model_path": "/Users/andrew/Documents/ComfyUI/models/",
+    "base_output_path": "./outputs"
+  },
+  "models": [
+    {
+      "label": "Z-Image Turbo",
+      "slug": "zimageturbo",
+      "path": "Stable-diffusion/zimage-turbo-1-5.safetensors",
+      "pipeline": "ZImagePipeline",
+      "settings": {
+        "steps": 9,
+        "guidance_scale": 0.0,
+        "resolution": 1024,
+        "scheduler": "FlowMatchEulerDiscreteScheduler",
+        "dtype": "bfloat16",
+        "supports_negative_prompt": false,
+        "max_sequence_length": null
+      }
+    },
+    {
+      "label": "Flux.1 Dev FP8 Mixed",
+      "slug": "flux1_dev",
+      "path": "Stable-diffusion/flux2_dev_fp8mixed.safetensors",
+      "pipeline": "FluxPipeline",
+      "settings": {
+        "steps": 28,
+        "guidance_scale": 3.5,
+        "resolution": 1024,
+        "scheduler": null,
+        "dtype": "bfloat16",
+        "supports_negative_prompt": false,
+        "max_sequence_length": 512
+      }
+    },
+    {
+      "label": "Qwen/Qwen-Image-2512",
+      "slug": "qwen_image",
+      "path": "Hugginface:Qwen/Qwen-Image-2512",
+      "pipeline": "QwenImagePipeline",
+      "settings": {
+        "steps": 50,
+        "guidance_scale": 4.5,
+        "resolution": 1024,
+        "scheduler": "FlowMatchEulerDiscreteScheduler",
+        "dtype": "bfloat16",
+        "supports_negative_prompt": true,
+        "max_sequence_length": null
+      }
+    }
+  ],
+  "loras": [
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:2344335@2636956",
+      "label": "Pen & Ink Illustration",
+      "path": "loras/lora-sb-phrsink-v1_20260127.safetensors",
+      "prompt": "phrsink, pen and ink illustration, no text, monochrome, high detail, intricate linework, hatching, cross-hatching, stippling, detailed shading, surreal, imaginative, artstation, concept art, sharp focus, illustration",
+      "compatibility": ["zimageturbo"],
+      "settings": { "strength": 0.7 }
+    },
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:1082272@2550274",
+      "label": "Retro Vintage Comics Style",
+      "path": "loras/ZiT retro vintage comics 1.05.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "vintage illustrated comic style, with a focus of detailed line art and minimalist colors",
+      "settings": {
+        "strength": 0.8
+      }
+    },
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:1717646@2458471",
+      "label": "Perfect Ink Drawing (Engraving Style)",
+      "path": "loras/1NK_H4TCH1NG_zimage_1024.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "1NK_H4TCH1NG",
+      "settings": {
+        "strength": 1.3
+      }
+    },
+    {
+      "air": "urn:air:zimagebase:lora:civitai:2192426@2649775",
+      "label": "Begotten",
+      "path": "loras/begott3n_zImage_base.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "begotten",
+      "settings": {
+        "strength": 1.0
+      }
+    },
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:880102@2463976",
+      "label": "Line Drawing",
+      "path": "loras/LineDrawing03_CE_ZIMGT_AIT5k.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "line drawing",
+      "settings": {
+        "strength": 0.5
+      }
+    },
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:2189639@2465423",
+      "label": "Anime MANGA Maker",
+      "path": "loras/manga_z_img.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "manga style, Black and white manga page",
+      "settings": {
+        "strength": 1.0
+      }
+    },
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
+      "label": "Better Sketches for Z-image",
+      "path": "loras/Sketchy style.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "sketch, rough sketch,  pen sketch",
+      "settings": {}
+    },
+    {
+      "air": "urn:air:zimageturbo:lora:civitai:789313@2526524",
+      "label": "80s Fantasy Movie",
+      "path": "loras/80sFantasyZHighTraining_2000_1000High.safetensors",
+      "compatibility": ["zimageturbo"],
+      "prompt": "ArsMovieStill, 80s Fantasy Movie Still",
+      "settings": {
+        "strength": 0.8
+      }
+    }
+  ]
+}

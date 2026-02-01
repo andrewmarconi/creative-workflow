@@ -1,7 +1,0 @@
-{
-  "count": 1,
-  "prompts": {
-    "sunset": "A beautiful sunset over the ocean, vibrant orange and pink colors"
-  },
-  "output_dir": "./outputs/test_single"
-}

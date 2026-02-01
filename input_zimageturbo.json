@@ -1,8 +1,0 @@
-{
-  "count": 2,
-  "prompts": {
-    "landscape": "A serene mountain landscape at sunset, vibrant colors",
-    "portrait": "Portrait of a person with colorful hair, artistic style"
-  },
-  "output_dir": "./outputs/zimageturbo_test"
-}
