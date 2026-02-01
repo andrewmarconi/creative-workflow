@@ -7,12 +7,16 @@ Generates images from text prompts using Flux2 diffusion models on Apple Silicon
 import argparse
 import json
 import os
+import random
 import sys
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import torch
+from PIL import Image
 from diffusers import FluxPipeline
 from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
+from tqdm import tqdm
 
 
 class Config:
@@ -244,6 +248,223 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
     }
 
 
+def generate_image(
+    pipeline: FluxPipeline,
+    prompt: str,
+    seed: int,
+    device: torch.device
+) -> Image.Image:
+    """
+    Generate a single image from a prompt
+
+    Args:
+        pipeline: Loaded Flux pipeline
+        prompt: Text prompt for generation
+        seed: Random seed for reproducibility
+        device: Torch device
+
+    Returns:
+        Generated PIL Image
+    """
+    # Set random seed for reproducibility
+    generator = torch.Generator(device=device.type if device.type != "mps" else "cpu")
+    generator.manual_seed(seed)
+
+    # Generate image with best practice parameters
+    image = pipeline(
+        prompt=prompt,
+        num_inference_steps=Config.STEPS,
+        guidance_scale=Config.GUIDANCE_SCALE,
+        height=Config.RESOLUTION,
+        width=Config.RESOLUTION,
+        generator=generator,
+    ).images[0]
+
+    return image
+
+
+def save_image_as_jpg(image: Image.Image, output_path: Path) -> None:
+    """
+    Save image as high-quality JPG
+
+    Args:
+        image: PIL Image to save
+        output_path: Path where to save the image
+    """
+    # Ensure parent directory exists
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Save as JPG with high quality
+    image.save(output_path, "JPEG", quality=Config.JPG_QUALITY, optimize=True)
+
+
+def get_output_filename(prefix: str, index: int, total_count: int) -> str:
+    """
+    Generate output filename with correct padding
+
+    Args:
+        prefix: File prefix from prompt key
+        index: Current image index (1-based)
+        total_count: Total number of images to generate
+
+    Returns:
+        Formatted filename
+    """
+    # Determine padding based on total count
+    if total_count > 99:
+        padding = 3
+    else:
+        padding = 3  # Always use 3-digit padding as per PRD
+
+    return f"{prefix}_{index:0{padding}d}.jpg"
+
+
+def save_metadata(
+    config: Dict[str, Any],
+    generation_metadata: List[Dict[str, Any]],
+    output_dir: Path
+) -> None:
+    """
+    Save generation metadata to JSON file
+
+    Args:
+        config: Input configuration
+        generation_metadata: List of metadata for each generated image
+        output_dir: Output directory path
+    """
+    metadata = {
+        "batch_config": {
+            "count": config['count'],
+        },
+        "model_config": {
+            "diffusion_model": Config.FLUX2_MODEL_ID,
+            "steps": Config.STEPS,
+            "guidance_scale": Config.GUIDANCE_SCALE,
+            "scheduler": "FlowMatchEulerDiscreteScheduler"
+        },
+        "images": generation_metadata
+    }
+
+    # Add LoRA info if present
+    if 'lora' in config:
+        metadata['batch_config']['lora'] = config['lora']
+
+    # Save to file
+    metadata_path = output_dir / "generation_metadata.json"
+    with open(metadata_path, 'w') as f:
+        json.dump(metadata, f, indent=2)
+
+    print(f"Metadata saved to {metadata_path}")
+
+
+def process_prompts(
+    config: Dict[str, Any],
+    models: Dict[str, Any]
+) -> List[Dict[str, Any]]:
+    """
+    Process all prompts and generate images
+
+    Args:
+        config: Input configuration
+        models: Loaded models dictionary
+
+    Returns:
+        List of generation metadata for each image
+    """
+    pipeline = models['pipeline']
+    lora_info = models['lora_info']
+    device = models['device']
+    output_dir = Path(config['output_dir'])
+
+    # Create output directory
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Calculate total images
+    total_images = len(config['prompts']) * config['count']
+    generation_metadata = []
+
+    # Create progress bar
+    pbar = tqdm(
+        total=total_images,
+        desc="Processing",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {postfix}]"
+    )
+
+    success_count = 0
+    failed_count = 0
+    skipped_count = 0
+
+    # Process each prompt
+    for prompt_prefix, prompt_text in config['prompts'].items():
+        # Append LoRA prompt if specified
+        if lora_info:
+            full_prompt = f"{prompt_text}, {lora_info['prompt']}"
+        else:
+            full_prompt = prompt_text
+
+        # Generate multiple images for this prompt
+        for i in range(1, config['count'] + 1):
+            # Generate random seed
+            seed = random.randint(0, 2**32 - 1)
+
+            # Create output filename
+            filename = get_output_filename(prompt_prefix, i, config['count'])
+            output_path = output_dir / filename
+
+            # Update progress bar description
+            pbar.set_description(f"Processing {prompt_prefix}")
+
+            try:
+                # Generate image
+                image = generate_image(pipeline, full_prompt, seed, device)
+
+                # Save as JPG
+                save_image_as_jpg(image, output_path)
+
+                # Record metadata
+                metadata = {
+                    "filename": filename,
+                    "prompt": full_prompt,
+                    "seed": seed,
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "status": "success"
+                }
+                generation_metadata.append(metadata)
+                success_count += 1
+
+                # Clear MPS cache if using Apple Silicon
+                if device.type == "mps":
+                    torch.mps.empty_cache()
+
+            except Exception as e:
+                # Record error in metadata
+                metadata = {
+                    "filename": filename,
+                    "prompt": full_prompt,
+                    "seed": seed,
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "status": "failed",
+                    "error": str(e)
+                }
+                generation_metadata.append(metadata)
+                failed_count += 1
+
+                # Log error but continue
+                tqdm.write(f"✗ Error generating {filename}: {e}")
+
+            # Update progress bar
+            pbar.set_postfix({
+                "Success": success_count,
+                "Failed": failed_count,
+                "Skipped": skipped_count
+            })
+            pbar.update(1)
+
+    pbar.close()
+
+    return generation_metadata
+
+
 def main():
     """Main entry point"""
 
@@ -262,7 +483,7 @@ def main():
         models = load_models(config, device)
 
         print(f"\n{'='*60}")
-        print("Phase 1 Complete: Models loaded successfully!")
+        print("Models loaded successfully!")
         print(f"{'='*60}")
         print(f"Device: {device_name}")
         print(f"Prompts to process: {len(config['prompts'])}")
@@ -273,10 +494,33 @@ def main():
             print(f"LoRA: {models['lora_info']['name']}")
         print(f"{'='*60}\n")
 
-        print("Phase 2 (Core Generation) not yet implemented.")
-        print("Models are loaded and ready for image generation.")
+        # Process prompts and generate images
+        generation_metadata = process_prompts(config, models)
 
-        return 0
+        # Save metadata
+        output_dir = Path(config['output_dir'])
+        save_metadata(config, generation_metadata, output_dir)
+
+        # Summary
+        success_count = sum(1 for m in generation_metadata if m['status'] == 'success')
+        failed_count = sum(1 for m in generation_metadata if m['status'] == 'failed')
+
+        print(f"\n{'='*60}")
+        print("Generation Complete!")
+        print(f"{'='*60}")
+        print(f"Total images: {len(generation_metadata)}")
+        print(f"Successful: {success_count}")
+        print(f"Failed: {failed_count}")
+        print(f"Output directory: {config['output_dir']}")
+        print(f"{'='*60}\n")
+
+        # Return appropriate exit code
+        if failed_count > 0 and success_count > 0:
+            return 2  # Partial success
+        elif failed_count > 0 and success_count == 0:
+            return 1  # All failed
+        else:
+            return 0  # All succeeded
 
     except FileNotFoundError as e:
         print(f"✗ Error: {e}", file=sys.stderr)
