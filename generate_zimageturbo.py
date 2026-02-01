@@ -30,16 +30,16 @@ class Config:
     # Model IDs
     MODEL_ID = "Tongyi-MAI/Z-Image-Turbo"
 
-    # Generation parameters (Turbo model best practices)
-    # TODO: Verify these parameters for ZImageTurbo
-    RESOLUTION = 1024  # May vary - check model documentation
-    STEPS = 4  # Turbo models typically use 1-4 steps
-    GUIDANCE_SCALE = 0.0  # Turbo models often use guidance_scale=0
+    # Generation parameters (Official Z-Image-Turbo recommendations)
+    # Source: https://huggingface.co/Tongyi-MAI/Z-Image-Turbo
+    RESOLUTION = 1024  # Supports variable resolutions
+    STEPS = 9  # Results in 8 DiT forwards (8 NFEs)
+    GUIDANCE_SCALE = 0.0  # MUST be 0.0 for Turbo models
     JPG_QUALITY = 95
 
     # Device settings
     DTYPE_FP16 = torch.float16
-    DTYPE_BF16 = torch.bfloat16
+    DTYPE_BF16 = torch.bfloat16  # Recommended by model creators
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -184,11 +184,11 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
     print(f"Loading ZImageTurbo pipeline...")
 
     try:
-        # Z-Image-Turbo has its own custom pipeline
+        # Z-Image-Turbo official loading (per HuggingFace model card)
         pipeline = ZImagePipeline.from_pretrained(
             Config.MODEL_ID,
-            torch_dtype=Config.DTYPE_FP16,
-            low_cpu_mem_usage=True,
+            torch_dtype=Config.DTYPE_BF16,  # Official recommendation
+            low_cpu_mem_usage=False,  # Official recommendation
         )
 
         # Use the default scheduler that comes with Z-Image-Turbo
@@ -229,9 +229,7 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
 
     # Enable memory optimizations
     if device.type == "mps":
-        # MPS-specific optimizations
-        # Use sequential CPU offload to keep most of the model on CPU
-        # and only load layers to MPS as needed
+        # MPS-specific optimizations for Apple Silicon
         print("Enabling sequential CPU offload for MPS...")
         pipeline.enable_sequential_cpu_offload(device=device)
         pipeline.enable_attention_slicing()
@@ -240,6 +238,14 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
         # CUDA-specific optimizations
         pipeline.enable_model_cpu_offload()
         pipeline.enable_attention_slicing()
+
+        # Optional: Enable Flash Attention for better efficiency
+        # Uncomment if Flash Attention is available:
+        # pipeline.transformer.set_attention_backend("flash")  # Flash-Attention-2
+
+        # Optional: Compile model for faster inference (first run takes longer)
+        # Uncomment to enable:
+        # pipeline.transformer.compile()
     else:
         # CPU - no special optimizations needed
         pipeline = pipeline.to(device)
