@@ -31,9 +31,11 @@ class QwenImageModel(BaseModel):
             # Qwen-Image is typically loaded from HuggingFace Hub
             # But also support local if path ends with .safetensors
             if self.model_path.endswith(".safetensors"):
-                # Load from single file
+                # Load from single file with config from HuggingFace
+                # Note: Requires config and subfolder for transformer
                 self.pipeline = QwenImagePipeline.from_single_file(
                     self.model_path,
+                    config="Qwen/Qwen-Image",
                     torch_dtype=self.dtype,
                     low_cpu_mem_usage=False,
                 )

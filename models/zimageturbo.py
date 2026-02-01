@@ -30,9 +30,10 @@ class ZImageTurboModel(BaseModel):
 
             # Check if loading from local file or HuggingFace
             if self.model_path.endswith(".safetensors"):
-                # Load from single file
+                # Load from single file with config from HuggingFace
                 self.pipeline = ZImagePipeline.from_single_file(
                     self.model_path,
+                    config="Tongyi-MAI/Z-Image-Turbo",
                     torch_dtype=self.dtype,
                     low_cpu_mem_usage=False,
                 )
