@@ -33,7 +33,7 @@ class ImageGenerator:
         self.current_model: Optional[BaseModel] = None
         self.current_model_slug: Optional[str] = None
 
-    def load_model(self, model_label: str, progress=gr.Progress()) -> Tuple[str, gr.update, gr.update, gr.update, gr.update, gr.update]:
+    def load_model(self, model_label: str, progress=gr.Progress()) -> Tuple[str, gr.update, gr.update, gr.update, gr.update, gr.update, gr.update]:
         """
         Load selected model
 
@@ -41,14 +41,14 @@ class ImageGenerator:
             model_label: Model label from dropdown
 
         Returns:
-            Tuple of (status message, lora_update, steps_update, guidance_update, negative_prompt_update, resolution_update)
+            Tuple of (status message, lora_update, steps_update, guidance_update, negative_prompt_update, width_update, height_update)
         """
         try:
             # Get model config
             model_config = self.config.get_model_by_label(model_label)
             if model_config is None:
                 return (f"Error: Model '{model_label}' not found",
-                        gr.update(), gr.update(), gr.update(), gr.update(), gr.update())
+                        gr.update(), gr.update(), gr.update(), gr.update(), gr.update(), gr.update())
 
             model_slug = model_config["slug"]
 
@@ -74,9 +74,9 @@ class ImageGenerator:
 
         except Exception as e:
             return (f"Error loading model: {e}",
-                    gr.update(), gr.update(), gr.update(), gr.update(), gr.update())
+                    gr.update(), gr.update(), gr.update(), gr.update(), gr.update(), gr.update())
 
-    def _update_ui_for_model(self, model_config: Dict, status_message: str) -> Tuple[str, gr.update, gr.update, gr.update, gr.update, gr.update]:
+    def _update_ui_for_model(self, model_config: Dict, status_message: str) -> Tuple[str, gr.update, gr.update, gr.update, gr.update, gr.update, gr.update]:
         """Update UI components based on loaded model settings"""
         model_slug = model_config["slug"]
         settings = model_config.get("settings", {})
@@ -93,11 +93,12 @@ class ImageGenerator:
         supports_negative = settings.get("supports_negative_prompt", False)
         negative_prompt_update = gr.update(visible=supports_negative)
 
-        # Update resolution
-        resolution_update = gr.update(value=settings.get("resolution", 1024))
+        # Update width and height
+        width_update = gr.update(value=settings.get("default_width", 1024))
+        height_update = gr.update(value=settings.get("default_height", 1024))
 
         return (status_message, lora_update, steps_update, guidance_update,
-                negative_prompt_update, resolution_update)
+                negative_prompt_update, width_update, height_update)
 
     def load_lora(self, lora_label: str) -> str:
         """Load selected LoRA"""
@@ -125,7 +126,8 @@ class ImageGenerator:
         negative_prompt: str,
         steps: int,
         guidance_scale: float,
-        resolution: int,
+        width: int,
+        height: int,
         seed: int,
         count: int,
         output_dir: str,
@@ -165,8 +167,8 @@ class ImageGenerator:
                     negative_prompt=negative_prompt if (negative_prompt and negative_prompt.strip()) else None,
                     steps=steps,
                     guidance_scale=guidance_scale,
-                    width=resolution,
-                    height=resolution,
+                    width=width,
+                    height=height,
                     seed=current_seed,
                     progress_callback=lambda p, desc: progress(
                         (i + p) / count, desc=f"Image {i+1}/{count}: {desc}"
@@ -281,13 +283,22 @@ def build_interface():
                         label="Guidance Scale"
                     )
 
-                resolution = gr.Slider(
-                    minimum=512,
-                    maximum=2048,
-                    value=1024,
-                    step=64,
-                    label="Resolution (square)"
-                )
+                with gr.Row():
+                    width = gr.Slider(
+                        minimum=512,
+                        maximum=2048,
+                        value=1024,
+                        step=64,
+                        label="Width"
+                    )
+
+                    height = gr.Slider(
+                        minimum=512,
+                        maximum=2048,
+                        value=1024,
+                        step=64,
+                        label="Height"
+                    )
 
                 with gr.Row():
                     seed = gr.Number(
@@ -346,7 +357,7 @@ def build_interface():
             fn=generator.load_model,
             inputs=[model_selector],
             outputs=[status_output, lora_selector, steps, guidance_scale,
-                     negative_prompt, resolution]
+                     negative_prompt, width, height]
         )
 
         # Update LoRAs when model changes
@@ -364,7 +375,7 @@ def build_interface():
 
         generate_button.click(
             fn=generator.generate,
-            inputs=[prompt, negative_prompt, steps, guidance_scale, resolution,
+            inputs=[prompt, negative_prompt, steps, guidance_scale, width, height,
                     seed, count, output_dir],
             outputs=[image_output, status_output, metadata_output]
         )
@@ -374,7 +385,7 @@ def build_interface():
             fn=generator.load_model,
             inputs=[model_selector],
             outputs=[status_output, lora_selector, steps, guidance_scale,
-                     negative_prompt, resolution]
+                     negative_prompt, width, height]
         )
 
     return interface

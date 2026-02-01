@@ -12,7 +12,9 @@
       "settings": {
         "steps": 9,
         "guidance_scale": 0.0,
-        "resolution": 1024,
+        "default_width": 1024,
+        "default_height": 1024,
+        "max_pixels": 1048576,
         "scheduler": "FlowMatchEulerDiscreteScheduler",
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
@@ -27,7 +29,9 @@
       "settings": {
         "steps": 28,
         "guidance_scale": 3.5,
-        "resolution": 1024,
+        "default_width": 1024,
+        "default_height": 1024,
+        "max_pixels": 2097152,
         "scheduler": null,
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
@@ -42,7 +46,9 @@
       "settings": {
         "steps": 50,
         "guidance_scale": 4.5,
-        "resolution": 1024,
+        "default_width": 1328,
+        "default_height": 1328,
+        "max_pixels": 14680064,
         "scheduler": "FlowMatchEulerDiscreteScheduler",
         "dtype": "bfloat16",
         "supports_negative_prompt": true,
