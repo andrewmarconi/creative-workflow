@@ -9,6 +9,7 @@ import json
 import os
 import random
 import sys
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional, List
@@ -17,6 +18,10 @@ from PIL import Image
 from diffusers import FluxPipeline
 from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
 from tqdm import tqdm
+
+# Suppress expected warnings on Apple Silicon
+warnings.filterwarnings('ignore', message='.*CUDA is not available.*')
+warnings.filterwarnings('ignore', message='.*torch_xla.*')
 
 
 class Config:
@@ -148,10 +153,6 @@ def setup_device() -> tuple[torch.device, str]:
     if torch.backends.mps.is_available():
         device = torch.device("mps")
         device_name = "MPS (Apple Silicon)"
-
-        # Set memory fraction for MPS
-        torch.mps.set_per_process_memory_fraction(0.9)
-
         print(f"✓ Using {device_name}")
         return device, device_name
     elif torch.cuda.is_available():
@@ -185,19 +186,20 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
     try:
         # Note: Using Flux 1 Dev as Flux 2 may not be publicly available yet
         # Adjust model ID when Flux2 Dev is released
+
+        # Load pipeline with memory-efficient settings
+        # Don't move to device yet - let CPU offload handle it
         pipeline = FluxPipeline.from_pretrained(
             Config.FLUX2_MODEL_ID,
             torch_dtype=Config.DTYPE_BF16,  # Using bf16 for now, fp8 may need additional setup
             low_cpu_mem_usage=True,
+            variant="fp16",  # Use fp16 variant if available to save memory
         )
 
         # Configure scheduler (FlowMatchEulerDiscreteScheduler is default for Flux)
         pipeline.scheduler = FlowMatchEulerDiscreteScheduler.from_config(
             pipeline.scheduler.config
         )
-
-        # Move to device
-        pipeline = pipeline.to(device)
 
         print(f"✓ Flux2 Dev (bf16) loaded")  # Note: fp8 requires additional quantization
 
@@ -235,11 +237,19 @@ def load_models(config: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
     # Enable memory optimizations
     if device.type == "mps":
         # MPS-specific optimizations
+        # Use sequential CPU offload to keep most of the model on CPU
+        # and only load layers to MPS as needed
+        print("Enabling sequential CPU offload for MPS...")
+        pipeline.enable_sequential_cpu_offload(device=device)
         pipeline.enable_attention_slicing()
+        print("✓ Memory optimizations enabled")
     elif device.type == "cuda":
         # CUDA-specific optimizations
         pipeline.enable_model_cpu_offload()
         pipeline.enable_attention_slicing()
+    else:
+        # CPU - no special optimizations needed
+        pipeline = pipeline.to(device)
 
     return {
         'pipeline': pipeline,
@@ -267,7 +277,8 @@ def generate_image(
         Generated PIL Image
     """
     # Set random seed for reproducibility
-    generator = torch.Generator(device=device.type if device.type != "mps" else "cpu")
+    # Always use CPU generator when using sequential CPU offload
+    generator = torch.Generator(device="cpu")
     generator.manual_seed(seed)
 
     # Generate image with best practice parameters
@@ -546,6 +557,9 @@ def process_prompts(
 
 def main():
     """Main entry point"""
+
+    # Set environment variables for better MPS memory management
+    os.environ.setdefault('PYTORCH_MPS_HIGH_WATERMARK_RATIO', '0.0')
 
     # Parse arguments
     args = parse_arguments()
