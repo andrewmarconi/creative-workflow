@@ -7,7 +7,7 @@
     {
       "label": "Z-Image Turbo",
       "slug": "zimageturbo",
-      "path": "diffusion_models/z_image_turbo_bf16.safetensors",
+      "path": "Tongyi-MAI/Z-Image-Turbo",
       "pipeline": "ZImagePipeline",
       "settings": {
         "steps": 9,

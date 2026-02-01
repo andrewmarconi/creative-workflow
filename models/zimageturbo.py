@@ -8,7 +8,6 @@ from typing import Dict, Optional, Tuple
 import torch
 from PIL import Image
 from diffusers import ZImagePipeline
-from transformers import Qwen2VLForConditionalGeneration
 from .base import BaseModel
 
 
@@ -29,36 +28,15 @@ class ZImageTurboModel(BaseModel):
             if progress_callback:
                 progress_callback(0.3, desc="Loading Z-Image Turbo pipeline...")
 
-            # Check if loading from local file or HuggingFace
-            if self.model_path.endswith(".safetensors"):
-                # Load text encoder separately (required for single file loading)
-                if progress_callback:
-                    progress_callback(0.4, desc="Loading text encoder...")
-
-                from transformers import Qwen2VLForConditionalGeneration
-                text_encoder = Qwen2VLForConditionalGeneration.from_pretrained(
-                    "Tongyi-MAI/Z-Image-Turbo",
-                    subfolder="text_encoder",
-                    torch_dtype=self.dtype,
-                )
-
-                if progress_callback:
-                    progress_callback(0.6, desc="Loading pipeline from single file...")
-
-                # Load from single file with pre-loaded text encoder
-                self.pipeline = ZImagePipeline.from_single_file(
-                    self.model_path,
-                    text_encoder=text_encoder,
-                    torch_dtype=self.dtype,
-                    low_cpu_mem_usage=False,
-                )
-            else:
-                # Load from HuggingFace (fallback, though ZImageTurbo is typically local)
-                self.pipeline = ZImagePipeline.from_pretrained(
-                    self.model_path,
-                    torch_dtype=self.dtype,
-                    low_cpu_mem_usage=False,
-                )
+            # Load from HuggingFace Hub (recommended for Z-Image Turbo)
+            # Note: Loading from split local .safetensors files (diffusion model,
+            # text encoder, VAE) requires complex component assembly not well
+            # supported by from_single_file(). Use HuggingFace for simplicity.
+            self.pipeline = ZImagePipeline.from_pretrained(
+                self.model_path,
+                torch_dtype=self.dtype,
+                low_cpu_mem_usage=False,
+            )
 
             if progress_callback:
                 progress_callback(0.7, desc="Enabling optimizations...")
