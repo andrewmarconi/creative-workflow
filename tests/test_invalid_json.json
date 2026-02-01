@@ -1,0 +1,6 @@
+{
+  "count": 1,
+  "prompts": {
+    "test": "This JSON is missing a closing brace"
+  },
+  "output_dir": "./outputs/test_invalid"

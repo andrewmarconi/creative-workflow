@@ -1,0 +1,12 @@
+{
+  "count": 2,
+  "lora": {
+    "name": "fofr/flux-80s-cyberpunk",
+    "prompt": "in 80s cyberpunk style"
+  },
+  "prompts": {
+    "car": "A futuristic sports car on a neon-lit street",
+    "building": "A towering megastructure with holographic advertisements"
+  },
+  "output_dir": "./outputs/test_lora_hf"
+}

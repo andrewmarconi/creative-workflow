@@ -103,6 +103,7 @@ To force regeneration, delete `.checkpoint.json`.
 
 - [CLAUDE.md](CLAUDE.md) - Developer guidance for Claude Code
 - [prd.md](prd.md) - Complete implementation specification
+- [TESTING.md](TESTING.md) - Comprehensive testing guide
 
 ## System Requirements
 

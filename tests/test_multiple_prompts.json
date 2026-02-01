@@ -1,0 +1,9 @@
+{
+  "count": 2,
+  "prompts": {
+    "cityscape": "A futuristic cityscape at night, neon lights, cyberpunk style",
+    "nature": "A serene forest with sunlight streaming through trees",
+    "portrait": "Portrait of a person with colorful hair, artistic style"
+  },
+  "output_dir": "./outputs/test_multiple"
+}

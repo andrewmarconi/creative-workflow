@@ -1,0 +1,6 @@
+{
+  "count": 1,
+  "prompts": {
+    "test": "This is missing output_dir field"
+  }
+}
