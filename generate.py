@@ -319,6 +319,56 @@ def get_output_filename(prefix: str, index: int, total_count: int) -> str:
     return f"{prefix}_{index:0{padding}d}.jpg"
 
 
+def load_checkpoint(output_dir: Path) -> set:
+    """
+    Load checkpoint file if it exists
+
+    Args:
+        output_dir: Output directory path
+
+    Returns:
+        Set of completed image filenames
+    """
+    checkpoint_path = output_dir / ".checkpoint.json"
+
+    if not checkpoint_path.exists():
+        return set()
+
+    try:
+        with open(checkpoint_path, 'r') as f:
+            checkpoint_data = json.load(f)
+        completed = set(checkpoint_data.get('completed_images', []))
+        print(f"✓ Loaded checkpoint: {len(completed)} images already completed")
+        return completed
+    except Exception as e:
+        print(f"⚠ Warning: Failed to load checkpoint: {e}")
+        return set()
+
+
+def save_checkpoint(output_dir: Path, completed_images: List[str], total_expected: int) -> None:
+    """
+    Save checkpoint file with current progress
+
+    Args:
+        output_dir: Output directory path
+        completed_images: List of completed image filenames
+        total_expected: Total number of images expected
+    """
+    checkpoint_path = output_dir / ".checkpoint.json"
+
+    checkpoint_data = {
+        "completed_images": completed_images,
+        "last_updated": datetime.utcnow().isoformat() + "Z",
+        "total_expected": total_expected
+    }
+
+    try:
+        with open(checkpoint_path, 'w') as f:
+            json.dump(checkpoint_data, f, indent=2)
+    except Exception as e:
+        print(f"⚠ Warning: Failed to save checkpoint: {e}")
+
+
 def save_metadata(
     config: Dict[str, Any],
     generation_metadata: List[Dict[str, Any]],
@@ -383,6 +433,10 @@ def process_prompts(
     total_images = len(config['prompts']) * config['count']
     generation_metadata = []
 
+    # Load checkpoint to resume from previous run
+    completed_images_set = load_checkpoint(output_dir)
+    completed_images_list = list(completed_images_set)
+
     # Create progress bar
     pbar = tqdm(
         total=total_images,
@@ -392,7 +446,7 @@ def process_prompts(
 
     success_count = 0
     failed_count = 0
-    skipped_count = 0
+    skipped_count = len(completed_images_set)
 
     # Process each prompt
     for prompt_prefix, prompt_text in config['prompts'].items():
@@ -414,6 +468,27 @@ def process_prompts(
             # Update progress bar description
             pbar.set_description(f"Processing {prompt_prefix}")
 
+            # Check if image already exists in checkpoint
+            if filename in completed_images_set:
+                # Skip this image - already generated
+                metadata = {
+                    "filename": filename,
+                    "prompt": full_prompt,
+                    "seed": seed,
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "status": "skipped"
+                }
+                generation_metadata.append(metadata)
+
+                # Update progress bar
+                pbar.set_postfix({
+                    "Success": success_count,
+                    "Failed": failed_count,
+                    "Skipped": skipped_count
+                })
+                pbar.update(1)
+                continue
+
             try:
                 # Generate image
                 image = generate_image(pipeline, full_prompt, seed, device)
@@ -431,6 +506,10 @@ def process_prompts(
                 }
                 generation_metadata.append(metadata)
                 success_count += 1
+
+                # Update checkpoint with completed image
+                completed_images_list.append(filename)
+                save_checkpoint(output_dir, completed_images_list, total_images)
 
                 # Clear MPS cache if using Apple Silicon
                 if device.type == "mps":
