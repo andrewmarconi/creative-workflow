@@ -28,24 +28,12 @@ class QwenImageModel(BaseModel):
             if progress_callback:
                 progress_callback(0.3, desc="Loading Qwen-Image pipeline...")
 
-            # Qwen-Image is typically loaded from HuggingFace Hub
-            # But also support local if path ends with .safetensors
-            if self.model_path.endswith(".safetensors"):
-                # Load from single file with config from HuggingFace
-                # Note: Requires config and subfolder for transformer
-                self.pipeline = QwenImagePipeline.from_single_file(
-                    self.model_path,
-                    config="Qwen/Qwen-Image",
-                    torch_dtype=self.dtype,
-                    low_cpu_mem_usage=False,
-                )
-            else:
-                # Load from HuggingFace Hub
-                self.pipeline = QwenImagePipeline.from_pretrained(
-                    self.model_path,
-                    torch_dtype=self.dtype,
-                    low_cpu_mem_usage=False,
-                )
+            # Load from HuggingFace Hub (best practice for Qwen-Image)
+            self.pipeline = QwenImagePipeline.from_pretrained(
+                self.model_path,
+                torch_dtype=self.dtype,
+                low_cpu_mem_usage=False,
+            )
 
             if progress_callback:
                 progress_callback(0.7, desc="Enabling optimizations...")

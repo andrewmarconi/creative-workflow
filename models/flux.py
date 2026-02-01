@@ -28,22 +28,12 @@ class FluxModel(BaseModel):
             if progress_callback:
                 progress_callback(0.3, desc="Loading Flux.1-dev pipeline...")
 
-            # Check if loading from local file or HuggingFace
-            if self.model_path.endswith(".safetensors"):
-                # Load from single file with config from HuggingFace
-                self.pipeline = FluxPipeline.from_single_file(
-                    self.model_path,
-                    config="black-forest-labs/FLUX.1-dev",
-                    torch_dtype=self.dtype,
-                    low_cpu_mem_usage=False,
-                )
-            else:
-                # Load from HuggingFace
-                self.pipeline = FluxPipeline.from_pretrained(
-                    self.model_path,
-                    torch_dtype=self.dtype,
-                    low_cpu_mem_usage=False,
-                )
+            # Load from HuggingFace Hub (best practice for Flux.1-dev)
+            self.pipeline = FluxPipeline.from_pretrained(
+                self.model_path,
+                torch_dtype=self.dtype,
+                low_cpu_mem_usage=False,
+            )
 
             if progress_callback:
                 progress_callback(0.7, desc="Enabling optimizations...")
