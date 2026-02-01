@@ -189,7 +189,7 @@ class ImageGenerator:
                 # Generate single image
                 image, metadata = self.current_model.generate(
                     prompt=prompt,
-                    negative_prompt=negative_prompt if negative_prompt.strip() else None,
+                    negative_prompt=negative_prompt if (negative_prompt and negative_prompt.strip()) else None,
                     steps=steps,
                     guidance_scale=guidance_scale,
                     width=resolution,
