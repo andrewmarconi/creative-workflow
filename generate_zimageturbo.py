@@ -28,8 +28,7 @@ class Config:
     """Configuration and constants for image generation"""
 
     # Model IDs
-    # TODO: Update with actual ZImageTurbo model ID from HuggingFace
-    MODEL_ID = "zimage/zimage-turbo"  # PLACEHOLDER - Update with correct model ID
+    MODEL_ID = "Tongyi-MAI/Z-Image-Turbo"
 
     # Generation parameters (Turbo model best practices)
     # TODO: Verify these parameters for ZImageTurbo
