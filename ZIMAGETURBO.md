@@ -32,14 +32,23 @@ RESOLUTION = 512-1024 # Check model documentation
 
 ### 3. Check Pipeline Class
 
-The script uses `AutoPipelineForText2Image` which should work with most models. If ZImageTurbo requires a specific pipeline class, update:
+The script uses `StableDiffusionXLPipeline` as a starting point (to avoid dependency issues with `AutoPipeline`).
+
+**Common pipeline classes for turbo models:**
+- `StableDiffusionXLPipeline` - SDXL-based turbo models
+- `StableDiffusionPipeline` - SD 1.5-based turbo models
+- `KandinskyPipeline` - Kandinsky-based models
+
+**To change the pipeline:**
 
 ```python
-from diffusers import SpecificPipelineClass
+from diffusers import YourPipelineClass
 
 # In load_models():
-pipeline = SpecificPipelineClass.from_pretrained(...)
+pipeline = YourPipelineClass.from_pretrained(...)
 ```
+
+**Note:** We avoid `AutoPipelineForText2Image` due to transformers 5.x compatibility issues.
 
 ### 4. Verify Scheduler
 
