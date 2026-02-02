@@ -85,6 +85,10 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 | Flux.1-dev | FluxPipeline | 28 | 3.5 | No |
 | Qwen-Image-2512 | QwenImagePipeline | 50 | 4.5 | Yes |
 | SDXL Turbo | AutoPipelineForText2Image | varies | varies | varies |
+| Flux.2 Klein 4B | Flux2KleinPipeline | 4 | 1.0 | No |
+| Juggernaut XL v9 | StableDiffusionXLPipeline | 30 | 7.0 | Yes |
+| DreamShaper XL Lightning | StableDiffusionXLPipeline | 4 | 2.0 | No |
+| Realistic Vision v5.1 | StableDiffusionPipeline | 30 | 5.0 | Yes |
 
 ### Path Resolution
 - Local models/LoRAs: path ends with `.safetensors` → resolved as `{base_model_path}/{path}`, loaded via `from_single_file()`
