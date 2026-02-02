@@ -8,7 +8,6 @@ from .zimageturbo import ZImageTurboModel
 from .flux import FluxModel
 from .qwen import QwenImageModel
 from .sdxlturbo import SDXLTurboModel
-from .flux2klein import Flux2KleinModel
 from .sdxl import SDXLModel
 from .sd15 import SD15Model
 
@@ -38,8 +37,6 @@ class ModelFactory:
             return QwenImageModel(model_config, model_path)
         elif pipeline_name == "AutoPipelineForText2Image":
             return SDXLTurboModel(model_config, model_path)
-        elif pipeline_name == "Flux2KleinPipeline":
-            return Flux2KleinModel(model_config, model_path)
         elif pipeline_name == "StableDiffusionXLPipeline":
             return SDXLModel(model_config, model_path)
         elif pipeline_name == "StableDiffusionPipeline":
@@ -48,4 +45,4 @@ class ModelFactory:
             raise ValueError(f"Unknown pipeline type: {pipeline_name}")
 
 
-__all__ = ["BaseModel", "ZImageTurboModel", "FluxModel", "QwenImageModel", "SDXLTurboModel", "Flux2KleinModel", "SDXLModel", "SD15Model", "ModelFactory"]
+__all__ = ["BaseModel", "ZImageTurboModel", "FluxModel", "QwenImageModel", "SDXLTurboModel", "SDXLModel", "SD15Model", "ModelFactory"]

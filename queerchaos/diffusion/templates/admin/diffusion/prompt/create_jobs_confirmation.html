@@ -29,7 +29,7 @@
             <select name="diffusion_model" id="id_diffusion_model" required
                     class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">
                 {% for model in models %}
-                <option value="{{ model.pk }}">{{ model.label }}</option>
+                <option value="{{ model.pk }}" data-arch="{{ model.base_architecture }}">{{ model.label }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -42,7 +42,7 @@
                     class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">
                 <option value="">{% trans "None" %}</option>
                 {% for lora in loras %}
-                <option value="{{ lora.pk }}" data-models="{{ lora.compatible_model_ids }}">{{ lora.label }}</option>
+                <option value="{{ lora.pk }}" data-arch="{{ lora.base_architecture }}">{{ lora.label }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -75,7 +75,8 @@
     const loraOptions = Array.from(loraSelect.options).slice(1); // skip "None"
 
     function filterLoras() {
-        const modelId = modelSelect.value;
+        const selectedModel = modelSelect.options[modelSelect.selectedIndex];
+        const arch = selectedModel ? selectedModel.dataset.arch : '';
         // Reset
         loraSelect.innerHTML = '';
         const none = document.createElement('option');
@@ -84,8 +85,7 @@
         loraSelect.appendChild(none);
 
         loraOptions.forEach(function(opt) {
-            const ids = opt.dataset.models.split(',');
-            if (ids.indexOf(modelId) !== -1) {
+            if (opt.dataset.arch === arch) {
                 loraSelect.appendChild(opt.cloneNode(true));
             }
         });

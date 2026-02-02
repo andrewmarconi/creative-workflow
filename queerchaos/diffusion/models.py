@@ -10,6 +10,15 @@ from django.contrib.postgres.fields import ArrayField
 import json
 
 
+BASE_ARCHITECTURE_CHOICES = [
+    ("sdxl", "SDXL"),
+    ("sd15", "SD 1.5"),
+    ("flux1", "Flux.1"),
+    ("qwen", "Qwen"),
+    ("zimage", "Z-Image (Lumina/S3-DiT)"),
+]
+
+
 class DiffusionModel(models.Model):
     """Represents a diffusion model for image generation.
 
@@ -19,6 +28,12 @@ class DiffusionModel(models.Model):
     # Basic info
     label = models.CharField(max_length=255, help_text="Display name for the model")
     slug = models.SlugField(max_length=100, unique=True, help_text="Unique identifier")
+    base_architecture = models.CharField(
+        max_length=20,
+        choices=BASE_ARCHITECTURE_CHOICES,
+        default="sdxl",
+        help_text="Base model architecture (determines LoRA compatibility)"
+    )
     path = models.CharField(
         max_length=500,
         help_text="HuggingFace model ID (e.g., 'Qwen/Qwen-Image-2512') or local path"
@@ -79,6 +94,16 @@ class DiffusionModel(models.Model):
         null=True,
         help_text="Maximum sequence length for text encoder"
     )
+    token_window = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="Maximum tokens for prompt input (e.g. 77 for CLIP, 512 for T5)"
+    )
+    vram_usage = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="Minimum VRAM required in MB (e.g. 8192 for 8GB)"
+    )
 
     # Metadata
     is_active = models.BooleanField(default=True, help_text="Enable/disable this model")
@@ -128,10 +153,11 @@ class LoraModel(models.Model):
     )
 
     # Compatibility
-    compatible_models = models.ManyToManyField(
-        DiffusionModel,
-        related_name='compatible_loras',
-        help_text="Models this LoRA is compatible with"
+    base_architecture = models.CharField(
+        max_length=20,
+        choices=BASE_ARCHITECTURE_CHOICES,
+        default="sdxl",
+        help_text="Base model architecture this LoRA is trained for"
     )
 
     # Prompt and settings

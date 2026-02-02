@@ -63,6 +63,7 @@ class Command(BaseCommand):
                         'label': model_data['label'],
                         'path': model_data['path'],
                         'pipeline': model_data['pipeline'],
+                        'base_architecture': model_data.get('base_architecture', 'sdxl'),
                         'steps': settings.get('steps', 28),
                         'guidance_scale': settings.get('guidance_scale', 3.5),
                         'default_width': settings.get('default_width', 1024),
@@ -72,6 +73,8 @@ class Command(BaseCommand):
                         'dtype': settings.get('dtype', 'bfloat16'),
                         'supports_negative_prompt': settings.get('supports_negative_prompt', False),
                         'max_sequence_length': settings.get('max_sequence_length'),
+                        'token_window': settings.get('token_window'),
+                        'vram_usage': settings.get('vram_usage'),
                         'is_active': True,
                     }
                 )
@@ -103,12 +106,15 @@ class Command(BaseCommand):
                 else:
                     lookup = {'label': lora_data['label']}
 
+                base_arch = lora_data.get('base_architecture', 'sdxl')
+
                 lora, created = LoraModel.objects.update_or_create(
                     **lookup,
                     defaults={
                         'label': lora_data['label'],
                         'path': lora_data.get('path', ''),
                         'air': lora_data.get('air', ''),
+                        'base_architecture': base_arch,
                         'prompt_suffix': lora_data.get('prompt', ''),
                         'negative_prompt_suffix': lora_data.get('negative_prompt', ''),
                         'default_strength': settings.get('strength', 0.8),
@@ -116,27 +122,18 @@ class Command(BaseCommand):
                     }
                 )
 
-                # Set compatibility
-                compatibility_slugs = lora_data.get('compatibility', [])
-                compatible_models = DiffusionModel.objects.filter(
-                    slug__in=compatibility_slugs
-                )
-                lora.compatible_models.set(compatible_models)
-
                 if created:
                     loras_created += 1
                     self.stdout.write(
                         self.style.SUCCESS(
-                            f"  ✓ Created: {lora.label} "
-                            f"(compatible with: {', '.join(compatibility_slugs)})"
+                            f"  ✓ Created: {lora.label} (arch: {base_arch})"
                         )
                     )
                 else:
                     loras_updated += 1
                     self.stdout.write(
                         self.style.WARNING(
-                            f"  ↻ Updated: {lora.label} "
-                            f"(compatible with: {', '.join(compatibility_slugs)})"
+                            f"  ↻ Updated: {lora.label} (arch: {base_arch})"
                         )
                     )
 

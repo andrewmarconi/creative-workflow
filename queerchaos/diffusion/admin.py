@@ -3,6 +3,8 @@ Django admin configuration for diffusion models.
 
 Uses Django Unfold for tabs, display decorators, and styled actions.
 """
+from pathlib import Path
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
@@ -16,6 +18,7 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline, StackedInline
 from unfold.decorators import display, action
+from huggingface_hub import scan_cache_dir
 from django_celery_results.models import TaskResult, GroupResult
 from django_celery_results.admin import TaskResultAdmin as BaseTaskResultAdmin
 from django_celery_results.admin import GroupResultAdmin as BaseGroupResultAdmin
@@ -76,20 +79,19 @@ class JobInline(TabularInline):
 @admin.register(DiffusionModel)
 class DiffusionModelAdmin(ModelAdmin):
     list_display = [
-        'label', 'slug', 'pipeline', 'steps', 'guidance_scale',
-        'show_resolution', 'show_negative_prompt', 'show_active',
-        'show_loras_count',
+        'label', 'base_architecture', 'token_window', 'vram_in_gb', 'steps',
+        'show_resolution', 'show_negative_prompt', 'show_downloaded', 'show_active', 'show_loras_count',
     ]
-    list_filter = ['is_active', 'pipeline', 'supports_negative_prompt', 'dtype']
+    list_filter = ['is_active', 'base_architecture', 'pipeline', 'supports_negative_prompt', 'dtype']
     search_fields = ['label', 'slug', 'path']
     readonly_fields = ['created_at', 'updated_at']
 
     fieldsets = (
         (_("Model"), {
             "classes": ["tab"],
-            "fields": ('label', 
-                       ('slug', 'path'), 
-                       ('pipeline', 'is_active')
+            "fields": ('label',
+                       ('slug', 'path'),
+                       ('pipeline', 'base_architecture', 'is_active')
                     ),
         }),
         (_("Generation"), {
@@ -98,6 +100,7 @@ class DiffusionModelAdmin(ModelAdmin):
                 ('default_width', 'default_height', 'max_pixels'),
                 ('steps', 'guidance_scale', 'scheduler'), 
                 ('dtype', 'max_sequence_length', 'supports_negative_prompt'),
+                ('token_window', 'vram_usage'),
             ),
         }),
         (_("Metadata"), {
@@ -109,25 +112,43 @@ class DiffusionModelAdmin(ModelAdmin):
     @display(description=_("Size"))
     def show_resolution(self, obj):
         return f"{obj.default_width}×{obj.default_height}"
+    show_resolution.short_description="Resolution"
 
-    @display(description=_("Neg Prompt"), label=True)
+    @display(description=_("Neg Prompt"), boolean=True)
     def show_negative_prompt(self, obj):
         return obj.supports_negative_prompt
 
-    @display(description=_("Active"), label=True)
+    @display(description=_("Downloaded"), boolean=True)
+    def show_downloaded(self, obj):
+        """Check if model exists in the HuggingFace cache."""
+        try:
+            cache_info = scan_cache_dir()
+            return any(repo.repo_id == obj.path for repo in cache_info.repos)
+        except Exception:
+            return False
+
+    @display(description=_("Active"), boolean=True)
     def show_active(self, obj):
         return obj.is_active
 
     @display(description=_("LoRAs"))
     def show_loras_count(self, obj):
-        count = obj.compatible_loras.count()
+        count = LoraModel.objects.filter(base_architecture=obj.base_architecture).count()
         if count > 0:
             url = reverse('admin:diffusion_loramodel_changelist')
             return format_html(
-                '<a href="{}?compatible_models__id__exact={}">{}</a>',
-                url, obj.id, count,
+                '<a href="{}?base_architecture__exact={}">{}</a>',
+                url, obj.base_architecture, count,
             )
         return "0"
+    
+    @display(description=_("VRAM"))
+    def vram_in_gb(self, obj):
+        if obj.vram_usage:
+            return f"{int(obj.vram_usage/1024)} GB"
+        return "—"
+
+
 
 
 # ---------------------------------------------------------------------------
@@ -136,10 +157,9 @@ class DiffusionModelAdmin(ModelAdmin):
 
 @admin.register(LoraModel)
 class LoraModelAdmin(ModelAdmin):
-    list_display = ['label', 'default_strength', 'show_compatible', 'show_active']
-    list_filter = ['is_active', 'compatible_models']
+    list_display = ['label', 'base_architecture', 'default_strength', 'show_compatible', 'show_downloaded', 'show_active']
+    list_filter = ['is_active', 'base_architecture']
     search_fields = ['label', 'path', 'air']
-    filter_horizontal = ['compatible_models']
     readonly_fields = ['created_at', 'updated_at', 'show_token_counts']
 
     fieldsets = (
@@ -147,12 +167,9 @@ class LoraModelAdmin(ModelAdmin):
             "classes": ["tab"],
             "fields": (
                 ('label', 'is_active'),
-                ('path', 'air')
+                ('path', 'air'),
+                'base_architecture',
            ),
-        }),
-        (_("Compatibility"), {
-            "classes": ["tab"],
-            "fields": ('compatible_models',),
         }),
         (_("Prompt & Settings"), {
             "classes": ["tab"],
@@ -192,12 +209,31 @@ class LoraModelAdmin(ModelAdmin):
 
     @display(description=_("Compatible With"))
     def show_compatible(self, obj):
-        models = obj.compatible_models.all()
+        models = DiffusionModel.objects.filter(base_architecture=obj.base_architecture)
         if models.exists():
             return ", ".join(m.label for m in models)
         return "—"
 
-    @display(description=_("Active"), label=True)
+    @display(description=_("Downloaded"), boolean=True)
+    def show_downloaded(self, obj):
+        """Check if LoRA file exists on disk."""
+        import re
+        try:
+            if obj.path:
+                lora_path = Path(obj.path)
+                if not lora_path.is_absolute():
+                    lora_path = settings.MODEL_BASE_PATH / obj.path
+                return lora_path.exists()
+            if obj.air:
+                match = re.search(r'@(\d+)$', obj.air)
+                if match:
+                    version_id = match.group(1)
+                    return (settings.MODEL_BASE_PATH / 'loras' / f'civitai_{version_id}.safetensors').exists()
+            return False
+        except Exception:
+            return False
+
+    @display(description=_("Active"), boolean=True)
     def show_active(self, obj):
         return obj.is_active
 
@@ -354,13 +390,7 @@ class PromptAdmin(ModelAdmin):
 
         # First pass: render confirmation page with model/LoRA selection
         models = DiffusionModel.objects.filter(is_active=True)
-        loras = LoraModel.objects.filter(is_active=True).prefetch_related('compatible_models')
-
-        # Attach comma-separated compatible model IDs for JS filtering
-        for lora in loras:
-            lora.compatible_model_ids = ','.join(
-                str(m.pk) for m in lora.compatible_models.all()
-            )
+        loras = LoraModel.objects.filter(is_active=True)
 
         return TemplateResponse(
             request,
@@ -402,9 +432,13 @@ class DiffusionJobAdmin(ModelAdmin):
         model_id = request.GET.get('model_id')
         if not model_id:
             return JsonResponse({'lora_ids': []})
+        try:
+            model = DiffusionModel.objects.get(id=model_id)
+        except DiffusionModel.DoesNotExist:
+            return JsonResponse({'lora_ids': []})
         lora_ids = list(
             LoraModel.objects.filter(
-                is_active=True, compatible_models__id=model_id
+                is_active=True, base_architecture=model.base_architecture
             ).values_list('id', flat=True)
         )
         return JsonResponse({'lora_ids': lora_ids})
