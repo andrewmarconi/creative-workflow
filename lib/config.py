@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Configuration loader and validator for QueerChaos 2
+Configuration loader and validator for Creative Workflow
 Loads presets.json and provides access to model and LoRA configurations
 """
 

@@ -1,24 +1,24 @@
 services:
   postgres:
     image: postgres:17
-    container_name: queerchaos_postgres
+    container_name: cw_postgres
     environment:
-      POSTGRES_DB: queerchaos
-      POSTGRES_USER: queerchaos
-      POSTGRES_PASSWORD: queerchaos_dev
+      POSTGRES_DB: cw
+      POSTGRES_USER: cw
+      POSTGRES_PASSWORD: cw_dev
     ports:
       - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U queerchaos"]
+      test: ["CMD-SHELL", "pg_isready -U cw"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   valkey:
     image: valkey/valkey:latest
-    container_name: queerchaos_valkey
+    container_name: cw_valkey
     ports:
       - "6379:6379"
     volumes:

@@ -1,5 +1,5 @@
 """
-Celery configuration for QueerChaos.
+Celery configuration for Creative Workflow.
 
 This module configures Celery to work with Django and uses the 'solo' execution pool
 to avoid fork() issues with MPS (Metal Performance Shaders) on macOS.
@@ -11,9 +11,9 @@ import os
 from celery import Celery
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'queerchaos.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cw.settings')
 
-app = Celery('queerchaos')
+app = Celery('cw')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
