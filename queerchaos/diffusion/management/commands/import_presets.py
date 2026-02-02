@@ -95,12 +95,22 @@ class Command(BaseCommand):
             for lora_data in presets.get('loras', []):
                 settings = lora_data.get('settings', {})
 
+                # Use AIR as lookup key if path is empty
+                if lora_data.get('path'):
+                    lookup = {'path': lora_data['path']}
+                elif lora_data.get('air'):
+                    lookup = {'air': lora_data['air']}
+                else:
+                    lookup = {'label': lora_data['label']}
+
                 lora, created = LoraModel.objects.update_or_create(
-                    path=lora_data['path'],
+                    **lookup,
                     defaults={
                         'label': lora_data['label'],
+                        'path': lora_data.get('path', ''),
                         'air': lora_data.get('air', ''),
                         'prompt_suffix': lora_data.get('prompt', ''),
+                        'negative_prompt_suffix': lora_data.get('negative_prompt', ''),
                         'default_strength': settings.get('strength', 0.8),
                         'is_active': True,
                     }

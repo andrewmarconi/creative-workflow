@@ -7,6 +7,7 @@ from .base import BaseModel
 from .zimageturbo import ZImageTurboModel
 from .flux import FluxModel
 from .qwen import QwenImageModel
+from .sdxlturbo import SDXLTurboModel
 
 
 class ModelFactory:
@@ -32,8 +33,10 @@ class ModelFactory:
             return FluxModel(model_config, model_path)
         elif pipeline_name == "QwenImagePipeline":
             return QwenImageModel(model_config, model_path)
+        elif pipeline_name == "AutoPipelineForText2Image":
+            return SDXLTurboModel(model_config, model_path)
         else:
             raise ValueError(f"Unknown pipeline type: {pipeline_name}")
 
 
-__all__ = ["BaseModel", "ZImageTurboModel", "FluxModel", "QwenImageModel", "ModelFactory"]
+__all__ = ["BaseModel", "ZImageTurboModel", "FluxModel", "QwenImageModel", "SDXLTurboModel", "ModelFactory"]

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',  # Required for ArrayField
     'queerchaos.diffusion',
     'django_extensions',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -137,9 +138,82 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# Django Unfold Admin Configuration
+# https://unfoldadmin.com/docs/configuration/
+
+UNFOLD = {
+    "SITE_TITLE": "Creative Workflow",
+    "SITE_HEADER": "Creative Workflow",
+    "SITE_SUBHEADER": "Multi-Model Diffusion Pipeline",
+    "SITE_DROPDOWN": [],
+    "SIDEBAR": {
+        "navigation": [
+            {
+                "title": "Diffusion",
+                "items": [
+                    {
+                        "title": "Prompts",
+                        "icon": "edit_note",
+                        "link": "/admin/diffusion/prompt/",
+                    },
+                    {
+                        "title": "Jobs",
+                        "icon": "precision_manufacturing",
+                        "link": "/admin/diffusion/diffusionjob/",
+                    },
+                    {
+                        "title": "Models",
+                        "icon": "neurology",
+                        "link": "/admin/diffusion/diffusionmodel/",
+                    },
+                    {
+                        "title": "LoRAs",
+                        "icon": "tune",
+                        "link": "/admin/diffusion/loramodel/",
+                    },
+                ],
+            },
+            {
+                "title": "Celery",
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Task Results",
+                        "icon": "task_alt",
+                        "link": "/admin/django_celery_results/taskresult/",
+                    },
+                    {
+                        "title": "Group Results",
+                        "icon": "workspaces",
+                        "link": "/admin/django_celery_results/groupresult/",
+                    },
+                ],
+            },
+            {
+                "title": "Auth",
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Users",
+                        "icon": "person",
+                        "link": "/admin/auth/user/",
+                    },
+                    {
+                        "title": "Groups",
+                        "icon": "group",
+                        "link": "/admin/auth/group/",
+                    },
+                ],
+            },
+        ],
+    },
+}
+
+
 # Model and LoRA base path (for diffusion models)
 # This is where local model files and LoRAs are stored
 MODEL_BASE_PATH = Path(os.getenv('MODEL_BASE_PATH', BASE_DIR / 'models'))
+CIVITAI_API_KEY = os.getenv('CIVITAI_API_KEY', '')
 
 
 # Celery Configuration
@@ -148,8 +222,9 @@ MODEL_BASE_PATH = Path(os.getenv('MODEL_BASE_PATH', BASE_DIR / 'models'))
 # Broker settings (using Valkey/Redis)
 CELERY_BROKER_URL = f'redis://{os.getenv("VALKEY_HOST", "localhost")}:{int(os.getenv("VALKEY_PORT", 6379))}/2'
 
-# Result backend (stores task results)
-CELERY_RESULT_BACKEND = f'redis://{os.getenv("VALKEY_HOST", "localhost")}:{int(os.getenv("VALKEY_PORT", 6379))}/3'
+# Result backend (stores task results in Django ORM)
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXTENDED = True
 
 # Task execution settings
 CELERY_TASK_TRACK_STARTED = True

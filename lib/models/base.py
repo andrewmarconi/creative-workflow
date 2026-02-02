@@ -173,6 +173,12 @@ class BaseModel(ABC):
             return ""
         return self.current_lora.get("prompt", "")
 
+    def get_lora_negative_prompt_suffix(self) -> str:
+        """Get negative prompt suffix from current LoRA"""
+        if self.current_lora is None:
+            return ""
+        return self.current_lora.get("negative_prompt", "")
+
     def clear_cache(self) -> None:
         """Clear GPU memory cache"""
         if self.device is None:

@@ -45,13 +45,34 @@ Edit [`presets.json`](presets.json) to configure:
 }
 ```
 
-### 3. Launch Application
+### 3. Launch All Services
+
+All processes are defined in the [`Procfile`](Procfile) and managed with [honcho](https://github.com/nickstenning/honcho).
 
 ```bash
-uv run main.py
+# Start everything (Docker, Django, Celery workers)
+honcho start
 ```
 
-The Gradio interface will launch at **http://localhost:7860**
+This launches four processes with color-coded, interleaved output:
+
+| Process | URL | Description |
+|---------|-----|-------------|
+| **docker** | — | PostgreSQL (port 5435) + Valkey (port 6379) |
+| **django** | http://localhost:8000/admin/ | Django admin interface |
+| **worker** | — | Celery worker for image generation (`default` queue) |
+| **enhancement** | — | Celery worker for prompt enhancement (`enhancement` queue) |
+
+Task results are visible in the Django admin under **Celery > Task Results**.
+
+You can also start a subset of processes:
+
+```bash
+# Start only Docker and Django (no workers)
+honcho start docker django
+```
+
+> **Note**: Docker services must be running before Django and the workers can connect. When using `honcho start`, all processes launch together — Celery will retry broker connections automatically.
 
 ## Usage
 
@@ -180,14 +201,23 @@ See [`CLAUDE.md`](CLAUDE.md) for detailed architecture documentation.
 ## Development
 
 ```bash
-# Run the application
-uv run main.py
+# Start all services
+honcho start
+
+# Start individual processes
+honcho start django worker
 
 # Add new dependency
 uv add package-name
 
 # Sync dependencies
 uv sync
+
+# Run Django management commands
+uv run manage.py migrate
+uv run manage.py import_presets
+uv run manage.py import_prompts --file data/coloringbook_prompts.txt --style coloring-book
+uv run manage.py createsuperuser
 ```
 
 ## Documentation

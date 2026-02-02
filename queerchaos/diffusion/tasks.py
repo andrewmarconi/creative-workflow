@@ -24,6 +24,19 @@ if str(lib_path) not in sys.path:
 
 from lib.prompt_enhancer import HFPromptEnhancer
 
+# Module-level enhancer cache: keeps the LLM warm between task invocations.
+_enhancer_cache = {}  # {model_id: HFPromptEnhancer}
+
+
+def _get_enhancer(model_id="Qwen/Qwen2.5-3B-Instruct"):
+    """Return a cached HFPromptEnhancer instance, loading on first call."""
+    if model_id not in _enhancer_cache:
+        print(f"DEBUG: Loading enhancer '{model_id}' (cold start)")
+        _enhancer_cache[model_id] = HFPromptEnhancer(model_id=model_id)
+    else:
+        print(f"DEBUG: Using warm enhancer '{model_id}'")
+    return _enhancer_cache[model_id]
+
 
 @shared_task(bind=True, name='queerchaos.diffusion.tasks.enhance_prompt_task')
 def enhance_prompt_task(self, prompt_id):
@@ -48,14 +61,11 @@ def enhance_prompt_task(self, prompt_id):
             'message': 'Prompt already enhanced'
         }
 
-    # Initialize HF enhancer with local model
-    # With Celery 'solo' pool, MPS will be auto-detected and used if available
-    enhancer = HFPromptEnhancer(
-        model_id="Qwen/Qwen2.5-3B-Instruct",
-        style=prompt.enhancement_style,
-        creativity=prompt.creativity,
-        trigger_words=None,  # No trigger words for base prompt
-    )
+    # Get cached enhancer and configure for this prompt
+    enhancer = _get_enhancer()
+    enhancer.style = prompt.enhancement_style
+    enhancer.creativity = prompt.creativity
+    enhancer.trigger_words = None
 
     # Enhance the prompt
     result = enhancer.enhance_prompt(prompt.source_prompt)
@@ -103,24 +113,38 @@ def generate_images_task(self, job_id):
 
         # Load LoRA if specified
         if job.lora_model:
-            # Construct full LoRA path from Django settings
-            lora_path_obj = Path(job.lora_model.path)
-            if not lora_path_obj.is_absolute():
-                # Relative path - combine with base model path from settings
-                lora_path = str(settings.MODEL_BASE_PATH / job.lora_model.path)
+            # Resolve LoRA file path
+            if job.lora_model.path:
+                lora_path_obj = Path(job.lora_model.path)
+                if not lora_path_obj.is_absolute():
+                    lora_path = str(settings.MODEL_BASE_PATH / job.lora_model.path)
+                else:
+                    lora_path = job.lora_model.path
+            elif job.lora_model.air:
+                # No path set — derive filename from AIR URN
+                from lib.civitai import parse_air
+                _, version_id = parse_air(job.lora_model.air)
+                lora_path = str(settings.MODEL_BASE_PATH / 'loras' / f'civitai_{version_id}.safetensors')
             else:
-                # Already absolute
-                lora_path = job.lora_model.path
+                raise RuntimeError(f"LoRA '{job.lora_model.label}' has no path and no AIR")
 
             # Create LoRA config matching BaseModel.load_lora() expectations
             lora_config = {
                 'label': job.lora_model.label,
                 'path': job.lora_model.path,
-                'prompt': job.lora_model.prompt_suffix,  # Trigger words to append
+                'prompt': job.lora_model.prompt_suffix,
+                'negative_prompt': job.lora_model.negative_prompt_suffix,
                 'settings': {
                     'strength': params.get('lora_strength', job.lora_model.default_strength)
                 }
             }
+
+            # Auto-download from CivitAI if file missing and AIR is set
+            if not Path(lora_path).exists() and job.lora_model.air:
+                from lib.civitai import download_lora
+                lora_path = download_lora(
+                    job.lora_model.air, lora_path, settings.CIVITAI_API_KEY
+                )
 
             # Debug: Log LoRA trigger words
             print(f"DEBUG: Loading LoRA '{job.lora_model.label}'")
@@ -139,9 +163,20 @@ def generate_images_task(self, job_id):
             'seed': params.get('seed'),
         }
 
-        # Add negative prompt if supported
+        # Add negative prompt if supported, appending LoRA negative suffix
         if 'negative_prompt' in params:
-            gen_params['negative_prompt'] = params['negative_prompt']
+            neg = params['negative_prompt'] or ''
+            if job.lora_model:
+                lora_neg = job.lora_model.negative_prompt_suffix
+                if lora_neg:
+                    neg = f"{neg}, {lora_neg}" if neg.strip() else lora_neg
+            gen_params['negative_prompt'] = neg
+
+        # Debug: Log final generation parameters
+        print(f"DEBUG: Final prompt: '{gen_params['prompt']}'")
+        if 'negative_prompt' in gen_params:
+            print(f"DEBUG: Final negative prompt: '{gen_params['negative_prompt']}'")
+        print(f"DEBUG: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}")
 
         # Generate images (loop for multiple images since generate() returns single image)
         saved_paths = []
@@ -153,16 +188,8 @@ def generate_images_task(self, job_id):
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
         for idx in range(num_images):
-            # Generate single image
-            # Returns: Tuple[Image.Image, Dict] - single image + metadata
             print(f"DEBUG: Generating image {idx+1}/{num_images}")
-            print(f"DEBUG: Input prompt: '{gen_params['prompt']}'")
-
             image, metadata = model.generate(**gen_params)
-
-            print(f"DEBUG: Generated with prompt: '{metadata.get('prompt', 'N/A')}'")
-            if job.lora_model:
-                print(f"DEBUG: LoRA applied: {metadata.get('lora', 'N/A')}")
 
             # Use seed from metadata (actual seed used, not requested seed)
             actual_seed = metadata.get('seed', 'unknown')
@@ -207,9 +234,17 @@ def generate_images_task(self, job_id):
         }
 
 
+# Module-level model cache: keeps the loaded model warm between task invocations.
+# Safe because Celery is configured with 'solo' pool (single-threaded worker).
+_model_cache = {}  # {slug: model_instance}
+
+
 def _load_model_instance(diffusion_model):
     """
-    Load a model instance using the lib modules.
+    Load a model instance using the lib modules, with warm caching.
+
+    If the requested model is already loaded, returns the cached instance.
+    If a different model is cached, it is unloaded first (one model at a time).
 
     Args:
         diffusion_model: DiffusionModel Django object
@@ -217,14 +252,42 @@ def _load_model_instance(diffusion_model):
     Returns:
         Loaded model instance from lib/models/*
     """
+    slug = diffusion_model.slug
+
+    # Return cached model if it matches and pipeline is loaded
+    if slug in _model_cache:
+        cached = _model_cache[slug]
+        if cached.pipeline is not None:
+            print(f"DEBUG: Using warm model '{slug}'")
+            return cached
+        else:
+            print(f"DEBUG: Cached model '{slug}' has no pipeline, reloading")
+            del _model_cache[slug]
+
+    # Evict any previously cached model (one model at a time for memory)
+    for old_slug, old_model in list(_model_cache.items()):
+        print(f"DEBUG: Evicting model '{old_slug}' to load '{slug}'")
+        try:
+            if hasattr(old_model, 'pipeline') and old_model.pipeline is not None:
+                del old_model.pipeline
+            import torch
+            if hasattr(torch, 'mps') and hasattr(torch.mps, 'empty_cache'):
+                torch.mps.empty_cache()
+            elif torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
+        del _model_cache[old_slug]
+
     # Import model classes
-    from lib.models import BaseModel, ZImageTurboModel, FluxModel, QwenImageModel
+    from lib.models import ZImageTurboModel, FluxModel, QwenImageModel, SDXLTurboModel
 
     # Map pipeline names to classes
     model_classes = {
         'ZImagePipeline': ZImageTurboModel,
         'FluxPipeline': FluxModel,
         'QwenImagePipeline': QwenImageModel,
+        'AutoPipelineForText2Image': SDXLTurboModel,
     }
 
     model_class = model_classes.get(diffusion_model.pipeline)
@@ -241,7 +304,13 @@ def _load_model_instance(diffusion_model):
     }
 
     # Instantiate and load the model
+    print(f"DEBUG: Loading model '{slug}' (cold start)")
     model_instance = model_class(model_config, diffusion_model.path)
-    model_instance.load_pipeline()
+    result = model_instance.load_pipeline()
 
+    # Only cache if pipeline actually loaded
+    if model_instance.pipeline is None:
+        raise RuntimeError(f"Failed to load model '{slug}': {result}")
+
+    _model_cache[slug] = model_instance
     return model_instance

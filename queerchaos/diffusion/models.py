@@ -117,7 +117,8 @@ class LoraModel(models.Model):
     label = models.CharField(max_length=255, help_text="Display name for the LoRA")
     path = models.CharField(
         max_length=500,
-        help_text="Path to LoRA file (relative to base_model_path or HF model ID)"
+        blank=True,
+        help_text="Path to LoRA file (relative to base_model_path or HF model ID). Optional if AIR is provided."
     )
     air = models.CharField(
         max_length=500,
@@ -136,6 +137,10 @@ class LoraModel(models.Model):
     prompt_suffix = models.TextField(
         blank=True,
         help_text="Trigger words and style description to append to prompts"
+    )
+    negative_prompt_suffix = models.TextField(
+        blank=True,
+        help_text="Terms to append to negative prompts (only applied when model supports negative prompts)"
     )
     default_strength = models.FloatField(
         default=0.8,

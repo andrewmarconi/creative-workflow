@@ -1,0 +1,90 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create jobs for selected prompts" %} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+
+    {% for prompt in prompts %}
+    <input type="hidden" name="_selected_action" value="{{ prompt.pk }}" />
+    {% endfor %}
+    <input type="hidden" name="action" value="create_job_for_prompts" />
+
+    <div style="max-width: 600px; margin: 0 auto; padding: 2rem 1rem;">
+        <h2 style="margin-bottom: 0.5rem;">{% trans "Create jobs for selected prompts" %}</h2>
+        <p class="text-gray-500 dark:text-gray-400" style="margin-bottom: 1.5rem;">
+            {% blocktrans count count=prompts|length %}
+            Create a diffusion job for {{ count }} selected prompt.
+            {% plural %}
+            Create diffusion jobs for {{ count }} selected prompts.
+            {% endblocktrans %}
+        </p>
+
+        <div style="margin-bottom: 1rem;">
+            <label for="id_diffusion_model" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Diffusion Model" %}
+            </label>
+            <select name="diffusion_model" id="id_diffusion_model" required
+                    class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">
+                {% for model in models %}
+                <option value="{{ model.pk }}">{{ model.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label for="id_lora_model" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "LoRA" %}
+            </label>
+            <select name="lora_model" id="id_lora_model"
+                    class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">
+                <option value="">{% trans "None" %}</option>
+                {% for lora in loras %}
+                <option value="{{ lora.pk }}" data-models="{{ lora.compatible_model_ids }}">{{ lora.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+            <button type="submit" name="post" value="yes"
+                    class="bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-md px-4 py-2">
+                {% trans "Create Jobs" %}
+            </button>
+            <a href="{% url 'admin:diffusion_prompt_changelist' %}"
+               class="border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 font-medium">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </div>
+</form>
+
+<script>
+(function() {
+    const modelSelect = document.getElementById('id_diffusion_model');
+    const loraSelect = document.getElementById('id_lora_model');
+    const loraOptions = Array.from(loraSelect.options).slice(1); // skip "None"
+
+    function filterLoras() {
+        const modelId = modelSelect.value;
+        // Reset
+        loraSelect.innerHTML = '';
+        const none = document.createElement('option');
+        none.value = '';
+        none.textContent = '{% trans "None" %}';
+        loraSelect.appendChild(none);
+
+        loraOptions.forEach(function(opt) {
+            const ids = opt.dataset.models.split(',');
+            if (ids.indexOf(modelId) !== -1) {
+                loraSelect.appendChild(opt.cloneNode(true));
+            }
+        });
+    }
+
+    modelSelect.addEventListener('change', filterLoras);
+    filterLoras();
+})();
+</script>
+{% endblock %}
