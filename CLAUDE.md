@@ -57,14 +57,14 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 
 **Model implementations** — `lib/models/`:
 - `base.py` — `BaseModel` abstract class (device setup, LoRA loading, cache management)
-- `zimageturbo.py`, `flux.py`, `qwen.py`, `sdxlturbo.py` — Concrete implementations
+- `zimageturbo.py`, `flux.py`, `qwen.py`, `sdxlturbo.py`, `sdxl.py`, `sd15.py` — Concrete implementations
 - `__init__.py` — `ModelFactory.create_model()` dispatches by pipeline type
 
 **Supporting libraries** — `lib/`:
 - `config.py` — `PresetsConfig` loads `data/presets.json`
 - `prompt_enhancer.py` — Three enhancers: rule-based (`PromptEnhancer`), local LLM (`HFPromptEnhancer` using Qwen2.5-3B), Anthropic API (`LLMPromptEnhancer`)
 - `civitai.py` — Auto-download LoRAs from CivitAI by AIR URN
-- `loras/manager.py` — LoRA filtering by model compatibility
+- `loras/manager.py` — LoRA filtering by base architecture
 
 ### Data Flow
 1. User creates a `Prompt` and `DiffusionJob` via Django admin
@@ -85,7 +85,6 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 | Flux.1-dev | FluxPipeline | 28 | 3.5 | No |
 | Qwen-Image-2512 | QwenImagePipeline | 50 | 4.5 | Yes |
 | SDXL Turbo | AutoPipelineForText2Image | varies | varies | varies |
-| Flux.2 Klein 4B | Flux2KleinPipeline | 4 | 1.0 | No |
 | Juggernaut XL v9 | StableDiffusionXLPipeline | 30 | 7.0 | Yes |
 | DreamShaper XL Lightning | StableDiffusionXLPipeline | 4 | 2.0 | No |
 | Realistic Vision v5.1 | StableDiffusionPipeline | 30 | 5.0 | Yes |

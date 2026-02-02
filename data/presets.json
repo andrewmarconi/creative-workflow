@@ -7,6 +7,7 @@
     {
       "label": "Z-Image Turbo",
       "slug": "zimageturbo",
+      "base_architecture": "zimage",
       "path": "Tongyi-MAI/Z-Image-Turbo",
       "pipeline": "ZImagePipeline",
       "settings": {
@@ -18,12 +19,15 @@
         "scheduler": "FlowMatchEulerDiscreteScheduler",
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
-        "max_sequence_length": null
+        "max_sequence_length": null,
+        "token_window": 512,
+        "vram_usage": 8192
       }
     },
     {
       "label": "Flux.1 Dev",
       "slug": "flux1_dev",
+      "base_architecture": "flux1",
       "path": "black-forest-labs/FLUX.1-dev",
       "pipeline": "FluxPipeline",
       "settings": {
@@ -35,12 +39,15 @@
         "scheduler": null,
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
-        "max_sequence_length": 512
+        "max_sequence_length": 512,
+        "token_window": 512,
+        "vram_usage": 24576
       }
     },
     {
       "label": "Qwen-Image-2512",
       "slug": "qwen_image",
+      "base_architecture": "qwen",
       "path": "Qwen/Qwen-Image-2512",
       "pipeline": "QwenImagePipeline",
       "settings": {
@@ -52,12 +59,15 @@
         "scheduler": "FlowMatchEulerDiscreteScheduler",
         "dtype": "bfloat16",
         "supports_negative_prompt": true,
-        "max_sequence_length": null
+        "max_sequence_length": null,
+        "token_window": 512,
+        "vram_usage": 24576
       }
     },
     {
       "label": "SDXL Turbo",
       "slug": "sdxl_turbo",
+      "base_architecture": "sdxl",
       "path": "stabilityai/sdxl-turbo",
       "pipeline": "AutoPipelineForText2Image",
       "settings": {
@@ -69,29 +79,15 @@
         "scheduler": "EulerAncestralDiscreteScheduler",
         "dtype": "float16",
         "supports_negative_prompt": false,
-        "max_sequence_length": null
-      }
-    },
-    {
-      "label": "Flux.2 Klein 4B",
-      "slug": "flux2_klein_4b",
-      "path": "black-forest-labs/FLUX.2-klein-4B",
-      "pipeline": "Flux2KleinPipeline",
-      "settings": {
-        "steps": 4,
-        "guidance_scale": 1.0,
-        "default_width": 1024,
-        "default_height": 1024,
-        "max_pixels": 2097152,
-        "scheduler": null,
-        "dtype": "bfloat16",
-        "supports_negative_prompt": false,
-        "max_sequence_length": 512
+        "max_sequence_length": null,
+        "token_window": 77,
+        "vram_usage": 6144
       }
     },
     {
       "label": "Juggernaut XL v9",
       "slug": "juggernaut_xl",
+      "base_architecture": "sdxl",
       "path": "RunDiffusion/Juggernaut-XL-v9",
       "pipeline": "StableDiffusionXLPipeline",
       "settings": {
@@ -103,12 +99,15 @@
         "scheduler": null,
         "dtype": "float16",
         "supports_negative_prompt": true,
-        "max_sequence_length": null
+        "max_sequence_length": null,
+        "token_window": 77,
+        "vram_usage": 8192
       }
     },
     {
       "label": "DreamShaper XL Lightning",
       "slug": "dreamshaper_xl",
+      "base_architecture": "sdxl",
       "path": "Lykon/dreamshaper-xl-lightning",
       "pipeline": "StableDiffusionXLPipeline",
       "settings": {
@@ -120,12 +119,15 @@
         "scheduler": "DPMSolverMultistepScheduler",
         "dtype": "float16",
         "supports_negative_prompt": false,
-        "max_sequence_length": null
+        "max_sequence_length": null,
+        "token_window": 77,
+        "vram_usage": 8192
       }
     },
     {
       "label": "Realistic Vision v5.1",
       "slug": "realistic_vision",
+      "base_architecture": "sd15",
       "path": "SG161222/Realistic_Vision_V5.1_noVAE",
       "pipeline": "StableDiffusionPipeline",
       "settings": {
@@ -137,7 +139,9 @@
         "scheduler": null,
         "dtype": "float16",
         "supports_negative_prompt": true,
-        "max_sequence_length": null
+        "max_sequence_length": null,
+        "token_window": 77,
+        "vram_usage": 4096
       }
     }
   ],
@@ -146,7 +150,7 @@
       "label": "Pen & Ink Illustration",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:2344335@2636956",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "phrsink, pen and ink illustration, no text, monochrome, high detail, intricate linework, hatching, cross-hatching, stippling, detailed shading, surreal, imaginative, artstation, concept art, sharp focus, illustration",
       "negative_prompt": "",
       "settings": { "strength": 0.7 }
@@ -155,7 +159,7 @@
       "label": "Retro Vintage Comics Style",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:1082272@2550274",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "vintage illustrated comic style, with a focus of detailed line art and minimalist colors",
       "negative_prompt": "",
       "settings": { "strength": 0.8 }
@@ -164,7 +168,7 @@
       "label": "Perfect Ink Drawing (Engraving Style)",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:1717646@2458471",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "1NK_H4TCH1NG",
       "negative_prompt": "",
       "settings": { "strength": 1.3 }
@@ -173,7 +177,7 @@
       "label": "Begotten",
       "path": "",
       "air": "urn:air:zimagebase:lora:civitai:2192426@2649775",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "begotten",
       "negative_prompt": "",
       "settings": { "strength": 1.0 }
@@ -182,7 +186,7 @@
       "label": "Line Drawing",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:880102@2463976",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "line drawing",
       "negative_prompt": "",
       "settings": { "strength": 0.5 }
@@ -191,7 +195,7 @@
       "label": "Anime MANGA Maker",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:2189639@2465423",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "manga style, Black and white manga page",
       "negative_prompt": "",
       "settings": { "strength": 1.0 }
@@ -200,7 +204,7 @@
       "label": "Better Sketches for Z-image",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "sketch, rough sketch,  pen sketch",
       "negative_prompt": "",
       "settings": { "strength": 0.8 }
@@ -209,7 +213,7 @@
       "label": "80s Fantasy Movie",
       "path": "",
       "air": "urn:air:zimageturbo:lora:civitai:789313@2526524",
-      "compatibility": ["zimageturbo"],
+      "base_architecture": "zimage",
       "prompt": "ArsMovieStill, 80s Fantasy Movie Still",
       "negative_prompt": "",
       "settings": { "strength": 0.8 }
@@ -218,7 +222,7 @@
       "label": "Coloring Book - Redmond",
       "path": "",
       "air": "urn:air:sdxl:lora:civitai:136348@177996",
-      "compatibility": ["sdxl_turbo"],
+      "base_architecture": "sdxl",
       "prompt": "ColoringBookAF, Coloring Book, solid white background, black and white, monochromatic, no color, no text, no bad art, no deformed, no watermark, Coloring Book, ColoringBookAF,<lora:ColoringBookRedmond-ColoringBook-ColoringBookAF:1> <lora:ThickOutline:1>",
       "negative_prompt": "",
       "settings": { "strength": 0.8 }

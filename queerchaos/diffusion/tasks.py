@@ -300,20 +300,7 @@ def _load_model_instance(diffusion_model):
             pass
         del _model_cache[old_slug]
 
-    # Import model classes
-    from lib.models import ZImageTurboModel, FluxModel, QwenImageModel, SDXLTurboModel
-
-    # Map pipeline names to classes
-    model_classes = {
-        'ZImagePipeline': ZImageTurboModel,
-        'FluxPipeline': FluxModel,
-        'QwenImagePipeline': QwenImageModel,
-        'AutoPipelineForText2Image': SDXLTurboModel,
-    }
-
-    model_class = model_classes.get(diffusion_model.pipeline)
-    if not model_class:
-        raise ValueError(f"Unknown pipeline: {diffusion_model.pipeline}")
+    from lib.models import ModelFactory
 
     # Create model config dict
     model_config = {
@@ -326,7 +313,7 @@ def _load_model_instance(diffusion_model):
 
     # Instantiate and load the model
     print(f"DEBUG: Loading model '{slug}' (cold start)")
-    model_instance = model_class(model_config, diffusion_model.path)
+    model_instance = ModelFactory.create_model(model_config, diffusion_model.path)
     result = model_instance.load_pipeline()
 
     # Only cache if pipeline actually loaded
