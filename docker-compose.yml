@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: queerchaos_postgres
+    environment:
+      POSTGRES_DB: queerchaos
+      POSTGRES_USER: queerchaos
+      POSTGRES_PASSWORD: queerchaos_dev
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U queerchaos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  valkey:
+    image: valkey/valkey:latest
+    container_name: queerchaos_valkey
+    ports:
+      - "6379:6379"
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  valkey_data:

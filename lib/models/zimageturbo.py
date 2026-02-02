@@ -88,11 +88,19 @@ class ZImageTurboModel(BaseModel):
         # Append LoRA prompt if applicable
         full_prompt = prompt
         lora_suffix = self.get_lora_prompt_suffix()
+        print(f"DEBUG [ZImageTurboModel]: LoRA suffix from get_lora_prompt_suffix(): '{lora_suffix}'")
+        print(f"DEBUG [ZImageTurboModel]: current_lora = {self.current_lora}")
         if lora_suffix:
             full_prompt = f"{prompt}, {lora_suffix}"
+            print(f"DEBUG [ZImageTurboModel]: Appended LoRA suffix to prompt")
+        else:
+            print(f"DEBUG [ZImageTurboModel]: No LoRA suffix to append")
 
         # Z-Image Turbo does NOT support negative prompts
         # Ignore negative_prompt parameter
+
+        print(f"DEBUG [ZImageTurboModel]: Final prompt being sent to pipeline:")
+        print(f"  '{full_prompt}'")
 
         # Generate
         image = self.pipeline(

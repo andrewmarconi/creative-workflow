@@ -46,3 +46,16 @@ generation_metadata.json
 # Gradio
 gradio_cached_examples/
 flagged/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+*.log
+
+# Environment variables
+.env
+
+# RQ / Redis
+dump.rdb

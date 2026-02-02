@@ -233,99 +233,108 @@ def build_interface():
         gr.Markdown("# QueerChaos 2 - Multi-Model Image Generator")
         gr.Markdown("Generate images using Z-Image Turbo, Flux.1-dev, or Qwen-Image with optional LoRAs")
 
+        # Row 1: Model and LoRA selectors
         with gr.Row():
+            model_selector = gr.Dropdown(
+                label="Model",
+                choices=config.get_model_choices(),
+                value=config.get_model_choices()[0],
+                interactive=True,
+                scale=1
+            )
+
+            lora_selector = gr.Dropdown(
+                label="LoRA",
+                choices=["None (No LoRA)"],
+                value="None (No LoRA)",
+                interactive=True,
+                scale=1
+            )
+
+        # Row 2: Two columns (Left: Tabs, Right: Output)
+        with gr.Row():
+            # Left column: Tabs
             with gr.Column(scale=1):
-                # Model selection
-                model_selector = gr.Dropdown(
-                    label="Model",
-                    choices=config.get_model_choices(),
-                    value=config.get_model_choices()[0],
-                    interactive=True
-                )
+                with gr.Tabs():
+                    # Tab 1: Prompt
+                    with gr.Tab("Prompt"):
+                        prompt = gr.Textbox(
+                            label="Prompt",
+                            placeholder="Enter your prompt here...",
+                            lines=5
+                        )
 
-                load_model_button = gr.Button("Load Model", variant="secondary")
+                        negative_prompt = gr.Textbox(
+                            label="Negative Prompt",
+                            placeholder="Enter negative prompt (if supported)...",
+                            lines=3,
+                            visible=False  # Hidden by default, shown for compatible models
+                        )
 
-                # Input controls
-                prompt = gr.Textbox(
-                    label="Prompt",
-                    placeholder="Enter your prompt here...",
-                    lines=3
-                )
+                    # Tab 2: Settings (2x3 grid)
+                    with gr.Tab("Settings"):
+                        with gr.Row():
+                            steps = gr.Slider(
+                                minimum=4,
+                                maximum=100,
+                                value=20,
+                                step=1,
+                                label="Steps"
+                            )
 
-                negative_prompt = gr.Textbox(
-                    label="Negative Prompt",
-                    placeholder="Enter negative prompt (if supported)...",
-                    lines=2,
-                    visible=False  # Hidden by default, shown for compatible models
-                )
+                            guidance_scale = gr.Slider(
+                                minimum=0.0,
+                                maximum=15.0,
+                                value=7.5,
+                                step=0.1,
+                                label="Guidance Scale"
+                            )
 
-                lora_selector = gr.Dropdown(
-                    label="LoRA",
-                    choices=["None (No LoRA)"],
-                    value="None (No LoRA)",
-                    interactive=True
-                )
+                        with gr.Row():
+                            width = gr.Slider(
+                                minimum=512,
+                                maximum=2048,
+                                value=1024,
+                                step=64,
+                                label="Width"
+                            )
 
-                with gr.Row():
-                    steps = gr.Slider(
-                        minimum=4,
-                        maximum=100,
-                        value=20,
-                        step=1,
-                        label="Steps"
-                    )
+                            height = gr.Slider(
+                                minimum=512,
+                                maximum=2048,
+                                value=1024,
+                                step=64,
+                                label="Height"
+                            )
 
-                    guidance_scale = gr.Slider(
-                        minimum=0.0,
-                        maximum=15.0,
-                        value=7.5,
-                        step=0.1,
-                        label="Guidance Scale"
-                    )
+                        with gr.Row():
+                            seed = gr.Number(
+                                label="Seed",
+                                value=randomize_seed(),
+                                precision=0
+                            )
+                            seed_button = gr.Button("🎲 Randomize", size="sm")
 
-                with gr.Row():
-                    width = gr.Slider(
-                        minimum=512,
-                        maximum=2048,
-                        value=1024,
-                        step=64,
-                        label="Width"
-                    )
+                    # Tab 3: Output
+                    with gr.Tab("Output"):
+                        count = gr.Slider(
+                            minimum=1,
+                            maximum=10,
+                            value=1,
+                            step=1,
+                            label="Count"
+                        )
 
-                    height = gr.Slider(
-                        minimum=512,
-                        maximum=2048,
-                        value=1024,
-                        step=64,
-                        label="Height"
-                    )
+                        output_dir = gr.Textbox(
+                            label="Output Directory (inside outputs/)",
+                            value="./genocide",
+                            placeholder="e.g., ./genocide"
+                        )
 
-                with gr.Row():
-                    seed = gr.Number(
-                        label="Seed",
-                        value=randomize_seed(),
-                        precision=0
-                    )
-                    seed_button = gr.Button("🎲", size="sm")
+                        generate_button = gr.Button("Generate", variant="primary", size="lg")
 
-                count = gr.Slider(
-                    minimum=1,
-                    maximum=10,
-                    value=1,
-                    step=1,
-                    label="Count"
-                )
-
-                output_dir = gr.Textbox(
-                    label="Output Directory (inside outputs/)",
-                    value="./genocide",
-                    placeholder="e.g., ./genocide"
-                )
-
-                generate_button = gr.Button("Generate", variant="primary")
-
+            # Right column: Status, Metadata, Images
             with gr.Column(scale=1):
-                # Output
                 status_output = gr.Textbox(
                     label="Status",
                     value="Select and load a model to begin",
@@ -353,17 +362,12 @@ def build_interface():
             outputs=seed
         )
 
-        load_model_button.click(
+        # Auto-load model when selection changes
+        model_selector.change(
             fn=generator.load_model,
             inputs=[model_selector],
             outputs=[status_output, lora_selector, steps, guidance_scale,
                      negative_prompt, width, height]
-        )
-
-        # Update LoRAs when model changes
-        model_selector.change(
-            fn=lambda: "Model changed. Click 'Load Model' to load the new model.",
-            outputs=status_output
         )
 
         # Load LoRA when selection changes

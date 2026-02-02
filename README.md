@@ -48,7 +48,7 @@ Edit [`presets.json`](presets.json) to configure:
 ### 3. Launch Application
 
 ```bash
-python main.py
+uv run main.py
 ```
 
 The Gradio interface will launch at **http://localhost:7860**
@@ -181,7 +181,7 @@ See [`CLAUDE.md`](CLAUDE.md) for detailed architecture documentation.
 
 ```bash
 # Run the application
-python main.py
+uv run main.py
 
 # Add new dependency
 uv add package-name
