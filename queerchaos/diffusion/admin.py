@@ -7,6 +7,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from django.contrib.auth.models import User, Group
+from django.http import JsonResponse
 from django.utils.html import format_html
 from django.urls import reverse, path
 from django.utils.safestring import mark_safe
@@ -139,7 +140,7 @@ class LoraModelAdmin(ModelAdmin):
     list_filter = ['is_active', 'compatible_models']
     search_fields = ['label', 'path', 'air']
     filter_horizontal = ['compatible_models']
-    readonly_fields = ['created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at', 'show_token_counts']
 
     fieldsets = (
         (_("LoRA"), {
@@ -157,7 +158,8 @@ class LoraModelAdmin(ModelAdmin):
             "classes": ["tab"],
             "fields": (
                  'default_strength',
-                 ('prompt_suffix', 'negative_prompt_suffix')
+                 ('prompt_suffix', 'negative_prompt_suffix'),
+                 'show_token_counts',
                 ),
         }),
         (_("Metadata"), {
@@ -165,6 +167,28 @@ class LoraModelAdmin(ModelAdmin):
             "fields": ('created_at', 'updated_at'),
         }),
     )
+
+    @display(description=_("CLIP Token Counts"))
+    def show_token_counts(self, obj):
+        try:
+            from transformers import CLIPTokenizer
+            tokenizer = CLIPTokenizer.from_pretrained("openai/clip-vit-large-patch14")
+            max_tokens = 75  # 77 minus BOS/EOS
+
+            parts = []
+            if obj.prompt_suffix:
+                # Strip A1111 tags for accurate count
+                import re
+                clean = re.sub(r'<lora:[^>]+>', '', obj.prompt_suffix).strip().rstrip(',').strip()
+                count = len(tokenizer.encode(clean, add_special_tokens=False))
+                remaining = max_tokens - count
+                parts.append(f"Prompt suffix: {count}/75 tokens ({remaining} remaining)")
+            if obj.negative_prompt_suffix:
+                count = len(tokenizer.encode(obj.negative_prompt_suffix, add_special_tokens=False))
+                parts.append(f"Negative suffix: {count}/75 tokens")
+            return mark_safe("<br>".join(parts)) if parts else "No suffixes set"
+        except Exception as e:
+            return f"Error: {e}"
 
     @display(description=_("Compatible With"))
     def show_compatible(self, obj):
@@ -300,6 +324,7 @@ class PromptAdmin(ModelAdmin):
 
             model_id = request.POST.get('diffusion_model')
             lora_id = request.POST.get('lora_model') or None
+            num_images = int(request.POST.get('num_images', 1))
 
             model = DiffusionModel.objects.get(id=model_id)
             lora = LoraModel.objects.get(id=lora_id) if lora_id else None
@@ -310,6 +335,7 @@ class PromptAdmin(ModelAdmin):
                     prompt=prompt,
                     diffusion_model=model,
                     lora_model=lora,
+                    num_images=num_images,
                 )
                 celery_task = tasks.generate_images_task.apply_async(
                     args=[job.id], queue='default'
@@ -356,6 +382,40 @@ class PromptAdmin(ModelAdmin):
 
 @admin.register(DiffusionJob)
 class DiffusionJobAdmin(ModelAdmin):
+    change_form_template = 'admin/diffusion/diffusionjob/change_form.html'
+
+    class Media:
+        js = ('diffusion/js/filter_loras.js',)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path(
+                'compatible-loras/',
+                self.admin_site.admin_view(self.compatible_loras_view),
+                name='diffusion_diffusionjob_compatible_loras',
+            ),
+        ]
+        return custom + urls
+
+    def compatible_loras_view(self, request):
+        model_id = request.GET.get('model_id')
+        if not model_id:
+            return JsonResponse({'lora_ids': []})
+        lora_ids = list(
+            LoraModel.objects.filter(
+                is_active=True, compatible_models__id=model_id
+            ).values_list('id', flat=True)
+        )
+        return JsonResponse({'lora_ids': lora_ids})
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['lora_compat_url'] = reverse(
+            'admin:diffusion_diffusionjob_compatible_loras'
+        )
+        return super().changeform_view(request, object_id, form_url, extra_context)
+
     list_display = [
         'show_id', 'show_status', 'diffusion_model', 'lora_model',
         'show_prompt', 'num_images', 'created_at', 'show_duration',

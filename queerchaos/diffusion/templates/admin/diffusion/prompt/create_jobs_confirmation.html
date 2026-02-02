@@ -34,7 +34,7 @@
             </select>
         </div>
 
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1rem;">
             <label for="id_lora_model" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
                 {% trans "LoRA" %}
             </label>
@@ -45,6 +45,14 @@
                 <option value="{{ lora.pk }}" data-models="{{ lora.compatible_model_ids }}">{{ lora.label }}</option>
                 {% endfor %}
             </select>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label for="id_num_images" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Number of Images" %}
+            </label>
+            <input type="number" name="num_images" id="id_num_images" value="1" min="1" max="10"
+                   class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full" />
         </div>
 
         <div style="display: flex; gap: 0.5rem;">

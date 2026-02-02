@@ -28,6 +28,9 @@ ENV/
 
 # Output directories
 outputs/
+
+# Model weights
+/models/
 *.jpg
 *.jpeg
 *.png

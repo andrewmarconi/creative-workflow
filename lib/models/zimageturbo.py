@@ -46,8 +46,9 @@ class ZImageTurboModel(BaseModel):
                 self.pipeline.enable_sequential_cpu_offload(device=device)
                 self.pipeline.enable_attention_slicing()
             elif device.type == "cuda":
-                self.pipeline.enable_model_cpu_offload()
+                self.pipeline.enable_sequential_cpu_offload(device=device)
                 self.pipeline.enable_attention_slicing()
+                self.pipeline.enable_vae_slicing()
             else:
                 self.pipeline = self.pipeline.to(device)
 
