@@ -15,7 +15,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from queerchaos.diffusion.models import DiffusionModel
+from cw.diffusion.models import DiffusionModel
 
 # Add lib/ to path for ModelFactory
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / 'lib'))

@@ -8,7 +8,7 @@ Usage:
 import json
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from queerchaos.diffusion.models import Prompt
+from cw.diffusion.models import Prompt
 from pathlib import Path
 
 

@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 class DiffusionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'queerchaos.diffusion'
+    name = 'cw.diffusion'
     verbose_name = 'Diffusion Image Generation'

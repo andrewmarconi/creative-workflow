@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Base model class for QueerChaos 2
+Base model class for Creative Workflow
 Abstract base class that all model implementations inherit from
 """
 

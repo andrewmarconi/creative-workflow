@@ -7,7 +7,7 @@ Usage:
 """
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from queerchaos.diffusion.models import DiffusionModel, LoraModel
+from cw.diffusion.models import DiffusionModel, LoraModel
 from pathlib import Path
 import json
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LoRA Manager for QueerChaos 2
+LoRA Manager for Creative Workflow
 Handles LoRA filtering, loading, and compatibility checking
 """
 

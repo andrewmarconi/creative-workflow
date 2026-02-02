@@ -38,7 +38,7 @@ def _get_enhancer(model_id="Qwen/Qwen2.5-3B-Instruct"):
     return _enhancer_cache[model_id]
 
 
-@shared_task(bind=True, name='queerchaos.diffusion.tasks.enhance_prompt_task')
+@shared_task(bind=True, name='cw.diffusion.tasks.enhance_prompt_task')
 def enhance_prompt_task(self, prompt_id):
     """
     Enhance a prompt using HFPromptEnhancer (local LLM).
@@ -49,7 +49,7 @@ def enhance_prompt_task(self, prompt_id):
     Returns:
         Dict with enhancement results
     """
-    from queerchaos.diffusion.models import Prompt
+    from cw.diffusion.models import Prompt
 
     prompt = Prompt.objects.get(id=prompt_id)
 
@@ -98,7 +98,7 @@ def _evict_enhancer():
         torch.mps.empty_cache()
 
 
-@shared_task(bind=True, name='queerchaos.diffusion.tasks.generate_images_task')
+@shared_task(bind=True, name='cw.diffusion.tasks.generate_images_task')
 def generate_images_task(self, job_id):
     """
     Generate images using diffusion models.
@@ -109,7 +109,7 @@ def generate_images_task(self, job_id):
     Returns:
         Dict with job results
     """
-    from queerchaos.diffusion.models import DiffusionJob, DiffusionModel, LoraModel
+    from cw.diffusion.models import DiffusionJob, DiffusionModel, LoraModel
 
     job_id = int(job_id)
     job = DiffusionJob.objects.get(id=job_id)

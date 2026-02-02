@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-QueerChaos 2 is a Django + Celery application for multi-model diffusion image generation. It uses Django Unfold for the admin UI, PostgreSQL for storage, and Valkey/Redis as the Celery broker. Models supported: Z-Image Turbo, Flux.1-dev, Qwen-Image-2512, SDXL Turbo.
+Creative Workflow is a Django + Celery application for multi-model diffusion image generation. It uses Django Unfold for the admin UI, PostgreSQL for storage, and Valkey/Redis as the Celery broker. Models supported: Z-Image Turbo, Flux.1-dev, Qwen-Image-2512, SDXL Turbo.
 
 ## Commands
 
@@ -18,8 +18,8 @@ honcho start                     # Start all processes (Docker, Django, Celery w
 ```bash
 docker compose up                               # PostgreSQL 17 + Valkey
 uv run manage.py runserver                      # Django dev server on :8000
-uv run celery -A queerchaos worker -Q default   # Image generation worker
-uv run celery -A queerchaos worker -Q enhancement  # Prompt enhancement worker
+uv run celery -A cw worker -Q default   # Image generation worker
+uv run celery -A cw worker -Q enhancement  # Prompt enhancement worker
 ```
 
 ### Database & Django
@@ -50,7 +50,7 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 
 ### Key Code Paths
 
-**Django app** — `queerchaos/diffusion/`:
+**Django app** — `cw/diffusion/`:
 - `models.py` — ORM models: `DiffusionModel`, `LoraModel`, `Prompt`, `DiffusionJob`
 - `admin.py` — Django Unfold admin (primary UI for creating prompts, queuing jobs, viewing results)
 - `tasks.py` — Celery tasks: `generate_images_task(job_id)`, `enhance_prompt_task(prompt_id)`
@@ -76,7 +76,7 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 ### Configuration
 - `data/presets.json` — Master config for models and LoRAs (synced to DB via `import_presets`)
 - `.env` — Environment variables (DB credentials, API keys for Anthropic/CivitAI)
-- `queerchaos/settings.py` — Django settings including Celery config and Unfold admin setup
+- `cw/settings.py` — Django settings including Celery config and Unfold admin setup
 
 ### Model-Specific Notes
 | Model | Pipeline | Steps | CFG | Negative Prompt |

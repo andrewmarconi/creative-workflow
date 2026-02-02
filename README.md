@@ -1,48 +1,40 @@
-# QueerChaos 2
+# Creative Workflow
 
-Multi-model image generation application with Gradio web interface, supporting Z-Image Turbo, Flux.1-dev, and Qwen-Image-2512. Optimized for Apple Silicon with dynamic LoRA filtering and research-backed optimal settings.
+Multi-model diffusion image generation application built with Django, Celery, and Django Unfold. Supports seven models across four architectures, with dynamic LoRA compatibility, CivitAI auto-download, and prompt enhancement via local LLM or Anthropic API.
 
 ## Features
 
-- ✨ **Multi-Model Support**: Switch between Z-Image Turbo, Flux.1-dev, and Qwen-Image-2512
-- 🎛️ **Dynamic LoRA Filtering**: Only shows compatible LoRAs for selected model
-- 🎯 **Research-Based Defaults**: Optimal settings pre-configured per model
-- 🖥️ **Gradio Web UI**: Interactive interface with real-time progress tracking
-- 🔄 **Smart UI Updates**: Controls auto-configure based on model capabilities
-- 📊 **Comprehensive Metadata**: Full generation parameters tracked and displayed
-- 🍎 **Apple Silicon Optimized**: MPS backend with memory management
-- 💾 **Flexible Model Loading**: Supports local .safetensors and HuggingFace Hub
+- **Multi-Model Support**: Z-Image Turbo, Flux.1-dev, Flux.2 Klein, SDXL Turbo, Juggernaut XL, DreamShaper XL Lightning, Realistic Vision v5.1
+- **Django Admin UI**: Full workflow via Django Unfold — create prompts, queue jobs, view results with image previews
+- **Dynamic LoRA Filtering**: LoRAs filtered by base architecture (SDXL, SD 1.5, Flux.1, etc.)
+- **CivitAI Auto-Download**: LoRAs with AIR URNs are downloaded automatically on first use
+- **Prompt Enhancement**: Rule-based, local LLM (Qwen2.5-3B), or Anthropic API enhancers
+- **Apple Silicon Optimized**: MPS backend with sequential CPU offload and attention slicing
+- **Flexible Model Loading**: Local `.safetensors` files or HuggingFace Hub models
 
 ## Quick Start
 
 ### 1. Setup Environment
 
-This project uses `uv` for Python environment management.
-
 ```bash
-# Sync dependencies
+# Install dependencies
 uv sync
 
-# Authenticate with HuggingFace (if not already done)
+# Copy environment file and configure
+cp .env.example .env  # Edit with your DB credentials, API keys
+
+# Authenticate with HuggingFace (for Hub models)
 huggingface-cli login
 ```
 
 ### 2. Configure Models & LoRAs
 
-Edit [`presets.json`](presets.json) to configure:
-- Model paths (local `.safetensors` or HuggingFace IDs)
-- LoRA library with compatibility mappings
-- Optimal generation settings per model
+Edit [`data/presets.json`](data/presets.json) to configure models and LoRAs, then sync to the database:
 
-```json
-{
-  "config": {
-    "base_model_path": "/path/to/models/",
-    "base_output_path": "./outputs"
-  },
-  "models": [...],
-  "loras": [...]
-}
+```bash
+uv run manage.py migrate
+uv run manage.py import_presets
+uv run manage.py createsuperuser
 ```
 
 ### 3. Launch All Services
@@ -50,198 +42,117 @@ Edit [`presets.json`](presets.json) to configure:
 All processes are defined in the [`Procfile`](Procfile) and managed with [honcho](https://github.com/nickstenning/honcho).
 
 ```bash
-# Start everything (Docker, Django, Celery workers)
 honcho start
 ```
 
-This launches four processes with color-coded, interleaved output:
-
-| Process | URL | Description |
-|---------|-----|-------------|
-| **docker** | — | PostgreSQL (port 5435) + Valkey (port 6379) |
-| **django** | http://localhost:8000/admin/ | Django admin interface |
-| **worker** | — | Celery worker for image generation (`default` queue) |
-| **enhancement** | — | Celery worker for prompt enhancement (`enhancement` queue) |
-
-Task results are visible in the Django admin under **Celery > Task Results**.
-
-You can also start a subset of processes:
+| Process | Description |
+|---------|-------------|
+| **docker** | PostgreSQL (port 5435) + Valkey (port 6379) |
+| **django** | Django dev server at http://localhost:8000/admin/ |
+| **worker** | Celery worker for image generation (`default` queue) |
+| **enhancement** | Celery worker for prompt enhancement (`enhancement` queue) |
 
 ```bash
-# Start only Docker and Django (no workers)
+# Start a subset of processes
 honcho start docker django
 ```
 
-> **Note**: Docker services must be running before Django and the workers can connect. When using `honcho start`, all processes launch together — Celery will retry broker connections automatically.
-
 ## Usage
 
-### Web Interface Workflow
+1. Create a **Prompt** in the Django admin
+2. Create **DiffusionJobs** from a prompt (select model, optional LoRA, parameters)
+3. Jobs are auto-queued to Celery on save
+4. Generated images saved to `media/diffusion/` and viewable in admin
 
-1. **Select Model**: Choose from Z-Image Turbo, Flux.1-dev, or Qwen-Image-2512
-2. **Load Model**: Click "Load Model" (auto-loads on startup)
-3. **Configure Generation**:
-   - Enter your prompt
-   - Select compatible LoRA (dropdown auto-filters)
-   - Adjust steps, guidance, resolution (defaults are optimal)
-   - Set seed (or randomize)
-   - Choose batch count (1-10 images)
-4. **Generate**: Watch real-time progress with step-by-step updates
-5. **Review**: View generated images and metadata in the UI
+## Model Comparison
 
-### Model Comparison
-
-| Model | Speed | Quality | Steps | Guidance | Neg Prompts | Best For |
-|-------|-------|---------|-------|----------|-------------|----------|
-| **Z-Image Turbo** | ⚡ Fastest | Good | 9 | 0.0 | ❌ | Quick iterations, style tests |
-| **Flux.1-dev** | ⚖️ Balanced | High | 28 | 3.5 | ❌ | General purpose, detailed images |
-| **Qwen-Image-2512** | 🐢 Slower | Highest | 50 | 4.5 | ✅ | Final outputs, precise control |
+| Model | Architecture | Steps | CFG | Neg Prompt | Best For |
+|-------|-------------|-------|-----|------------|----------|
+| Z-Image Turbo | Lumina/S3-DiT | 9 | 0.0 | No | Quick iterations |
+| Flux.1-dev | Flux.1 | 28 | 3.5 | No | General purpose |
+| Flux.2 Klein | Flux.1 | 28 | 3.5 | No | Lightweight Flux |
+| SDXL Turbo | SDXL | 4 | 0.0 | No | Fast SDXL |
+| Juggernaut XL v9 | SDXL | 30 | 7.0 | Yes | Photorealistic |
+| DreamShaper XL Lightning | SDXL | 4 | 2.0 | No | Fast stylized |
+| Realistic Vision v5.1 | SD 1.5 | 30 | 5.0 | Yes | Photorealistic (SD 1.5) |
 
 ## Configuration
 
 ### Adding Models
 
-Add to `presets.json`:
-
-```json
-{
-  "label": "My Model",
-  "slug": "my_model",
-  "path": "path/to/model.safetensors",
-  "pipeline": "PipelineClassName",
-  "settings": {
-    "steps": 30,
-    "guidance_scale": 7.0,
-    "resolution": 1024,
-    "supports_negative_prompt": true
-  }
-}
-```
+1. Add model config to `data/presets.json`
+2. Create `lib/models/newmodel.py` inheriting from `BaseModel`
+3. Register in `lib/models/__init__.py` `ModelFactory.create_model()`
+4. Run `uv run manage.py import_presets`
 
 ### Adding LoRAs
 
-Add to `presets.json`:
+Add to `data/presets.json` with a `base_architecture` field for compatibility:
 
 ```json
 {
   "label": "My LoRA",
   "path": "loras/my-lora.safetensors",
-  "compatibility": ["zimageturbo", "flux1_dev"],
-  "prompt": "trigger words, style description",
+  "base_architecture": "sdxl",
+  "prompt": "trigger words",
   "settings": {"strength": 0.8}
 }
 ```
 
-LoRAs will automatically appear in the dropdown for compatible models only.
-
-## Output Structure
-
-Generated images are saved to:
-
-```
-outputs/{output_dir}/
-├── {model_slug}_{timestamp}_{seed}_001.jpg
-├── {model_slug}_{timestamp}_{seed}_002.jpg
-└── ...
-```
-
-**Filename Format**: `{model_slug}_{YYYYMMDD_HHMMSS}_{seed}_{index:03d}.jpg`
-
-**Metadata** is displayed in the UI after generation:
-- Model used
-- Full prompt (with LoRA suffix)
-- Negative prompt (if supported)
-- Steps, guidance scale, resolution
-- LoRA applied (if any)
-- Seed for reproducibility
+LoRAs can also specify a CivitAI `air` URN for auto-download instead of a local path.
 
 ## Architecture
 
 ```
-main.py                    # Gradio web interface
-├── config.py              # Loads presets.json
-├── models/                # Model implementations
-│   ├── base.py           # Abstract BaseModel
-│   ├── zimageturbo.py    # Z-Image Turbo
-│   ├── flux.py           # Flux.1-dev
-│   └── qwen.py           # Qwen-Image-2512
-└── loras/
-    └── manager.py         # LoRA filtering & loading
+cw/diffusion/       # Django app
+  models.py                 # DiffusionModel, LoraModel, Prompt, DiffusionJob
+  admin.py                  # Django Unfold admin (primary UI)
+  tasks.py                  # Celery tasks for generation and enhancement
+lib/models/                 # Model implementations
+  base.py                   # Abstract BaseModel
+  zimageturbo.py, flux.py, flux2klein.py, qwen.py,
+  sdxlturbo.py, sdxl.py, sd15.py
+lib/
+  config.py                 # Loads data/presets.json
+  prompt_enhancer.py        # Rule-based, HF, and Anthropic enhancers
+  civitai.py                # CivitAI LoRA downloader
+  loras/manager.py          # LoRA filtering by base architecture
 ```
 
 See [`CLAUDE.md`](CLAUDE.md) for detailed architecture documentation.
 
 ## System Requirements
 
-- **Hardware**: M4 Mac with 48GB RAM (or similar Apple Silicon)
-- **Software**: Python 3.12+, `uv` package manager
-- **Storage**: ~15GB for model cache (`~/.cache/huggingface/`)
-- **Models**: Local `.safetensors` files or HuggingFace Hub access
-
-## Model-Specific Notes
-
-### Z-Image Turbo
-- **Speed**: ~4 seconds per image on RTX A6000
-- **Settings**: 9 steps, guidance 0.0 (distilled model)
-- **LoRAs**: 8 compatible LoRAs included (pen & ink, manga, sketches, etc.)
-- **Use Case**: Quick iterations, style exploration
-
-### Flux.1-dev FP8 Mixed
-- **Speed**: Moderate (28 steps optimal)
-- **Settings**: Guidance 3.5 (distilled CFG), max_sequence_length 512
-- **Format**: Local FP8 quantized `.safetensors`
-- **Use Case**: Balanced quality/speed, general purpose
-
-### Qwen-Image-2512
-- **Speed**: Slower (50 steps)
-- **Settings**: Guidance 4.5 (true_cfg_scale), supports negative prompts
-- **Format**: HuggingFace Hub download
-- **Use Case**: Highest quality, precise control with negative prompts
+- **Python**: 3.12+ via `uv`
+- **Services**: PostgreSQL, Valkey/Redis (provided via Docker Compose)
+- **GPU**: Apple Silicon (MPS) or CUDA
+- **Storage**: ~15-30GB for model cache (`~/.cache/huggingface/`)
 
 ## Development
 
 ```bash
-# Start all services
-honcho start
-
-# Start individual processes
-honcho start django worker
-
-# Add new dependency
-uv add package-name
-
-# Sync dependencies
-uv sync
-
-# Run Django management commands
-uv run manage.py migrate
-uv run manage.py import_presets
-uv run manage.py import_prompts --file data/coloringbook_prompts.txt --style coloring-book
-uv run manage.py createsuperuser
+honcho start                              # Start all services
+uv run manage.py migrate                  # Run migrations
+uv run manage.py import_presets           # Sync presets.json to DB
+uv run manage.py preload_models           # Pre-download models to HF cache
+uv run manage.py import_prompts           # Bulk import prompts
+uv run manage.py export_prompts           # Export prompts
 ```
-
-## Documentation
-
-- **[CLAUDE.md](CLAUDE.md)** - Architecture & development guide
-- **[presets.json](presets.json)** - Model & LoRA configuration
-- **Legacy batch processor** - See `_PARKED/` directory
 
 ## Troubleshooting
 
 **Model won't load?**
-- Check `base_model_path` in `presets.json`
-- Verify `.safetensors` files exist for local models
-- Ensure HuggingFace authentication for Hub models
+- Verify HuggingFace authentication for Hub models
+- Check `MODEL_BASE_PATH` in `.env` for local `.safetensors` models
 
 **LoRA not appearing?**
-- Check `compatibility` array matches model `slug`
-- Verify LoRA path is relative to `base_model_path`
-- Ensure `.safetensors` file exists
+- Check `base_architecture` matches the model's architecture
+- Verify the file exists or the AIR URN is valid for CivitAI download
 
 **Out of memory?**
-- Use Z-Image Turbo (9 steps) or reduce resolution
-- Close other applications
+- Use a turbo/lightning model with fewer steps
 - Only one model loads at a time (by design)
+- `torch.mps.empty_cache()` runs after each generation
 
 ## License
 

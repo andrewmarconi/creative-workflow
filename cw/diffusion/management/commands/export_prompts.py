@@ -7,7 +7,7 @@ Usage:
 """
 import json
 from django.core.management.base import BaseCommand, CommandError
-from queerchaos.diffusion.models import Prompt
+from cw.diffusion.models import Prompt
 from pathlib import Path
 
 

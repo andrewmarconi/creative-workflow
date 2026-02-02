@@ -1,5 +1,5 @@
 """
-QueerChaos 2 - LoRA Management
+Creative Workflow - LoRA Management
 LoRA filtering and loading utilities
 """
 

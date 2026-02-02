@@ -1,5 +1,5 @@
 """
-Django settings for queerchaos project.
+Django settings for cw project.
 
 Generated for Django 6.0.
 
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',  # Required for ArrayField
-    'queerchaos.diffusion',
+    'cw.diffusion',
     'django_extensions',
     'django_celery_results',
 ]
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'queerchaos.urls'
+ROOT_URLCONF = 'cw.urls'
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'queerchaos.wsgi.application'
+WSGI_APPLICATION = 'cw.wsgi.application'
 
 
 # Database
@@ -82,9 +82,9 @@ WSGI_APPLICATION = 'queerchaos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'queerchaos'),
-        'USER': os.getenv('POSTGRES_USER', 'queerchaos'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'queerchaos_dev'),
+        'NAME': os.getenv('POSTGRES_DB', 'cw'),
+        'USER': os.getenv('POSTGRES_USER', 'cw'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'cw_dev'),
         'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
         'PORT': os.getenv('POSTGRES_PORT', '5435'),
     }
@@ -244,8 +244,8 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # Task routing (queues)
 CELERY_TASK_ROUTES = {
-    'queerchaos.diffusion.tasks.enhance_prompt_task': {'queue': 'enhancement'},
-    'queerchaos.diffusion.tasks.generate_images_task': {'queue': 'default'},
+    'cw.diffusion.tasks.enhance_prompt_task': {'queue': 'enhancement'},
+    'cw.diffusion.tasks.generate_images_task': {'queue': 'default'},
 }
 
 # Queue configuration

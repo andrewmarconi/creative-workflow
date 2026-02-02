@@ -1,5 +1,5 @@
 """
-QueerChaos 2 - Model Implementations
+Creative Workflow - Model Implementations
 Modular model classes for different diffusion pipelines
 """
 
