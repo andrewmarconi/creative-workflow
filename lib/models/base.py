@@ -36,9 +36,13 @@ class BaseModel(ABC):
         self.supports_negative_prompt = self.settings.get("supports_negative_prompt", False)
         self.max_sequence_length = self.settings.get("max_sequence_length")
 
-        # Get dtype
+        # Get dtype — FP8 variants can't be used as torch_dtype for loading,
+        # so fall back to bfloat16 (weights are upcast automatically).
         dtype_str = self.settings.get("dtype", "bfloat16")
-        self.dtype = getattr(torch, dtype_str, torch.bfloat16)
+        if dtype_str.startswith("float8"):
+            self.dtype = torch.bfloat16
+        else:
+            self.dtype = getattr(torch, dtype_str, torch.bfloat16)
 
     @abstractmethod
     def load_pipeline(self, progress_callback=None) -> str:

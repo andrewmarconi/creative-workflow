@@ -84,6 +84,20 @@ def enhance_prompt_task(self, prompt_id):
     }
 
 
+def _evict_enhancer():
+    """Free VRAM occupied by the prompt enhancer LLM."""
+    import torch
+    for key in list(_enhancer_cache.keys()):
+        print(f"DEBUG: Evicting enhancer '{key}' to free VRAM")
+        del _enhancer_cache[key]
+    import gc
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    elif hasattr(torch, 'mps') and hasattr(torch.mps, 'empty_cache'):
+        torch.mps.empty_cache()
+
+
 @shared_task(bind=True, name='queerchaos.diffusion.tasks.generate_images_task')
 def generate_images_task(self, job_id):
     """
@@ -97,6 +111,7 @@ def generate_images_task(self, job_id):
     """
     from queerchaos.diffusion.models import DiffusionJob, DiffusionModel, LoraModel
 
+    job_id = int(job_id)
     job = DiffusionJob.objects.get(id=job_id)
 
     try:
@@ -107,6 +122,9 @@ def generate_images_task(self, job_id):
 
         # Get generation parameters
         params = job.get_generation_params()
+
+        # Evict the prompt enhancer LLM from VRAM before loading diffusion model
+        _evict_enhancer()
 
         # Load the model using the factory pattern from lib
         model = _load_model_instance(job.diffusion_model)
@@ -180,22 +198,25 @@ def generate_images_task(self, job_id):
 
         # Generate images (loop for multiple images since generate() returns single image)
         saved_paths = []
-        media_dir = Path(settings.MEDIA_ROOT) / 'diffusion' / f'job_{job_id}'
+        media_dir = Path(settings.MEDIA_ROOT) / 'diffusion'
         media_dir.mkdir(parents=True, exist_ok=True)
 
         num_images = params['num_images']
-        from datetime import datetime
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        prompt_id = job.prompt_id
+        model_id = job.diffusion_model_id
+        lora_id = job.lora_model_id or 0
 
+        import random
         for idx in range(num_images):
-            print(f"DEBUG: Generating image {idx+1}/{num_images}")
+            # Randomize seed for each image unless explicitly set
+            if params.get('seed') is None:
+                gen_params['seed'] = random.randint(0, 2**32 - 1)
+            print(f"DEBUG: Generating image {idx+1}/{num_images}, seed={gen_params['seed']}")
             image, metadata = model.generate(**gen_params)
 
-            # Use seed from metadata (actual seed used, not requested seed)
-            actual_seed = metadata.get('seed', 'unknown')
-
-            # Save image
-            filename = f"{job.diffusion_model.slug}_{timestamp}_{actual_seed}_{idx+1:03d}.jpg"
+            # Filename: {jobID}.{imageNo}-{promptID}-{modelID}-{loraID}.jpg
+            img_no = idx + 1 if num_images > 1 else 0
+            filename = f"{job_id:05d}.{img_no:02d}-{prompt_id:03d}-{model_id:03d}-{lora_id:03d}.jpg"
             filepath = media_dir / filename
             image.save(filepath, quality=95)
 

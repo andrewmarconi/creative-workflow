@@ -55,6 +55,12 @@ class SDXLTurboModel(BaseModel):
         except Exception as e:
             return f"Error loading SDXL Turbo: {e}"
 
+    @staticmethod
+    def _strip_a1111_lora_tags(text: str) -> str:
+        """Remove A1111/ComfyUI <lora:...> tags which are meaningless in diffusers."""
+        import re
+        return re.sub(r'<lora:[^>]+>', '', text).strip().rstrip(',').strip()
+
     def _fit_prompt_to_token_limit(self, prompt: str, suffix: str) -> str:
         """
         Build a prompt that fits within CLIP's 77-token limit.
@@ -70,6 +76,9 @@ class SDXLTurboModel(BaseModel):
         Returns:
             Combined prompt that fits within 77 tokens
         """
+        # Strip A1111/ComfyUI <lora:> tags — diffusers loads LoRAs directly
+        suffix = self._strip_a1111_lora_tags(suffix)
+
         tokenizer = self.pipeline.tokenizer
         # 77 tokens total, minus 2 for BOS/EOS
         max_content_tokens = tokenizer.model_max_length - 2
@@ -134,6 +143,7 @@ class SDXLTurboModel(BaseModel):
         # prioritizing LoRA trigger words
         lora_suffix = self.get_lora_prompt_suffix()
         full_prompt = self._fit_prompt_to_token_limit(prompt, lora_suffix)
+        print(f"DEBUG [SDXL Turbo]: Prompt sent to pipeline ({len(self.pipeline.tokenizer.encode(full_prompt, add_special_tokens=False))} tokens): '{full_prompt}'")
 
         image = self.pipeline(
             prompt=full_prompt,

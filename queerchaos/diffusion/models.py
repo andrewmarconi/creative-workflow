@@ -66,6 +66,7 @@ class DiffusionModel(models.Model):
             ("bfloat16", "BFloat16"),
             ("float16", "Float16"),
             ("float32", "Float32"),
+            ("float8_e4m3fn", "Float8 (E4M3)"),
         ],
         help_text="Data type for model weights"
     )

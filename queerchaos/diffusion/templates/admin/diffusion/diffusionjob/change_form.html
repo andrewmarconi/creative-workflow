@@ -1,0 +1,6 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>window.__lora_compat_url__ = '{{ lora_compat_url }}';</script>
+{% endblock %}
