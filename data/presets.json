@@ -71,6 +71,74 @@
         "supports_negative_prompt": false,
         "max_sequence_length": null
       }
+    },
+    {
+      "label": "Flux.2 Klein 4B",
+      "slug": "flux2_klein_4b",
+      "path": "black-forest-labs/FLUX.2-klein-4B",
+      "pipeline": "Flux2KleinPipeline",
+      "settings": {
+        "steps": 4,
+        "guidance_scale": 1.0,
+        "default_width": 1024,
+        "default_height": 1024,
+        "max_pixels": 2097152,
+        "scheduler": null,
+        "dtype": "bfloat16",
+        "supports_negative_prompt": false,
+        "max_sequence_length": 512
+      }
+    },
+    {
+      "label": "Juggernaut XL v9",
+      "slug": "juggernaut_xl",
+      "path": "RunDiffusion/Juggernaut-XL-v9",
+      "pipeline": "StableDiffusionXLPipeline",
+      "settings": {
+        "steps": 30,
+        "guidance_scale": 7.0,
+        "default_width": 1024,
+        "default_height": 1024,
+        "max_pixels": 1048576,
+        "scheduler": null,
+        "dtype": "float16",
+        "supports_negative_prompt": true,
+        "max_sequence_length": null
+      }
+    },
+    {
+      "label": "DreamShaper XL Lightning",
+      "slug": "dreamshaper_xl",
+      "path": "Lykon/dreamshaper-xl-lightning",
+      "pipeline": "StableDiffusionXLPipeline",
+      "settings": {
+        "steps": 4,
+        "guidance_scale": 2.0,
+        "default_width": 1024,
+        "default_height": 1024,
+        "max_pixels": 1048576,
+        "scheduler": "DPMSolverMultistepScheduler",
+        "dtype": "float16",
+        "supports_negative_prompt": false,
+        "max_sequence_length": null
+      }
+    },
+    {
+      "label": "Realistic Vision v5.1",
+      "slug": "realistic_vision",
+      "path": "SG161222/Realistic_Vision_V5.1_noVAE",
+      "pipeline": "StableDiffusionPipeline",
+      "settings": {
+        "steps": 30,
+        "guidance_scale": 5.0,
+        "default_width": 512,
+        "default_height": 768,
+        "max_pixels": 393216,
+        "scheduler": null,
+        "dtype": "float16",
+        "supports_negative_prompt": true,
+        "max_sequence_length": null
+      }
     }
   ],
   "loras": [
