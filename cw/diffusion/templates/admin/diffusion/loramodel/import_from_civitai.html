@@ -1,0 +1,136 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Import LoRA from CivitAI" %} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
+        <h2 style="margin-bottom: 0.5rem;">{% trans "Import LoRA from CivitAI" %}</h2>
+        <p class="text-gray-500 dark:text-gray-400" style="margin-bottom: 1.5rem;">
+            {% if metadata_fetched %}
+                {% trans "Metadata fetched from CivitAI. Review and edit the fields below before importing." %}
+            {% else %}
+                {% trans "Import a LoRA model from CivitAI using its AIR (AI Resource) identifier." %}
+            {% endif %}
+        </p>
+
+        <!-- AIR Input -->
+        <div style="margin-bottom: 1rem;">
+            <label for="id_air" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "CivitAI AIR" %} <span style="color: #dc2626;">*</span>
+            </label>
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" name="air" id="id_air" required
+                       value="{{ initial_data.air }}"
+                       placeholder="urn:air:sdxl:lora:civitai:123456@789012"
+                       class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full font-mono text-sm" />
+                {% if not metadata_fetched %}
+                <button type="button" id="fetch_metadata_btn"
+                        class="border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 font-medium whitespace-nowrap">
+                    {% trans "Fetch Metadata" %}
+                </button>
+                {% endif %}
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400" style="margin-top: 0.25rem;">
+                {% trans "Format: urn:air:{ecosystem}:{type}:civitai:{modelId}@{versionId}" %}
+            </p>
+        </div>
+
+        <!-- Label -->
+        <div style="margin-bottom: 1rem;">
+            <label for="id_label" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Label" %}
+            </label>
+            <input type="text" name="label" id="id_label"
+                   value="{{ initial_data.label }}"
+                   placeholder="{% trans "Display name for the LoRA" %}"
+                   class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full" />
+            <p class="text-sm text-gray-500 dark:text-gray-400" style="margin-top: 0.25rem;">
+                {% trans "Leave blank to auto-generate from model ID" %}
+            </p>
+        </div>
+
+        <!-- Base Architecture -->
+        <div style="margin-bottom: 1rem;">
+            <label for="id_base_architecture" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Base Architecture" %}
+            </label>
+            <select name="base_architecture" id="id_base_architecture" required
+                    class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">
+                {% for value, label in base_architecture_choices %}
+                <option value="{{ value }}"{% if value == initial_data.base_architecture %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Prompt Suffix (Trigger Words) -->
+        <div style="margin-bottom: 1rem;">
+            <label for="id_prompt_suffix" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Prompt Suffix (Trigger Words)" %}
+            </label>
+            <textarea name="prompt_suffix" id="id_prompt_suffix" rows="2"
+                      placeholder="{% trans "Trigger words to append to prompts" %}"
+                      class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">{{ initial_data.prompt_suffix }}</textarea>
+        </div>
+
+        <!-- Negative Prompt Suffix -->
+        <div style="margin-bottom: 1rem;">
+            <label for="id_negative_prompt_suffix" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Negative Prompt Suffix" %}
+            </label>
+            <textarea name="negative_prompt_suffix" id="id_negative_prompt_suffix" rows="2"
+                      placeholder="{% trans "Terms to append to negative prompts" %}"
+                      class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">{{ initial_data.negative_prompt_suffix }}</textarea>
+        </div>
+
+        <!-- Guidance Scale -->
+        <div style="margin-bottom: 1rem;">
+            <label for="id_guidance_scale" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Guidance Scale (CFG)" %}
+            </label>
+            <input type="number" name="guidance_scale" id="id_guidance_scale" step="0.1" min="0" max="20"
+                   value="{{ initial_data.guidance_scale }}"
+                   placeholder="{% trans "Leave blank to use model default" %}"
+                   class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full" />
+        </div>
+
+        <!-- Notes -->
+        <div style="margin-bottom: 1.5rem;">
+            <label for="id_notes" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">
+                {% trans "Notes" %}
+            </label>
+            <textarea name="notes" id="id_notes" rows="4"
+                      placeholder="{% trans "Internal notes about this LoRA" %}"
+                      class="border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 w-full">{{ initial_data.notes }}</textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 0.5rem;">
+            <button type="submit"
+                    class="bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-md px-4 py-2">
+                {% trans "Import and Download" %}
+            </button>
+            <a href="{% url 'admin:diffusion_loramodel_changelist' %}"
+               class="border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 font-medium">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </div>
+</form>
+
+<script>
+// Fetch metadata button handler
+document.getElementById('fetch_metadata_btn')?.addEventListener('click', function() {
+    const air = document.getElementById('id_air').value.trim();
+    if (!air) {
+        alert('{% trans "Please enter a CivitAI AIR first" %}');
+        return;
+    }
+    // Reload page with AIR as query param to trigger metadata fetch
+    window.location.href = '{% url "admin:import_lora_from_civitai" %}?air=' + encodeURIComponent(air);
+});
+</script>
+{% endblock %}

@@ -1,42 +1,36 @@
 {
-  "config": {
-    "base_model_path": "/Users/andrew/Documents/ComfyUI/models/",
-    "base_output_path": "./outputs"
-  },
   "models": [
     {
-      "label": "Z-Image Turbo",
-      "slug": "zimageturbo",
-      "base_architecture": "zimage",
-      "path": "Tongyi-MAI/Z-Image-Turbo",
-      "pipeline": "ZImagePipeline",
+      "slug": "dreamshaper_xl",
+      "label": "DreamShaper XL Lightning",
+      "path": "Lykon/dreamshaper-xl-lightning",
+      "pipeline": "StableDiffusionXLPipeline",
+      "base_architecture": "sdxl",
       "settings": {
-        "steps": 9,
-        "guidance_scale": 0.0,
+        "steps": 4,
+        "guidance_scale": 2.0,
         "default_width": 1024,
         "default_height": 1024,
         "max_pixels": 1048576,
-        "scheduler": "FlowMatchEulerDiscreteScheduler",
-        "dtype": "bfloat16",
+        "dtype": "float16",
         "supports_negative_prompt": false,
-        "max_sequence_length": null,
-        "token_window": 512,
+        "scheduler": "DPMSolverMultistepScheduler",
+        "token_window": 77,
         "vram_usage": 8192
       }
     },
     {
-      "label": "Flux.1 Dev",
       "slug": "flux1_dev",
-      "base_architecture": "flux1",
+      "label": "Flux.1 Dev",
       "path": "black-forest-labs/FLUX.1-dev",
       "pipeline": "FluxPipeline",
+      "base_architecture": "flux1",
       "settings": {
         "steps": 28,
         "guidance_scale": 3.5,
         "default_width": 1024,
         "default_height": 1024,
         "max_pixels": 2097152,
-        "scheduler": null,
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
         "max_sequence_length": 512,
@@ -45,187 +39,291 @@
       }
     },
     {
-      "label": "Qwen-Image-2512",
-      "slug": "qwen_image",
-      "base_architecture": "qwen",
-      "path": "Qwen/Qwen-Image-2512",
-      "pipeline": "QwenImagePipeline",
-      "settings": {
-        "steps": 50,
-        "guidance_scale": 4.5,
-        "default_width": 1328,
-        "default_height": 1328,
-        "max_pixels": 14680064,
-        "scheduler": "FlowMatchEulerDiscreteScheduler",
-        "dtype": "bfloat16",
-        "supports_negative_prompt": true,
-        "max_sequence_length": null,
-        "token_window": 512,
-        "vram_usage": 24576
-      }
-    },
-    {
-      "label": "SDXL Turbo",
-      "slug": "sdxl_turbo",
-      "base_architecture": "sdxl",
-      "path": "stabilityai/sdxl-turbo",
-      "pipeline": "AutoPipelineForText2Image",
-      "settings": {
-        "steps": 4,
-        "guidance_scale": 0.0,
-        "default_width": 512,
-        "default_height": 512,
-        "max_pixels": 262144,
-        "scheduler": "EulerAncestralDiscreteScheduler",
-        "dtype": "float16",
-        "supports_negative_prompt": false,
-        "max_sequence_length": null,
-        "token_window": 77,
-        "vram_usage": 6144
-      }
-    },
-    {
-      "label": "Juggernaut XL v9",
       "slug": "juggernaut_xl",
-      "base_architecture": "sdxl",
+      "label": "Juggernaut XL v9",
       "path": "RunDiffusion/Juggernaut-XL-v9",
       "pipeline": "StableDiffusionXLPipeline",
+      "base_architecture": "sdxl",
       "settings": {
         "steps": 30,
         "guidance_scale": 7.0,
         "default_width": 1024,
         "default_height": 1024,
         "max_pixels": 1048576,
-        "scheduler": null,
         "dtype": "float16",
         "supports_negative_prompt": true,
-        "max_sequence_length": null,
         "token_window": 77,
         "vram_usage": 8192
       }
     },
     {
-      "label": "DreamShaper XL Lightning",
-      "slug": "dreamshaper_xl",
-      "base_architecture": "sdxl",
-      "path": "Lykon/dreamshaper-xl-lightning",
-      "pipeline": "StableDiffusionXLPipeline",
+      "slug": "qwen_image",
+      "label": "Qwen-Image-2512",
+      "path": "Qwen/Qwen-Image-2512",
+      "pipeline": "QwenImagePipeline",
+      "base_architecture": "qwen",
       "settings": {
-        "steps": 4,
-        "guidance_scale": 2.0,
-        "default_width": 1024,
-        "default_height": 1024,
-        "max_pixels": 1048576,
-        "scheduler": "DPMSolverMultistepScheduler",
-        "dtype": "float16",
-        "supports_negative_prompt": false,
-        "max_sequence_length": null,
-        "token_window": 77,
-        "vram_usage": 8192
+        "steps": 50,
+        "guidance_scale": 4.5,
+        "default_width": 1328,
+        "default_height": 1328,
+        "max_pixels": 14680064,
+        "dtype": "bfloat16",
+        "supports_negative_prompt": true,
+        "scheduler": "FlowMatchEulerDiscreteScheduler",
+        "token_window": 512,
+        "vram_usage": 24576
       }
     },
     {
-      "label": "Realistic Vision v5.1",
       "slug": "realistic_vision",
-      "base_architecture": "sd15",
+      "label": "Realistic Vision v5.1",
       "path": "SG161222/Realistic_Vision_V5.1_noVAE",
       "pipeline": "StableDiffusionPipeline",
+      "base_architecture": "sd15",
       "settings": {
         "steps": 30,
         "guidance_scale": 5.0,
         "default_width": 512,
         "default_height": 768,
         "max_pixels": 393216,
-        "scheduler": null,
         "dtype": "float16",
         "supports_negative_prompt": true,
-        "max_sequence_length": null,
         "token_window": 77,
         "vram_usage": 4096
+      }
+    },
+    {
+      "slug": "sdxl_turbo",
+      "label": "SDXL Turbo",
+      "path": "stabilityai/sdxl-turbo",
+      "pipeline": "AutoPipelineForText2Image",
+      "base_architecture": "sdxl",
+      "settings": {
+        "steps": 4,
+        "guidance_scale": 0.0,
+        "force_default_guidance": true,
+        "default_width": 512,
+        "default_height": 512,
+        "max_pixels": 262144,
+        "dtype": "float16",
+        "supports_negative_prompt": false,
+        "scheduler": "EulerAncestralDiscreteScheduler",
+        "token_window": 77,
+        "vram_usage": 6144
+      }
+    },
+    {
+      "slug": "zimageturbo",
+      "label": "Z-Image Turbo",
+      "path": "Tongyi-MAI/Z-Image-Turbo",
+      "pipeline": "ZImagePipeline",
+      "base_architecture": "zimage",
+      "settings": {
+        "steps": 9,
+        "guidance_scale": 0.0,
+        "force_default_guidance": true,
+        "default_width": 1024,
+        "default_height": 1024,
+        "max_pixels": 1048576,
+        "dtype": "bfloat16",
+        "supports_negative_prompt": false,
+        "scheduler": "FlowMatchEulerDiscreteScheduler",
+        "token_window": 512,
+        "vram_usage": 8192
       }
     }
   ],
   "loras": [
     {
-      "label": "Pen & Ink Illustration",
-      "path": "",
-      "air": "urn:air:zimageturbo:lora:civitai:2344335@2636956",
-      "base_architecture": "zimage",
-      "prompt": "phrsink, pen and ink illustration, no text, monochrome, high detail, intricate linework, hatching, cross-hatching, stippling, detailed shading, surreal, imaginative, artstation, concept art, sharp focus, illustration",
-      "negative_prompt": "",
-      "settings": { "strength": 0.7 }
+      "label": "geometric_shapes",
+      "base_architecture": "sd15",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 7.0,
+        "clip_skip": 2
+      },
+      "air": "urn:air:sd1:lora:civitai:111408@120178",
+      "negative_prompt": "(worst quality, low quality:1.4), (bad_prompt_version2:0.8), EasyNegative, badhandv4, text, name, letters, watermark",
+      "notes": "\n\nCivitAI Stats: 4,798 downloads, 0.0★ (0 ratings)"
     },
     {
-      "label": "Retro Vintage Comics Style",
-      "path": "",
-      "air": "urn:air:zimageturbo:lora:civitai:1082272@2550274",
-      "base_architecture": "zimage",
-      "prompt": "vintage illustrated comic style, with a focus of detailed line art and minimalist colors",
-      "negative_prompt": "",
-      "settings": { "strength": 0.8 }
+      "label": "Pen Sketch Style",
+      "base_architecture": "sd15",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 7.0
+      },
+      "air": "urn:air:sd1:lora:civitai:28687@35516",
+      "prompt": "penSketch_style, monochrome, ink sketch",
+      "negative_prompt": "badhandv4, EasyNegative, signature",
+      "notes": "<p>v1.3 LoRa is trained based on SD 1.5, and is continued on the first version of pen sketch LoRa</p><p>v1.3 是基于SD第一个版本的直线速写风格的lora继续训练的</p><p>For pen_sketch_style_v1.3, I strengthened \"hatching\" style and improved stablity of it.</p><p>在1.3版本中我加强了阴影线的风格效果，并且提升了模型的稳定性。</p><p>Recommended weight for LoRa ：0.6-0.8</p><p>推荐LoRa权重：0.6-0.8</p>\n\nCivitAI Stats: 14,203 downloads, 0.0★ (0 ratings)"
     },
     {
-      "label": "Perfect Ink Drawing (Engraving Style)",
-      "path": "",
-      "air": "urn:air:zimageturbo:lora:civitai:1717646@2458471",
-      "base_architecture": "zimage",
-      "prompt": "1NK_H4TCH1NG",
-      "negative_prompt": "",
-      "settings": { "strength": 1.3 }
-    },
-    {
-      "label": "Begotten",
-      "path": "",
-      "air": "urn:air:zimagebase:lora:civitai:2192426@2649775",
-      "base_architecture": "zimage",
-      "prompt": "begotten",
-      "negative_prompt": "",
-      "settings": { "strength": 1.0 }
-    },
-    {
-      "label": "Line Drawing",
-      "path": "",
-      "air": "urn:air:zimageturbo:lora:civitai:880102@2463976",
-      "base_architecture": "zimage",
-      "prompt": "line drawing",
-      "negative_prompt": "",
-      "settings": { "strength": 0.5 }
-    },
-    {
-      "label": "Anime MANGA Maker",
-      "path": "",
-      "air": "urn:air:zimageturbo:lora:civitai:2189639@2465423",
-      "base_architecture": "zimage",
-      "prompt": "manga style, Black and white manga page",
-      "negative_prompt": "",
-      "settings": { "strength": 1.0 }
-    },
-    {
-      "label": "Better Sketches for Z-image",
-      "path": "",
-      "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
-      "base_architecture": "zimage",
-      "prompt": "sketch, rough sketch,  pen sketch",
-      "negative_prompt": "",
-      "settings": { "strength": 0.8 }
+      "label": "Sketch Anime Pose",
+      "base_architecture": "sd15",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 7.0,
+        "clip_skip": 2
+      },
+      "air": "urn:air:sd1:lora:civitai:106609@114508",
+      "prompt": "anime pose, sketch, white background",
+      "negative_prompt": "EasyNegative",
+      "notes": "\n\nCivitAI Stats: 8,548 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "80s Fantasy Movie",
-      "path": "",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 1.0
+      },
       "air": "urn:air:zimageturbo:lora:civitai:789313@2526524",
-      "base_architecture": "zimage",
       "prompt": "ArsMovieStill, 80s Fantasy Movie Still",
-      "negative_prompt": "",
-      "settings": { "strength": 0.8 }
+      "negative_prompt": "blurry ugly bad",
+      "notes": "<p>Trained on the V2 Dataset in AI Toolkit. <br />Used different approach when I trained this version - the main difference is that 1000 steps of \"High Noise Only\" training was done at the end of the process.<br /></p>\n\nCivitAI Stats: 2,026 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Anime MANGA Maker",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 1.0,
+        "guidance_scale": 1.0
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:2189639@2465423",
+      "negative_prompt": "模糊、低质量、低分辨率、解剖结构错误、扭曲、变形、多余肢体、缺失肢体、多余手指、手指融合、手指断裂、比例失调、姿势不自然、手部畸形、面部畸形、面部扭曲、面部不对称、眼睛歪斜、模糊、噪点、像素化、过度锐化、水印、文字、标志、签名、瑕疵、杂乱背景、故障、双身、双头、变异、畸形、重复、颗粒感、压缩伪影",
+      "notes": "\n\nCivitAI Stats: 757 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Begotten",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 1.0,
+        "guidance_scale": 4.0
+      },
+      "air": "urn:air:zimagebase:lora:civitai:2192426@2649775",
+      "negative_prompt": "bad hands, extra limbs, deformed low quality, cgi, film crew, camera man,",
+      "notes": "\n\nCivitAI Stats: 115 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Better Sketches for Z-image",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 1.0
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
+      "negative_prompt": "blurry ugly bad",
+      "notes": "\n\nCivitAI Stats: 674 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Coloring Book - Redmond",
-      "path": "",
-      "air": "urn:air:sdxl:lora:civitai:136348@177996",
       "base_architecture": "sdxl",
-      "prompt": "ColoringBookAF, Coloring Book, solid white background, black and white, monochromatic, no color, no text, no bad art, no deformed, no watermark, Coloring Book, ColoringBookAF,<lora:ColoringBookRedmond-ColoringBook-ColoringBookAF:1> <lora:ThickOutline:1>",
-      "negative_prompt": "",
-      "settings": { "strength": 0.8 }
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 7.0
+      },
+      "air": "urn:air:sdxl:lora:civitai:136348@177996",
+      "prompt": "Coloring Book, ColoringBookAF",
+      "negative_prompt": "bad art, ugly, deformed, watermark, duplicated,",
+      "notes": "\n\nCivitAI Stats: 10,827 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "LineAni.Redmond",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 7.0
+      },
+      "air": "urn:air:sdxl:lora:civitai:127018@177544",
+      "prompt": "lineart, LineAniAF",
+      "negative_prompt": "bad art, ugly, deformed, watermark, duplicated, colors, colorful, blurry, bokeh , full body",
+      "notes": "\n\nCivitAI Stats: 16,859 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Line Drawing",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.5
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:880102@2463976",
+      "notes": "\n\nCivitAI Stats: 946 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Pen & Ink Illustration",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.7,
+        "guidance_scale": 1.0
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:2344335@2636956",
+      "prompt": "phrsink, pen and ink illustration",
+      "notes": "\n\nCivitAI Stats: 69 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Perfect Ink Drawing (Engraving Style)",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 1.3,
+        "guidance_scale": 1.0
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:1717646@2458471",
+      "prompt": "1NK_H4TCH1NG",
+      "negative_prompt": "blurry ugly bad ",
+      "notes": "<p>Be sure to use high strength (aborve 1.0, best: 1.3)</p>\n\nCivitAI Stats: 743 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Real Humans",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 1.0
+      },
+      "air": "urn:air:sdxl:lora:civitai:232746@262705",
+      "prompt": "photo, portrait photo",
+      "notes": "\n\nCivitAI Stats: 26,798 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Retro Vintage Comics Style",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 1.0
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:1082272@2550274",
+      "negative_prompt": "Blurry, pixelated, low quality, grainy",
+      "notes": "<p>This is a later epoch than 1.03 and may be more true to style at the expense of reduced prompt coherency and more concept bleed.</p>\n\nCivitAI Stats: 875 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "TShirtDesignRedmond",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 7.0
+      },
+      "air": "urn:air:sdxl:lora:civitai:133031@178022",
+      "prompt": "T shirt design, TshirtDesignAF",
+      "negative_prompt": "bad art, ugly, deformed, watermark, duplicated,",
+      "notes": "\n\nCivitAI Stats: 9,815 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Wizard's Vintage Comic Book Cover",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 1.0
+      },
+      "air": "urn:air:sdxl:lora:civitai:210095@302504",
+      "prompt": "Vintage comic book with title text: \"xyz\", vintage comic book",
+      "notes": "<p>Grittier, less pulp and more focused on ink. Inspired by the underground comics of the 50s - 70s and artists like Will Eisner, Robert Crumb and Rand Holmes.</p><p>Hopefully you'll notice a better text coherace and better variations on the titles.</p>\n\nCivitAI Stats: 5,389 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "zyd232's Ink Style",
+      "base_architecture": "zimage",
+      "settings": {
+        "strength": 1.2
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:73305@2486884",
+      "prompt": "水墨风, ink style, zydink"
     }
   ]
 }

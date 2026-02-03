@@ -66,6 +66,7 @@ class Command(BaseCommand):
                         'base_architecture': model_data.get('base_architecture', 'sdxl'),
                         'steps': settings.get('steps', 28),
                         'guidance_scale': settings.get('guidance_scale', 3.5),
+                        'force_default_guidance': settings.get('force_default_guidance', False),
                         'default_width': settings.get('default_width', 1024),
                         'default_height': settings.get('default_height', 1024),
                         'max_pixels': settings.get('max_pixels', 1048576),
@@ -108,18 +109,27 @@ class Command(BaseCommand):
 
                 base_arch = lora_data.get('base_architecture', 'sdxl')
 
+                defaults_dict = {
+                    'label': lora_data['label'],
+                    'path': lora_data.get('path', ''),
+                    'air': lora_data.get('air', ''),
+                    'base_architecture': base_arch,
+                    'prompt_suffix': lora_data.get('prompt', ''),
+                    'negative_prompt_suffix': lora_data.get('negative_prompt', ''),
+                    'default_strength': settings.get('strength', 0.8),
+                    'notes': lora_data.get('notes', ''),
+                    'is_active': True,
+                }
+
+                # Add optional fields if present
+                if 'guidance_scale' in settings:
+                    defaults_dict['guidance_scale'] = settings['guidance_scale']
+                if 'clip_skip' in settings:
+                    defaults_dict['clip_skip'] = settings['clip_skip']
+
                 lora, created = LoraModel.objects.update_or_create(
                     **lookup,
-                    defaults={
-                        'label': lora_data['label'],
-                        'path': lora_data.get('path', ''),
-                        'air': lora_data.get('air', ''),
-                        'base_architecture': base_arch,
-                        'prompt_suffix': lora_data.get('prompt', ''),
-                        'negative_prompt_suffix': lora_data.get('negative_prompt', ''),
-                        'default_strength': settings.get('strength', 0.8),
-                        'is_active': True,
-                    }
+                    defaults=defaults_dict
                 )
 
                 if created:

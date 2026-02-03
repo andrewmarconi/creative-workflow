@@ -22,7 +22,7 @@ from huggingface_hub import scan_cache_dir
 from django_celery_results.models import TaskResult, GroupResult
 from django_celery_results.admin import TaskResultAdmin as BaseTaskResultAdmin
 from django_celery_results.admin import GroupResultAdmin as BaseGroupResultAdmin
-from .models import DiffusionModel, LoraModel, Prompt, DiffusionJob
+from .models import DiffusionModel, LoraModel, Prompt, DiffusionJob, BASE_ARCHITECTURE_CHOICES
 
 
 # ---------------------------------------------------------------------------
@@ -161,6 +161,8 @@ class LoraModelAdmin(ModelAdmin):
     list_filter = ['is_active', 'base_architecture']
     search_fields = ['label', 'path', 'air']
     readonly_fields = ['created_at', 'updated_at', 'show_token_counts']
+    actions = ['refresh_metadata_bulk_action']
+    actions_row = ['refresh_metadata_action']
 
     fieldsets = (
         (_("LoRA"), {
@@ -174,9 +176,10 @@ class LoraModelAdmin(ModelAdmin):
         (_("Prompt & Settings"), {
             "classes": ["tab"],
             "fields": (
-                 'default_strength',
+                 ('default_strength', 'guidance_scale', 'clip_skip'),
                  ('prompt_suffix', 'negative_prompt_suffix'),
                  'show_token_counts',
+                 'notes',
                 ),
         }),
         (_("Metadata"), {
@@ -236,6 +239,369 @@ class LoraModelAdmin(ModelAdmin):
     @display(description=_("Active"), boolean=True)
     def show_active(self, obj):
         return obj.is_active
+
+    # --- Row actions ---
+
+    @action(description=_("Refresh Metadata"))
+    def refresh_metadata_action(self, request, object_id):
+        """Refresh metadata from CivitAI for a LoRA."""
+        return redirect('admin:refresh_lora_metadata', object_id)
+
+    # --- Bulk actions ---
+
+    @action(description=_("Refresh metadata from CivitAI"))
+    def refresh_metadata_bulk_action(self, request, queryset):
+        """Refresh metadata from CivitAI for selected LoRAs."""
+        from lib.civitai import parse_air, fetch_model_version_metadata, extract_lora_metadata
+
+        # Filter for LoRAs with AIRs
+        loras_with_air = queryset.exclude(air='')
+        total_selected = queryset.count()
+        processable = loras_with_air.count()
+
+        if processable == 0:
+            self.message_user(
+                request,
+                "None of the selected LoRAs have CivitAI AIRs configured.",
+                level=messages.WARNING
+            )
+            return
+
+        updated_count = 0
+        failed_count = 0
+        skipped_count = 0
+        error_messages = []
+
+        for lora in loras_with_air:
+            try:
+                model_id, version_id = parse_air(lora.air)
+
+                # Fetch fresh metadata from CivitAI
+                raw_metadata = fetch_model_version_metadata(version_id, settings.CIVITAI_API_KEY)
+                extracted = extract_lora_metadata(raw_metadata)
+
+                # Track if anything changed
+                changed = False
+
+                # Update label if it was auto-generated or empty
+                if not lora.label or lora.label.startswith('CivitAI Model'):
+                    if extracted.get('label') and extracted['label'] != lora.label:
+                        lora.label = extracted['label']
+                        changed = True
+
+                # Update fields if they differ
+                if 'base_architecture' in extracted and lora.base_architecture != extracted['base_architecture']:
+                    lora.base_architecture = extracted['base_architecture']
+                    changed = True
+
+                if 'prompt_suffix' in extracted and lora.prompt_suffix != extracted['prompt_suffix']:
+                    lora.prompt_suffix = extracted['prompt_suffix']
+                    changed = True
+
+                if 'negative_prompt_suffix' in extracted and lora.negative_prompt_suffix != extracted['negative_prompt_suffix']:
+                    lora.negative_prompt_suffix = extracted['negative_prompt_suffix']
+                    changed = True
+
+                if 'guidance_scale' in extracted and lora.guidance_scale != extracted.get('guidance_scale'):
+                    lora.guidance_scale = extracted['guidance_scale']
+                    changed = True
+
+                if 'notes' in extracted:
+                    lora.notes = extracted['notes']
+                    changed = True  # Always consider notes as updated (stats change)
+
+                if changed:
+                    lora.save()
+                    updated_count += 1
+                else:
+                    skipped_count += 1
+
+            except Exception as e:
+                failed_count += 1
+                error_messages.append(f"{lora.label}: {str(e)}")
+
+        # Build result message
+        messages_list = []
+        if updated_count > 0:
+            messages_list.append(f"{updated_count} LoRA(s) updated")
+        if skipped_count > 0:
+            messages_list.append(f"{skipped_count} unchanged")
+        if failed_count > 0:
+            messages_list.append(f"{failed_count} failed")
+
+        result_message = f"Metadata refresh complete: {', '.join(messages_list)}."
+
+        if failed_count > 0 and len(error_messages) <= 5:
+            result_message += f" Errors: {'; '.join(error_messages[:5])}"
+        elif failed_count > 5:
+            result_message += f" Errors: {'; '.join(error_messages[:5])} (and {failed_count - 5} more)"
+
+        if updated_count > 0:
+            self.message_user(request, result_message, level=messages.SUCCESS)
+        elif skipped_count > 0:
+            self.message_user(request, result_message, level=messages.INFO)
+        else:
+            self.message_user(request, result_message, level=messages.WARNING)
+
+    def change_form_buttons(self, request, obj=None, add=False):
+        """Add custom Download and Refresh Metadata buttons to the change form for LoRAs with AIR."""
+        buttons = super().change_form_buttons(request, obj, add)
+
+        if obj and obj.air and not add:
+            # Check if already downloaded
+            is_downloaded = self.show_downloaded(obj)
+            button_title = 'Re-download from CivitAI' if is_downloaded else 'Download from CivitAI'
+
+            buttons.append({
+                'title': button_title,
+                'url': reverse('admin:download_lora', args=[obj.pk]),
+                'attrs': {
+                    'class': 'button',
+                }
+            })
+
+            # Add refresh metadata button
+            buttons.append({
+                'title': 'Refresh Metadata from CivitAI',
+                'url': reverse('admin:refresh_lora_metadata', args=[obj.pk]),
+                'attrs': {
+                    'class': 'button',
+                }
+            })
+
+        return buttons
+
+    def get_urls(self):
+        """Add custom URL for download action."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<int:lora_id>/download/',
+                self.admin_site.admin_view(self.download_lora_view),
+                name='download_lora',
+            ),
+            path(
+                '<int:lora_id>/refresh-metadata/',
+                self.admin_site.admin_view(self.refresh_metadata_view),
+                name='refresh_lora_metadata',
+            ),
+            path(
+                'import-from-civitai/',
+                self.admin_site.admin_view(self.import_from_civitai_view),
+                name='import_lora_from_civitai',
+            ),
+        ]
+        return custom_urls + urls
+
+    def download_lora_view(self, request, lora_id):
+        """Handle the download action by queuing a Celery task."""
+        from .tasks import download_lora_task
+
+        lora = LoraModel.objects.get(pk=lora_id)
+
+        if not lora.air:
+            messages.error(request, f'LoRA "{lora.label}" has no CivitAI AIR configured.')
+            return redirect('admin:diffusion_loramodel_change', lora_id)
+
+        # Queue the download task
+        download_lora_task.apply_async(args=[lora_id], queue='default')
+
+        messages.info(
+            request,
+            f'Download started for "{lora.label}" in background. '
+            f'Check logs or refresh page to verify completion.'
+        )
+
+        return redirect('admin:diffusion_loramodel_change', lora_id)
+
+    def refresh_metadata_view(self, request, lora_id):
+        """Refresh metadata from CivitAI for an existing LoRA."""
+        lora = LoraModel.objects.get(pk=lora_id)
+
+        if not lora.air:
+            messages.error(request, f'LoRA "{lora.label}" has no CivitAI AIR configured.')
+            return redirect('admin:diffusion_loramodel_change', lora_id)
+
+        try:
+            from lib.civitai import parse_air, fetch_model_version_metadata, extract_lora_metadata
+
+            model_id, version_id = parse_air(lora.air)
+
+            # Fetch fresh metadata from CivitAI
+            raw_metadata = fetch_model_version_metadata(version_id, settings.CIVITAI_API_KEY)
+            extracted = extract_lora_metadata(raw_metadata)
+
+            # Track what fields were updated
+            updated_fields = []
+
+            # Update label if it was auto-generated or empty
+            if not lora.label or lora.label.startswith('CivitAI Model'):
+                if extracted.get('label'):
+                    lora.label = extracted['label']
+                    updated_fields.append('label')
+
+            # Always update these fields with fresh data
+            if 'base_architecture' in extracted:
+                old_arch = lora.base_architecture
+                lora.base_architecture = extracted['base_architecture']
+                if old_arch != lora.base_architecture:
+                    updated_fields.append('base_architecture')
+
+            if 'prompt_suffix' in extracted:
+                lora.prompt_suffix = extracted['prompt_suffix']
+                updated_fields.append('trigger words')
+
+            if 'negative_prompt_suffix' in extracted:
+                lora.negative_prompt_suffix = extracted['negative_prompt_suffix']
+                updated_fields.append('negative prompt')
+
+            if 'guidance_scale' in extracted:
+                lora.guidance_scale = extracted['guidance_scale']
+                updated_fields.append('guidance scale')
+
+            if 'notes' in extracted:
+                lora.notes = extracted['notes']
+                updated_fields.append('notes/stats')
+
+            lora.save()
+
+            if updated_fields:
+                messages.success(
+                    request,
+                    f'Metadata refreshed for "{lora.label}". Updated: {", ".join(updated_fields)}.'
+                )
+            else:
+                messages.info(request, f'Metadata fetched but no changes detected for "{lora.label}".')
+
+        except Exception as e:
+            messages.error(request, f'Failed to refresh metadata: {e}')
+
+        return redirect('admin:diffusion_loramodel_change', lora_id)
+
+    def import_from_civitai_view(self, request):
+        """Handle importing a LoRA from CivitAI by AIR."""
+        from django.template.response import TemplateResponse
+        from .tasks import download_lora_task
+
+        # Handle form submission
+        if request.method == 'POST':
+            air = request.POST.get('air', '').strip()
+            label = request.POST.get('label', '').strip()
+            base_architecture = request.POST.get('base_architecture', 'sdxl')
+            prompt_suffix = request.POST.get('prompt_suffix', '').strip()
+            negative_prompt_suffix = request.POST.get('negative_prompt_suffix', '').strip()
+            notes = request.POST.get('notes', '').strip()
+            guidance_scale_str = request.POST.get('guidance_scale', '').strip()
+
+            # Validate AIR format
+            if not air:
+                messages.error(request, 'AIR is required.')
+                return redirect('admin:import_lora_from_civitai')
+
+            # Parse AIR to validate format
+            try:
+                from lib.civitai import parse_air
+                model_id, version_id = parse_air(air)
+            except ValueError as e:
+                messages.error(request, f'Invalid AIR format: {e}')
+                return redirect('admin:import_lora_from_civitai')
+
+            # Auto-generate label if not provided
+            if not label:
+                label = f"CivitAI Model {model_id} v{version_id}"
+
+            # Parse guidance_scale if provided
+            guidance_scale = None
+            if guidance_scale_str:
+                try:
+                    guidance_scale = float(guidance_scale_str)
+                except ValueError:
+                    pass
+
+            # Create the LoRA model with all fields
+            lora = LoraModel.objects.create(
+                label=label,
+                air=air,
+                base_architecture=base_architecture,
+                prompt_suffix=prompt_suffix,
+                negative_prompt_suffix=negative_prompt_suffix,
+                notes=notes,
+                guidance_scale=guidance_scale,
+                is_active=True,
+            )
+
+            # Queue the download task
+            download_lora_task.apply_async(args=[lora.id], queue='default')
+
+            messages.success(
+                request,
+                f'LoRA "{label}" created and download queued. '
+                f'Check the LoRA details page to verify completion.'
+            )
+
+            return redirect('admin:diffusion_loramodel_change', lora.id)
+
+        # Handle GET request - optionally fetch metadata if AIR provided
+        initial_data = {
+            'air': request.GET.get('air', ''),
+            'label': '',
+            'base_architecture': 'sdxl',
+            'prompt_suffix': '',
+            'negative_prompt_suffix': '',
+            'notes': '',
+            'guidance_scale': '',
+        }
+
+        metadata_fetched = False
+        fetch_error = None
+
+        # If AIR is provided in query params, fetch metadata
+        if initial_data['air']:
+            try:
+                from lib.civitai import parse_air, fetch_model_version_metadata, extract_lora_metadata
+
+                model_id, version_id = parse_air(initial_data['air'])
+
+                # Fetch metadata from CivitAI API
+                raw_metadata = fetch_model_version_metadata(version_id, settings.CIVITAI_API_KEY)
+                extracted = extract_lora_metadata(raw_metadata)
+
+                # Update initial data with extracted metadata
+                initial_data.update(extracted)
+                metadata_fetched = True
+
+                messages.info(
+                    request,
+                    f'Metadata fetched from CivitAI. Review and edit fields below before importing.'
+                )
+
+            except Exception as e:
+                fetch_error = str(e)
+                messages.warning(
+                    request,
+                    f'Could not fetch metadata from CivitAI: {e}. You can still import manually.'
+                )
+
+        # Render the form
+        return TemplateResponse(
+            request,
+            'admin/diffusion/loramodel/import_from_civitai.html',
+            {
+                **self.admin_site.each_context(request),
+                'title': _('Import LoRA from CivitAI'),
+                'opts': self.model._meta,
+                'base_architecture_choices': BASE_ARCHITECTURE_CHOICES,
+                'initial_data': initial_data,
+                'metadata_fetched': metadata_fetched,
+                'fetch_error': fetch_error,
+            },
+        )
+
+    def changelist_view(self, request, extra_context=None):
+        """Override changelist to add import button context."""
+        extra_context = extra_context or {}
+        extra_context['import_from_civitai_url'] = reverse('admin:import_lora_from_civitai')
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 # ---------------------------------------------------------------------------
@@ -450,6 +816,27 @@ class DiffusionJobAdmin(ModelAdmin):
         )
         return super().changeform_view(request, object_id, form_url, extra_context)
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """Filter LoRA choices based on the selected model's architecture."""
+        if db_field.name == "lora_model":
+            # Get the job being edited (if any)
+            object_id = request.resolver_match.kwargs.get('object_id')
+            if object_id:
+                try:
+                    job = DiffusionJob.objects.get(pk=object_id)
+                    if job.diffusion_model:
+                        # Filter LoRAs to match the job's model architecture
+                        kwargs["queryset"] = LoraModel.objects.filter(
+                            is_active=True,
+                            base_architecture=job.diffusion_model.base_architecture
+                        )
+                except DiffusionJob.DoesNotExist:
+                    pass
+            # For new jobs, show only active LoRAs (JavaScript will filter dynamically)
+            if "queryset" not in kwargs:
+                kwargs["queryset"] = LoraModel.objects.filter(is_active=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     list_display = [
         'show_id', 'show_status', 'diffusion_model', 'lora_model',
         'show_prompt', 'num_images', 'created_at', 'show_duration',
@@ -458,7 +845,7 @@ class DiffusionJobAdmin(ModelAdmin):
     search_fields = ['rq_job_id', 'prompt__source_prompt']
     readonly_fields = [
         'rq_job_id', 'status', 'created_at', 'started_at', 'completed_at',
-        'show_result_images', 'show_duration',
+        'show_result_images', 'show_generation_metadata', 'show_duration',
     ]
     actions = ['queue_jobs_action', 'cancel_jobs_action', 'retry_failed_jobs']
     actions_row = ['queue_single_action', 'retry_single_action', 'cancel_single_action']
@@ -484,7 +871,7 @@ class DiffusionJobAdmin(ModelAdmin):
         }),
         (_("Results"), {
             "classes": ["tab"],
-            "fields": ('show_result_images',),
+            "fields": ('show_result_images', 'show_generation_metadata'),
         }),
         (_("Timing"), {
             "classes": ["tab"],
@@ -549,6 +936,19 @@ class DiffusionJobAdmin(ModelAdmin):
                 f'</a>'
             )
         return mark_safe(''.join(html_parts))
+
+    @display(description=_("Generation Metadata"))
+    def show_generation_metadata(self, obj):
+        """Display generation metadata as formatted JSON"""
+        if not obj.generation_metadata:
+            return "No metadata available"
+
+        import json
+        formatted_json = json.dumps(obj.generation_metadata, indent=2, ensure_ascii=False)
+        return format_html(
+            '<pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; max-height: 500px;">{}</pre>',
+            formatted_json
+        )
 
     # --- Row actions ---
 
