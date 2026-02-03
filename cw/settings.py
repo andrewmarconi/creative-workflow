@@ -216,6 +216,76 @@ MODEL_BASE_PATH = Path(os.getenv('MODEL_BASE_PATH', BASE_DIR / 'models'))
 CIVITAI_API_KEY = os.getenv('CIVITAI_API_KEY', '')
 
 
+# Logging Configuration
+# Creates logs directory and configures Django and Celery logging
+
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'django_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'django.log',
+            'maxBytes': 10485760,  # 10MB
+            'backupCount': 5,
+            'formatter': 'json',
+        },
+        'celery_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'celery.log',
+            'maxBytes': 10485760,  # 10MB
+            'backupCount': 5,
+            'formatter': 'json',
+        },
+        'tasks_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'tasks.log',
+            'maxBytes': 10485760,  # 10MB
+            'backupCount': 5,
+            'formatter': 'json',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'django_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['console', 'celery_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'cw.diffusion.tasks': {
+            'handlers': ['console', 'tasks_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+
 # Celery Configuration
 # https://docs.celeryproject.org/en/stable/userguide/configuration.html
 
@@ -260,4 +330,14 @@ CELERY_TASK_QUEUES = {
         'routing_key': 'enhancement',
     },
 }
+
+
+# OpenTelemetry Configuration (SigNoz)
+# Enable observability by setting OTEL_ENABLED=true in environment
+
+# Initialize OpenTelemetry instrumentation if enabled
+# This will instrument Django, Celery, and logging automatically
+if os.getenv('OTEL_ENABLED', 'false').lower() == 'true':
+    from cw.otel import setup_opentelemetry
+    setup_opentelemetry()
 

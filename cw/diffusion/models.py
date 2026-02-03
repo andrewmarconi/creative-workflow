@@ -89,6 +89,10 @@ class DiffusionModel(models.Model):
         default=False,
         help_text="Whether this model supports negative prompts"
     )
+    force_default_guidance = models.BooleanField(
+        default=False,
+        help_text="Force model's default guidance_scale (Turbo models). Prevents LoRA/job overrides."
+    )
     max_sequence_length = models.IntegerField(
         blank=True,
         null=True,
@@ -123,6 +127,7 @@ class DiffusionModel(models.Model):
         return {
             "steps": self.steps,
             "guidance_scale": self.guidance_scale,
+            "force_default_guidance": self.force_default_guidance,
             "default_width": self.default_width,
             "default_height": self.default_height,
             "max_pixels": self.max_pixels,
@@ -174,6 +179,22 @@ class LoraModel(models.Model):
         validators=[MinValueValidator(0.0), MaxValueValidator(2.0)],
         help_text="Default LoRA strength/weight"
     )
+    guidance_scale = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0.0), MaxValueValidator(20.0)],
+        help_text="Override guidance scale (CFG) when using this LoRA. Leave blank to use model/job default."
+    )
+    clip_skip = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(12)],
+        help_text="Number of CLIP layers to skip (1-12). Leave blank to use model default. Commonly 1 or 2 for anime/artistic styles."
+    )
+    notes = models.TextField(
+        blank=True,
+        help_text="Internal notes about this LoRA (usage tips, characteristics, etc.)"
+    )
 
     # Metadata
     is_active = models.BooleanField(default=True, help_text="Enable/disable this LoRA")
@@ -190,9 +211,14 @@ class LoraModel(models.Model):
 
     def get_settings_dict(self):
         """Return settings as a dictionary matching presets.json format."""
-        return {
+        settings = {
             "strength": self.default_strength
         }
+        if self.guidance_scale is not None:
+            settings["guidance_scale"] = self.guidance_scale
+        if self.clip_skip is not None:
+            settings["clip_skip"] = self.clip_skip
+        return settings
 
 
 class Prompt(models.Model):
@@ -357,6 +383,11 @@ class DiffusionJob(models.Model):
         blank=True,
         default=list,
         help_text="List of generated image paths"
+    )
+    generation_metadata = models.JSONField(
+        null=True,
+        blank=True,
+        help_text="Complete generation settings used (prompt, seed, parameters, etc.)"
     )
     error_message = models.TextField(
         blank=True,

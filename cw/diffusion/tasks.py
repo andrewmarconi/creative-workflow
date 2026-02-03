@@ -11,11 +11,14 @@ This allows tasks to use GPU acceleration (MPS on Apple Silicon, CUDA on NVIDIA)
 """
 import sys
 import os
+import logging
 from pathlib import Path
 from datetime import datetime
 from django.conf import settings
 from django.utils import timezone
 from celery import shared_task
+
+logger = logging.getLogger(__name__)
 
 # Add lib directory to Python path
 lib_path = Path(settings.BASE_DIR) / 'lib'
@@ -23,6 +26,7 @@ if str(lib_path) not in sys.path:
     sys.path.insert(0, str(lib_path))
 
 from lib.prompt_enhancer import HFPromptEnhancer
+from lib.civitai import download_lora, parse_air
 
 # Module-level enhancer cache: keeps the LLM warm between task invocations.
 _enhancer_cache = {}  # {model_id: HFPromptEnhancer}
@@ -98,6 +102,63 @@ def _evict_enhancer():
         torch.mps.empty_cache()
 
 
+@shared_task(bind=True, name='cw.diffusion.tasks.download_lora_task')
+def download_lora_task(self, lora_id):
+    """
+    Download a LoRA from CivitAI in the background.
+
+    Args:
+        lora_id: ID of the LoraModel to download
+
+    Returns:
+        Dict with download results
+    """
+    from cw.diffusion.models import LoraModel
+
+    lora = LoraModel.objects.get(id=lora_id)
+
+    if not lora.air:
+        return {
+            'status': 'failed',
+            'lora_id': lora_id,
+            'error': 'No AIR URN configured for this LoRA'
+        }
+
+    try:
+        # Derive filename from AIR URN
+        _, version_id = parse_air(lora.air)
+        dest_path = str(settings.MODEL_BASE_PATH / 'loras' / f'civitai_{version_id}.safetensors')
+
+        # Check if already downloaded
+        if Path(dest_path).exists():
+            logger.info(f"LoRA '{lora.label}' already exists at {dest_path}")
+            return {
+                'status': 'skipped',
+                'lora_id': lora_id,
+                'message': 'LoRA file already exists',
+                'path': dest_path
+            }
+
+        # Download the file
+        logger.info(f"Downloading LoRA '{lora.label}' from CivitAI (version {version_id})")
+        downloaded_path = download_lora(lora.air, dest_path, settings.CIVITAI_API_KEY)
+
+        logger.info(f"Successfully downloaded LoRA '{lora.label}' to {downloaded_path}")
+        return {
+            'status': 'success',
+            'lora_id': lora_id,
+            'path': downloaded_path
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to download LoRA '{lora.label}': {e}")
+        return {
+            'status': 'failed',
+            'lora_id': lora_id,
+            'error': str(e)
+        }
+
+
 @shared_task(bind=True, name='cw.diffusion.tasks.generate_images_task')
 def generate_images_task(self, job_id):
     """
@@ -157,6 +218,10 @@ def generate_images_task(self, job_id):
                 }
             }
 
+            # Add clip_skip if set on LoRA
+            if job.lora_model.clip_skip is not None:
+                lora_config['settings']['clip_skip'] = job.lora_model.clip_skip
+
             # Auto-download from CivitAI if file missing and AIR is set
             if not Path(lora_path).exists() and job.lora_model.air:
                 from lib.civitai import download_lora
@@ -172,32 +237,28 @@ def generate_images_task(self, job_id):
             print(f"DEBUG: LoRA load result: {load_result}")
 
         # Prepare generation parameters (matching BaseModel.generate() signature)
+        # BaseModel.generate() handles all LoRA overrides internally via _resolve_guidance_scale()
+        # and _build_prompts() (appends LoRA trigger words and negative prompts)
         gen_params = {
             'prompt': params['prompt'],
+            'negative_prompt': params.get('negative_prompt'),
             'width': params['width'],
             'height': params['height'],
-            'steps': params['steps'],  # Not 'num_inference_steps'
+            'steps': params['steps'],
             'guidance_scale': params['guidance_scale'],
             'seed': params.get('seed'),
         }
 
-        # Add negative prompt if supported, appending LoRA negative suffix
-        if 'negative_prompt' in params:
-            neg = params['negative_prompt'] or ''
-            if job.lora_model:
-                lora_neg = job.lora_model.negative_prompt_suffix
-                if lora_neg:
-                    neg = f"{neg}, {lora_neg}" if neg.strip() else lora_neg
-            gen_params['negative_prompt'] = neg
-
-        # Debug: Log final generation parameters
-        print(f"DEBUG: Final prompt: '{gen_params['prompt']}'")
-        if 'negative_prompt' in gen_params:
-            print(f"DEBUG: Final negative prompt: '{gen_params['negative_prompt']}'")
-        print(f"DEBUG: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}")
+        # Debug: Log generation parameters being passed to model
+        # Note: BaseModel may modify these (LoRA triggers, guidance_scale resolution, etc.)
+        print(f"DEBUG: Input prompt: '{gen_params['prompt']}'")
+        if gen_params.get('negative_prompt'):
+            print(f"DEBUG: Input negative prompt: '{gen_params['negative_prompt']}'")
+        print(f"DEBUG: Input params: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}")
 
         # Generate images (loop for multiple images since generate() returns single image)
         saved_paths = []
+        images_metadata = []  # Collect metadata for each image
         media_dir = Path(settings.MEDIA_ROOT) / 'diffusion'
         media_dir.mkdir(parents=True, exist_ok=True)
 
@@ -211,8 +272,37 @@ def generate_images_task(self, job_id):
             # Randomize seed for each image unless explicitly set
             if params.get('seed') is None:
                 gen_params['seed'] = random.randint(0, 2**32 - 1)
-            print(f"DEBUG: Generating image {idx+1}/{num_images}, seed={gen_params['seed']}")
+
+            logger.info(f"Generating image {idx+1}/{num_images} (seed: {gen_params['seed']}, steps: {gen_params['steps']})")
+
+            # Progress callback for generation (defensive implementation)
+            # Try to handle multiple possible signatures
+            total_steps = gen_params['steps']
+            callback_called = [False]  # Track if callback is ever called
+
+            def gen_progress(*args, **kwargs):
+                # Log first call to see actual signature
+                if not callback_called[0]:
+                    logger.info(f"  Callback CALLED! args={len(args)}, kwargs={list(kwargs.keys())}")
+                    callback_called[0] = True
+
+                # Try to extract step number from various possible signatures
+                step = None
+                if len(args) >= 2:
+                    # Could be (step, timestep, ...) or (pipe, step, timestep, ...)
+                    step = args[0] if isinstance(args[0], int) else args[1] if len(args) > 1 and isinstance(args[1], int) else None
+
+                if step is not None and (step == 0 or step % 5 == 0 or step == total_steps - 1):
+                    logger.info(f"  Step {step+1}/{total_steps}")
+
+                # Return callback_kwargs if it's the last argument
+                if args and isinstance(args[-1], dict):
+                    return args[-1]
+                return kwargs if kwargs else None
+
+            gen_params['progress_callback'] = gen_progress
             image, metadata = model.generate(**gen_params)
+            logger.info(f"Image {idx+1}/{num_images} generated successfully")
 
             # Filename: {jobID}.{imageNo}-{promptID}-{modelID}-{loraID}.jpg
             img_no = idx + 1 if num_images > 1 else 0
@@ -224,8 +314,54 @@ def generate_images_task(self, job_id):
             rel_path = str(filepath.relative_to(settings.MEDIA_ROOT))
             saved_paths.append(rel_path)
 
+            # Collect metadata for this image
+            images_metadata.append({
+                'image_index': idx,
+                'filename': filename,
+                'seed': gen_params.get('seed'),
+                'pipeline_metadata': metadata
+            })
+
+        # Build comprehensive generation metadata using actual values from pipeline
+        # Use first image's pipeline metadata for common parameters (all images use same settings except seed)
+        first_pipeline_meta = images_metadata[0]['pipeline_metadata'] if images_metadata else {}
+
+        generation_metadata = {
+            'model': {
+                'slug': job.diffusion_model.slug,
+                'label': job.diffusion_model.label,
+                'path': job.diffusion_model.path,
+                'pipeline': job.diffusion_model.pipeline,
+                'base_architecture': job.diffusion_model.base_architecture,
+            },
+            'lora': {
+                'label': job.lora_model.label,
+                'path': job.lora_model.path,
+                'air': job.lora_model.air,
+                'strength': params.get('lora_strength', job.lora_model.default_strength),
+                'guidance_scale': job.lora_model.guidance_scale,
+                'clip_skip': job.lora_model.clip_skip,
+            } if job.lora_model else None,
+            'prompt': {
+                'source': job.prompt.source_prompt,
+                'enhanced': job.prompt.enhanced_prompt,
+                'final': first_pipeline_meta.get('prompt', gen_params['prompt']),  # Use actual prompt with LoRA triggers
+                'negative': first_pipeline_meta.get('negative_prompt', gen_params.get('negative_prompt')),
+            },
+            'parameters': {
+                'width': first_pipeline_meta.get('width', gen_params['width']),
+                'height': first_pipeline_meta.get('height', gen_params['height']),
+                'steps': first_pipeline_meta.get('steps', gen_params['steps']),
+                'guidance_scale': first_pipeline_meta.get('guidance_scale', gen_params['guidance_scale']),  # Use ACTUAL guidance_scale
+                'num_images': num_images,
+            },
+            'images': images_metadata,
+            'generated_at': timezone.now().isoformat(),
+        }
+
         # Update job with results
         job.result_images = saved_paths
+        job.generation_metadata = generation_metadata
         job.status = 'completed'
         job.completed_at = timezone.now()
         job.save()
@@ -312,9 +448,18 @@ def _load_model_instance(diffusion_model):
     }
 
     # Instantiate and load the model
-    print(f"DEBUG: Loading model '{slug}' (cold start)")
+    logger.info(f"Loading model '{slug}' (cold start) - this may take several minutes for first download...")
     model_instance = ModelFactory.create_model(model_config, diffusion_model.path)
-    result = model_instance.load_pipeline()
+
+    # Progress callback for model loading
+    def log_progress(progress=None, desc=None):
+        if desc:
+            logger.info(f"Model '{slug}': {desc}")
+        elif progress is not None:
+            logger.info(f"Model '{slug}': {progress}")
+
+    result = model_instance.load_pipeline(progress_callback=log_progress)
+    logger.info(f"Model '{slug}' loaded successfully: {result}")
 
     # Only cache if pipeline actually loaded
     if model_instance.pipeline is None:

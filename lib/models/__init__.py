@@ -4,6 +4,7 @@ Modular model classes for different diffusion pipelines
 """
 
 from .base import BaseModel
+from .mixins import CLIPTokenLimitMixin, DebugLoggingMixin
 from .zimageturbo import ZImageTurboModel
 from .flux import FluxModel
 from .qwen import QwenImageModel
@@ -45,4 +46,15 @@ class ModelFactory:
             raise ValueError(f"Unknown pipeline type: {pipeline_name}")
 
 
-__all__ = ["BaseModel", "ZImageTurboModel", "FluxModel", "QwenImageModel", "SDXLTurboModel", "SDXLModel", "SD15Model", "ModelFactory"]
+__all__ = [
+    "BaseModel",
+    "CLIPTokenLimitMixin",
+    "DebugLoggingMixin",
+    "ZImageTurboModel",
+    "FluxModel",
+    "QwenImageModel",
+    "SDXLTurboModel",
+    "SDXLModel",
+    "SD15Model",
+    "ModelFactory",
+]
