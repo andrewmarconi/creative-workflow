@@ -174,6 +174,31 @@ UNFOLD = {
                 ],
             },
             {
+                "title": "TV Spots",
+                "items": [
+                    {
+                        "title": "TV Spots",
+                        "icon": "live_tv",
+                        "link": "/admin/diffusion/tvspot/",
+                    },
+                    {
+                        "title": "Versions",
+                        "icon": "description",
+                        "link": "/admin/diffusion/tvspotversion/",
+                    },
+                    {
+                        "title": "Storyboards",
+                        "icon": "dashboard",
+                        "link": "/admin/diffusion/storyboardjob/",
+                    },
+                    {
+                        "title": "Markets",
+                        "icon": "public",
+                        "link": "/admin/diffusion/adaptationmarket/",
+                    },
+                ],
+            },
+            {
                 "title": "Celery",
                 "collapsible": True,
                 "items": [

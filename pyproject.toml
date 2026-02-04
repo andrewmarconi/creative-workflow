@@ -35,6 +35,7 @@ dependencies = [
     "tqdm>=4.67.2",
     "transformers~=4.45",
     "werkzeug>=3.1.5",
+    "outlines>=1.2.9",
 ]
 
 [dependency-groups]
