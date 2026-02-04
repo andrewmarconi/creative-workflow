@@ -1453,7 +1453,7 @@ class TvSpotVersionAdmin(ModelAdmin):
         return obj.is_active
 
     def get_urls(self):
-        """Add custom URLs for storyboard generation."""
+        """Add custom URLs for storyboard generation and viewing."""
         urls = super().get_urls()
         custom_urls = [
             path(
@@ -1461,14 +1461,33 @@ class TvSpotVersionAdmin(ModelAdmin):
                 self.admin_site.admin_view(self.generate_storyboard_view),
                 name='diffusion_tvspotversion_generate_storyboard',
             ),
+            path(
+                '<int:object_id>/storyboard/',
+                self.admin_site.admin_view(self.storyboard_view),
+                name='diffusion_tvspotversion_storyboard',
+            ),
         ]
         return custom_urls + urls
 
     def change_form_buttons(self, request, obj=None, add=False):
-        """Add custom Generate Storyboard button to the change form."""
+        """Add custom storyboard buttons to the change form."""
         buttons = super().change_form_buttons(request, obj, add)
 
         if obj and not add and obj.script_rows.exists():
+            # Add View Storyboard button if there are any storyboard images
+            has_storyboard = obj.storyboard_jobs.filter(
+                images__diffusion_job__result_images__len__gt=0
+            ).exists()
+
+            if has_storyboard:
+                buttons.append({
+                    'title': 'View Storyboard',
+                    'url': reverse('admin:diffusion_tvspotversion_storyboard', args=[obj.pk]),
+                    'attrs': {
+                        'class': 'button',
+                    }
+                })
+
             buttons.append({
                 'title': 'Generate Storyboard',
                 'url': reverse('admin:diffusion_tvspotversion_generate_storyboard', args=[obj.pk]),
@@ -1540,6 +1559,70 @@ class TvSpotVersionAdmin(ModelAdmin):
                 'models': models,
                 'loras': loras,
                 'existing_jobs': existing_jobs,
+            },
+        )
+
+    def storyboard_view(self, request, object_id):
+        """Display the storyboard viewer for a TV spot version."""
+        from django.template.response import TemplateResponse
+        from django.conf import settings as django_settings
+        import os
+
+        version = TvSpotVersion.objects.get(pk=object_id)
+
+        # Get the most recent storyboard job
+        storyboard_job = version.storyboard_jobs.order_by('-created_at').first()
+
+        # Build frame data from storyboard images
+        frames = []
+        completed_count = 0
+        processing_count = 0
+        pending_count = 0
+
+        if storyboard_job:
+            for image in storyboard_job.images.all().select_related(
+                'script_row', 'diffusion_job'
+            ).order_by('script_row__order_index', 'image_index'):
+                diffusion_job = image.diffusion_job
+                script_row = image.script_row
+
+                # Get image URL if completed
+                image_url = None
+                if diffusion_job.result_images:
+                    # Get the first image path
+                    img_path = diffusion_job.result_images[0]
+                    image_url = os.path.join(django_settings.MEDIA_URL, img_path)
+
+                # Track status counts
+                if diffusion_job.status == 'completed':
+                    completed_count += 1
+                elif diffusion_job.status == 'processing':
+                    processing_count += 1
+                else:
+                    pending_count += 1
+
+                frames.append({
+                    'shot_number': script_row.shot_number or f"{script_row.order_index + 1:02d}",
+                    'visual_text': script_row.visual_text,
+                    'audio_text': script_row.audio_text,
+                    'image_url': image_url,
+                    'status': diffusion_job.status,
+                    'image_index': image.image_index,
+                })
+
+        return TemplateResponse(
+            request,
+            'admin/diffusion/tvspotversion/storyboard_view.html',
+            {
+                **self.admin_site.each_context(request),
+                'title': _('Storyboard'),
+                'opts': self.model._meta,
+                'version': version,
+                'storyboard_job': storyboard_job,
+                'frames': frames,
+                'completed_count': completed_count,
+                'processing_count': processing_count,
+                'pending_count': pending_count,
             },
         )
 
