@@ -47,12 +47,14 @@ class StoryboardGenerator:
     def _get_enhancer(self):
         """Get or create the prompt enhancer."""
         if self._enhancer is None and self.use_llm:
+            logger.debug(f"Creating HFPromptEnhancer with model: {self.model_id}")
             from lib.prompt_enhancer import HFPromptEnhancer
             self._enhancer = HFPromptEnhancer(
                 model_id=self.model_id,
                 style="cinematic",
                 creativity=0.7,
             )
+            logger.debug("HFPromptEnhancer created")
         return self._enhancer
 
     def generate_prompt(
@@ -74,13 +76,17 @@ class StoryboardGenerator:
         Returns:
             Dict with 'prompt' and optionally 'negative_prompt'
         """
+        logger.debug(f"Generating prompt from visual_text: {visual_text[:80]}...")
+
         # Build base prompt from visual description
         # Extract key visual elements, ignoring timing/technical notes
         base_prompt = self._extract_visual_elements(visual_text)
+        logger.debug(f"Extracted visual elements: {base_prompt[:80]}...")
 
         # Add style prefix if provided
         if visual_style_prompt:
             full_prompt = f"{visual_style_prompt}, {base_prompt}"
+            logger.debug(f"Added style prefix: {visual_style_prompt[:50]}...")
         else:
             full_prompt = base_prompt
 
@@ -97,6 +103,7 @@ class StoryboardGenerator:
 
         # Optionally enhance with LLM
         if enhance and self.use_llm:
+            logger.debug("Attempting LLM enhancement")
             try:
                 enhancer = self._get_enhancer()
                 if enhancer:
@@ -104,10 +111,12 @@ class StoryboardGenerator:
                     result['prompt'] = enhanced.get('enhanced_prompt', full_prompt)
                     result['negative_prompt'] = enhanced.get('negative_prompt', result['negative_prompt'])
                     result['enhanced'] = True
+                    logger.debug(f"LLM enhancement successful, prompt length: {len(result['prompt'])}")
             except Exception as e:
                 logger.warning(f"LLM enhancement failed, using base prompt: {e}")
                 result['enhanced'] = False
         else:
+            logger.debug("Skipping LLM enhancement (disabled)")
             result['enhanced'] = False
 
         return result
@@ -153,10 +162,16 @@ class StoryboardGenerator:
         Returns:
             List of prompt dicts, one per script row
         """
+        logger.debug(f"Generating prompts for version: {tv_spot_version.code}")
         prompts = []
         visual_style = tv_spot_version.visual_style_prompt or ""
+        logger.debug(f"Visual style prompt: {visual_style[:50] if visual_style else '(none)'}...")
 
-        for row in tv_spot_version.script_rows.all().order_by('order_index'):
+        script_rows = list(tv_spot_version.script_rows.all().order_by('order_index'))
+        logger.debug(f"Processing {len(script_rows)} script rows")
+
+        for idx, row in enumerate(script_rows):
+            logger.debug(f"Generating prompt for row {idx + 1}/{len(script_rows)}: shot {row.shot_number}")
             prompt_data = self.generate_prompt(
                 visual_text=row.visual_text,
                 audio_text=row.audio_text,
@@ -167,6 +182,7 @@ class StoryboardGenerator:
             prompt_data['shot_number'] = row.shot_number
             prompts.append(prompt_data)
 
+        logger.info(f"Generated {len(prompts)} prompts for version {tv_spot_version.code}")
         return prompts
 
 
@@ -216,13 +232,15 @@ def create_storyboard_jobs(
                 enhancement_method='huggingface' if prompt_data.get('enhanced') else 'none',
             )
 
-            # Create DiffusionJob
+            # Create DiffusionJob with 16:9 storyboard dimensions
             diffusion_job = DiffusionJob.objects.create(
                 diffusion_model=diffusion_model,
                 lora_model=lora_model,
                 prompt=prompt_record,
                 identifier=identifier,
                 status='pending',
+                width=1280,
+                height=720,
             )
 
             # Create StoryboardImage link

@@ -4,9 +4,12 @@ Mixins for model implementations
 Shared behaviors that can be composed with BaseModel
 """
 
+import logging
 import re
 from typing import Dict, Optional
 import torch
+
+logger = logging.getLogger(__name__)
 
 
 class CLIPTokenLimitMixin:
@@ -135,12 +138,15 @@ class CompelPromptMixin:
             Compel instance (CompelForSDXL or CompelForSD)
         """
         if self._compel is None:
+            logger.debug("Initializing Compel for prompt encoding")
             # Compel expects device as string ("mps", "cuda", "cpu")
             device_str = str(self.device.type) if hasattr(self.device, 'type') else str(self.device)
+            logger.debug(f"Compel device: {device_str}")
 
             # Check if model has dual text encoders (SDXL)
             has_text_encoder_2 = hasattr(self.pipeline, 'text_encoder_2') and \
                                  hasattr(self.pipeline, 'tokenizer_2')
+            logger.debug(f"Has dual text encoders (SDXL): {has_text_encoder_2}")
 
             # Compel wrappers don't work with CPU offloading
             # We need to ensure the text encoders are loaded before Compel accesses them
@@ -149,19 +155,19 @@ class CompelPromptMixin:
                                    str(self.pipeline.text_encoder.device) == 'meta')
 
             if text_encoder_on_meta:
-                print(f"[Compel Init] WARNING: Text encoders on meta device due to CPU offload")
-                print(f"[Compel Init] Compel requires text encoders on real device")
-                print(f"[Compel Init] Moving entire pipeline to {self.device}")
+                logger.warning("Text encoders on meta device due to CPU offload")
+                logger.debug("Compel requires text encoders on real device, moving pipeline")
                 # Remove the offload hooks
                 if hasattr(self.pipeline, '_all_hooks'):
                     self.pipeline._all_hooks = []
                 # Move pipeline to device
                 self.pipeline = self.pipeline.to(self.device)
+                logger.debug(f"Pipeline moved to {self.device}")
 
             if has_text_encoder_2:
                 # SDXL: Use CompelForSDXL wrapper
                 from compel import CompelForSDXL
-                print(f"[Compel Init] Using CompelForSDXL wrapper")
+                logger.debug("Creating CompelForSDXL wrapper")
                 self._compel = CompelForSDXL(
                     pipe=self.pipeline,
                     device=device_str,
@@ -169,11 +175,12 @@ class CompelPromptMixin:
             else:
                 # SD 1.5: Use CompelForSD wrapper
                 from compel import CompelForSD
-                print(f"[Compel Init] Using CompelForSD wrapper")
+                logger.debug("Creating CompelForSD wrapper")
                 self._compel = CompelForSD(
                     pipe=self.pipeline,
                     device=device_str,
                 )
+            logger.debug("Compel initialized successfully")
         return self._compel
 
     def _build_prompts(self, params: Dict) -> Dict:
@@ -192,11 +199,13 @@ class CompelPromptMixin:
         Returns:
             Updated parameter dictionary with 'prompt_embeds' and 'negative_prompt_embeds'
         """
+        logger.debug("Building prompts with Compel")
         compel = self._get_compel()
 
         # Preserve original prompts for metadata (before encoding)
         original_prompt = params['prompt']
         original_negative_prompt = params.get('negative_prompt')
+        logger.debug(f"Original prompt length: {len(original_prompt)} chars")
 
         # Build final prompt with LoRA suffix
         lora_suffix = self.get_lora_prompt_suffix()
@@ -204,36 +213,38 @@ class CompelPromptMixin:
 
         if lora_suffix:
             full_prompt = f"{original_prompt}, {lora_suffix}"
+            logger.debug(f"Added LoRA suffix: {lora_suffix[:50]}...")
         else:
             full_prompt = original_prompt
 
         # Encode prompt to embeddings using Compel
         # CompelForSDXL/CompelForSD return LabelledConditioning objects
+        logger.debug("Encoding prompt with Compel")
         conditioning = compel(full_prompt)
 
         # Extract embeddings from LabelledConditioning
-        print(f"[Compel] Conditioning type: {type(conditioning).__name__}")
+        logger.debug(f"Conditioning type: {type(conditioning).__name__}")
 
         # Check if it's a LabelledConditioning object (from CompelFor* wrappers)
         if hasattr(conditioning, 'embeds'):
             # CompelForSDXL or CompelForSD wrapper
-            print(f"[Compel] Using LabelledConditioning wrapper")
+            logger.debug("Using LabelledConditioning wrapper")
             params['prompt_embeds'] = conditioning.embeds
-            print(f"[Compel] prompt_embeds shape: {conditioning.embeds.shape}")
+            logger.debug(f"prompt_embeds shape: {conditioning.embeds.shape}")
 
             # SDXL has pooled embeddings
             if hasattr(conditioning, 'pooled_embeds') and conditioning.pooled_embeds is not None:
                 params['pooled_prompt_embeds'] = conditioning.pooled_embeds
-                print(f"[Compel] pooled_prompt_embeds shape: {conditioning.pooled_embeds.shape}")
+                logger.debug(f"pooled_prompt_embeds shape: {conditioning.pooled_embeds.shape}")
         elif isinstance(conditioning, tuple):
             # Legacy Compel returns (prompt_embeds, pooled_prompt_embeds)
-            print(f"[Compel] Legacy tuple format")
+            logger.debug("Legacy tuple format from Compel")
             prompt_embeds, pooled_prompt_embeds = conditioning
             params['prompt_embeds'] = prompt_embeds
             params['pooled_prompt_embeds'] = pooled_prompt_embeds
         else:
             # Direct tensor (shouldn't happen with current wrappers)
-            print(f"[Compel] Direct tensor format")
+            logger.debug("Direct tensor format from Compel")
             params['prompt_embeds'] = conditioning
 
         # Handle negative prompt
@@ -247,18 +258,19 @@ class CompelPromptMixin:
                 full_negative = original_negative_prompt if original_negative_prompt else ""
 
             # Encode negative prompt
+            logger.debug("Encoding negative prompt with Compel")
             negative_conditioning = compel(full_negative)
 
             # Extract negative embeddings from LabelledConditioning
             if hasattr(negative_conditioning, 'embeds'):
                 # CompelForSDXL or CompelForSD wrapper
                 params['negative_prompt_embeds'] = negative_conditioning.embeds
-                print(f"[Compel] negative_prompt_embeds shape: {negative_conditioning.embeds.shape}")
+                logger.debug(f"negative_prompt_embeds shape: {negative_conditioning.embeds.shape}")
 
                 # SDXL has pooled embeddings
                 if hasattr(negative_conditioning, 'pooled_embeds') and negative_conditioning.pooled_embeds is not None:
                     params['negative_pooled_prompt_embeds'] = negative_conditioning.pooled_embeds
-                    print(f"[Compel] negative_pooled_prompt_embeds shape: {negative_conditioning.pooled_embeds.shape}")
+                    logger.debug(f"negative_pooled_prompt_embeds shape: {negative_conditioning.pooled_embeds.shape}")
             elif isinstance(negative_conditioning, tuple):
                 # Legacy Compel
                 negative_prompt_embeds, negative_pooled_prompt_embeds = negative_conditioning
@@ -279,6 +291,7 @@ class CompelPromptMixin:
             elif lora_neg_suffix:
                 params['negative_prompt'] = lora_neg_suffix
 
+        logger.debug("Prompt encoding complete")
         return params
 
 
@@ -291,10 +304,10 @@ class DebugLoggingMixin:
 
     def _debug_print(self, message: str) -> None:
         """
-        Print debug message if debug logging is enabled
+        Log debug message if debug logging is enabled
 
         Args:
-            message: Debug message to print
+            message: Debug message to log
         """
         if getattr(self, 'enable_debug_logging', False):
-            print(f"DEBUG [{self.__class__.__name__}]: {message}")
+            logger.debug(f"[{self.__class__.__name__}] {message}")

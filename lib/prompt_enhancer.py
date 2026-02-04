@@ -13,10 +13,13 @@ Usage:
 
 import argparse
 import json
+import logging
 import sys
 from pathlib import Path
 from typing import List, Optional
 import random
+
+logger = logging.getLogger(__name__)
 
 
 class PromptEnhancer:
@@ -289,63 +292,54 @@ class HFPromptEnhancer(PromptEnhancer):
             from transformers import AutoTokenizer, AutoModelForCausalLM
             import torch
         except ImportError:
-            print("Warning: transformers/torch not installed. Falling back to rule-based enhancement.")
-            print("Install with: uv add transformers torch accelerate")
+            logger.warning("transformers/torch not installed. Falling back to rule-based enhancement.")
+            logger.debug("Install with: uv add transformers torch accelerate")
             return
 
-        print(f"\n{'='*60}")
-        print(f"Loading HuggingFace Model: {self.model_id}")
-        print(f"{'='*60}")
+        logger.info(f"Loading HuggingFace Model: {self.model_id}")
 
         # Detect device (MPS for Apple Silicon, CUDA for NVIDIA, CPU fallback)
         if self.device is None:
             if torch.backends.mps.is_available():
                 self.device = "mps"
-                print("✓ Device: Apple Silicon (MPS)")
+                logger.debug("Device detected: Apple Silicon (MPS)")
             elif torch.cuda.is_available():
                 self.device = "cuda"
-                print("✓ Device: CUDA (NVIDIA GPU)")
+                logger.debug("Device detected: CUDA (NVIDIA GPU)")
             else:
                 self.device = "cpu"
-                print("✓ Device: CPU (slower)")
+                logger.debug("Device detected: CPU (slower)")
         else:
-            print(f"✓ Device: {self.device} (forced)")
+            logger.debug(f"Device forced: {self.device}")
+
+        logger.info(f"Using device: {self.device}")
 
         try:
-            print("\n[1/3] Loading tokenizer...")
+            logger.debug("[1/3] Loading tokenizer...")
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
-            print("✓ Tokenizer loaded")
+            logger.debug("Tokenizer loaded")
 
-            print("\n[2/3] Loading model weights...")
-            print("      (First run: downloading from HuggingFace)")
-            print("      (This may take 1-5 minutes depending on model size)")
-
-            # Check if tqdm is installed for download progress
-            try:
-                import tqdm
-                print("      (Download progress bars enabled via tqdm)")
-            except ImportError:
-                print("      (Tip: Install tqdm for download progress: uv add tqdm)")
+            logger.debug("[2/3] Loading model weights...")
+            dtype = torch.bfloat16 if self.device != "cpu" else torch.float32
+            logger.debug(f"Using dtype: {dtype}")
 
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_id,
-                torch_dtype=torch.bfloat16 if self.device != "cpu" else torch.float32,
+                torch_dtype=dtype,
                 device_map=self.device,
                 low_cpu_mem_usage=True
             )
-            print("✓ Model weights loaded")
+            logger.debug("Model weights loaded")
 
-            print("\n[3/3] Moving model to device...")
+            logger.debug("[3/3] Model on device...")
             # Model is already on device via device_map, just confirm
-            print(f"✓ Model ready on {self.device}")
+            logger.debug(f"Model ready on {self.device}")
 
-            print(f"\n{'='*60}")
-            print(f"✓ Model loaded successfully!")
-            print(f"{'='*60}\n")
+            logger.info(f"Model loaded successfully: {self.model_id}")
 
         except Exception as e:
-            print(f"\n✗ Error loading model: {e}")
-            print("✗ Falling back to rule-based enhancement.\n")
+            logger.error(f"Error loading model: {e}", exc_info=True)
+            logger.warning("Falling back to rule-based enhancement")
             self.model = None
             self.tokenizer = None
 
@@ -409,7 +403,7 @@ Format your response as JSON:
         ]
 
         try:
-            print("→ Formatting prompt for model...")
+            logger.debug("Formatting prompt for model...")
             # Apply chat template
             text = self.tokenizer.apply_chat_template(
                 messages,
@@ -417,12 +411,12 @@ Format your response as JSON:
                 add_generation_prompt=True
             )
 
-            print("→ Tokenizing input...")
+            logger.debug("Tokenizing input...")
             # Tokenize
             inputs = self.tokenizer(text, return_tensors="pt").to(self.device)
+            logger.debug(f"Input tokens: {inputs['input_ids'].shape[1]}")
 
-            print("→ Generating enhanced prompt...")
-            print(f"  (Using {self.device}, creativity={self.creativity}, max_tokens=512)")
+            logger.debug(f"Generating enhanced prompt (device={self.device}, creativity={self.creativity}, max_tokens=512)")
             # Generate
             import time
             start_time = time.time()
@@ -438,22 +432,26 @@ Format your response as JSON:
                 )
 
             generation_time = time.time() - start_time
-            print(f"✓ Generation complete ({generation_time:.1f}s)")
+            logger.debug(f"Generation complete in {generation_time:.1f}s")
 
-            print("→ Decoding response...")
+            logger.debug("Decoding response...")
             # Decode
             response = self.tokenizer.decode(outputs[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+            logger.debug(f"Response length: {len(response)} chars")
 
             # Try to extract JSON
             import re
             json_match = re.search(r'\{.*\}', response, re.DOTALL)
             if json_match:
                 result = json.loads(json_match.group())
+                logger.debug("JSON parsed successfully")
 
                 # Clear MPS cache if using Apple Silicon
                 if self.device == "mps":
                     torch.mps.empty_cache()
+                    logger.debug("MPS cache cleared")
 
+                logger.info(f"Prompt enhanced successfully: {len(result.get('enhanced_prompt', ''))} chars")
                 return {
                     "original": simple_prompt,
                     "enhanced_prompt": result.get("enhanced_prompt", ""),
@@ -465,7 +463,7 @@ Format your response as JSON:
                 raise ValueError("No JSON found in response")
 
         except Exception as e:
-            print(f"HuggingFace model enhancement failed: {e}. Falling back to rule-based.")
+            logger.warning(f"HuggingFace model enhancement failed: {e}. Falling back to rule-based.")
             return super().enhance_prompt(simple_prompt)
 
 
@@ -494,8 +492,8 @@ class LLMPromptEnhancer(PromptEnhancer):
         try:
             import anthropic
         except ImportError:
-            print("Warning: anthropic package not installed. Falling back to rule-based enhancement.")
-            print("Install with: uv add anthropic")
+            logger.warning("anthropic package not installed. Falling back to rule-based enhancement.")
+            logger.debug("Install with: uv add anthropic")
             return super().enhance_prompt(simple_prompt)
 
         client = anthropic.Anthropic(api_key=self.api_key)
@@ -571,7 +569,7 @@ Format your response as JSON:
                 raise ValueError("No JSON found in response")
 
         except Exception as e:
-            print(f"LLM enhancement failed: {e}. Falling back to rule-based.")
+            logger.warning(f"LLM enhancement failed: {e}. Falling back to rule-based.")
             return super().enhance_prompt(simple_prompt)
 
 

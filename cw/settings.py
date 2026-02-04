@@ -303,6 +303,31 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'lib.adaptation': {
+            'handlers': ['console', 'tasks_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'lib.models': {
+            'handlers': ['console', 'tasks_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'lib.prompt_enhancer': {
+            'handlers': ['console', 'tasks_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'lib.storyboard': {
+            'handlers': ['console', 'tasks_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'lib.civitai': {
+            'handlers': ['console', 'tasks_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
     'root': {
         'handlers': ['console'],

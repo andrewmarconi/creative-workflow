@@ -4,11 +4,14 @@ Base model class for Creative Workflow
 Abstract base class that all model implementations inherit from
 """
 
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import torch
 from PIL import Image
+
+logger = logging.getLogger(__name__)
 
 
 class BaseModel(ABC):
@@ -68,42 +71,55 @@ class BaseModel(ABC):
             Status message
         """
         if self.pipeline is not None:
+            logger.debug(f"Pipeline already loaded for {self.model_name}, skipping load_pipeline")
             return "Model already loaded"
+
+        logger.info(f"Loading pipeline for {self.model_name}")
+        logger.debug(f"Model path: {self.model_path}")
+        logger.debug(f"Model settings: steps={self.default_steps}, guidance={self.default_guidance}, dtype={self.dtype}")
 
         try:
             # Step 1: Device setup
             if progress_callback:
                 progress_callback(0, desc="Setting up device...")
+            logger.debug("Step 1: Setting up device")
             device, device_name = self.setup_device()
 
             # Step 2: Load pipeline (model-specific)
             if progress_callback:
                 progress_callback(0.3, desc=f"Loading {self.model_name} pipeline...")
+            logger.debug(f"Step 2: Creating pipeline via _create_pipeline()")
 
             self.pipeline = self._create_pipeline()
+            logger.debug(f"Pipeline created: {type(self.pipeline).__name__}")
 
             # Step 2.5: Store original scheduler config for potential restoration
             if hasattr(self.pipeline, 'scheduler') and hasattr(self.pipeline.scheduler, 'config'):
                 self._original_scheduler_config = self.pipeline.scheduler.config
+                logger.debug(f"Stored original scheduler config: {self.pipeline.scheduler.__class__.__name__}")
 
             # Step 2.6: Apply default scheduler if configured
             if self.default_scheduler:
                 if progress_callback:
                     progress_callback(0.5, desc=f"Setting scheduler: {self.default_scheduler}...")
+                logger.debug(f"Step 2.5: Setting default scheduler: {self.default_scheduler}")
                 self.set_scheduler(self.default_scheduler)
 
             # Step 3: Apply optimizations
             if progress_callback:
                 progress_callback(0.7, desc="Enabling optimizations...")
+            logger.debug("Step 3: Applying device optimizations")
 
             self._apply_device_optimizations()
 
             if progress_callback:
                 progress_callback(1.0, desc="Model loaded successfully!")
 
+            logger.info(f"Pipeline loaded successfully: {self.model_name} on {device_name}")
             return f"{self.model_name} loaded on {device_name}"
 
         except Exception as e:
+            logger.error(f"Error loading pipeline for {self.model_name}: {e}", exc_info=True)
             return f"Error loading {self.model_name}: {e}"
 
     def generate(
@@ -144,44 +160,58 @@ class BaseModel(ABC):
         if self.pipeline is None:
             raise RuntimeError("Pipeline not loaded")
 
+        logger.debug(f"generate() called for {self.model_name}")
+        logger.debug(f"Input prompt: {prompt[:100]}..." if len(prompt) > 100 else f"Input prompt: {prompt}")
+        logger.debug(f"Generation params: steps={steps}, guidance={guidance_scale}, size={width}x{height}, seed={seed}")
+
         # Step 0: Apply scheduler override if provided
         scheduler_applied = None
         if scheduler:
+            logger.debug(f"Step 0: Applying scheduler override: {scheduler}")
             scheduler_applied = self.set_scheduler(scheduler)
 
         # Step 1: Apply parameter defaults and overrides
+        logger.debug("Step 1: Preparing generation parameters")
         params = self._prepare_generation_params(
             prompt, negative_prompt, steps, guidance_scale,
             width, height, seed, clip_skip
         )
         # Track which scheduler is active for metadata
         params['scheduler'] = scheduler_applied or self._get_current_scheduler_name()
+        logger.debug(f"Resolved params: steps={params['steps']}, guidance={params['guidance_scale']}, scheduler={params['scheduler']}")
 
         # Step 2: Build prompts with LoRA suffixes (hook for customization)
+        logger.debug("Step 2: Building prompts with LoRA suffixes")
         params = self._build_prompts(params)
+        logger.debug(f"Final prompt length: {len(params['prompt'])} chars")
 
         # Step 3: Build pipeline kwargs (hook for model-specific parameters)
+        logger.debug("Step 3: Building pipeline kwargs")
         gen_kwargs = self._build_pipeline_kwargs(params, progress_callback)
+        logger.debug(f"Pipeline kwargs keys: {list(gen_kwargs.keys())}")
 
         # Step 3.5: Pre-generation VAE check (for debugging black images on MPS)
         if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.info(f"[Pre-generation check] VAE device: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
+            logger.debug(f"[MPS VAE check] device: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
             if self.pipeline.vae.dtype != torch.float32:
-                logger.warning(f"[Pre-generation] VAE is NOT float32! Fixing now...")
+                logger.warning(f"[MPS VAE check] VAE is NOT float32! Fixing now...")
                 self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
-                logger.info(f"[Pre-generation] VAE after fix: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
+                logger.debug(f"[MPS VAE check] VAE after fix: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
 
         # Step 4: Generate image
+        logger.debug("Step 4: Calling pipeline for generation")
         image = self.pipeline(**gen_kwargs).images[0]
+        logger.debug(f"Generation complete, image size: {image.size}")
 
         # Step 5: Cleanup
+        logger.debug("Step 5: Clearing cache")
         self.clear_cache()
 
         # Step 6: Build metadata
+        logger.debug("Step 6: Building metadata")
         metadata = self._build_metadata(params)
 
+        logger.info(f"Image generated successfully: {params['width']}x{params['height']}, {params['steps']} steps")
         return image, metadata
 
     @abstractmethod
@@ -398,38 +428,47 @@ class BaseModel(ABC):
         Override this method if your model needs custom optimizations
         """
         device = self.device
+        logger.debug(f"Applying device optimizations for: {device.type}")
 
         if device.type == "mps":
             # For MPS, keep VAE on device but force float32 to avoid NaN values
             # Moving VAE to CPU causes device mismatch errors without offload
             if hasattr(self.pipeline, 'vae'):
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.info(f"[MPS] Converting VAE to float32 (keeping on MPS)")
+                logger.debug("[MPS] Converting VAE to float32 (keeping on MPS)")
                 self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
                 # Enable VAE slicing for better memory usage and numerical stability
                 if hasattr(self.pipeline.vae, 'enable_slicing'):
+                    logger.debug("[MPS] Enabling VAE slicing")
                     self.pipeline.vae.enable_slicing()
                 if hasattr(self.pipeline.vae, 'enable_tiling'):
+                    logger.debug("[MPS] Enabling VAE tiling")
                     self.pipeline.vae.enable_tiling()
 
             # Move entire pipeline to MPS
+            logger.debug("[MPS] Moving pipeline to MPS device")
             self.pipeline.to(device)
+            logger.debug("[MPS] Enabling attention slicing")
             self.pipeline.enable_attention_slicing()
 
             # Ensure VAE is still float32 after pipeline.to()
             if hasattr(self.pipeline, 'vae'):
-                logger.info(f"[MPS] Re-confirming VAE float32 after pipeline.to()")
+                logger.debug("[MPS] Re-confirming VAE float32 after pipeline.to()")
                 self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
         elif device.type == "cuda":
             # Default to model_cpu_offload (override if needed)
             if self.use_sequential_cpu_offload:
+                logger.debug("[CUDA] Enabling sequential CPU offload")
                 self.pipeline.enable_sequential_cpu_offload(device=device)
             else:
+                logger.debug("[CUDA] Enabling model CPU offload")
                 self.pipeline.enable_model_cpu_offload()
+            logger.debug("[CUDA] Enabling attention slicing")
             self.pipeline.enable_attention_slicing()
         else:
+            logger.debug(f"[CPU] Moving pipeline to {device}")
             self.pipeline = self.pipeline.to(device)
+
+        logger.debug("Device optimizations applied successfully")
 
     def set_scheduler(self, scheduler_name: str) -> Optional[str]:
         """
@@ -443,10 +482,14 @@ class BaseModel(ABC):
             Name of the scheduler that was set, or None if failed
         """
         if self.pipeline is None:
+            logger.debug("Cannot set scheduler: pipeline not loaded")
             return None
 
         if not hasattr(self.pipeline, 'scheduler'):
+            logger.debug("Cannot set scheduler: pipeline has no scheduler attribute")
             return None
+
+        logger.debug(f"Setting scheduler: {scheduler_name}")
 
         try:
             # Import diffusers schedulers dynamically
@@ -454,26 +497,22 @@ class BaseModel(ABC):
 
             # Get the scheduler class by name
             if not hasattr(diffusers, scheduler_name):
-                import logging
-                logging.getLogger(__name__).warning(
-                    f"Scheduler '{scheduler_name}' not found in diffusers, keeping current scheduler"
-                )
+                logger.warning(f"Scheduler '{scheduler_name}' not found in diffusers, keeping current scheduler")
                 return None
 
             scheduler_class = getattr(diffusers, scheduler_name)
 
             # Create new scheduler from current scheduler's config
             # This preserves model-specific scheduler parameters
+            logger.debug(f"Creating {scheduler_name} from existing config")
             new_scheduler = scheduler_class.from_config(self.pipeline.scheduler.config)
             self.pipeline.scheduler = new_scheduler
 
-            import logging
-            logging.getLogger(__name__).info(f"Scheduler set to: {scheduler_name}")
+            logger.info(f"Scheduler set to: {scheduler_name}")
             return scheduler_name
 
         except Exception as e:
-            import logging
-            logging.getLogger(__name__).warning(f"Failed to set scheduler '{scheduler_name}': {e}")
+            logger.warning(f"Failed to set scheduler '{scheduler_name}': {e}")
             return None
 
     def _get_current_scheduler_name(self) -> Optional[str]:
@@ -511,6 +550,7 @@ class BaseModel(ABC):
         Returns:
             Tuple of (device, device_name)
         """
+        logger.debug("Detecting available compute device")
         if torch.backends.mps.is_available():
             device = torch.device("mps")
             device_name = "MPS (Apple Silicon)"
@@ -522,6 +562,7 @@ class BaseModel(ABC):
             device_name = "CPU"
 
         self.device = device
+        logger.info(f"Device configured: {device_name}")
         return device, device_name
 
     def load_lora(self, lora_path: str, lora_config: Dict) -> str:
@@ -536,11 +577,16 @@ class BaseModel(ABC):
             Status message
         """
         if self.pipeline is None:
+            logger.warning("Attempted to load LoRA but pipeline not loaded")
             return "Error: Model not loaded yet"
+
+        logger.info(f"Loading LoRA: {lora_config.get('label', 'unknown')}")
+        logger.debug(f"LoRA path: {lora_path}")
 
         try:
             # Unload previous LoRA if any
             if self.current_lora is not None:
+                logger.debug(f"Unloading previous LoRA: {self.current_lora.get('label')}")
                 try:
                     self.pipeline.unload_lora_weights()
                 except Exception:
@@ -548,27 +594,34 @@ class BaseModel(ABC):
 
             # Load new LoRA
             if not Path(lora_path).exists():
+                logger.error(f"LoRA file not found: {lora_path}")
                 return f"Error: LoRA file not found: {lora_path}"
 
             # Get LoRA strength from settings
             strength = lora_config.get("settings", {}).get("strength", 1.0)
+            logger.debug(f"LoRA strength: {strength}")
 
             # Load LoRA weights
+            logger.debug("Loading LoRA weights into pipeline")
             self.pipeline.load_lora_weights(lora_path, adapter_name="default")
 
             # Set LoRA scale if applicable
             if hasattr(self.pipeline, "set_adapters"):
+                logger.debug(f"Setting adapter weights: {strength}")
                 self.pipeline.set_adapters(["default"], adapter_weights=[strength])
 
             # CRITICAL: Re-apply device-specific fixes after LoRA loading
             # LoRA loading can move components or change dtypes
+            logger.debug("Applying post-LoRA load fixes")
             self._post_lora_load_fixes()
 
             self.current_lora = lora_config
 
+            logger.info(f"LoRA loaded successfully: {lora_config['label']} (strength: {strength})")
             return f"LoRA loaded: {lora_config['label']} (strength: {strength})"
 
         except Exception as e:
+            logger.error(f"Error loading LoRA: {e}", exc_info=True)
             return f"Error loading LoRA: {e}"
 
     def unload_lora(self) -> str:
@@ -579,21 +632,30 @@ class BaseModel(ABC):
             Status message
         """
         if self.pipeline is None:
+            logger.warning("Attempted to unload LoRA but pipeline not loaded")
             return "Error: Model not loaded yet"
 
         if self.current_lora is None:
+            logger.debug("No LoRA to unload")
             return "No LoRA loaded"
 
+        lora_label = self.current_lora.get('label', 'unknown')
+        logger.info(f"Unloading LoRA: {lora_label}")
+
         try:
+            logger.debug("Calling pipeline.unload_lora_weights()")
             self.pipeline.unload_lora_weights()
 
             # CRITICAL: Re-apply device-specific fixes after LoRA unloading
             # LoRA unloading can move components or change dtypes
+            logger.debug("Applying post-LoRA unload fixes")
             self._post_lora_unload_fixes()
 
             self.current_lora = None
+            logger.info(f"LoRA unloaded successfully: {lora_label}")
             return "LoRA unloaded"
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Exception during LoRA unload (resetting anyway): {e}")
             self.current_lora = None
             return "LoRA reset"
 
@@ -626,6 +688,7 @@ class BaseModel(ABC):
         if self.device is None:
             return
 
+        logger.debug(f"Clearing {self.device.type} cache")
         if self.device.type == "mps":
             torch.mps.empty_cache()
         elif self.device.type == "cuda":

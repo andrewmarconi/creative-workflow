@@ -173,6 +173,7 @@ class LoraModelAdmin(ModelAdmin):
     search_fields = ['label', 'path', 'air', 'theme']
     readonly_fields = ['created_at', 'updated_at', 'show_token_counts']
     actions = ['refresh_metadata_bulk_action']
+    actions_list = ['import_from_civitai_action']
     actions_row = ['refresh_metadata_action']
 
     fieldsets = (
@@ -608,11 +609,13 @@ class LoraModelAdmin(ModelAdmin):
             },
         )
 
-    def changelist_view(self, request, extra_context=None):
-        """Override changelist to add import button context."""
-        extra_context = extra_context or {}
-        extra_context['import_from_civitai_url'] = reverse('admin:import_lora_from_civitai')
-        return super().changelist_view(request, extra_context=extra_context)
+    @action(
+        description=_("Import from CivitAI"),
+        url_path="import-from-civitai-action",
+    )
+    def import_from_civitai_action(self, request):
+        """Redirect to the import from CivitAI view."""
+        return redirect('admin:import_lora_from_civitai')
 
 
 # ---------------------------------------------------------------------------
@@ -1144,6 +1147,8 @@ class TvSpotAdmin(ModelAdmin):
     search_fields = ['script_title', 'client_name', 'brand_name', 'job_id']
     readonly_fields = ['created_at', 'updated_at']
     inlines = [TvSpotVersionInline]
+    actions_list = ['import_tvspot_action']
+    actions_detail = ['create_adaptation_action']
 
     fieldsets = (
         (_("Project"), {
@@ -1313,29 +1318,32 @@ class TvSpotAdmin(ModelAdmin):
 
         return errors
 
-    def changelist_view(self, request, extra_context=None):
-        """Override changelist to add import button context."""
-        extra_context = extra_context or {}
-        extra_context['import_tvspot_url'] = reverse('admin:diffusion_tvspot_import')
-        return super().changelist_view(request, extra_context=extra_context)
+    @action(
+        description=_("Import TV Spot"),
+        url_path="import-tvspot-action",
+    )
+    def import_tvspot_action(self, request):
+        """Redirect to the import TV spot view."""
+        return redirect('admin:diffusion_tvspot_import')
 
-    def change_form_buttons(self, request, obj=None, add=False):
-        """Add custom Create Adaptation button to the change form."""
-        buttons = super().change_form_buttons(request, obj, add)
+    @action(
+        description=_("Create Adaptation"),
+        url_path="create-adaptation-action",
+        permissions=["create_adaptation_action"],
+    )
+    def create_adaptation_action(self, request, object_id):
+        """Redirect to the create adaptation view."""
+        return redirect('admin:diffusion_tvspot_create_adaptation', object_id)
 
-        if obj and not add:
-            # Only show button if there's an origin version
-            origin = obj.versions.filter(version_type='origin').first()
-            if origin:
-                buttons.append({
-                    'title': 'Create Adaptation',
-                    'url': reverse('admin:diffusion_tvspot_create_adaptation', args=[obj.pk]),
-                    'attrs': {
-                        'class': 'button',
-                    }
-                })
-
-        return buttons
+    def has_create_adaptation_action_permission(self, request, object_id=None):
+        """Only show button if there's an origin version."""
+        if object_id:
+            try:
+                tv_spot = TvSpot.objects.get(pk=object_id)
+                return tv_spot.versions.filter(version_type='origin').exists()
+            except TvSpot.DoesNotExist:
+                return False
+        return False
 
     def create_adaptation_view(self, request, object_id):
         """Handle creating an adaptation of a TV spot."""
@@ -1418,6 +1426,7 @@ class TvSpotVersionAdmin(ModelAdmin):
     search_fields = ['code', 'name', 'tv_spot__script_title', 'tv_spot__job_id']
     readonly_fields = ['created_at', 'updated_at']
     inlines = [TvSpotScriptRowInline]
+    actions_detail = ['view_storyboard_action', 'generate_storyboard_action']
 
     fieldsets = (
         (_("Version"), {
@@ -1469,34 +1478,46 @@ class TvSpotVersionAdmin(ModelAdmin):
         ]
         return custom_urls + urls
 
-    def change_form_buttons(self, request, obj=None, add=False):
-        """Add custom storyboard buttons to the change form."""
-        buttons = super().change_form_buttons(request, obj, add)
+    @action(
+        description=_("View Storyboard"),
+        url_path="view-storyboard-action",
+        permissions=["view_storyboard_action"],
+    )
+    def view_storyboard_action(self, request, object_id):
+        """Redirect to the storyboard viewer."""
+        return redirect('admin:diffusion_tvspotversion_storyboard', object_id)
 
-        if obj and not add and obj.script_rows.exists():
-            # Add View Storyboard button if there are any storyboard images
-            has_storyboard = obj.storyboard_jobs.filter(
-                images__diffusion_job__result_images__len__gt=0
-            ).exists()
+    def has_view_storyboard_action_permission(self, request, object_id=None):
+        """Only show button if there are storyboard images."""
+        if object_id:
+            try:
+                version = TvSpotVersion.objects.get(pk=object_id)
+                # Check if there are any storyboard jobs with completed images
+                return version.storyboard_jobs.filter(
+                    images__diffusion_job__status='completed'
+                ).exists()
+            except TvSpotVersion.DoesNotExist:
+                return False
+        return False
 
-            if has_storyboard:
-                buttons.append({
-                    'title': 'View Storyboard',
-                    'url': reverse('admin:diffusion_tvspotversion_storyboard', args=[obj.pk]),
-                    'attrs': {
-                        'class': 'button',
-                    }
-                })
+    @action(
+        description=_("Generate Storyboard"),
+        url_path="generate-storyboard-action",
+        permissions=["generate_storyboard_action"],
+    )
+    def generate_storyboard_action(self, request, object_id):
+        """Redirect to the generate storyboard view."""
+        return redirect('admin:diffusion_tvspotversion_generate_storyboard', object_id)
 
-            buttons.append({
-                'title': 'Generate Storyboard',
-                'url': reverse('admin:diffusion_tvspotversion_generate_storyboard', args=[obj.pk]),
-                'attrs': {
-                    'class': 'button',
-                }
-            })
-
-        return buttons
+    def has_generate_storyboard_action_permission(self, request, object_id=None):
+        """Only show button if there are script rows."""
+        if object_id:
+            try:
+                version = TvSpotVersion.objects.get(pk=object_id)
+                return version.script_rows.exists()
+            except TvSpotVersion.DoesNotExist:
+                return False
+        return False
 
     def generate_storyboard_view(self, request, object_id):
         """Handle generating a storyboard for a TV spot version."""
@@ -1559,6 +1580,7 @@ class TvSpotVersionAdmin(ModelAdmin):
                 'models': models,
                 'loras': loras,
                 'existing_jobs': existing_jobs,
+                'lora_compat_url': reverse('admin:diffusion_diffusionjob_compatible_loras'),
             },
         )
 
@@ -1694,3 +1716,14 @@ class StoryboardJobAdmin(ModelAdmin):
     )
     def show_status(self, obj):
         return obj.get_status_display()
+
+    def save_model(self, request, obj, form, change):
+        """Auto-queue new storyboard jobs on save."""
+        is_new = obj.pk is None
+        super().save_model(request, obj, form, change)
+        if is_new and obj.status == 'pending':
+            from .tasks import generate_storyboard_task
+            generate_storyboard_task.apply_async(
+                args=[obj.pk, True],  # enhance_prompts=True by default
+                queue='enhancement'
+            )

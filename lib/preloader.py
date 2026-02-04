@@ -15,12 +15,15 @@ Usage:
 """
 
 import argparse
+import logging
 import sys
 import torch
 from pathlib import Path
 
 from config import get_config
 from models import ModelFactory
+
+logger = logging.getLogger(__name__)
 
 
 class ModelPreloader:
@@ -83,6 +86,8 @@ class ModelPreloader:
         model_slug = model_config["slug"]
         model_path = self.config.get_model_path(model_config)
 
+        logger.debug(f"Preloading model: {model_slug}")
+        logger.debug(f"Model path: {model_path}")
         print(f"Path: {model_path}")
 
         # Create progress callback
@@ -91,15 +96,19 @@ class ModelPreloader:
             print(f"  [{percentage:3d}%] {desc}")
 
         # Create model instance
+        logger.debug(f"Creating model instance via ModelFactory")
         model = ModelFactory.create_model(model_config, model_path)
 
         # Load pipeline (downloads if not cached)
+        logger.debug(f"Loading pipeline (may download from HuggingFace)")
         status = model.load_pipeline(progress_callback=progress_callback)
 
         if not model.is_loaded():
+            logger.error(f"Failed to load model {model_slug}: {status}")
             raise RuntimeError(f"Failed to load model: {status}")
 
         # Model is now cached!
+        logger.info(f"Model {model_slug} preloaded and cached successfully")
         print(f"  [100%] Cached to HuggingFace cache")
 
     def preload_by_slug(self, slug: str) -> None:

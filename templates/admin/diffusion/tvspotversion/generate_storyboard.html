@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block content %}
 <div class="p-6">
@@ -25,28 +25,28 @@
             {% csrf_token %}
 
             <div>
-                <label for="diffusion_model" class="block text-sm font-medium mb-2">
+                <label for="id_diffusion_model" class="block text-sm font-medium mb-2">
                     {% trans "Diffusion Model" %}
                 </label>
                 <select
                     name="diffusion_model"
-                    id="diffusion_model"
+                    id="id_diffusion_model"
                     required
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                     {% for model in models %}
-                    <option value="{{ model.id }}">{{ model.label }} ({{ model.base_architecture }})</option>
+                    <option value="{{ model.id }}" data-architecture="{{ model.base_architecture }}">{{ model.label }} ({{ model.base_architecture }})</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div>
-                <label for="lora_model" class="block text-sm font-medium mb-2">
+                <label for="id_lora_model" class="block text-sm font-medium mb-2">
                     {% trans "LoRA Model (Optional)" %}
                 </label>
                 <select
                     name="lora_model"
-                    id="lora_model"
+                    id="id_lora_model"
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                     <option value="">{% trans "None" %}</option>
@@ -128,4 +128,8 @@
         </div>
     </div>
 </div>
+<script>
+    window.__lora_compat_url__ = "{{ lora_compat_url }}";
+</script>
+<script src="{% static 'diffusion/js/filter_loras.js' %}"></script>
 {% endblock %}
