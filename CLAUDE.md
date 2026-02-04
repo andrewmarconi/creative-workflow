@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Creative Workflow is a Django + Celery application for multi-model diffusion image generation. It uses Django Unfold for the admin UI, PostgreSQL for storage, and Valkey/Redis as the Celery broker. Models supported: Z-Image Turbo, Flux.1-dev, Qwen-Image-2512, SDXL Turbo.
+Creative Workflow is a Django + Celery application for multi-model diffusion image generation. It uses Django Unfold for the admin UI, PostgreSQL for storage, and Valkey/Redis as the Celery broker. Models supported: Z-Image Turbo, Flux.1-dev, Flux.2 Klein, Qwen-Image-2512, SDXL Turbo, DreamShaper XL Lightning, Juggernaut XL v9, Realistic Vision v5.1.
 
 ## Commands
 
@@ -12,6 +12,7 @@ Creative Workflow is a Django + Celery application for multi-model diffusion ima
 ```bash
 uv sync                          # Install/sync dependencies
 honcho start                     # Start all processes (Docker, Django, Celery workers)
+honcho start docker django       # Start subset of processes (without workers)
 ```
 
 ### Individual Processes (from Procfile)
@@ -29,6 +30,7 @@ uv run manage.py import_presets                 # Sync data/presets.json → dat
 uv run manage.py export_presets                 # Export models/LoRAs from database to JSON
 uv run manage.py import_prompts                 # Bulk import prompts
 uv run manage.py export_prompts                 # Export prompts to file
+uv run manage.py import_adaptations             # Import adaptations.json into prompts/jobs
 uv run manage.py preload_models                 # Pre-download models to HF cache
 uv run manage.py createsuperuser                # Create admin user
 ```
@@ -110,7 +112,7 @@ Access Grafana UI at http://localhost:3000 (anonymous login enabled for local de
 - `max_sequence_length` - Context length for Flux variants
 - `load_in_8bit` - 8-bit quantization for Qwen
 
-**Model Implementations**: ZImageTurboModel (73 lines), FluxModel (21 lines), Flux2KleinModel (21 lines), QwenImageModel (67 lines), SDXLModel (24 lines), SDXLTurboModel (48 lines), SD15Model (22 lines)
+**Model Implementations**: ZImageTurboModel, FluxModel, Flux2KleinModel, QwenImageModel, SDXLModel, SDXLTurboModel, SD15Model
 
 **Factory**: `ModelFactory.create_model()` in `lib/models/__init__.py` dispatches by pipeline type
 
@@ -143,15 +145,16 @@ Access Grafana UI at http://localhost:3000 (anonymous login enabled for local de
 - `grafana/provisioning/` — Grafana datasource/dashboard provisioning (auto-configures Loki on startup)
 
 ### Model-Specific Notes
-| Model | Pipeline | Steps | CFG | Negative Prompt |
-|-------|----------|-------|-----|-----------------|
-| Z-Image Turbo | ZImagePipeline | 9 | 0.0 | No |
-| Flux.1-dev | FluxPipeline | 28 | 3.5 | No |
-| Qwen-Image-2512 | QwenImagePipeline | 50 | 4.5 | Yes |
-| SDXL Turbo | AutoPipelineForText2Image | varies | varies | varies |
-| Juggernaut XL v9 | StableDiffusionXLPipeline | 30 | 7.0 | Yes |
-| DreamShaper XL Lightning | StableDiffusionXLPipeline | 4 | 2.0 | No |
-| Realistic Vision v5.1 | StableDiffusionPipeline | 30 | 5.0 | Yes |
+| Model | Pipeline | Steps | CFG | Negative Prompt | Architecture |
+|-------|----------|-------|-----|-----------------|--------------|
+| Z-Image Turbo | ZImagePipeline | 9 | 0.0 | No | zimage |
+| Flux.1-dev | FluxPipeline | 28 | 3.5 | No | flux1 |
+| Flux.2 Klein | FluxPipeline | 28 | 3.5 | No | flux1 |
+| Qwen-Image-2512 | QwenImagePipeline | 50 | 4.5 | Yes | qwen |
+| SDXL Turbo | AutoPipelineForText2Image | 4 | 0.0 | No | sdxl |
+| Juggernaut XL v9 | StableDiffusionXLPipeline | 30 | 7.0 | Yes | sdxl |
+| DreamShaper XL Lightning | StableDiffusionXLPipeline | 4 | 2.0 | No | sdxl |
+| Realistic Vision v5.1 | StableDiffusionPipeline | 30 | 5.0 | Yes | sd15 |
 
 ### Path Resolution
 - Local models/LoRAs: path ends with `.safetensors` → resolved as `{base_model_path}/{path}`, loaded via `from_single_file()`
