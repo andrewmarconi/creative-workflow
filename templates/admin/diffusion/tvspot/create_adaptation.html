@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="p-6">
+    <div class="max-w-2xl">
+        <h1 class="text-2xl font-bold mb-2">{% trans "Create Adaptation" %}</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {{ tv_spot.script_title }} ({{ tv_spot.job_id }})
+        </p>
+
+        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <h3 class="font-medium mb-2">{% trans "Origin Version" %}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ origin_version.name }} ({{ origin_version.language }}) - {{ origin_version.script_rows.count }} script rows
+            </p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="market" class="block text-sm font-medium mb-2">
+                    {% trans "Target Market" %}
+                </label>
+                <select
+                    name="market"
+                    id="market"
+                    required
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "Select a market..." %}</option>
+                    {% for market in markets %}
+                    <option value="{{ market.id }}">{{ market.name }} ({{ market.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if existing_adaptations %}
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <h3 class="text-yellow-800 dark:text-yellow-300 font-medium mb-2">{% trans "Existing Adaptations" %}</h3>
+                <p class="text-yellow-700 dark:text-yellow-400 text-sm mb-2">
+                    {% trans "The following adaptations already exist for this TV spot:" %}
+                </p>
+                <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 text-sm">
+                    {% for adaptation in existing_adaptations %}
+                    <li>{{ adaptation.name }} ({{ adaptation.market.code }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Create Adaptation" %}
+                </button>
+                <a href="{% url 'admin:diffusion_tvspot_change' tv_spot.pk %}"
+                   class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+
+        <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h3 class="text-blue-800 dark:text-blue-300 font-medium mb-2">{% trans "How it works" %}</h3>
+            <ul class="list-disc list-inside text-blue-700 dark:text-blue-400 text-sm space-y-1">
+                <li>{% trans "The LLM will analyze the origin script and market rules" %}</li>
+                <li>{% trans "Language, visuals, and cultural references will be adapted" %}</li>
+                <li>{% trans "A new TvSpotVersion will be created with adapted script rows" %}</li>
+                <li>{% trans "Processing happens in the background (may take 1-2 minutes)" %}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1180,13 +1180,18 @@ class TvSpotAdmin(ModelAdmin):
         return "0"
 
     def get_urls(self):
-        """Add custom URL for import action."""
+        """Add custom URLs for import and adaptation actions."""
         urls = super().get_urls()
         custom_urls = [
             path(
                 'import/',
                 self.admin_site.admin_view(self.import_tvspot_view),
                 name='diffusion_tvspot_import',
+            ),
+            path(
+                '<int:object_id>/create-adaptation/',
+                self.admin_site.admin_view(self.create_adaptation_view),
+                name='diffusion_tvspot_create_adaptation',
             ),
         ]
         return custom_urls + urls
@@ -1313,6 +1318,93 @@ class TvSpotAdmin(ModelAdmin):
         extra_context = extra_context or {}
         extra_context['import_tvspot_url'] = reverse('admin:diffusion_tvspot_import')
         return super().changelist_view(request, extra_context=extra_context)
+
+    def change_form_buttons(self, request, obj=None, add=False):
+        """Add custom Create Adaptation button to the change form."""
+        buttons = super().change_form_buttons(request, obj, add)
+
+        if obj and not add:
+            # Only show button if there's an origin version
+            origin = obj.versions.filter(version_type='origin').first()
+            if origin:
+                buttons.append({
+                    'title': 'Create Adaptation',
+                    'url': reverse('admin:diffusion_tvspot_create_adaptation', args=[obj.pk]),
+                    'attrs': {
+                        'class': 'button',
+                    }
+                })
+
+        return buttons
+
+    def create_adaptation_view(self, request, object_id):
+        """Handle creating an adaptation of a TV spot."""
+        from django.template.response import TemplateResponse
+        from .tasks import create_adaptation_task
+
+        tv_spot = TvSpot.objects.get(pk=object_id)
+        origin_version = tv_spot.versions.filter(version_type='origin').first()
+
+        if not origin_version:
+            messages.error(request, 'No origin version found for this TV spot.')
+            return redirect('admin:diffusion_tvspot_change', object_id)
+
+        if request.method == 'POST':
+            market_id = request.POST.get('market')
+
+            if not market_id:
+                messages.error(request, 'Please select a target market.')
+                return redirect('admin:diffusion_tvspot_create_adaptation', object_id)
+
+            # Check if adaptation already exists for this market
+            market = AdaptationMarket.objects.get(pk=market_id)
+            existing = tv_spot.versions.filter(market=market).first()
+            if existing:
+                messages.warning(
+                    request,
+                    f"An adaptation for {market.name} already exists: {existing.name}"
+                )
+                return redirect('admin:diffusion_tvspotversion_change', existing.pk)
+
+            # Queue the adaptation task
+            create_adaptation_task.apply_async(
+                args=[origin_version.pk, market_id],
+                queue='enhancement'
+            )
+
+            messages.success(
+                request,
+                f"Adaptation to {market.name} queued for processing. "
+                f"Check back in 1-2 minutes for the new version."
+            )
+            return redirect('admin:diffusion_tvspot_change', object_id)
+
+        # Get available markets (exclude markets with existing adaptations)
+        existing_market_ids = tv_spot.versions.exclude(
+            market__isnull=True
+        ).values_list('market_id', flat=True)
+
+        markets = AdaptationMarket.objects.filter(
+            is_active=True
+        ).exclude(id__in=existing_market_ids)
+
+        existing_adaptations = tv_spot.versions.filter(
+            version_type='adaptation'
+        ).select_related('market')
+
+        return TemplateResponse(
+            request,
+            'admin/diffusion/tvspot/create_adaptation.html',
+            {
+                **self.admin_site.each_context(request),
+                'title': _('Create Adaptation'),
+                'opts': self.model._meta,
+                'tv_spot': tv_spot,
+                'origin_version': origin_version,
+                'markets': markets,
+                'existing_adaptations': existing_adaptations,
+            },
+        )
 
 
 # ---------------------------------------------------------------------------

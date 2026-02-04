@@ -485,3 +485,105 @@ def _load_model_instance(diffusion_model):
 
     _model_cache[slug] = model_instance
     return model_instance
+
+
+# ---------------------------------------------------------------------------
+# TV Spot Adaptation Tasks
+# ---------------------------------------------------------------------------
+
+@shared_task(bind=True, name='cw.diffusion.tasks.create_adaptation_task')
+def create_adaptation_task(self, origin_version_id, target_market_id):
+    """
+    Create a culturally-adapted TV spot version using LLM.
+
+    Args:
+        origin_version_id: ID of the origin TvSpotVersion to adapt from
+        target_market_id: ID of the target AdaptationMarket
+
+    Returns:
+        Dict with adaptation results
+    """
+    from cw.diffusion.models import TvSpotVersion, TvSpotScriptRow, AdaptationMarket
+
+    origin_version = TvSpotVersion.objects.get(id=origin_version_id)
+    target_market = AdaptationMarket.objects.get(id=target_market_id)
+    tv_spot = origin_version.tv_spot
+
+    logger.info(
+        f"Starting adaptation of '{tv_spot.script_title}' to {target_market.name}",
+        extra={
+            "tv_spot_id": tv_spot.pk,
+            "origin_version_id": origin_version_id,
+            "target_market_id": target_market_id,
+            "target_market_code": target_market.code,
+        }
+    )
+
+    try:
+        # Get the adaptation generator
+        from lib.adaptation import get_adaptation_generator
+        generator = get_adaptation_generator()
+
+        # Generate the adaptation
+        result = generator.adapt(origin_version, target_market)
+
+        # Create the new TvSpotVersion
+        new_version = TvSpotVersion.objects.create(
+            tv_spot=tv_spot,
+            version_type='adaptation',
+            market=target_market,
+            code=result.code,
+            name=result.name,
+            language=result.language,
+            visual_style_prompt=result.visual_style_prompt,
+            is_active=True,
+        )
+
+        # Create the adapted script rows
+        for idx, row_data in enumerate(result.script_rows):
+            TvSpotScriptRow.objects.create(
+                tv_spot_version=new_version,
+                order_index=idx,
+                shot_number=row_data.shot_number,
+                timecode_start=row_data.timecode_start,
+                duration_seconds=row_data.duration_seconds,
+                visual_text=row_data.visual_text,
+                audio_text=row_data.audio_text,
+            )
+
+        logger.info(
+            f"Adaptation created successfully: {new_version.name}",
+            extra={
+                "tv_spot_id": tv_spot.pk,
+                "new_version_id": new_version.pk,
+                "adaptation_code": new_version.code,
+                "num_rows": len(result.script_rows),
+            }
+        )
+
+        return {
+            'status': 'success',
+            'tv_spot_id': tv_spot.pk,
+            'origin_version_id': origin_version_id,
+            'new_version_id': new_version.pk,
+            'adaptation_code': new_version.code,
+            'adaptation_name': new_version.name,
+            'num_rows': len(result.script_rows),
+        }
+
+    except Exception as e:
+        logger.error(
+            f"Adaptation failed: {e}",
+            extra={
+                "tv_spot_id": tv_spot.pk,
+                "origin_version_id": origin_version_id,
+                "target_market_id": target_market_id,
+                "error": str(e),
+            }
+        )
+        return {
+            'status': 'failed',
+            'origin_version_id': origin_version_id,
+            'target_market_id': target_market_id,
+            'error': str(e),
+        }
