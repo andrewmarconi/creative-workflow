@@ -22,7 +22,10 @@ from huggingface_hub import scan_cache_dir
 from django_celery_results.models import TaskResult, GroupResult
 from django_celery_results.admin import TaskResultAdmin as BaseTaskResultAdmin
 from django_celery_results.admin import GroupResultAdmin as BaseGroupResultAdmin
-from .models import DiffusionModel, LoraModel, Prompt, DiffusionJob, BASE_ARCHITECTURE_CHOICES
+from .models import (
+    DiffusionModel, LoraModel, Prompt, DiffusionJob, BASE_ARCHITECTURE_CHOICES,
+    AdaptationMarket, TvSpot, TvSpotVersion, TvSpotScriptRow, StoryboardJob, StoryboardImage,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -1061,3 +1064,367 @@ class DiffusionJobAdmin(ModelAdmin):
             obj.rq_job_id = celery_task.id
             obj.status = 'queued'
             obj.save()
+
+
+# ---------------------------------------------------------------------------
+# AdaptationMarket
+# ---------------------------------------------------------------------------
+
+@admin.register(AdaptationMarket)
+class AdaptationMarketAdmin(ModelAdmin):
+    list_display = ['name', 'code', 'show_active', 'show_versions_count', 'updated_at']
+    list_filter = ['is_active']
+    search_fields = ['name', 'code', 'rules']
+    readonly_fields = ['created_at', 'updated_at']
+
+    fieldsets = (
+        (_("Market"), {
+            "classes": ["tab"],
+            "fields": ('name', 'code', 'is_active'),
+        }),
+        (_("Rules"), {
+            "classes": ["tab"],
+            "fields": ('rules',),
+        }),
+        (_("Metadata"), {
+            "classes": ["tab"],
+            "fields": ('created_at', 'updated_at'),
+        }),
+    )
+
+    @display(description=_("Active"), boolean=True)
+    def show_active(self, obj):
+        return obj.is_active
+
+    @display(description=_("Versions"))
+    def show_versions_count(self, obj):
+        count = obj.versions.count()
+        if count > 0:
+            url = reverse('admin:diffusion_tvspotversion_changelist')
+            return format_html(
+                '<a href="{}?market__id__exact={}">{}</a>',
+                url, obj.id, count,
+            )
+        return "0"
+
+
+# ---------------------------------------------------------------------------
+# TV Spot Inlines
+# ---------------------------------------------------------------------------
+
+class TvSpotScriptRowInline(TabularInline):
+    """Inline display of script rows for TvSpotVersion."""
+    model = TvSpotScriptRow
+    extra = 0
+    fields = ['order_index', 'shot_number', 'timecode_start', 'duration_seconds', 'visual_text', 'audio_text']
+    ordering = ['order_index']
+
+
+class TvSpotVersionInline(TabularInline):
+    """Inline display of versions for TvSpot."""
+    model = TvSpotVersion
+    extra = 0
+    fields = ['code', 'name', 'version_type', 'market', 'language', 'is_active']
+    readonly_fields = ['code', 'name', 'version_type', 'market', 'language']
+    can_delete = False
+    show_change_link = True
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+# ---------------------------------------------------------------------------
+# TvSpot
+# ---------------------------------------------------------------------------
+
+@admin.register(TvSpot)
+class TvSpotAdmin(ModelAdmin):
+    list_display = ['script_title', 'client_name', 'brand_name', 'job_id', 'show_trt', 'show_versions_count', 'created_at']
+    list_filter = ['client_name', 'created_at']
+    search_fields = ['script_title', 'client_name', 'brand_name', 'job_id']
+    readonly_fields = ['created_at', 'updated_at']
+    inlines = [TvSpotVersionInline]
+
+    fieldsets = (
+        (_("Project"), {
+            "classes": ["tab"],
+            "fields": (
+                ('client_name', 'brand_name'),
+                ('script_title', 'job_id'),
+                'total_runtime_seconds',
+            ),
+        }),
+        (_("Notes"), {
+            "classes": ["tab"],
+            "fields": ('notes',),
+        }),
+        (_("Metadata"), {
+            "classes": ["tab"],
+            "fields": ('created_at', 'updated_at'),
+        }),
+    )
+
+    @display(description=_("TRT"))
+    def show_trt(self, obj):
+        return f"{obj.total_runtime_seconds}s"
+
+    @display(description=_("Versions"))
+    def show_versions_count(self, obj):
+        count = obj.versions.count()
+        if count > 0:
+            url = reverse('admin:diffusion_tvspotversion_changelist')
+            return format_html(
+                '<a href="{}?tv_spot__id__exact={}">{}</a>',
+                url, obj.id, count,
+            )
+        return "0"
+
+    def get_urls(self):
+        """Add custom URL for import action."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'import/',
+                self.admin_site.admin_view(self.import_tvspot_view),
+                name='diffusion_tvspot_import',
+            ),
+        ]
+        return custom_urls + urls
+
+    def import_tvspot_view(self, request):
+        """Handle importing a TV spot from JSON."""
+        from django.template.response import TemplateResponse
+        from django.db import transaction
+        import json
+
+        if request.method == 'POST':
+            json_data = request.POST.get('json_data', '').strip()
+
+            if not json_data:
+                messages.error(request, 'JSON data is required.')
+                return redirect('admin:diffusion_tvspot_import')
+
+            try:
+                data = json.loads(json_data)
+            except json.JSONDecodeError as e:
+                messages.error(request, f'Invalid JSON: {e}')
+                return redirect('admin:diffusion_tvspot_import')
+
+            # Validate required fields
+            errors = self._validate_tvspot_json(data)
+            if errors:
+                for error in errors:
+                    messages.error(request, error)
+                return redirect('admin:diffusion_tvspot_import')
+
+            # Check for duplicate job_id
+            job_id = data['job_id']
+            if TvSpot.objects.filter(job_id=job_id).exists():
+                messages.error(request, f"TV Spot with job_id '{job_id}' already exists.")
+                return redirect('admin:diffusion_tvspot_import')
+
+            # Create records
+            try:
+                with transaction.atomic():
+                    tv_spot = TvSpot.objects.create(
+                        client_name=data['client_name'],
+                        brand_name=data.get('brand_name', ''),
+                        script_title=data['script_title'],
+                        total_runtime_seconds=data['total_runtime_seconds'],
+                        job_id=job_id,
+                        notes=data.get('notes', ''),
+                    )
+
+                    version = TvSpotVersion.objects.create(
+                        tv_spot=tv_spot,
+                        version_type='origin',
+                        code='ORIGIN',
+                        name='Origin',
+                        language=data.get('language', 'en-US'),
+                    )
+
+                    for idx, row_data in enumerate(data['script_rows']):
+                        TvSpotScriptRow.objects.create(
+                            tv_spot_version=version,
+                            order_index=idx,
+                            shot_number=row_data.get('shot_number', f"{idx + 1:02d}"),
+                            timecode_start=row_data.get('timecode_start', ''),
+                            duration_seconds=row_data.get('duration_seconds'),
+                            visual_text=row_data['visual_text'],
+                            audio_text=row_data['audio_text'],
+                        )
+
+                messages.success(
+                    request,
+                    f"Created TV Spot '{tv_spot.script_title}' with {len(data['script_rows'])} script rows."
+                )
+                return redirect('admin:diffusion_tvspot_change', tv_spot.pk)
+
+            except Exception as e:
+                messages.error(request, f'Failed to create TV Spot: {e}')
+                return redirect('admin:diffusion_tvspot_import')
+
+        # Render import form
+        return TemplateResponse(
+            request,
+            'admin/diffusion/tvspot/import_tvspot.html',
+            {
+                **self.admin_site.each_context(request),
+                'title': _('Import TV Spot from JSON'),
+                'opts': self.model._meta,
+            },
+        )
+
+    def _validate_tvspot_json(self, data: dict) -> list:
+        """Validate JSON against expected schema. Returns list of errors."""
+        errors = []
+
+        required = ['client_name', 'script_title', 'total_runtime_seconds', 'job_id', 'script_rows']
+        for field in required:
+            if field not in data:
+                errors.append(f"Missing required field: {field}")
+
+        if errors:
+            return errors
+
+        if not isinstance(data['script_rows'], list):
+            errors.append("script_rows must be an array")
+            return errors
+
+        if len(data['script_rows']) == 0:
+            errors.append("script_rows must have at least one row")
+
+        if not isinstance(data['total_runtime_seconds'], int) or data['total_runtime_seconds'] <= 0:
+            errors.append("total_runtime_seconds must be a positive integer")
+
+        for idx, row in enumerate(data['script_rows']):
+            if not isinstance(row, dict):
+                errors.append(f"script_rows[{idx}] must be an object")
+                continue
+            if 'visual_text' not in row or not row['visual_text']:
+                errors.append(f"script_rows[{idx}] missing or empty visual_text")
+            if 'audio_text' not in row or not row['audio_text']:
+                errors.append(f"script_rows[{idx}] missing or empty audio_text")
+
+        return errors
+
+    def changelist_view(self, request, extra_context=None):
+        """Override changelist to add import button context."""
+        extra_context = extra_context or {}
+        extra_context['import_tvspot_url'] = reverse('admin:diffusion_tvspot_import')
+        return super().changelist_view(request, extra_context=extra_context)
+
+
+# ---------------------------------------------------------------------------
+# TvSpotVersion
+# ---------------------------------------------------------------------------
+
+@admin.register(TvSpotVersion)
+class TvSpotVersionAdmin(ModelAdmin):
+    list_display = ['show_title', 'code', 'name', 'version_type', 'market', 'language', 'show_rows_count', 'show_active']
+    list_filter = ['version_type', 'market', 'is_active', 'tv_spot']
+    search_fields = ['code', 'name', 'tv_spot__script_title', 'tv_spot__job_id']
+    readonly_fields = ['created_at', 'updated_at']
+    inlines = [TvSpotScriptRowInline]
+
+    fieldsets = (
+        (_("Version"), {
+            "classes": ["tab"],
+            "fields": (
+                'tv_spot',
+                ('version_type', 'market'),
+                ('code', 'name'),
+                'language',
+                'is_active',
+            ),
+        }),
+        (_("Visual Style"), {
+            "classes": ["tab"],
+            "fields": ('visual_style_prompt',),
+        }),
+        (_("Metadata"), {
+            "classes": ["tab"],
+            "fields": ('created_at', 'updated_at'),
+        }),
+    )
+
+    @display(description=_("TV Spot"))
+    def show_title(self, obj):
+        return obj.tv_spot.script_title
+
+    @display(description=_("Rows"))
+    def show_rows_count(self, obj):
+        return obj.script_rows.count()
+
+    @display(description=_("Active"), boolean=True)
+    def show_active(self, obj):
+        return obj.is_active
+
+
+# ---------------------------------------------------------------------------
+# StoryboardJob
+# ---------------------------------------------------------------------------
+
+class StoryboardImageInline(TabularInline):
+    """Inline display of images for StoryboardJob."""
+    model = StoryboardImage
+    extra = 0
+    fields = ['script_row', 'image_index', 'diffusion_job', 'show_status']
+    readonly_fields = ['script_row', 'image_index', 'diffusion_job', 'show_status']
+    can_delete = False
+    show_change_link = True
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    @display(description=_("Status"))
+    def show_status(self, obj):
+        return obj.diffusion_job.get_status_display() if obj.diffusion_job else "—"
+
+
+@admin.register(StoryboardJob)
+class StoryboardJobAdmin(ModelAdmin):
+    list_display = ['show_id', 'show_version', 'diffusion_model', 'lora_model', 'images_per_row', 'show_status', 'created_at']
+    list_filter = ['status', 'diffusion_model', 'tv_spot_version__tv_spot']
+    search_fields = ['tv_spot_version__tv_spot__script_title', 'tv_spot_version__code']
+    readonly_fields = ['created_at', 'completed_at']
+    inlines = [StoryboardImageInline]
+
+    fieldsets = (
+        (_("Configuration"), {
+            "classes": ["tab"],
+            "fields": (
+                'tv_spot_version',
+                ('diffusion_model', 'lora_model'),
+                'images_per_row',
+            ),
+        }),
+        (_("Status"), {
+            "classes": ["tab"],
+            "fields": ('status', 'error_message'),
+        }),
+        (_("Timing"), {
+            "classes": ["tab"],
+            "fields": ('created_at', 'completed_at'),
+        }),
+    )
+
+    @display(description=_("ID"))
+    def show_id(self, obj):
+        return f"#{obj.pk}"
+
+    @display(description=_("Version"))
+    def show_version(self, obj):
+        return f"{obj.tv_spot_version.tv_spot.script_title} / {obj.tv_spot_version.code}"
+
+    @display(
+        description=_("Status"),
+        label={
+            "Pending": "info",
+            "Processing": "warning",
+            "Completed": "success",
+            "Failed": "danger",
+        },
+    )
+    def show_status(self, obj):
+        return obj.get_status_display()
