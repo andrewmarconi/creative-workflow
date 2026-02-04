@@ -70,10 +70,12 @@ class AdaptationGenerator:
     def _load_model(self):
         """Load the model and create Outlines generator."""
         if self._generator is not None:
+            logger.debug("Model already loaded, skipping _load_model")
             return
 
         import torch
         import outlines
+        from transformers import AutoModelForCausalLM, AutoTokenizer
 
         logger.info(f"Loading model for adaptation: {self.model_id}")
 
@@ -88,18 +90,28 @@ class AdaptationGenerator:
 
         logger.info(f"Using device: {self.device}")
 
-        # Load model with Outlines
-        self._model = outlines.models.transformers(
+        # Load model and tokenizer with transformers
+        dtype = torch.bfloat16 if self.device != "cpu" else torch.float32
+        logger.debug(f"Loading HuggingFace model with dtype={dtype}")
+        hf_model = AutoModelForCausalLM.from_pretrained(
             self.model_id,
-            device=self.device,
-            model_kwargs={
-                "torch_dtype": torch.bfloat16 if self.device != "cpu" else torch.float32,
-                "low_cpu_mem_usage": True,
-            }
+            torch_dtype=dtype,
+            low_cpu_mem_usage=True,
+            device_map=self.device,
         )
+        logger.debug("HuggingFace model loaded, loading tokenizer")
+        self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)
+        logger.debug("Tokenizer loaded")
 
-        # Create JSON generator with schema
-        self._generator = outlines.generate.json(self._model, AdaptationOutput)
+        # Wrap with Outlines
+        logger.debug("Wrapping model with outlines.from_transformers")
+        self._model = outlines.from_transformers(hf_model, self._tokenizer, device_dtype=dtype)
+        logger.debug("Outlines model wrapper created")
+
+        # Create generator with JSON schema output type
+        logger.debug("Creating Outlines Generator with AdaptationOutput schema")
+        self._generator = outlines.Generator(self._model, output_type=AdaptationOutput)
+        logger.debug("Outlines Generator created")
 
         logger.info("Adaptation model loaded successfully")
 
@@ -120,11 +132,18 @@ class AdaptationGenerator:
         Returns:
             AdaptationOutput with adapted script content
         """
+        logger.debug(
+            f"adapt() called: origin_version_id={origin_version.pk}, "
+            f"target_market={target_market.code}, creativity={creativity}"
+        )
+
         self._load_model()
 
         tv_spot = origin_version.tv_spot
+        logger.debug(f"TV Spot: {tv_spot.script_title} (id={tv_spot.pk})")
 
         # Build the original spot data
+        logger.debug("Building original spot data structure")
         original_spot = {
             "client_name": tv_spot.client_name,
             "brand_name": tv_spot.brand_name,
@@ -142,9 +161,12 @@ class AdaptationGenerator:
                 for row in origin_version.script_rows.all().order_by('order_index')
             ]
         }
+        logger.debug(f"Original spot has {len(original_spot['script_rows'])} script rows")
 
         # Build the prompt
+        logger.debug("Building LLM prompt")
         prompt = self._build_prompt(original_spot, target_market, creativity)
+        logger.debug(f"Prompt built, length={len(prompt)} chars")
 
         logger.info(
             f"Generating adaptation for '{tv_spot.script_title}' to {target_market.name}",
@@ -157,7 +179,22 @@ class AdaptationGenerator:
         )
 
         # Generate with Outlines (guaranteed valid JSON)
-        result = self._generator(prompt)
+        # max_new_tokens needs to be high enough for full JSON output
+        logger.debug("Calling Outlines generator with max_new_tokens=4096")
+        raw_result = self._generator(prompt, max_new_tokens=4096)
+        logger.debug(f"Generator returned result of type {type(raw_result).__name__}")
+
+        # Parse the result - Outlines 1.x returns JSON string, need to parse to Pydantic
+        if isinstance(raw_result, str):
+            logger.debug(f"Raw result is string, length={len(raw_result)} chars")
+            logger.debug(f"Raw result preview: {raw_result[:500]}...")
+            import json
+            logger.debug("Parsing JSON and validating with Pydantic")
+            result = AdaptationOutput.model_validate(json.loads(raw_result))
+            logger.debug("Pydantic validation successful")
+        else:
+            logger.debug("Raw result is already parsed object")
+            result = raw_result
 
         logger.info(
             f"Adaptation generated successfully",
@@ -174,7 +211,9 @@ class AdaptationGenerator:
         """Build the adaptation prompt for the LLM."""
         import json
 
+        logger.debug(f"_build_prompt: target_market={target_market.code}, creativity={creativity}")
         original_json = json.dumps(original_spot, indent=2, ensure_ascii=False)
+        logger.debug(f"Original spot JSON length: {len(original_json)} chars")
 
         prompt = f"""You are an expert advertising creative and localization strategist.
 
@@ -230,17 +269,28 @@ Generate the adapted TV spot:"""
         """Clear the model from memory."""
         import torch
 
+        logger.debug("clear_cache() called")
+
         if self._generator is not None:
+            logger.debug("Deleting generator")
             del self._generator
             self._generator = None
 
         if self._model is not None:
+            logger.debug("Deleting model")
             del self._model
             self._model = None
 
+        if self._tokenizer is not None:
+            logger.debug("Deleting tokenizer")
+            del self._tokenizer
+            self._tokenizer = None
+
         if self.device == "mps":
+            logger.debug("Clearing MPS cache")
             torch.mps.empty_cache()
         elif self.device == "cuda":
+            logger.debug("Clearing CUDA cache")
             torch.cuda.empty_cache()
 
         logger.info("Adaptation model cache cleared")
@@ -254,7 +304,12 @@ def get_adaptation_generator(model_id: str = "Qwen/Qwen2.5-3B-Instruct") -> Adap
     """Get or create the adaptation generator singleton."""
     global _adaptation_generator
 
+    logger.debug(f"get_adaptation_generator called with model_id={model_id}")
+
     if _adaptation_generator is None or _adaptation_generator.model_id != model_id:
+        logger.debug("Creating new AdaptationGenerator instance")
         _adaptation_generator = AdaptationGenerator(model_id=model_id)
+    else:
+        logger.debug("Returning existing AdaptationGenerator instance")
 
     return _adaptation_generator

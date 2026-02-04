@@ -5,11 +5,14 @@ AIR format: urn:air:{ecosystem}:{type}:civitai:{modelId}@{versionId}
 Download endpoint: GET https://civitai.com/api/download/models/{versionId}
 Metadata endpoint: GET https://civitai.com/api/v1/model-versions/{versionId}
 """
+import logging
 import re
 from pathlib import Path
 from typing import Optional
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 
 def parse_air(air_urn: str) -> tuple[str, str]:
@@ -50,13 +53,13 @@ def fetch_model_version_metadata(version_id: str, api_key: Optional[str] = None)
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
 
-    print(f"DEBUG: Fetching metadata from CivitAI (version={version_id})")
+    logger.debug(f"Fetching metadata from CivitAI (version={version_id})")
 
     response = requests.get(url, headers=headers, timeout=30)
     response.raise_for_status()
 
     data = response.json()
-    print(f"DEBUG: Fetched metadata for '{data.get('name', 'Unknown')}'")
+    logger.debug(f"Fetched metadata for '{data.get('name', 'Unknown')}'")
 
     return data
 
@@ -151,14 +154,16 @@ def download_lora(air_urn: str, dest_path: str, api_key: str) -> str:
         raise RuntimeError("CIVITAI_API_KEY is not configured")
 
     model_id, version_id = parse_air(air_urn)
+    logger.debug(f"Parsed AIR: model_id={model_id}, version_id={version_id}")
 
     url = f"https://civitai.com/api/download/models/{version_id}"
     headers = {"Authorization": f"Bearer {api_key}"}
 
-    print(f"DEBUG: Downloading LoRA from CivitAI (model={model_id}, version={version_id})")
+    logger.info(f"Downloading LoRA from CivitAI (model={model_id}, version={version_id})")
 
     response = requests.get(url, headers=headers, stream=True, timeout=300)
     response.raise_for_status()
+    logger.debug("Download request successful, streaming to file")
 
     dest = Path(dest_path)
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -173,8 +178,9 @@ def download_lora(air_urn: str, dest_path: str, api_key: str) -> str:
                 size += len(chunk)
         tmp_path.rename(dest)
     except Exception:
+        logger.error(f"Download failed, removing temp file: {tmp_path}")
         tmp_path.unlink(missing_ok=True)
         raise
 
-    print(f"DEBUG: Downloaded LoRA to {dest_path} ({size / 1024 / 1024:.1f} MB)")
+    logger.info(f"Downloaded LoRA to {dest_path} ({size / 1024 / 1024:.1f} MB)")
     return dest_path

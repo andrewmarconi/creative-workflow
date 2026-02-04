@@ -35,10 +35,10 @@ _enhancer_cache = {}  # {model_id: HFPromptEnhancer}
 def _get_enhancer(model_id="Qwen/Qwen2.5-3B-Instruct"):
     """Return a cached HFPromptEnhancer instance, loading on first call."""
     if model_id not in _enhancer_cache:
-        print(f"DEBUG: Loading enhancer '{model_id}' (cold start)")
+        logger.debug(f"Loading enhancer '{model_id}' (cold start)")
         _enhancer_cache[model_id] = HFPromptEnhancer(model_id=model_id)
     else:
-        print(f"DEBUG: Using warm enhancer '{model_id}'")
+        logger.debug(f"Using warm enhancer '{model_id}'")
     return _enhancer_cache[model_id]
 
 
@@ -92,7 +92,7 @@ def _evict_enhancer():
     """Free VRAM occupied by the prompt enhancer LLM."""
     import torch
     for key in list(_enhancer_cache.keys()):
-        print(f"DEBUG: Evicting enhancer '{key}' to free VRAM")
+        logger.debug(f"Evicting enhancer '{key}' to free VRAM")
         del _enhancer_cache[key]
     import gc
     gc.collect()
@@ -236,11 +236,11 @@ def generate_images_task(self, job_id):
                 )
 
             # Debug: Log LoRA trigger words
-            print(f"DEBUG: Loading LoRA '{job.lora_model.label}'")
-            print(f"DEBUG: LoRA trigger words: '{job.lora_model.prompt_suffix}'")
+            logger.debug(f"Loading LoRA '{job.lora_model.label}'")
+            logger.debug(f"LoRA trigger words: '{job.lora_model.prompt_suffix}'")
 
             load_result = model.load_lora(lora_path, lora_config)
-            print(f"DEBUG: LoRA load result: {load_result}")
+            logger.debug(f"LoRA load result: {load_result}")
 
         # Prepare generation parameters (matching BaseModel.generate() signature)
         # BaseModel.generate() handles all LoRA overrides internally via _resolve_guidance_scale()
@@ -258,10 +258,10 @@ def generate_images_task(self, job_id):
 
         # Debug: Log generation parameters being passed to model
         # Note: BaseModel may modify these (LoRA triggers, guidance_scale resolution, etc.)
-        print(f"DEBUG: Input prompt: '{gen_params['prompt']}'")
+        logger.debug(f"Input prompt: '{gen_params['prompt']}'")
         if gen_params.get('negative_prompt'):
-            print(f"DEBUG: Input negative prompt: '{gen_params['negative_prompt']}'")
-        print(f"DEBUG: Input params: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}, scheduler={gen_params.get('scheduler')}")
+            logger.debug(f"Input negative prompt: '{gen_params['negative_prompt']}'")
+        logger.debug(f"Input params: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}, scheduler={gen_params.get('scheduler')}")
 
         # Generate images (loop for multiple images since generate() returns single image)
         saved_paths = []
@@ -433,15 +433,15 @@ def _load_model_instance(diffusion_model):
     if slug in _model_cache:
         cached = _model_cache[slug]
         if cached.pipeline is not None:
-            print(f"DEBUG: Using warm model '{slug}'")
+            logger.debug(f"Using warm model '{slug}'")
             return cached
         else:
-            print(f"DEBUG: Cached model '{slug}' has no pipeline, reloading")
+            logger.debug(f"Cached model '{slug}' has no pipeline, reloading")
             del _model_cache[slug]
 
     # Evict any previously cached model (one model at a time for memory)
     for old_slug, old_model in list(_model_cache.items()):
-        print(f"DEBUG: Evicting model '{old_slug}' to load '{slug}'")
+        logger.debug(f"Evicting model '{old_slug}' to load '{slug}'")
         try:
             if hasattr(old_model, 'pipeline') and old_model.pipeline is not None:
                 del old_model.pipeline
