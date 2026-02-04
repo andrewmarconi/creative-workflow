@@ -66,3 +66,9 @@ dump.rdb
 # Logs (but keep grafana provisioning config)
 logs/
 !grafana/provisioning/
+
+# Temporary data files
+scripts.csv
+scripts.md
+script_adaptations.json
+data/adaptations.json
