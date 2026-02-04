@@ -62,5 +62,7 @@ db.sqlite3-journal
 
 # RQ / Redis
 dump.rdb
+
+# Logs (but keep grafana provisioning config)
 logs/
-signoz/*.log
+!grafana/provisioning/

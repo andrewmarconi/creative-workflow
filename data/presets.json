@@ -102,12 +102,12 @@
       "settings": {
         "steps": 4,
         "guidance_scale": 0.0,
-        "force_default_guidance": true,
         "default_width": 512,
         "default_height": 512,
         "max_pixels": 262144,
         "dtype": "float16",
         "supports_negative_prompt": false,
+        "force_default_guidance": true,
         "scheduler": "EulerAncestralDiscreteScheduler",
         "token_window": 77,
         "vram_usage": 6144
@@ -122,12 +122,12 @@
       "settings": {
         "steps": 9,
         "guidance_scale": 0.0,
-        "force_default_guidance": true,
         "default_width": 1024,
         "default_height": 1024,
         "max_pixels": 1048576,
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
+        "force_default_guidance": true,
         "scheduler": "FlowMatchEulerDiscreteScheduler",
         "token_window": 512,
         "vram_usage": 8192
@@ -170,7 +170,7 @@
       "air": "urn:air:sd1:lora:civitai:106609@114508",
       "prompt": "anime pose, sketch, white background",
       "negative_prompt": "EasyNegative",
-      "notes": "\n\nCivitAI Stats: 8,548 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 8,548 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "80s Fantasy Movie",
@@ -193,7 +193,7 @@
       },
       "air": "urn:air:zimageturbo:lora:civitai:2189639@2465423",
       "negative_prompt": "模糊、低质量、低分辨率、解剖结构错误、扭曲、变形、多余肢体、缺失肢体、多余手指、手指融合、手指断裂、比例失调、姿势不自然、手部畸形、面部畸形、面部扭曲、面部不对称、眼睛歪斜、模糊、噪点、像素化、过度锐化、水印、文字、标志、签名、瑕疵、杂乱背景、故障、双身、双头、变异、畸形、重复、颗粒感、压缩伪影",
-      "notes": "\n\nCivitAI Stats: 757 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 757 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Begotten",
@@ -204,7 +204,7 @@
       },
       "air": "urn:air:zimagebase:lora:civitai:2192426@2649775",
       "negative_prompt": "bad hands, extra limbs, deformed low quality, cgi, film crew, camera man,",
-      "notes": "\n\nCivitAI Stats: 115 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 115 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Better Sketches for Z-image",
@@ -215,7 +215,17 @@
       },
       "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
       "negative_prompt": "blurry ugly bad",
-      "notes": "\n\nCivitAI Stats: 674 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 674 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Collage Art",
+      "base_architecture": "sdxl",
+      "settings": {
+        "strength": 0.8
+      },
+      "air": "urn:air:sdxl:lora:civitai:753774@842872",
+      "prompt": "ff-collage",
+      "notes": "CivitAI Stats: 216 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Coloring Book - Redmond",
@@ -227,7 +237,7 @@
       "air": "urn:air:sdxl:lora:civitai:136348@177996",
       "prompt": "Coloring Book, ColoringBookAF",
       "negative_prompt": "bad art, ugly, deformed, watermark, duplicated,",
-      "notes": "\n\nCivitAI Stats: 10,827 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 10,827 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "LineAni.Redmond",
@@ -239,7 +249,7 @@
       "air": "urn:air:sdxl:lora:civitai:127018@177544",
       "prompt": "lineart, LineAniAF",
       "negative_prompt": "bad art, ugly, deformed, watermark, duplicated, colors, colorful, blurry, bokeh , full body",
-      "notes": "\n\nCivitAI Stats: 16,859 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 16,859 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Line Drawing",
@@ -248,7 +258,7 @@
         "strength": 0.5
       },
       "air": "urn:air:zimageturbo:lora:civitai:880102@2463976",
-      "notes": "\n\nCivitAI Stats: 946 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 946 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Pen & Ink Illustration",
@@ -259,7 +269,7 @@
       },
       "air": "urn:air:zimageturbo:lora:civitai:2344335@2636956",
       "prompt": "phrsink, pen and ink illustration",
-      "notes": "\n\nCivitAI Stats: 69 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 69 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Perfect Ink Drawing (Engraving Style)",
@@ -270,8 +280,8 @@
       },
       "air": "urn:air:zimageturbo:lora:civitai:1717646@2458471",
       "prompt": "1NK_H4TCH1NG",
-      "negative_prompt": "blurry ugly bad ",
-      "notes": "<p>Be sure to use high strength (aborve 1.0, best: 1.3)</p>\n\nCivitAI Stats: 743 downloads, 0.0★ (0 ratings)"
+      "negative_prompt": "blurry ugly bad",
+      "notes": "<p>Be sure to use high strength (aborve 1.0, best: 1.3)</p>\r\n\r\nCivitAI Stats: 743 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Real Humans",
@@ -281,7 +291,7 @@
       },
       "air": "urn:air:sdxl:lora:civitai:232746@262705",
       "prompt": "photo, portrait photo",
-      "notes": "\n\nCivitAI Stats: 26,798 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 26,798 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Retro Vintage Comics Style",
@@ -292,7 +302,7 @@
       },
       "air": "urn:air:zimageturbo:lora:civitai:1082272@2550274",
       "negative_prompt": "Blurry, pixelated, low quality, grainy",
-      "notes": "<p>This is a later epoch than 1.03 and may be more true to style at the expense of reduced prompt coherency and more concept bleed.</p>\n\nCivitAI Stats: 875 downloads, 0.0★ (0 ratings)"
+      "notes": "<p>This is a later epoch than 1.03 and may be more true to style at the expense of reduced prompt coherency and more concept bleed.</p>\r\n\r\nCivitAI Stats: 875 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "TShirtDesignRedmond",
@@ -304,7 +314,7 @@
       "air": "urn:air:sdxl:lora:civitai:133031@178022",
       "prompt": "T shirt design, TshirtDesignAF",
       "negative_prompt": "bad art, ugly, deformed, watermark, duplicated,",
-      "notes": "\n\nCivitAI Stats: 9,815 downloads, 0.0★ (0 ratings)"
+      "notes": "CivitAI Stats: 9,815 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Wizard's Vintage Comic Book Cover",
@@ -313,8 +323,8 @@
         "strength": 1.0
       },
       "air": "urn:air:sdxl:lora:civitai:210095@302504",
-      "prompt": "Vintage comic book with title text: \"xyz\", vintage comic book",
-      "notes": "<p>Grittier, less pulp and more focused on ink. Inspired by the underground comics of the 50s - 70s and artists like Will Eisner, Robert Crumb and Rand Holmes.</p><p>Hopefully you'll notice a better text coherace and better variations on the titles.</p>\n\nCivitAI Stats: 5,389 downloads, 0.0★ (0 ratings)"
+      "prompt": "vintage comic book",
+      "notes": "<p>Grittier, less pulp and more focused on ink. Inspired by the underground comics of the 50s - 70s and artists like Will Eisner, Robert Crumb and Rand Holmes.</p><p>Hopefully you'll notice a better text coherace and better variations on the titles.</p>\r\n\r\nCivitAI Stats: 5,389 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "zyd232's Ink Style",

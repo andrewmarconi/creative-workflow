@@ -190,6 +190,12 @@ def generate_images_task(self, job_id):
         # Load the model using the factory pattern from lib
         model = _load_model_instance(job.diffusion_model)
 
+        # CRITICAL: Always unload any existing LoRA first to ensure clean state
+        # This prevents LoRA state from persisting between jobs
+        if model.current_lora is not None:
+            logger.info(f"Unloading previous LoRA '{model.current_lora['label']}' to ensure clean state")
+            model.unload_lora()
+
         # Load LoRA if specified
         if job.lora_model:
             # Resolve LoRA file path
@@ -366,8 +372,10 @@ def generate_images_task(self, job_id):
         job.completed_at = timezone.now()
         job.save()
 
-        # Unload LoRA if it was loaded
-        if job.lora_model:
+        # CRITICAL: Always unload LoRA at the end to ensure clean state for next job
+        # This prevents VAE dtype issues from LoRA state persisting
+        if model.current_lora is not None:
+            logger.info(f"Unloading LoRA '{model.current_lora['label']}' after generation")
             model.unload_lora()
 
         return {

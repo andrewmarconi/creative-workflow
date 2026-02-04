@@ -157,9 +157,9 @@ class DiffusionModelAdmin(ModelAdmin):
 
 @admin.register(LoraModel)
 class LoraModelAdmin(ModelAdmin):
-    list_display = ['label', 'base_architecture', 'default_strength', 'show_compatible', 'show_downloaded', 'show_active']
-    list_filter = ['is_active', 'base_architecture']
-    search_fields = ['label', 'path', 'air']
+    list_display = ['label', 'theme', 'base_architecture', 'show_downloaded', 'show_active']
+    list_filter = ['is_active', 'base_architecture', 'theme']
+    search_fields = ['label', 'path', 'air', 'theme']
     readonly_fields = ['created_at', 'updated_at', 'show_token_counts']
     actions = ['refresh_metadata_bulk_action']
     actions_row = ['refresh_metadata_action']
@@ -170,7 +170,7 @@ class LoraModelAdmin(ModelAdmin):
             "fields": (
                 ('label', 'is_active'),
                 ('path', 'air'),
-                'base_architecture',
+                ('base_architecture', 'theme'),
            ),
         }),
         (_("Prompt & Settings"), {

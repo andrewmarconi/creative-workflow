@@ -40,35 +40,44 @@ uv run python test_admin.py                     # Run admin tests
 
 ### Observability & Logging
 ```bash
-# View logs (JSON format)
-tail -f logs/tasks.log                          # Task execution logs
-tail -f logs/celery.log                         # Celery worker logs
+# View logs locally (JSON format)
+tail -f logs/tasks.log                          # Task execution logs (all workers)
+tail -f logs/worker_default.log                 # Image generation worker only
+tail -f logs/worker_enhancement.log             # Prompt enhancement worker only
 tail -f logs/django.log                         # Django server logs
+tail -f logs/celery.log                         # Celery general logs
 
 # Parse JSON logs with jq
 cat logs/tasks.log | jq 'select(.levelname == "ERROR")'
 
-# Start Jaeger (tracing UI)
-# 1. Set OTEL_ENABLED=true in .env
-# 2. Restart honcho (traces sent to Jaeger)
-# 3. Access Jaeger UI at http://localhost:16686
+# Grafana Loki - Log aggregation & search
+# 1. Start docker-compose (includes Loki, Promtail, Grafana)
+# 2. Logs are automatically collected from logs/*.log
+# 3. Access Grafana UI at http://localhost:3000
+# 4. Navigate to Explore → select Loki data source
+# 5. Query examples:
+#    - {job="django"} - All Django logs
+#    - {job="celery"} | json | level="ERROR" - Celery errors
+#    - {job="tasks"} |= "image generation" - Search for text
 ```
 
 ## Architecture
 
 ### Process Model
 Four processes run concurrently (defined in `Procfile`, launched via `honcho start`):
-1. **docker** — PostgreSQL 17 (port 5435) + Valkey (port 6379) + Jaeger (optional tracing)
+1. **docker** — PostgreSQL 17 (port 5435) + Valkey (port 6379) + Grafana/Loki (log aggregation)
 2. **django** — Django dev server (port 8000)
 3. **worker** — Celery worker on `default` queue (image generation, GPU-intensive)
 4. **enhancement** — Celery worker on `enhancement` queue (prompt enhancement via local LLM)
 
 Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork-safe.
 
-**Jaeger Tracing** (via `docker-compose.yml`, optional):
-- **Jaeger** (ports 4317/4318, UI: 16686) — All-in-one tracing backend with OTLP support
+**Grafana + Loki** (via `docker-compose.yml`, always enabled):
+- **Loki** (port 3100) — Log aggregation backend, stores all logs
+- **Promtail** — Collects logs from `logs/*.log` and ships to Loki
+- **Grafana** (port 3000) — Web UI for searching and viewing logs
 
-Enable by setting `OTEL_ENABLED=true` in `.env`. Access UI at http://localhost:16686.
+Access Grafana UI at http://localhost:3000 (anonymous login enabled for local dev).
 
 ### Model Architecture (Refactored 2026-02)
 
@@ -81,7 +90,8 @@ Enable by setting `OTEL_ENABLED=true` in `.env`. Access UI at http://localhost:1
 - Configuration-driven behavior via flags: `force_default_guidance`, `enable_debug_logging`, etc.
 
 **Mixins** (`lib/models/mixins.py`) - Shared behaviors via multiple inheritance:
-- `CLIPTokenLimitMixin` - 77-token limit handling for SDXL/SD15 models
+- `CompelPromptMixin` - Long prompt handling (>77 tokens) and prompt weighting for CLIP-based models using Compel library
+- `CLIPTokenLimitMixin` - (Legacy) 77-token truncation for SDXL/SD15 models (replaced by CompelPromptMixin)
 - `DebugLoggingMixin` - Debug print statements (enabled via config)
 
 **Concrete Models** - Minimal implementations (20-70 lines each):
@@ -107,7 +117,7 @@ Enable by setting `OTEL_ENABLED=true` in `.env`. Access UI at http://localhost:1
 ### Key Code Paths
 
 **Django app** — `cw/diffusion/`:
-- `models.py` — ORM models: `DiffusionModel`, `LoraModel`, `Prompt`, `DiffusionJob`
+- `models.py` — ORM models: `DiffusionModel`, `LoraModel` (with theme field for categorization), `Prompt`, `DiffusionJob`
 - `admin.py` — Django Unfold admin (primary UI for creating prompts, queuing jobs, viewing results)
 - `tasks.py` — Celery tasks: `generate_images_task(job_id)`, `enhance_prompt_task(prompt_id)`
 
@@ -115,7 +125,7 @@ Enable by setting `OTEL_ENABLED=true` in `.env`. Access UI at http://localhost:1
 - `config.py` — `PresetsConfig` loads `data/presets.json`
 - `prompt_enhancer.py` — Three enhancers: rule-based (`PromptEnhancer`), local LLM (`HFPromptEnhancer` using Qwen2.5-3B), Anthropic API (`LLMPromptEnhancer`)
 - `civitai.py` — Auto-download LoRAs from CivitAI by AIR URN
-- `loras/manager.py` — LoRA filtering by base architecture
+- `loras/manager.py` — LoRA filtering by base architecture and optional theme (e.g., 'anime', 'photorealistic', 'fantasy')
 
 ### Data Flow
 1. User creates a `Prompt` and `DiffusionJob` via Django admin
@@ -126,8 +136,11 @@ Enable by setting `OTEL_ENABLED=true` in `.env`. Access UI at http://localhost:1
 
 ### Configuration
 - `data/presets.json` — Master config for models and LoRAs (synced to DB via `import_presets`)
-- `.env` — Environment variables (DB credentials, API keys for Anthropic/CivitAI)
+- `.env` — Environment variables:
+  - **Required**: `POSTGRES_*`, `VALKEY_*`, `DJANGO_SECRET_KEY`
+  - **Optional**: `ANTHROPIC_API_KEY` (for LLM prompt enhancement), `CIVITAI_API_KEY` (for auto-downloading LoRAs), `MODEL_BASE_PATH` (base directory for local `.safetensors` files)
 - `cw/settings.py` — Django settings including Celery config and Unfold admin setup
+- `grafana/provisioning/` — Grafana datasource/dashboard provisioning (auto-configures Loki on startup)
 
 ### Model-Specific Notes
 | Model | Pipeline | Steps | CFG | Negative Prompt |
@@ -167,12 +180,33 @@ class YourModel(BaseModel):
 ```
 
 **Models with special requirements**:
-- **Token limiting** (CLIP 77-token): Inherit from `CLIPTokenLimitMixin` + `BaseModel`
+- **Long prompts + prompt weighting** (CLIP-based models): Inherit from `CompelPromptMixin` + `BaseModel` (handles >77 tokens via Compel, supports `(word:weight)` syntax)
+- **Token truncation** (legacy): Inherit from `CLIPTokenLimitMixin` + `BaseModel` (simple 77-token truncation, deprecated in favor of CompelPromptMixin)
 - **Debug logging**: Inherit from `DebugLoggingMixin` + `BaseModel`
 - **Custom prompt handling**: Override `_build_prompts(params: Dict) -> Dict`
 - **Custom pipeline kwargs**: Override `_build_pipeline_kwargs(params: Dict, callback) -> Dict`
 - **Custom device optimizations**: Override `_apply_device_optimizations() -> None`
 - **Special prompt requirements**: Override `_handle_special_prompt_requirements(params: Dict) -> Dict`
+
+### Compel Prompt Features (SDXL, SD15)
+
+CLIP-based models (SDXL, SD15) now use [Compel](https://github.com/damian0815/compel) for advanced prompt handling:
+
+**Long Prompts**: No 77-token limit - prompts are automatically chunked and embeddings concatenated:
+```python
+# This long prompt works without truncation:
+prompt = """a highly detailed, photorealistic landscape painting of a serene mountain
+valley at sunset, with dramatic lighting, golden hour atmosphere, misty background,
+lush green meadows in the foreground, snow-capped peaks in the distance"""
+```
+
+**Prompt Weighting**: Emphasize or de-emphasize concepts using `(word:weight)` syntax:
+```python
+# Increase emphasis (>1.0) or decrease (<1.0):
+prompt = "a (beautiful:1.3) landscape with (dramatic lighting:1.5), avoiding (blur:0.5)"
+```
+
+**LoRA Integration**: Trigger words are automatically appended without truncation concerns.
 
 ## Environment & Dependencies
 - Python 3.12+ managed via `uv`

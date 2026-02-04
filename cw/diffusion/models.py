@@ -195,6 +195,11 @@ class LoraModel(models.Model):
         blank=True,
         help_text="Internal notes about this LoRA (usage tips, characteristics, etc.)"
     )
+    theme = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Theme or category for filtering (e.g., 'anime', 'photorealistic', 'fantasy')"
+    )
 
     # Metadata
     is_active = models.BooleanField(default=True, help_text="Enable/disable this LoRA")

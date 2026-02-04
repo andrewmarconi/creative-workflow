@@ -332,12 +332,3 @@ CELERY_TASK_QUEUES = {
 }
 
 
-# OpenTelemetry Configuration (SigNoz)
-# Enable observability by setting OTEL_ENABLED=true in environment
-
-# Initialize OpenTelemetry instrumentation if enabled
-# This will instrument Django, Celery, and logging automatically
-if os.getenv('OTEL_ENABLED', 'false').lower() == 'true':
-    from cw.otel import setup_opentelemetry
-    setup_opentelemetry()
-
