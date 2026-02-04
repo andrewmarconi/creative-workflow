@@ -114,6 +114,7 @@ class Command(BaseCommand):
                     'path': lora_data.get('path', ''),
                     'air': lora_data.get('air', ''),
                     'base_architecture': base_arch,
+                    'theme': lora_data.get('theme', ''),
                     'prompt_suffix': lora_data.get('prompt', ''),
                     'negative_prompt_suffix': lora_data.get('negative_prompt', ''),
                     'default_strength': settings.get('strength', 0.8),

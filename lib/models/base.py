@@ -42,6 +42,10 @@ class BaseModel(ABC):
         self.enable_vae_slicing = self.settings.get("enable_vae_slicing", False)
         self.enable_debug_logging = self.settings.get("enable_debug_logging", False)
 
+        # Scheduler configuration
+        self.default_scheduler = self.settings.get("scheduler")
+        self._original_scheduler_config = None  # Store original for restoration
+
         # Get dtype — FP8 variants can't be used as torch_dtype for loading,
         # so fall back to bfloat16 (weights are upcast automatically).
         dtype_str = self.settings.get("dtype", "bfloat16")
@@ -78,6 +82,16 @@ class BaseModel(ABC):
 
             self.pipeline = self._create_pipeline()
 
+            # Step 2.5: Store original scheduler config for potential restoration
+            if hasattr(self.pipeline, 'scheduler') and hasattr(self.pipeline.scheduler, 'config'):
+                self._original_scheduler_config = self.pipeline.scheduler.config
+
+            # Step 2.6: Apply default scheduler if configured
+            if self.default_scheduler:
+                if progress_callback:
+                    progress_callback(0.5, desc=f"Setting scheduler: {self.default_scheduler}...")
+                self.set_scheduler(self.default_scheduler)
+
             # Step 3: Apply optimizations
             if progress_callback:
                 progress_callback(0.7, desc="Enabling optimizations...")
@@ -102,6 +116,7 @@ class BaseModel(ABC):
         height: Optional[int] = None,
         seed: Optional[int] = None,
         clip_skip: Optional[int] = None,
+        scheduler: Optional[str] = None,
         progress_callback=None,
     ) -> Tuple[Image.Image, Dict]:
         """
@@ -120,6 +135,7 @@ class BaseModel(ABC):
             height: Image height
             seed: Random seed
             clip_skip: Number of CLIP layers to skip (if supported)
+            scheduler: Scheduler class name to use (overrides default)
             progress_callback: Optional callback for progress updates
 
         Returns:
@@ -128,11 +144,18 @@ class BaseModel(ABC):
         if self.pipeline is None:
             raise RuntimeError("Pipeline not loaded")
 
+        # Step 0: Apply scheduler override if provided
+        scheduler_applied = None
+        if scheduler:
+            scheduler_applied = self.set_scheduler(scheduler)
+
         # Step 1: Apply parameter defaults and overrides
         params = self._prepare_generation_params(
             prompt, negative_prompt, steps, guidance_scale,
             width, height, seed, clip_skip
         )
+        # Track which scheduler is active for metadata
+        params['scheduler'] = scheduler_applied or self._get_current_scheduler_name()
 
         # Step 2: Build prompts with LoRA suffixes (hook for customization)
         params = self._build_prompts(params)
@@ -354,6 +377,7 @@ class BaseModel(ABC):
             'width': params['width'],
             'height': params['height'],
             'seed': params['seed'],
+            'scheduler': params.get('scheduler'),
             'lora': self.current_lora['label'] if self.current_lora else None,
         }
 
@@ -406,6 +430,57 @@ class BaseModel(ABC):
             self.pipeline.enable_attention_slicing()
         else:
             self.pipeline = self.pipeline.to(device)
+
+    def set_scheduler(self, scheduler_name: str) -> Optional[str]:
+        """
+        Set the scheduler for the pipeline by class name.
+
+        Args:
+            scheduler_name: Name of the scheduler class (e.g., 'EulerDiscreteScheduler',
+                           'DPMSolverMultistepScheduler', 'FlowMatchEulerDiscreteScheduler')
+
+        Returns:
+            Name of the scheduler that was set, or None if failed
+        """
+        if self.pipeline is None:
+            return None
+
+        if not hasattr(self.pipeline, 'scheduler'):
+            return None
+
+        try:
+            # Import diffusers schedulers dynamically
+            import diffusers
+
+            # Get the scheduler class by name
+            if not hasattr(diffusers, scheduler_name):
+                import logging
+                logging.getLogger(__name__).warning(
+                    f"Scheduler '{scheduler_name}' not found in diffusers, keeping current scheduler"
+                )
+                return None
+
+            scheduler_class = getattr(diffusers, scheduler_name)
+
+            # Create new scheduler from current scheduler's config
+            # This preserves model-specific scheduler parameters
+            new_scheduler = scheduler_class.from_config(self.pipeline.scheduler.config)
+            self.pipeline.scheduler = new_scheduler
+
+            import logging
+            logging.getLogger(__name__).info(f"Scheduler set to: {scheduler_name}")
+            return scheduler_name
+
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to set scheduler '{scheduler_name}': {e}")
+            return None
+
+    def _get_current_scheduler_name(self) -> Optional[str]:
+        """Get the current scheduler's class name."""
+        if self.pipeline is None or not hasattr(self.pipeline, 'scheduler'):
+            return None
+        return self.pipeline.scheduler.__class__.__name__
 
     def _post_lora_load_fixes(self) -> None:
         """

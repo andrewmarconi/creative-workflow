@@ -79,10 +79,10 @@ class JobInline(TabularInline):
 @admin.register(DiffusionModel)
 class DiffusionModelAdmin(ModelAdmin):
     list_display = [
-        'label', 'base_architecture', 'token_window', 'vram_in_gb', 'steps',
+        'label', 'base_architecture', 'show_scheduler', 'token_window', 'vram_in_gb', 'steps',
         'show_resolution', 'show_negative_prompt', 'show_downloaded', 'show_active', 'show_loras_count',
     ]
-    list_filter = ['is_active', 'base_architecture', 'pipeline', 'supports_negative_prompt', 'dtype']
+    list_filter = ['is_active', 'base_architecture', 'pipeline', 'scheduler', 'supports_negative_prompt', 'dtype']
     search_fields = ['label', 'slug', 'path']
     readonly_fields = ['created_at', 'updated_at']
 
@@ -146,6 +146,14 @@ class DiffusionModelAdmin(ModelAdmin):
     def vram_in_gb(self, obj):
         if obj.vram_usage:
             return f"{int(obj.vram_usage/1024)} GB"
+        return "—"
+
+    @display(description=_("Scheduler"))
+    def show_scheduler(self, obj):
+        if obj.scheduler:
+            # Shorten common scheduler names for display
+            name = obj.scheduler.replace('Scheduler', '').replace('Discrete', '')
+            return name
         return "—"
 
 
@@ -838,10 +846,10 @@ class DiffusionJobAdmin(ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     list_display = [
-        'show_id', 'show_status', 'diffusion_model', 'lora_model',
+        'show_id', 'identifier', 'show_status', 'diffusion_model', 'lora_model', 'show_scheduler',
         'show_prompt', 'num_images', 'created_at', 'show_duration',
     ]
-    list_filter = ['status', 'diffusion_model', 'lora_model', 'created_at']
+    list_filter = ['status', 'diffusion_model', 'lora_model', 'scheduler', 'created_at']
     search_fields = ['rq_job_id', 'prompt__source_prompt']
     readonly_fields = [
         'rq_job_id', 'status', 'created_at', 'started_at', 'completed_at',
@@ -853,13 +861,13 @@ class DiffusionJobAdmin(ModelAdmin):
     fieldsets = (
         (_("Configuration"), {
             "classes": ["tab"],
-            "fields": ('diffusion_model', 'lora_model', 'prompt'),
+            "fields": ('diffusion_model', 'lora_model', 'prompt', 'identifier'),
         }),
         (_("Parameters"), {
             "classes": ["tab"],
             "fields": (
-                ('width', 'height'), 'steps', 'guidance_scale',
-                'lora_strength', 'seed', 'num_images',
+                ('width', 'height'), ('steps', 'guidance_scale'),
+                ('scheduler', 'lora_strength'), ('seed', 'num_images'),
             ),
             "description": _("Leave blank to use model/LoRA defaults."),
         }),
@@ -914,6 +922,19 @@ class DiffusionJobAdmin(ModelAdmin):
             elif seconds < 3600:
                 return f"{seconds // 60}m {seconds % 60}s"
             return f"{seconds // 3600}h {(seconds % 3600) // 60}m"
+        return "—"
+
+    @display(description=_("Scheduler"))
+    def show_scheduler(self, obj):
+        # Show job override or model default
+        scheduler = obj.scheduler or (obj.diffusion_model.scheduler if obj.diffusion_model else None)
+        if scheduler:
+            # Shorten common scheduler names for display
+            name = scheduler.replace('Scheduler', '').replace('Discrete', '')
+            # Indicate if it's an override vs model default
+            if obj.scheduler:
+                return format_html('<span title="Job override">{}</span>', name)
+            return format_html('<span title="Model default" style="opacity: 0.7">{}</span>', name)
         return "—"
 
     @display(description=_("Generated Images"))

@@ -33,6 +33,7 @@
         "max_pixels": 2097152,
         "dtype": "bfloat16",
         "supports_negative_prompt": false,
+        "scheduler": "FlowMatchEulerDiscreteScheduler",
         "max_sequence_length": 512,
         "token_window": 512,
         "vram_usage": 24576
@@ -52,6 +53,7 @@
         "max_pixels": 1048576,
         "dtype": "float16",
         "supports_negative_prompt": true,
+        "scheduler": "DPMSolverMultistepScheduler",
         "token_window": 77,
         "vram_usage": 8192
       }
@@ -89,6 +91,7 @@
         "max_pixels": 393216,
         "dtype": "float16",
         "supports_negative_prompt": true,
+        "scheduler": "DPMSolverMultistepScheduler",
         "token_window": 77,
         "vram_usage": 4096
       }
@@ -138,6 +141,7 @@
     {
       "label": "geometric_shapes",
       "base_architecture": "sd15",
+      "theme": "abstract",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 7.0,
@@ -150,18 +154,21 @@
     {
       "label": "Pen Sketch Style",
       "base_architecture": "sd15",
+      "theme": "sketch",
       "settings": {
         "strength": 0.8,
-        "guidance_scale": 7.0
+        "guidance_scale": 7.0,
+        "clip_skip": 2
       },
       "air": "urn:air:sd1:lora:civitai:28687@35516",
       "prompt": "penSketch_style, monochrome, ink sketch",
       "negative_prompt": "badhandv4, EasyNegative, signature",
-      "notes": "<p>v1.3 LoRa is trained based on SD 1.5, and is continued on the first version of pen sketch LoRa</p><p>v1.3 是基于SD第一个版本的直线速写风格的lora继续训练的</p><p>For pen_sketch_style_v1.3, I strengthened \"hatching\" style and improved stablity of it.</p><p>在1.3版本中我加强了阴影线的风格效果，并且提升了模型的稳定性。</p><p>Recommended weight for LoRa ：0.6-0.8</p><p>推荐LoRa权重：0.6-0.8</p>\n\nCivitAI Stats: 14,203 downloads, 0.0★ (0 ratings)"
+      "notes": "<p>v1.3 LoRa is trained based on SD 1.5, and is continued on the first version of pen sketch LoRa</p><p>v1.3 是基于SD第一个版本的直线速写风格的lora继续训练的</p><p>For pen_sketch_style_v1.3, I strengthened \"hatching\" style and improved stablity of it.</p><p>在1.3版本中我加强了阴影线的风格效果，并且提升了模型的稳定性。</p><p>Recommended weight for LoRa ：0.6-0.8</p><p>推荐LoRa权重：0.6-0.8</p>\n\nCivitAI Stats: 14,204 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Sketch Anime Pose",
       "base_architecture": "sd15",
+      "theme": "anime",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 7.0,
@@ -170,11 +177,12 @@
       "air": "urn:air:sd1:lora:civitai:106609@114508",
       "prompt": "anime pose, sketch, white background",
       "negative_prompt": "EasyNegative",
-      "notes": "CivitAI Stats: 8,548 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 8,550 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "80s Fantasy Movie",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "cinematic",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 1.0
@@ -182,54 +190,48 @@
       "air": "urn:air:zimageturbo:lora:civitai:789313@2526524",
       "prompt": "ArsMovieStill, 80s Fantasy Movie Still",
       "negative_prompt": "blurry ugly bad",
-      "notes": "<p>Trained on the V2 Dataset in AI Toolkit. <br />Used different approach when I trained this version - the main difference is that 1000 steps of \"High Noise Only\" training was done at the end of the process.<br /></p>\n\nCivitAI Stats: 2,026 downloads, 0.0★ (0 ratings)"
+      "notes": "<p>Trained on the V2 Dataset in AI Toolkit. <br />Used different approach when I trained this version - the main difference is that 1000 steps of \"High Noise Only\" training was done at the end of the process.<br /></p>\n\nCivitAI Stats: 2,039 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Anime MANGA Maker",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "anime",
       "settings": {
         "strength": 1.0,
         "guidance_scale": 1.0
       },
       "air": "urn:air:zimageturbo:lora:civitai:2189639@2465423",
       "negative_prompt": "模糊、低质量、低分辨率、解剖结构错误、扭曲、变形、多余肢体、缺失肢体、多余手指、手指融合、手指断裂、比例失调、姿势不自然、手部畸形、面部畸形、面部扭曲、面部不对称、眼睛歪斜、模糊、噪点、像素化、过度锐化、水印、文字、标志、签名、瑕疵、杂乱背景、故障、双身、双头、变异、畸形、重复、颗粒感、压缩伪影",
-      "notes": "CivitAI Stats: 757 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 757 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Begotten",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "cinematic",
       "settings": {
         "strength": 1.0,
         "guidance_scale": 4.0
       },
       "air": "urn:air:zimagebase:lora:civitai:2192426@2649775",
       "negative_prompt": "bad hands, extra limbs, deformed low quality, cgi, film crew, camera man,",
-      "notes": "CivitAI Stats: 115 downloads, 0.0★ (0 ratings)"
-    },
-    {
-      "label": "Better Sketches for Z-image",
-      "base_architecture": "sdxl",
-      "settings": {
-        "strength": 0.8,
-        "guidance_scale": 1.0
-      },
-      "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
-      "negative_prompt": "blurry ugly bad",
-      "notes": "CivitAI Stats: 674 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 123 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Collage Art",
       "base_architecture": "sdxl",
+      "theme": "artistic",
       "settings": {
-        "strength": 0.8
+        "strength": 0.8,
+        "guidance_scale": 7.0
       },
       "air": "urn:air:sdxl:lora:civitai:753774@842872",
       "prompt": "ff-collage",
-      "notes": "CivitAI Stats: 216 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 217 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Coloring Book - Redmond",
       "base_architecture": "sdxl",
+      "theme": "illustration",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 7.0
@@ -237,11 +239,12 @@
       "air": "urn:air:sdxl:lora:civitai:136348@177996",
       "prompt": "Coloring Book, ColoringBookAF",
       "negative_prompt": "bad art, ugly, deformed, watermark, duplicated,",
-      "notes": "CivitAI Stats: 10,827 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 10,832 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "LineAni.Redmond",
       "base_architecture": "sdxl",
+      "theme": "anime",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 7.0
@@ -249,64 +252,71 @@
       "air": "urn:air:sdxl:lora:civitai:127018@177544",
       "prompt": "lineart, LineAniAF",
       "negative_prompt": "bad art, ugly, deformed, watermark, duplicated, colors, colorful, blurry, bokeh , full body",
-      "notes": "CivitAI Stats: 16,859 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 16,867 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Line Drawing",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "sketch",
       "settings": {
-        "strength": 0.5
+        "strength": 0.5,
+        "guidance_scale": 1.0
       },
       "air": "urn:air:zimageturbo:lora:civitai:880102@2463976",
-      "notes": "CivitAI Stats: 946 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 947 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Pen & Ink Illustration",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "illustration",
       "settings": {
         "strength": 0.7,
         "guidance_scale": 1.0
       },
       "air": "urn:air:zimageturbo:lora:civitai:2344335@2636956",
-      "prompt": "phrsink, pen and ink illustration",
-      "notes": "CivitAI Stats: 69 downloads, 0.0★ (0 ratings)"
+      "prompt": "phrsink, pen and ink illustration"
     },
     {
       "label": "Perfect Ink Drawing (Engraving Style)",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "illustration",
       "settings": {
         "strength": 1.3,
         "guidance_scale": 1.0
       },
       "air": "urn:air:zimageturbo:lora:civitai:1717646@2458471",
       "prompt": "1NK_H4TCH1NG",
-      "negative_prompt": "blurry ugly bad",
-      "notes": "<p>Be sure to use high strength (aborve 1.0, best: 1.3)</p>\r\n\r\nCivitAI Stats: 743 downloads, 0.0★ (0 ratings)"
+      "negative_prompt": "blurry ugly bad ",
+      "notes": "<p>Be sure to use high strength (aborve 1.0, best: 1.3)</p>\n\nCivitAI Stats: 744 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Real Humans",
       "base_architecture": "sdxl",
+      "theme": "photorealistic",
       "settings": {
-        "strength": 1.0
+        "strength": 1.0,
+        "guidance_scale": 7.0
       },
       "air": "urn:air:sdxl:lora:civitai:232746@262705",
       "prompt": "photo, portrait photo",
-      "notes": "CivitAI Stats: 26,798 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 26,833 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Retro Vintage Comics Style",
-      "base_architecture": "sdxl",
+      "base_architecture": "zimage",
+      "theme": "comic",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 1.0
       },
       "air": "urn:air:zimageturbo:lora:civitai:1082272@2550274",
       "negative_prompt": "Blurry, pixelated, low quality, grainy",
-      "notes": "<p>This is a later epoch than 1.03 and may be more true to style at the expense of reduced prompt coherency and more concept bleed.</p>\r\n\r\nCivitAI Stats: 875 downloads, 0.0★ (0 ratings)"
+      "notes": "<p>This is a later epoch than 1.03 and may be more true to style at the expense of reduced prompt coherency and more concept bleed.</p>\n\nCivitAI Stats: 879 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "TShirtDesignRedmond",
       "base_architecture": "sdxl",
+      "theme": "design",
       "settings": {
         "strength": 0.8,
         "guidance_scale": 7.0
@@ -314,26 +324,43 @@
       "air": "urn:air:sdxl:lora:civitai:133031@178022",
       "prompt": "T shirt design, TshirtDesignAF",
       "negative_prompt": "bad art, ugly, deformed, watermark, duplicated,",
-      "notes": "CivitAI Stats: 9,815 downloads, 0.0★ (0 ratings)"
+      "notes": "\n\nCivitAI Stats: 9,821 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "Wizard's Vintage Comic Book Cover",
       "base_architecture": "sdxl",
+      "theme": "comic",
       "settings": {
-        "strength": 1.0
+        "strength": 1.0,
+        "guidance_scale": 7.0
       },
       "air": "urn:air:sdxl:lora:civitai:210095@302504",
-      "prompt": "vintage comic book",
-      "notes": "<p>Grittier, less pulp and more focused on ink. Inspired by the underground comics of the 50s - 70s and artists like Will Eisner, Robert Crumb and Rand Holmes.</p><p>Hopefully you'll notice a better text coherace and better variations on the titles.</p>\r\n\r\nCivitAI Stats: 5,389 downloads, 0.0★ (0 ratings)"
+      "prompt": "Vintage comic book with title text: \"xyz\", vintage comic book",
+      "notes": "<p>Grittier, less pulp and more focused on ink. Inspired by the underground comics of the 50s - 70s and artists like Will Eisner, Robert Crumb and Rand Holmes.</p><p>Hopefully you'll notice a better text coherace and better variations on the titles.</p>\n\nCivitAI Stats: 5,391 downloads, 0.0★ (0 ratings)"
     },
     {
       "label": "zyd232's Ink Style",
       "base_architecture": "zimage",
+      "theme": "artistic",
       "settings": {
-        "strength": 1.2
+        "strength": 1.2,
+        "guidance_scale": 1.0
       },
       "air": "urn:air:zimageturbo:lora:civitai:73305@2486884",
-      "prompt": "水墨风, ink style, zydink"
+      "prompt": "水墨风, ink style, zydink",
+      "notes": "<p>About this version</p><p>Weight: 0.8-1.2</p><p>Trigger word: 水墨风, ink style</p>\n\nCivitAI Stats: 1,230 downloads, 0.0★ (0 ratings)"
+    },
+    {
+      "label": "Better Sketches for Z-image",
+      "base_architecture": "zimage",
+      "theme": "sketch",
+      "settings": {
+        "strength": 0.8,
+        "guidance_scale": 1.0
+      },
+      "air": "urn:air:zimageturbo:lora:civitai:2200435@2477573",
+      "negative_prompt": "blurry ugly bad",
+      "notes": "CivitAI Stats: 676 downloads, 0.0★ (0 ratings)"
     }
   ]
 }

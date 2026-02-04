@@ -88,6 +88,10 @@ class Command(BaseCommand):
                 }
             }
 
+            # Add theme if present
+            if lora.theme:
+                lora_data['theme'] = lora.theme
+
             # Add optional settings if present
             if lora.guidance_scale is not None:
                 lora_data['settings']['guidance_scale'] = lora.guidance_scale
