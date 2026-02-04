@@ -587,3 +587,107 @@ def create_adaptation_task(self, origin_version_id, target_market_id):
             'target_market_id': target_market_id,
             'error': str(e),
         }
+
+
+@shared_task(bind=True, name='cw.diffusion.tasks.generate_storyboard_task')
+def generate_storyboard_task(self, storyboard_job_id, enhance_prompts=True):
+    """
+    Generate storyboard images for a TV spot version.
+
+    This task:
+    1. Generates image prompts from script rows
+    2. Creates Prompt and DiffusionJob records for each frame
+    3. Queues the DiffusionJobs for image generation
+
+    Args:
+        storyboard_job_id: ID of the StoryboardJob
+        enhance_prompts: Whether to use LLM to enhance prompts
+
+    Returns:
+        Dict with generation results
+    """
+    from cw.diffusion.models import StoryboardJob
+    from lib.storyboard import StoryboardGenerator, create_storyboard_jobs
+
+    storyboard_job = StoryboardJob.objects.get(id=storyboard_job_id)
+    tv_spot_version = storyboard_job.tv_spot_version
+    tv_spot = tv_spot_version.tv_spot
+
+    logger.info(
+        f"Starting storyboard generation for '{tv_spot.script_title}' / {tv_spot_version.code}",
+        extra={
+            "storyboard_job_id": storyboard_job_id,
+            "tv_spot_id": tv_spot.pk,
+            "version_id": tv_spot_version.pk,
+            "images_per_row": storyboard_job.images_per_row,
+        }
+    )
+
+    try:
+        # Update job status
+        storyboard_job.status = 'processing'
+        storyboard_job.save()
+
+        # Generate prompts from script rows
+        generator = StoryboardGenerator(use_llm=enhance_prompts)
+        prompts = generator.generate_prompts_for_version(
+            tv_spot_version,
+            enhance=enhance_prompts,
+        )
+
+        logger.info(
+            f"Generated {len(prompts)} prompts for storyboard",
+            extra={
+                "storyboard_job_id": storyboard_job_id,
+                "num_prompts": len(prompts),
+            }
+        )
+
+        # Create DiffusionJobs and StoryboardImages
+        created_jobs = create_storyboard_jobs(storyboard_job, prompts)
+
+        # Queue the DiffusionJobs for image generation
+        for job in created_jobs:
+            generate_images_task.apply_async(args=[job.id], queue='default')
+            job.status = 'queued'
+            job.save()
+
+        # Update storyboard job status
+        storyboard_job.status = 'completed'
+        storyboard_job.completed_at = timezone.now()
+        storyboard_job.save()
+
+        logger.info(
+            f"Storyboard generation complete: {len(created_jobs)} jobs queued",
+            extra={
+                "storyboard_job_id": storyboard_job_id,
+                "num_jobs": len(created_jobs),
+            }
+        )
+
+        return {
+            'status': 'success',
+            'storyboard_job_id': storyboard_job_id,
+            'num_prompts': len(prompts),
+            'num_jobs': len(created_jobs),
+            'job_ids': [job.id for job in created_jobs],
+        }
+
+    except Exception as e:
+        storyboard_job.status = 'failed'
+        storyboard_job.error_message = str(e)
+        storyboard_job.save()
+
+        logger.error(
+            f"Storyboard generation failed: {e}",
+            extra={
+                "storyboard_job_id": storyboard_job_id,
+                "error": str(e),
+            }
+        )
+
+        return {
+            'status': 'failed',
+            'storyboard_job_id': storyboard_job_id,
+            'error': str(e),
+        }

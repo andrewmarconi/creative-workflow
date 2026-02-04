@@ -1452,6 +1452,97 @@ class TvSpotVersionAdmin(ModelAdmin):
     def show_active(self, obj):
         return obj.is_active
 
+    def get_urls(self):
+        """Add custom URLs for storyboard generation."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<int:object_id>/generate-storyboard/',
+                self.admin_site.admin_view(self.generate_storyboard_view),
+                name='diffusion_tvspotversion_generate_storyboard',
+            ),
+        ]
+        return custom_urls + urls
+
+    def change_form_buttons(self, request, obj=None, add=False):
+        """Add custom Generate Storyboard button to the change form."""
+        buttons = super().change_form_buttons(request, obj, add)
+
+        if obj and not add and obj.script_rows.exists():
+            buttons.append({
+                'title': 'Generate Storyboard',
+                'url': reverse('admin:diffusion_tvspotversion_generate_storyboard', args=[obj.pk]),
+                'attrs': {
+                    'class': 'button',
+                }
+            })
+
+        return buttons
+
+    def generate_storyboard_view(self, request, object_id):
+        """Handle generating a storyboard for a TV spot version."""
+        from django.template.response import TemplateResponse
+        from .tasks import generate_storyboard_task
+
+        version = TvSpotVersion.objects.get(pk=object_id)
+
+        if not version.script_rows.exists():
+            messages.error(request, 'No script rows found for this version.')
+            return redirect('admin:diffusion_tvspotversion_change', object_id)
+
+        if request.method == 'POST':
+            model_id = request.POST.get('diffusion_model')
+            lora_id = request.POST.get('lora_model') or None
+            images_per_row = int(request.POST.get('images_per_row', 1))
+            enhance_prompts = request.POST.get('enhance_prompts') == 'on'
+
+            if not model_id:
+                messages.error(request, 'Please select a diffusion model.')
+                return redirect('admin:diffusion_tvspotversion_generate_storyboard', object_id)
+
+            # Create StoryboardJob
+            storyboard_job = StoryboardJob.objects.create(
+                tv_spot_version=version,
+                diffusion_model_id=model_id,
+                lora_model_id=lora_id,
+                images_per_row=images_per_row,
+                status='pending',
+            )
+
+            # Queue the storyboard generation task
+            generate_storyboard_task.apply_async(
+                args=[storyboard_job.pk, enhance_prompts],
+                queue='enhancement'
+            )
+
+            total_images = version.script_rows.count() * images_per_row
+            messages.success(
+                request,
+                f"Storyboard generation queued ({total_images} images). "
+                f"Check the Storyboard Jobs page for progress."
+            )
+            return redirect('admin:diffusion_storyboardjob_change', storyboard_job.pk)
+
+        # Get available models and LoRAs
+        models = DiffusionModel.objects.filter(is_active=True)
+        loras = LoraModel.objects.filter(is_active=True)
+
+        existing_jobs = version.storyboard_jobs.all().select_related('diffusion_model')
+
+        return TemplateResponse(
+            request,
+            'admin/diffusion/tvspotversion/generate_storyboard.html',
+            {
+                **self.admin_site.each_context(request),
+                'title': _('Generate Storyboard'),
+                'opts': self.model._meta,
+                'version': version,
+                'models': models,
+                'loras': loras,
+                'existing_jobs': existing_jobs,
+            },
+        )
+
 
 # ---------------------------------------------------------------------------
 # StoryboardJob
