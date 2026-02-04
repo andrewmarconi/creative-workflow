@@ -253,6 +253,7 @@ def generate_images_task(self, job_id):
             'steps': params['steps'],
             'guidance_scale': params['guidance_scale'],
             'seed': params.get('seed'),
+            'scheduler': params.get('scheduler'),  # Job/model scheduler override
         }
 
         # Debug: Log generation parameters being passed to model
@@ -260,7 +261,7 @@ def generate_images_task(self, job_id):
         print(f"DEBUG: Input prompt: '{gen_params['prompt']}'")
         if gen_params.get('negative_prompt'):
             print(f"DEBUG: Input negative prompt: '{gen_params['negative_prompt']}'")
-        print(f"DEBUG: Input params: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}")
+        print(f"DEBUG: Input params: {gen_params['width']}x{gen_params['height']}, steps={gen_params['steps']}, cfg={gen_params['guidance_scale']}, seed={gen_params.get('seed')}, scheduler={gen_params.get('scheduler')}")
 
         # Generate images (loop for multiple images since generate() returns single image)
         saved_paths = []
@@ -310,9 +311,16 @@ def generate_images_task(self, job_id):
             image, metadata = model.generate(**gen_params)
             logger.info(f"Image {idx+1}/{num_images} generated successfully")
 
-            # Filename: {jobID}.{imageNo}-{promptID}-{modelID}-{loraID}.jpg
+            # Filename format:
+            # - With identifier: {identifier}-{jobID}.{imageNo}.jpg
+            # - Without identifier: {jobID}.{imageNo}-p{promptID}-m{modelID}-l{loraID}.jpg
             img_no = idx + 1 if num_images > 1 else 0
-            filename = f"{job_id:05d}.{img_no:02d}-{prompt_id:03d}-{model_id:03d}-{lora_id:03d}.jpg"
+            if job.identifier:
+                # Sanitize identifier for filename (replace spaces, remove special chars)
+                safe_id = "".join(c if c.isalnum() or c in '-_' else '-' for c in job.identifier)
+                filename = f"{safe_id}-{job_id:05d}.{img_no:02d}.jpg"
+            else:
+                filename = f"{job_id:05d}.{img_no:02d}-p{prompt_id:03d}-m{model_id:03d}-l{lora_id:03d}.jpg"
             filepath = media_dir / filename
             image.save(filepath, quality=95)
 
@@ -333,6 +341,7 @@ def generate_images_task(self, job_id):
         first_pipeline_meta = images_metadata[0]['pipeline_metadata'] if images_metadata else {}
 
         generation_metadata = {
+            'identifier': job.identifier or None,
             'model': {
                 'slug': job.diffusion_model.slug,
                 'label': job.diffusion_model.label,
@@ -359,6 +368,7 @@ def generate_images_task(self, job_id):
                 'height': first_pipeline_meta.get('height', gen_params['height']),
                 'steps': first_pipeline_meta.get('steps', gen_params['steps']),
                 'guidance_scale': first_pipeline_meta.get('guidance_scale', gen_params['guidance_scale']),  # Use ACTUAL guidance_scale
+                'scheduler': first_pipeline_meta.get('scheduler'),  # Actual scheduler used
                 'num_images': num_images,
             },
             'images': images_metadata,

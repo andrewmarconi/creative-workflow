@@ -18,6 +18,28 @@ BASE_ARCHITECTURE_CHOICES = [
     ("zimage", "Z-Image (Lumina/S3-DiT)"),
 ]
 
+SCHEDULER_CHOICES = [
+    ("", "— Use pipeline default —"),
+    # Euler family
+    ("EulerDiscreteScheduler", "Euler"),
+    ("EulerAncestralDiscreteScheduler", "Euler Ancestral"),
+    # DPM family
+    ("DPMSolverMultistepScheduler", "DPM++ 2M"),
+    ("DPMSolverSinglestepScheduler", "DPM++ SDE"),
+    ("KDPM2DiscreteScheduler", "DPM2"),
+    ("KDPM2AncestralDiscreteScheduler", "DPM2 Ancestral"),
+    # Flow matching (Flux, etc.)
+    ("FlowMatchEulerDiscreteScheduler", "Flow Match Euler"),
+    # Other popular schedulers
+    ("DDIMScheduler", "DDIM"),
+    ("DDPMScheduler", "DDPM"),
+    ("PNDMScheduler", "PNDM"),
+    ("HeunDiscreteScheduler", "Heun"),
+    ("LMSDiscreteScheduler", "LMS"),
+    ("UniPCMultistepScheduler", "UniPC"),
+    ("LCMScheduler", "LCM"),
+]
+
 
 class DiffusionModel(models.Model):
     """Represents a diffusion model for image generation.
@@ -71,8 +93,9 @@ class DiffusionModel(models.Model):
     scheduler = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
-        help_text="Scheduler class name (e.g., 'FlowMatchEulerDiscreteScheduler')"
+        default="",
+        choices=SCHEDULER_CHOICES,
+        help_text="Default scheduler for this model"
     )
     dtype = models.CharField(
         max_length=50,
@@ -326,6 +349,11 @@ class DiffusionJob(models.Model):
         related_name='jobs',
         help_text="Prompt to use for generation"
     )
+    identifier = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Optional identifier for file naming (e.g., 'hero-shot', 'product-v2')"
+    )
 
     # Generation parameters (override model defaults if set)
     width = models.IntegerField(
@@ -362,6 +390,13 @@ class DiffusionJob(models.Model):
         null=True,
         blank=True,
         help_text="Random seed for reproducibility (random if not set)"
+    )
+    scheduler = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        choices=SCHEDULER_CHOICES,
+        help_text="Override scheduler. Leave blank to use model default."
     )
     num_images = models.IntegerField(
         default=1,
@@ -424,6 +459,11 @@ class DiffusionJob(models.Model):
             'seed': self.seed,
             'num_images': self.num_images,
         }
+
+        # Scheduler: job override → model default → None (use pipeline default)
+        scheduler = self.scheduler or self.diffusion_model.scheduler
+        if scheduler:
+            params['scheduler'] = scheduler
 
         if self.diffusion_model.supports_negative_prompt and self.prompt.negative_prompt:
             params['negative_prompt'] = self.prompt.negative_prompt
