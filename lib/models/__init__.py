@@ -4,7 +4,7 @@ Modular model classes for different diffusion pipelines
 """
 
 from .base import BaseModel
-from .mixins import CLIPTokenLimitMixin, DebugLoggingMixin
+from .mixins import CLIPTokenLimitMixin, CompelPromptMixin, DebugLoggingMixin
 from .zimageturbo import ZImageTurboModel
 from .flux import FluxModel
 from .qwen import QwenImageModel
@@ -49,6 +49,7 @@ class ModelFactory:
 __all__ = [
     "BaseModel",
     "CLIPTokenLimitMixin",
+    "CompelPromptMixin",
     "DebugLoggingMixin",
     "ZImageTurboModel",
     "FluxModel",

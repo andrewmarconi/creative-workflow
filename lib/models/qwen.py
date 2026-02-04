@@ -7,6 +7,7 @@ Supports negative prompts and uses true_cfg_scale with 50 steps optimal
 from typing import Dict
 import logging
 import inspect
+import torch
 from diffusers import QwenImagePipeline
 from .base import BaseModel
 
@@ -32,7 +33,8 @@ class QwenImageModel(BaseModel):
         return QwenImagePipeline.from_pretrained(self.model_path, **load_kwargs)
 
     def _apply_device_optimizations(self) -> None:
-        """Apply optimizations with VAE slicing"""
+        """Apply optimizations with VAE slicing and MPS VAE fix"""
+        # Use base implementation (keeps VAE on MPS in float32)
         super()._apply_device_optimizations()
 
         # Enable VAE slicing for lower memory
@@ -64,3 +66,19 @@ class QwenImageModel(BaseModel):
         logger.info(f"Generation kwargs keys: {list(gen_kwargs.keys())}")
 
         return gen_kwargs
+
+    def _post_lora_load_fixes(self) -> None:
+        """Re-apply MPS VAE fix after LoRA loading"""
+        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+            logger.info(f"[Qwen MPS Fix] Re-applying VAE float32 after LoRA load")
+            logger.info(f"[Qwen MPS Fix] VAE dtype before: {self.pipeline.vae.dtype}")
+            self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+            logger.info(f"[Qwen MPS Fix] VAE dtype after: {self.pipeline.vae.dtype}")
+
+    def _post_lora_unload_fixes(self) -> None:
+        """Re-apply MPS VAE fix after LoRA unloading"""
+        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+            logger.info(f"[Qwen MPS Fix] Re-applying VAE float32 after LoRA unload")
+            logger.info(f"[Qwen MPS Fix] VAE dtype before: {self.pipeline.vae.dtype}")
+            self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+            logger.info(f"[Qwen MPS Fix] VAE dtype after: {self.pipeline.vae.dtype}")

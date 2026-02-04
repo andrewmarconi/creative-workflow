@@ -140,6 +140,16 @@ class BaseModel(ABC):
         # Step 3: Build pipeline kwargs (hook for model-specific parameters)
         gen_kwargs = self._build_pipeline_kwargs(params, progress_callback)
 
+        # Step 3.5: Pre-generation VAE check (for debugging black images on MPS)
+        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"[Pre-generation check] VAE device: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
+            if self.pipeline.vae.dtype != torch.float32:
+                logger.warning(f"[Pre-generation] VAE is NOT float32! Fixing now...")
+                self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+                logger.info(f"[Pre-generation] VAE after fix: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
+
         # Step 4: Generate image
         image = self.pipeline(**gen_kwargs).images[0]
 
@@ -302,7 +312,6 @@ class BaseModel(ABC):
 
         # Base kwargs
         gen_kwargs = {
-            'prompt': params['prompt'],
             'num_inference_steps': params['steps'],
             'guidance_scale': params['guidance_scale'],
             'height': params['height'],
@@ -310,8 +319,11 @@ class BaseModel(ABC):
             'generator': generator,
         }
 
+        # Base kwargs
+        gen_kwargs['prompt'] = params['prompt']
+
         # Add negative prompt if supported
-        if self.supports_negative_prompt and params['negative_prompt']:
+        if self.supports_negative_prompt and params.get('negative_prompt'):
             gen_kwargs['negative_prompt'] = params['negative_prompt']
 
         # Add clip_skip if set
@@ -364,8 +376,27 @@ class BaseModel(ABC):
         device = self.device
 
         if device.type == "mps":
-            self.pipeline.enable_sequential_cpu_offload(device=device)
+            # For MPS, keep VAE on device but force float32 to avoid NaN values
+            # Moving VAE to CPU causes device mismatch errors without offload
+            if hasattr(self.pipeline, 'vae'):
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"[MPS] Converting VAE to float32 (keeping on MPS)")
+                self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+                # Enable VAE slicing for better memory usage and numerical stability
+                if hasattr(self.pipeline.vae, 'enable_slicing'):
+                    self.pipeline.vae.enable_slicing()
+                if hasattr(self.pipeline.vae, 'enable_tiling'):
+                    self.pipeline.vae.enable_tiling()
+
+            # Move entire pipeline to MPS
+            self.pipeline.to(device)
             self.pipeline.enable_attention_slicing()
+
+            # Ensure VAE is still float32 after pipeline.to()
+            if hasattr(self.pipeline, 'vae'):
+                logger.info(f"[MPS] Re-confirming VAE float32 after pipeline.to()")
+                self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
         elif device.type == "cuda":
             # Default to model_cpu_offload (override if needed)
             if self.use_sequential_cpu_offload:
@@ -375,6 +406,28 @@ class BaseModel(ABC):
             self.pipeline.enable_attention_slicing()
         else:
             self.pipeline = self.pipeline.to(device)
+
+    def _post_lora_load_fixes(self) -> None:
+        """
+        Re-apply device-specific fixes after LoRA loading
+
+        LoRA loading can move pipeline components or change their dtypes.
+        Override this method to re-apply critical fixes (e.g., VAE float32 on MPS).
+
+        Default implementation does nothing.
+        """
+        pass
+
+    def _post_lora_unload_fixes(self) -> None:
+        """
+        Re-apply device-specific fixes after LoRA unloading
+
+        LoRA unloading can move pipeline components or change their dtypes.
+        Override this method to re-apply critical fixes (e.g., VAE float32 on MPS).
+
+        Default implementation does nothing.
+        """
+        pass
 
     def setup_device(self) -> Tuple[torch.device, str]:
         """
@@ -432,6 +485,10 @@ class BaseModel(ABC):
             if hasattr(self.pipeline, "set_adapters"):
                 self.pipeline.set_adapters(["default"], adapter_weights=[strength])
 
+            # CRITICAL: Re-apply device-specific fixes after LoRA loading
+            # LoRA loading can move components or change dtypes
+            self._post_lora_load_fixes()
+
             self.current_lora = lora_config
 
             return f"LoRA loaded: {lora_config['label']} (strength: {strength})"
@@ -454,6 +511,11 @@ class BaseModel(ABC):
 
         try:
             self.pipeline.unload_lora_weights()
+
+            # CRITICAL: Re-apply device-specific fixes after LoRA unloading
+            # LoRA unloading can move components or change dtypes
+            self._post_lora_unload_fixes()
+
             self.current_lora = None
             return "LoRA unloaded"
         except Exception:

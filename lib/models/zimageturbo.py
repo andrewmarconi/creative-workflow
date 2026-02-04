@@ -5,9 +5,13 @@ Optimized for 8-9 step fast generation with guidance_scale=0.0
 """
 
 from typing import Dict
+import logging
+import torch
 from diffusers import ZImagePipeline
 from .base import BaseModel
 from .mixins import DebugLoggingMixin
+
+logger = logging.getLogger(__name__)
 
 
 class ZImageTurboModel(DebugLoggingMixin, BaseModel):
@@ -22,12 +26,23 @@ class ZImageTurboModel(DebugLoggingMixin, BaseModel):
         )
 
     def _apply_device_optimizations(self) -> None:
-        """Apply Z-Image specific optimizations (always sequential CPU offload)"""
+        """Apply Z-Image specific optimizations"""
         device = self.device
 
         if device.type == "mps":
-            self.pipeline.enable_sequential_cpu_offload(device=device)
+            # Keep VAE on device but force float32
+            if hasattr(self.pipeline, 'vae'):
+                logger.info(f"[Z-Image MPS Fix] Converting VAE to float32 (keeping on MPS)")
+                self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+
+            # Move entire pipeline to MPS
+            self.pipeline.to(device)
             self.pipeline.enable_attention_slicing()
+
+            # Ensure VAE is still float32 after pipeline.to()
+            if hasattr(self.pipeline, 'vae'):
+                logger.info(f"[Z-Image MPS Fix] Re-confirming VAE float32 after pipeline.to()")
+                self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
         elif device.type == "cuda":
             self.pipeline.enable_sequential_cpu_offload(device=device)
             self.pipeline.enable_attention_slicing()
@@ -70,3 +85,19 @@ class ZImageTurboModel(DebugLoggingMixin, BaseModel):
             progress_callback(progress, desc=f"Step {step_index + 1}/{total_steps}")
             return callback_kwargs
         return callback
+
+    def _post_lora_load_fixes(self) -> None:
+        """Re-apply MPS VAE fix after LoRA loading"""
+        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+            logger.info(f"[Z-Image MPS Fix] Re-applying VAE float32 after LoRA load")
+            logger.info(f"[Z-Image MPS Fix] VAE dtype before: {self.pipeline.vae.dtype}")
+            self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+            logger.info(f"[Z-Image MPS Fix] VAE dtype after: {self.pipeline.vae.dtype}")
+
+    def _post_lora_unload_fixes(self) -> None:
+        """Re-apply MPS VAE fix after LoRA unloading"""
+        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+            logger.info(f"[Z-Image MPS Fix] Re-applying VAE float32 after LoRA unload")
+            logger.info(f"[Z-Image MPS Fix] VAE dtype before: {self.pipeline.vae.dtype}")
+            self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
+            logger.info(f"[Z-Image MPS Fix] VAE dtype after: {self.pipeline.vae.dtype}")
