@@ -10,8 +10,9 @@ Generative Creative Lab is a Django + Celery application for multi-model diffusi
 
 ### Setup & Run
 ```bash
-uv sync                          # Install/sync dependencies
-uv run honcho start                     # Start all processes (Docker, Django, Celery workers)
+uv sync                                 # Install/sync dependencies
+./start.sh                              # Start all processes (recommended, waits for containers)
+uv run honcho start                     # Start all processes (parallel, no dependency ordering)
 uv run honcho start docker django       # Start subset of processes (without workers)
 ```
 
