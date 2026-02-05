@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',  # Required for ArrayField
     'cw.diffusion',
+    'cw.tvspots',
     'django_extensions',
     'django_celery_results',
 ]
