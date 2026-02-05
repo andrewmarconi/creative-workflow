@@ -52,7 +52,7 @@ class ConsistencyChecker:
         self._check_admin_config()
         self._check_presets_json()
         self._check_database_schema_rst()
-        self._check_language_csv()
+        self._check_core_data_json()
 
         failures = [r for r in self.results if r.status == "fail"]
         return len(failures) == 0
@@ -355,57 +355,82 @@ class ConsistencyChecker:
                 )
             )
 
-    def _check_language_csv(self) -> None:
-        """Validate language_model_recommendations.csv if present."""
-        filepath = self.repo_dir / "data/language_model_recommendations.csv"
+    def _check_core_data_json(self) -> None:
+        """Validate core_data.json (languages and LLM models)."""
+        filepath = self.repo_dir / "data/core_data.json"
 
         if not filepath.exists():
             self.results.append(
                 CheckResult(
-                    name="Data: language_model_recommendations.csv",
-                    status="pass",
-                    message="File not present (optional)",
+                    name="Data: core_data.json",
+                    status="warn",
+                    message="File not found (run export_languages to create)",
                 )
             )
             return
 
         try:
-            with open(filepath, encoding="utf-8", newline="") as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                if not header:
-                    self.results.append(
-                        CheckResult(
-                            name="Data: language_model_recommendations.csv",
-                            status="warn",
-                            message="CSV file is empty",
-                        )
-                    )
-                    return
-
-                row_count = sum(1 for _ in reader)
-                self.results.append(
-                    CheckResult(
-                        name="Data: language_model_recommendations.csv",
-                        status="pass",
-                        message=f"Valid CSV with {row_count} rows",
-                        details=[f"Columns: {', '.join(header[:5])}"],
-                    )
-                )
-        except csv.Error as e:
+            with open(filepath, encoding="utf-8") as f:
+                data = json.load(f)
+        except json.JSONDecodeError as e:
             self.results.append(
                 CheckResult(
-                    name="Data: language_model_recommendations.csv",
+                    name="Data: core_data.json",
                     status="fail",
-                    message=f"CSV parse error: {e}",
+                    message=f"Invalid JSON: {e}",
                 )
             )
-        except Exception as e:
+            return
+
+        issues: list[str] = []
+        warnings: list[str] = []
+
+        # Check LLM models
+        models = data.get("llm_models", [])
+        for i, model in enumerate(models):
+            required = ["model_id", "name"]
+            missing = [f for f in required if f not in model]
+            if missing:
+                issues.append(f"LLM model {i}: missing {', '.join(missing)}")
+
+        # Check languages
+        languages = data.get("languages", [])
+        for i, lang in enumerate(languages):
+            required = ["code", "name", "primary_model"]
+            missing = [f for f in required if f not in lang]
+            if missing:
+                issues.append(f"Language {i}: missing {', '.join(missing)}")
+
+            # Check primary_model references a known model
+            primary = lang.get("primary_model", "")
+            model_ids = {m.get("model_id") for m in models}
+            if primary and primary not in model_ids:
+                warnings.append(f"Language '{lang.get('code', i)}': primary_model '{primary}' not in llm_models")
+
+        if issues:
             self.results.append(
                 CheckResult(
-                    name="Data: language_model_recommendations.csv",
+                    name="Data: core_data.json",
                     status="fail",
-                    message=f"Error reading file: {e}",
+                    message=f"{len(issues)} structural issue(s)",
+                    details=issues[:5],
+                )
+            )
+        elif warnings:
+            self.results.append(
+                CheckResult(
+                    name="Data: core_data.json",
+                    status="warn",
+                    message=f"{len(models)} models, {len(languages)} languages ({len(warnings)} warnings)",
+                    details=warnings[:5],
+                )
+            )
+        else:
+            self.results.append(
+                CheckResult(
+                    name="Data: core_data.json",
+                    status="pass",
+                    message=f"{len(models)} LLM models, {len(languages)} languages validated",
                 )
             )
 

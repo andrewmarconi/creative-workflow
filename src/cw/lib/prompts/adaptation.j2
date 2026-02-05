@@ -6,6 +6,7 @@
 
     Variables:
         target_market_name (str): Human-readable market name (e.g., "US Hispanic")
+        target_market_language (str): Language code for dialogue (e.g., "de", "es-MX")
         target_market_rules (str): Market-specific rules and guidelines
         target_market_code (str): Market code for output (e.g., "US-HISP")
         original_json (str): JSON representation of the original TV spot
@@ -17,6 +18,7 @@ You are an expert advertising creative and localization strategist.
 Your task is to create a culturally sensitive, legally compliant, and creatively strong adaptation of a TV spot for a specified target market, while preserving the core brand idea and campaign objectives.
 
 ## Target Market: {{ target_market_name }}
+## Target Language for Dialogue: {{ target_market_language }}
 
 ### Market Rules and Guidelines:
 {{ target_market_rules }}
@@ -44,26 +46,37 @@ Your task is to create a culturally sensitive, legally compliant, and creatively
    - Sensitive imagery related to religion, politics, or historical trauma
    - Claims that may be misleading in the target market
 
-4. **Language Requirements** (IMPORTANT):
-   - Write ALL descriptions, stage directions, and notes in **English**
-   - For literal spoken dialogue (VO, character lines) and on-screen text (supers, titles, taglines):
-     - Write in the **target market language**
-     - Immediately follow with an **English translation in parentheses**
-   - Example: `VO: "¡Descubre el sabor!" (Discover the flavor!)`
-   - Example: `SUPER: "Oferta válida hasta el 31 de marzo" (Offer valid until March 31)`
-   - This allows creative directors who don't speak the target language to review adaptations
+4. **Language Requirements** (CRITICAL - READ CAREFULLY):
+   - **ALL descriptions, stage directions, and notes MUST be in English**
+   - Only spoken dialogue (VO) and on-screen text (supers) use {{ target_market_language }}
+   - Every {{ target_market_language }} phrase MUST have an English translation in parentheses
+
+   ✅ CORRECT examples for {{ target_market_language }}:
+   - `visual_text: "Wide shot of a bustling market. A woman picks up the product."` (English description)
+   - `audio_text: "VO: '[{{ target_market_language }} dialogue here]' (English translation here)"`
+   - `visual_text: "SUPER: '[{{ target_market_language }} text]' (English translation)"`
+
+   ❌ INCORRECT:
+   - `visual_text: "[Any non-English description]"` (Descriptions must ALWAYS be English - WRONG)
+   - `audio_text: "VO: '[dialogue]'"` (Missing English translation in parentheses - WRONG)
 
 ## Output Requirements:
 
 Generate a JSON object with:
-- `code`: Market code for this adaptation (e.g., "{{ target_market_code }}")
-- `name`: Human-readable name (e.g., "{{ target_market_name }} Adaptation")
-- `language`: Primary language code for the adaptation
-- `visual_style_prompt`: A common prompt prefix for consistent storyboard generation
-- `script_rows`: Array of adapted rows, each with shot_number, timecode_start, duration_seconds, visual_text, audio_text
+- `code`: "{{ target_market_code }}"
+- `name`: "{{ target_market_name }} Adaptation"
+- `language`: "{{ target_market_language }}"
+- `visual_style_prompt`: A common prompt prefix (MUST BE IN ENGLISH)
+- `script_rows`: Array of {{ num_script_rows }} adapted rows:
+  - `visual_text`: Scene description **IN ENGLISH ONLY** (on-screen text in {{ target_market_language }} with English translation)
+  - `audio_text`: **IN ENGLISH** except dialogue/VO which uses {{ target_market_language }} with (English translation)
 
 Adapt all {{ num_script_rows }} script rows, maintaining the same structure and timing.
 
-Creativity level: {{ creativity }}/1.0 (higher = more creative adaptations)
+⚠️ FINAL REMINDER:
+- Descriptions and stage directions: ENGLISH ONLY
+- Dialogue and on-screen text: {{ target_market_language }} with (English translation)
+
+Creativity level: {{ creativity }}/1.0
 
 Generate the adapted TV spot:

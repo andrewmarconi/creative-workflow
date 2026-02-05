@@ -13,6 +13,7 @@ from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
 
 from .models import (
+    AdaptationJob,
     AdaptationMarket,
     StoryboardImage,
     StoryboardJob,
@@ -28,17 +29,18 @@ from .models import (
 
 @admin.register(AdaptationMarket)
 class AdaptationMarketAdmin(ModelAdmin):
-    list_display = ["name", "code", "show_active", "show_versions_count", "updated_at"]
-    list_filter = ["is_active"]
+    list_display = ["name", "code", "default_language", "show_active", "show_versions_count", "updated_at"]
+    list_filter = ["is_active", "default_language"]
     search_fields = ["name", "code", "rules"]
     readonly_fields = ["created_at", "updated_at"]
+    autocomplete_fields = ["default_language"]
 
     fieldsets = (
         (
             _("Market"),
             {
                 "classes": ["tab"],
-                "fields": ("name", "code", "is_active"),
+                "fields": ("name", "code", "default_language", "is_active"),
             },
         ),
         (
@@ -86,7 +88,6 @@ class TvSpotScriptRowInline(TabularInline):
     model = TvSpotScriptRow
     extra = 0
     fields = [
-        "order_index",
         "shot_number",
         "timecode_start",
         "duration_seconds",
@@ -110,6 +111,34 @@ class TvSpotVersionInline(TabularInline):
         return False
 
 
+class AdaptationJobInline(TabularInline):
+    """Inline display of adaptation jobs for TvSpot."""
+
+    model = AdaptationJob
+    extra = 0
+    fields = ["target_market", "show_status", "result_version", "created_at"]
+    readonly_fields = ["target_market", "show_status", "result_version", "created_at"]
+    can_delete = False
+    show_change_link = True
+    verbose_name = "Adaptation Request"
+    verbose_name_plural = "Adaptation Requests"
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    @display(
+        description=_("Status"),
+        label={
+            "Pending": "info",
+            "Processing": "warning",
+            "Completed": "success",
+            "Failed": "danger",
+        },
+    )
+    def show_status(self, obj):
+        return obj.get_status_display()
+
+
 # ---------------------------------------------------------------------------
 # TvSpot
 # ---------------------------------------------------------------------------
@@ -129,7 +158,7 @@ class TvSpotAdmin(ModelAdmin):
     list_filter = ["client_name", "created_at"]
     search_fields = ["script_title", "client_name", "brand_name", "job_id"]
     readonly_fields = ["created_at", "updated_at"]
-    inlines = [TvSpotVersionInline]
+    inlines = [TvSpotVersionInline, AdaptationJobInline]
     actions_list = ["import_tvspot_action"]
     actions_detail = ["create_adaptation_action"]
 
@@ -192,8 +221,47 @@ class TvSpotAdmin(ModelAdmin):
                 self.admin_site.admin_view(self.create_adaptation_view),
                 name="tvspots_tvspot_create_adaptation",
             ),
+            path(
+                "api/language/<int:language_id>/models/",
+                self.admin_site.admin_view(self.get_language_models_api),
+                name="tvspots_tvspot_language_models_api",
+            ),
         ]
         return custom_urls + urls
+
+    def get_language_models_api(self, request, language_id):
+        """AJAX endpoint to get models for a language."""
+        from django.http import JsonResponse
+
+        from cw.core.models import Language
+
+        try:
+            language = Language.objects.select_related("primary_model").prefetch_related(
+                "alternative_models"
+            ).get(pk=language_id)
+        except Language.DoesNotExist:
+            return JsonResponse({"error": "Language not found"}, status=404)
+
+        models = [
+            {
+                "id": language.primary_model.id,
+                "model_id": language.primary_model.model_id,
+                "name": language.primary_model.name,
+                "is_primary": True,
+            }
+        ]
+        for alt in language.alternative_models.filter(is_active=True):
+            models.append({
+                "id": alt.id,
+                "model_id": alt.model_id,
+                "name": alt.name,
+                "is_primary": False,
+            })
+
+        return JsonResponse({
+            "language": {"id": language.id, "code": language.code, "name": language.name},
+            "models": models,
+        })
 
     def import_tvspot_view(self, request):
         """Handle importing a TV spot from JSON."""
@@ -344,6 +412,8 @@ class TvSpotAdmin(ModelAdmin):
         """Handle creating an adaptation of a TV spot."""
         from django.template.response import TemplateResponse
 
+        from cw.core.models import Language, LLMModel
+
         from .tasks import create_adaptation_task
 
         tv_spot = TvSpot.objects.get(pk=object_id)
@@ -355,13 +425,24 @@ class TvSpotAdmin(ModelAdmin):
 
         if request.method == "POST":
             market_id = request.POST.get("market")
+            language_id = request.POST.get("language")
+            llm_model_id = request.POST.get("llm_model")
 
             if not market_id:
                 messages.error(request, "Please select a target market.")
                 return redirect("admin:tvspots_tvspot_create_adaptation", object_id)
 
-            # Check if adaptation already exists for this market
             market = AdaptationMarket.objects.get(pk=market_id)
+
+            # Get optional language and model overrides
+            language = None
+            llm_model = None
+            if language_id:
+                language = Language.objects.filter(pk=language_id).first()
+            if llm_model_id:
+                llm_model = LLMModel.objects.filter(pk=llm_model_id).first()
+
+            # Check if adaptation already exists for this market
             existing = tv_spot.versions.filter(market=market).first()
             if existing:
                 messages.warning(
@@ -369,30 +450,65 @@ class TvSpotAdmin(ModelAdmin):
                 )
                 return redirect("admin:tvspots_tvspotversion_change", existing.pk)
 
-            # Queue the adaptation task
-            create_adaptation_task.apply_async(
-                args=[origin_version.pk, market_id], queue="enhancement"
+            # Check for pending/processing adaptation job for this market
+            pending_job = tv_spot.adaptation_jobs.filter(
+                target_market=market, status__in=["pending", "processing"]
+            ).first()
+            if pending_job:
+                messages.warning(
+                    request,
+                    f"An adaptation to {market.name} is already in progress "
+                    f"(status: {pending_job.get_status_display()}).",
+                )
+                return redirect("admin:tvspots_adaptationjob_change", pending_job.pk)
+
+            # Create AdaptationJob to track the request
+            adaptation_job = AdaptationJob.objects.create(
+                tv_spot=tv_spot,
+                origin_version=origin_version,
+                target_market=market,
+                language=language,
+                llm_model=llm_model,
+                status="pending",
             )
+
+            # Queue the adaptation task with job ID
+            result = create_adaptation_task.apply_async(
+                args=[adaptation_job.pk], queue="enhancement"
+            )
+
+            # Store the Celery task ID
+            adaptation_job.celery_task_id = result.id
+            adaptation_job.save(update_fields=["celery_task_id"])
 
             messages.success(
                 request,
                 f"Adaptation to {market.name} queued for processing. "
-                f"Check back in 1-2 minutes for the new version.",
+                f"Track progress in the Adaptation Requests section below.",
             )
             return redirect("admin:tvspots_tvspot_change", object_id)
 
-        # Get available markets (exclude markets with existing adaptations)
+        # Get available markets (exclude markets with existing adaptations or pending jobs)
         existing_market_ids = tv_spot.versions.exclude(market__isnull=True).values_list(
             "market_id", flat=True
         )
+        pending_market_ids = tv_spot.adaptation_jobs.filter(
+            status__in=["pending", "processing"]
+        ).values_list("target_market_id", flat=True)
 
         markets = AdaptationMarket.objects.filter(is_active=True).exclude(
-            id__in=existing_market_ids
-        )
+            id__in=list(existing_market_ids) + list(pending_market_ids)
+        ).select_related("default_language")
+
+        # Get all active languages for the dropdown
+        languages = Language.objects.filter(is_active=True).select_related("primary_model")
 
         existing_adaptations = tv_spot.versions.filter(version_type="adaptation").select_related(
             "market"
         )
+        pending_jobs = tv_spot.adaptation_jobs.filter(
+            status__in=["pending", "processing"]
+        ).select_related("target_market")
 
         return TemplateResponse(
             request,
@@ -404,7 +520,9 @@ class TvSpotAdmin(ModelAdmin):
                 "tv_spot": tv_spot,
                 "origin_version": origin_version,
                 "markets": markets,
+                "languages": languages,
                 "existing_adaptations": existing_adaptations,
+                "pending_jobs": pending_jobs,
             },
         )
 

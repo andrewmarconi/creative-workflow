@@ -57,9 +57,11 @@ Check `data/presets.json`:
 - All lora entries have required fields: label, base_architecture
 - `base_architecture` values match `BASE_ARCHITECTURE_CHOICES` in models.py
 
-Check `data/language_model_recommendations.csv` if present:
-- Valid CSV format
-- Language codes are consistent
+Check `data/core_data.json`:
+- Valid JSON syntax
+- LLM models have required fields: model_id, name
+- Languages have required fields: code, name, primary_model
+- Language primary_model references a valid model_id
 
 ### 5. CLAUDE.md vs Implementation
 
@@ -88,7 +90,7 @@ Report findings using this structure:
 
 ### Data Files
 - [PASS/WARN/FAIL] presets.json: <details>
-- [PASS/WARN/FAIL] language_model_recommendations.csv: <details>
+- [PASS/WARN/FAIL] core_data.json: <details>
 
 ### Summary
 X checks passed, Y warnings, Z failures

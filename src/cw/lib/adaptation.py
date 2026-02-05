@@ -159,25 +159,42 @@ class AdaptationGenerator:
 
     def adapt(
         self,
-        origin_version,
-        target_market,
+        adaptation_job,
         creativity: float = 0.7,
     ) -> AdaptationOutput:
         """
         Generate a culturally-adapted version of a TV spot.
 
         Args:
-            origin_version: TvSpotVersion instance (the origin to adapt from)
-            target_market: AdaptationMarket instance (target market with rules)
+            adaptation_job: AdaptationJob instance with origin_version, target_market,
+                and optional language/llm_model overrides
             creativity: Temperature for generation (0.0-1.0)
 
         Returns:
             AdaptationOutput with adapted script content
         """
+        origin_version = adaptation_job.origin_version
+        target_market = adaptation_job.target_market
+
+        # Get effective language and model (from job overrides or market/language defaults)
+        effective_language = adaptation_job.effective_language
+        effective_model = adaptation_job.effective_llm_model
+
         logger.debug(
             f"adapt() called: origin_version_id={origin_version.pk}, "
-            f"target_market={target_market.code}, creativity={creativity}"
+            f"target_market={target_market.code}, language={effective_language.code if effective_language else 'None'}, "
+            f"model={effective_model.model_id if effective_model else 'None'}, creativity={creativity}"
         )
+
+        # Use the effective model from the job
+        if effective_model:
+            required_model = effective_model.model_id
+            if required_model != self.model_id:
+                logger.info(
+                    f"Switching model for {effective_language.code}: {self.model_id} -> {required_model}"
+                )
+                self.clear_cache()
+                self.model_id = required_model
 
         self._load_model()
 
@@ -209,7 +226,7 @@ class AdaptationGenerator:
 
         # Build the prompt
         logger.debug("Building LLM prompt")
-        prompt = self._build_prompt(original_spot, target_market, creativity)
+        prompt = self._build_prompt(original_spot, target_market, effective_language, creativity)
         logger.debug(f"Prompt built, length={len(prompt)} chars")
 
         logger.info(
@@ -252,23 +269,57 @@ class AdaptationGenerator:
 
         return result
 
-    def _build_prompt(self, original_spot: dict, target_market, creativity: float) -> str:
-        """Build the adaptation prompt using Jinja2 template."""
+    def _build_prompt(self, original_spot: dict, target_market, language, creativity: float) -> str:
+        """Build the adaptation prompt using Jinja2 template with chat formatting.
+
+        Args:
+            original_spot: Dict with original TV spot data
+            target_market: AdaptationMarket instance
+            language: Language instance (the effective language for the adaptation)
+            creativity: Temperature for generation
+        """
         import json
 
-        logger.debug(f"_build_prompt: target_market={target_market.code}, creativity={creativity}")
+        language_code = language.code if language else "en"
+        language_name = language.name if language else "English"
+
+        logger.debug(f"_build_prompt: target_market={target_market.code}, language={language_code}, creativity={creativity}")
         original_json = json.dumps(original_spot, indent=2, ensure_ascii=False)
         logger.debug(f"Original spot JSON length: {len(original_json)} chars")
 
-        prompt = render_prompt(
+        user_prompt = render_prompt(
             "adaptation.j2",
             target_market_name=target_market.name,
+            target_market_language=language_code,
             target_market_rules=target_market.rules_as_markdown(),
             target_market_code=target_market.code.upper(),
             original_json=original_json,
             num_script_rows=len(original_spot["script_rows"]),
             creativity=creativity,
         )
+
+        # System message to enforce English for descriptions
+        system_message = (
+            "You are an expert advertising creative and localization strategist. "
+            "CRITICAL LANGUAGE RULE: You MUST write ALL descriptions, stage directions, "
+            f"and visual_text content in ENGLISH. Only spoken dialogue (VO) and on-screen text "
+            f"(supers, titles) should use {language_name} ({language_code}), and these MUST include "
+            "an English translation in parentheses. Never write scene descriptions in any "
+            "language other than English."
+        )
+
+        # Format using Qwen chat template
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        prompt = self._tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        logger.debug(f"Chat-formatted prompt length: {len(prompt)} chars")
 
         return prompt
 

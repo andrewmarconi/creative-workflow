@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",  # Required for ArrayField
+    "cw.core",
     "cw.diffusion",
     "cw.tvspots",
     "django_extensions",

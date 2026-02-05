@@ -34,6 +34,14 @@ class AdaptationMarket(models.Model):
     code = models.CharField(
         max_length=20, unique=True, help_text="Short code (e.g., 'us-hispanic', 'jp')."
     )
+    default_language = models.ForeignKey(
+        "core.Language",
+        on_delete=models.PROTECT,
+        related_name="markets",
+        null=True,
+        blank=True,
+        help_text="Default language for adaptations in this market.",
+    )
     rules = models.JSONField(
         default=list,
         help_text="Structured rules: list of {heading, points[]} objects for adaptation guidance.",
@@ -179,6 +187,94 @@ class TvSpotVersion(models.Model):
             raise ValidationError("Adaptation versions require a target market.")
         if self.version_type == "origin" and self.market:
             raise ValidationError("Origin versions should not have a target market.")
+
+
+class AdaptationJob(models.Model):
+    """Tracks adaptation requests for TV spot versions.
+
+    Created when a user requests an adaptation, updated by the Celery task.
+    Similar to StoryboardJob for tracking async work status.
+    """
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("processing", "Processing"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+    ]
+
+    tv_spot = models.ForeignKey(
+        TvSpot,
+        on_delete=models.CASCADE,
+        related_name="adaptation_jobs",
+    )
+    origin_version = models.ForeignKey(
+        "TvSpotVersion",
+        on_delete=models.CASCADE,
+        related_name="adaptation_jobs_as_origin",
+    )
+    target_market = models.ForeignKey(
+        AdaptationMarket,
+        on_delete=models.PROTECT,
+        related_name="adaptation_jobs",
+    )
+    language = models.ForeignKey(
+        "core.Language",
+        on_delete=models.PROTECT,
+        related_name="adaptation_jobs",
+        null=True,
+        blank=True,
+        help_text="Override market's default language (e.g., for multi-language markets like Canada).",
+    )
+    llm_model = models.ForeignKey(
+        "core.LLMModel",
+        on_delete=models.PROTECT,
+        related_name="adaptation_jobs",
+        null=True,
+        blank=True,
+        help_text="Override language's primary model.",
+    )
+    result_version = models.OneToOneField(
+        "TvSpotVersion",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="adaptation_job_result",
+        help_text="The created adaptation version (set on completion).",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending",
+    )
+    celery_task_id = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Celery task ID for tracking.",
+    )
+    error_message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "diffusion_adaptationjob"
+        ordering = ["-created_at"]
+        verbose_name = "Adaptation Job"
+        verbose_name_plural = "Adaptation Jobs"
+
+    def __str__(self):
+        return f"Adaptation to {self.target_market.name} ({self.get_status_display()})"
+
+    @property
+    def effective_language(self):
+        """Get the language to use (override or market default)."""
+        return self.language or self.target_market.default_language
+
+    @property
+    def effective_llm_model(self):
+        """Get the LLM model to use (override or language's primary)."""
+        return self.llm_model or self.effective_language.primary_model
 
 
 class TvSpotScriptRow(models.Model):

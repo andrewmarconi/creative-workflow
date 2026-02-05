@@ -20,32 +20,38 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(bind=True, name="cw.tvspots.tasks.create_adaptation_task")
-def create_adaptation_task(self, origin_version_id, target_market_id):
+def create_adaptation_task(self, adaptation_job_id):
     """
     Create a culturally-adapted TV spot version using LLM.
 
     Args:
-        origin_version_id: ID of the origin TvSpotVersion to adapt from
-        target_market_id: ID of the target AdaptationMarket
+        adaptation_job_id: ID of the AdaptationJob to process
 
     Returns:
         Dict with adaptation results
     """
-    from cw.tvspots.models import AdaptationMarket, TvSpotScriptRow, TvSpotVersion
+    from cw.tvspots.models import AdaptationJob, TvSpotScriptRow, TvSpotVersion
 
-    origin_version = TvSpotVersion.objects.get(id=origin_version_id)
-    target_market = AdaptationMarket.objects.get(id=target_market_id)
-    tv_spot = origin_version.tv_spot
+    adaptation_job = AdaptationJob.objects.get(id=adaptation_job_id)
+    origin_version = adaptation_job.origin_version
+    target_market = adaptation_job.target_market
+    tv_spot = adaptation_job.tv_spot
 
     logger.info(
         f"Starting adaptation of '{tv_spot.script_title}' to {target_market.name}",
         extra={
+            "adaptation_job_id": adaptation_job_id,
             "tv_spot_id": tv_spot.pk,
-            "origin_version_id": origin_version_id,
-            "target_market_id": target_market_id,
+            "origin_version_id": origin_version.pk,
+            "target_market_id": target_market.pk,
             "target_market_code": target_market.code,
         },
     )
+
+    # Update job status to processing
+    adaptation_job.status = "processing"
+    adaptation_job.started_at = timezone.now()
+    adaptation_job.save(update_fields=["status", "started_at"])
 
     try:
         # Get the adaptation generator
@@ -53,8 +59,8 @@ def create_adaptation_task(self, origin_version_id, target_market_id):
 
         generator = get_adaptation_generator()
 
-        # Generate the adaptation
-        result = generator.adapt(origin_version, target_market)
+        # Generate the adaptation using job's effective language and model
+        result = generator.adapt(adaptation_job)
 
         # Create the new TvSpotVersion
         new_version = TvSpotVersion.objects.create(
@@ -80,9 +86,16 @@ def create_adaptation_task(self, origin_version_id, target_market_id):
                 audio_text=row_data.audio_text,
             )
 
+        # Update job as completed
+        adaptation_job.status = "completed"
+        adaptation_job.result_version = new_version
+        adaptation_job.completed_at = timezone.now()
+        adaptation_job.save(update_fields=["status", "result_version", "completed_at"])
+
         logger.info(
             f"Adaptation created successfully: {new_version.name}",
             extra={
+                "adaptation_job_id": adaptation_job_id,
                 "tv_spot_id": tv_spot.pk,
                 "new_version_id": new_version.pk,
                 "adaptation_code": new_version.code,
@@ -92,8 +105,9 @@ def create_adaptation_task(self, origin_version_id, target_market_id):
 
         return {
             "status": "success",
+            "adaptation_job_id": adaptation_job_id,
             "tv_spot_id": tv_spot.pk,
-            "origin_version_id": origin_version_id,
+            "origin_version_id": origin_version.pk,
             "new_version_id": new_version.pk,
             "adaptation_code": new_version.code,
             "adaptation_name": new_version.name,
@@ -101,19 +115,27 @@ def create_adaptation_task(self, origin_version_id, target_market_id):
         }
 
     except Exception as e:
+        # Update job as failed
+        adaptation_job.status = "failed"
+        adaptation_job.error_message = str(e)
+        adaptation_job.completed_at = timezone.now()
+        adaptation_job.save(update_fields=["status", "error_message", "completed_at"])
+
         logger.error(
             f"Adaptation failed: {e}",
             extra={
+                "adaptation_job_id": adaptation_job_id,
                 "tv_spot_id": tv_spot.pk,
-                "origin_version_id": origin_version_id,
-                "target_market_id": target_market_id,
+                "origin_version_id": origin_version.pk,
+                "target_market_id": target_market.pk,
                 "error": str(e),
             },
         )
         return {
             "status": "failed",
-            "origin_version_id": origin_version_id,
-            "target_market_id": target_market_id,
+            "adaptation_job_id": adaptation_job_id,
+            "origin_version_id": origin_version.pk,
+            "target_market_id": target_market.pk,
             "error": str(e),
         }
 

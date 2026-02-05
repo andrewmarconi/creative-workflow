@@ -38,13 +38,18 @@ and :doc:`cw.tvspots <api/tvspots>` for details regarding these models.
          TvSpot:::appTvSpotClass
          TvSpotVersion:::appTvSpotClass
          TvSpotScriptRow:::appTvSpotClass
+         AdaptationJob:::appTvSpotClass
          StoryboardJob:::appTvSpotClass
          StoryboardImage:::appTvSpotClass
 
        TvSpot ||--o{ TvSpotVersion : "has versions"
+       TvSpot ||--o{ AdaptationJob : "requests"
        AdaptationMarket ||--o{ TvSpotVersion : "target for"
+       AdaptationMarket ||--o{ AdaptationJob : "target for"
        TvSpotVersion ||--o{ TvSpotScriptRow : "contains"
        TvSpotVersion ||--o{ StoryboardJob : "generates"
+       TvSpotVersion ||--o{ AdaptationJob : "origin for"
+       AdaptationJob ||--o| TvSpotVersion : "creates"
        StoryboardJob ||--o{ StoryboardImage : "produces"
        TvSpotScriptRow ||--o{ StoryboardImage : "source for"
 
@@ -107,6 +112,11 @@ Models for TV commercial workflow: spots, versions, scripts, and storyboard gene
    contains shots, graphics, and supers. Right column (audio_text) contains
    VO, dialogue, SFX, and music cues.
 
+**AdaptationJob**
+   Tracks adaptation requests from origin to target market. Created when user
+   requests an adaptation, updated by Celery task. Links to result_version on
+   completion. Enables status visibility in admin while task is processing.
+
 **StoryboardJob**
    Coordinates storyboard generation for a TvSpotVersion. Creates one DiffusionJob
    per script row (multiplied by ``images_per_row``). Tracks overall progress.
@@ -159,6 +169,18 @@ Cascade Behavior
    * - TvSpotScriptRow → TvSpotVersion
      - CASCADE
      - Delete rows with version
+   * - AdaptationJob → TvSpot
+     - CASCADE
+     - Delete jobs with spot
+   * - AdaptationJob → TvSpotVersion (origin)
+     - CASCADE
+     - Delete jobs with origin version
+   * - AdaptationJob → AdaptationMarket
+     - PROTECT
+     - Preserve market reference
+   * - AdaptationJob → TvSpotVersion (result)
+     - SET_NULL
+     - Allow orphan jobs if version deleted
    * - StoryboardJob → TvSpotVersion
      - CASCADE
      - Delete jobs with version
