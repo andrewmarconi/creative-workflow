@@ -79,3 +79,6 @@ docs/_build/
 
 # Local work files (not committed)
 local_workfiles/
+
+# Claude Code (personal settings only - shared settings.json and skills/ are committed)
+.claude/settings.local.json
