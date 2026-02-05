@@ -35,6 +35,24 @@ Key Capabilities
    philosophy
    api/index
 
+Citing This Software
+====================
+
+If you use this software in your research, please cite it using the following BibTeX entry:
+
+.. code-block:: bibtex
+
+   @misc{marconi2026generativecreativelab,
+     author       = {Andrew Marconi},
+     title        = {Generative Creative Lab},
+     year         = {2026},
+     howpublished = {\url{https://andrewmarconi.github.io/generative-creative-lab}},
+     note         = {Interactive web project},
+   }
+
+| **Marconi, A.** (2026). *Generative Creative Lab* [Interactive web project].
+| Retrieved from https://andrewmarconi.github.io/generative-creative-lab
+
 Indices and tables
 ==================
 

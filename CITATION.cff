@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Generative Creative Lab"
+abstract: "A modular framework for creative development, exploration, and experimentation using generative AI. Built with Django and Celery for multi-model diffusion image generation."
+authors:
+  - family-names: Marconi
+    given-names: Andrew
+version: "0.1.0"
+date-released: "2026-02-05"
+url: "https://andrewmarconi.github.io/generative-creative-lab"
+repository-code: "https://github.com/andrewmarconi/generative-creative-lab"
+license: "LicenseRef-Generative-Creative-Lab-Non-Commercial"
+keywords:
+  - diffusion
+  - image-generation
+  - generative-ai
+  - django
+  - celery
+  - stable-diffusion
+  - flux

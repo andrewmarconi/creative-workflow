@@ -245,3 +245,20 @@ If you want to use Generative Creative Lab or derivatives of it in any commercia
 By using or contributing to this repository, you agree to the terms of the Generative Creative Lab Non-Commercial License.
 
 See the [LICENSE](./LICENSE.md) file for full details.
+
+
+## Citing This Software
+
+If you use this software in your research, please cite it using the following BibTeX entry:
+
+```bibtex
+@misc{marconi2026generativecreativelab,
+  author       = {Andrew Marconi},
+  title        = {Generative Creative Lab},
+  year         = {2026},
+  howpublished = {\url{https://andrewmarconi.github.io/generative-creative-lab}},
+  note         = {Interactive web project},
+}
+```
+
+> **Marconi, A.** (2026). *Generative Creative Lab* [Interactive web project]. Retrieved from https://andrewmarconi.github.io/generative-creative-lab
