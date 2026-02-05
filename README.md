@@ -1,159 +1,241 @@
+![Creative Workflow](docs/_static/logo-landscape.png)
+
 # Creative Workflow
 
-Multi-model diffusion image generation application built with Django, Celery, and Django Unfold. Supports seven models across four architectures, with dynamic LoRA compatibility, CivitAI auto-download, and prompt enhancement via local LLM or Anthropic API.
+A modular framework for creative development, exploration, and experimentation using generative AI. Built with Django and Celery, this system provides a flexible platform for multi-model diffusion image generation with dynamic model composition, prompt enhancement, and extensible architecture.
 
-## Features
+## Philosophy
 
-- **Multi-Model Support**: Z-Image Turbo, Flux.1-dev, Flux.2 Klein, SDXL Turbo, Juggernaut XL, DreamShaper XL Lightning, Realistic Vision v5.1
-- **Django Admin UI**: Full workflow via Django Unfold — create prompts, queue jobs, view results with image previews
-- **Dynamic LoRA Filtering**: LoRAs filtered by base architecture (SDXL, SD 1.5, Flux.1, etc.)
-- **CivitAI Auto-Download**: LoRAs with AIR URNs are downloaded automatically on first use
-- **Prompt Enhancement**: Rule-based, local LLM (Qwen2.5-3B), or Anthropic API enhancers
-- **Apple Silicon Optimized**: MPS backend with sequential CPU offload and attention slicing
+Creative Workflow is designed as a **creative laboratory** - not just a tool for generating images, but a framework for exploring the intersection of different AI models, prompting strategies, and creative workflows. It enables rapid experimentation through:
+
+- **Model Modularity**: Mix and match diffusion models, LoRAs, and enhancement strategies
+- **Prompt Evolution**: Transform and refine prompts using multiple enhancement approaches
+- **Workflow Orchestration**: Queue-based processing for batch experimentation
+- **Extensible Architecture**: Easy to add new models, enhancement methods, and creative tools
+
+## Core Capabilities
+
+### Generative Models
+- **Diffusion Models**: Z-Image Turbo, Flux.1-dev, Flux.2 Klein, SDXL Turbo, Juggernaut XL, DreamShaper XL Lightning, Realistic Vision v5.1
+- **Dynamic LoRA Integration**: Architecture-aware LoRA filtering with CivitAI auto-download
 - **Flexible Model Loading**: Local `.safetensors` files or HuggingFace Hub models
 
-## Quick Start
+### Creative Enhancement
+- **Multi-Strategy Prompt Enhancement**: Rule-based transformations, local LLM refinement (Qwen2.5-3B), or Anthropic API enhancement
+- **Iterative Workflows**: Chain multiple enhancement steps for prompt evolution
+- **Batch Experimentation**: Queue multiple variations for systematic exploration
 
-### 1. Setup Environment
+### Development Framework
+- **Template Method Architecture**: Extensible base classes for adding new models and behaviors
+- **Configuration-Driven**: JSON-based model and LoRA configuration with database sync
+- **Process Isolation**: Separate Celery workers for generation and enhancement tasks
+
+## Getting Started
+
+### 1. Environment Setup
 
 ```bash
 # Install dependencies
 uv sync
 
-# Copy environment file and configure
-cp .env.example .env  # Edit with your DB credentials, API keys
+# Configure environment
+cp .env.example .env  # Edit with your API keys and preferences
 
 # Authenticate with HuggingFace (for Hub models)
 huggingface-cli login
 ```
 
-### 2. Configure Models & LoRAs
-
-Edit [`data/presets.json`](data/presets.json) to configure models and LoRAs, then sync to the database:
+### 2. Initialize Creative Workspace
 
 ```bash
+# Setup database and import model configurations
 uv run manage.py migrate
 uv run manage.py import_presets
 uv run manage.py createsuperuser
 ```
 
-### 3. Launch All Services
-
-All processes are defined in the [`Procfile`](Procfile) and managed with [honcho](https://github.com/nickstenning/honcho).
+### 3. Launch Creative Studio
 
 ```bash
+# Start all services for full creative workflow
 honcho start
 ```
 
-| Process | Description |
-|---------|-------------|
-| **docker** | PostgreSQL (port 5435) + Valkey (port 6379) |
-| **django** | Django dev server at http://localhost:8000/admin/ |
-| **worker** | Celery worker for image generation (`default` queue) |
-| **enhancement** | Celery worker for prompt enhancement (`enhancement` queue) |
+| Process | Creative Function |
+|---------|-------------------|
+| **docker** | Data persistence (PostgreSQL + Valkey) |
+| **django** | Creative studio interface at http://localhost:8000/admin/ |
+| **worker** | Generative model execution (`default` queue) |
+| **enhancement** | Prompt transformation and refinement (`enhancement` queue) |
 
 ```bash
-# Start a subset of processes
+# Start minimal setup for configuration
 honcho start docker django
 ```
 
-## Usage
+## Creative Workflow
 
-1. Create a **Prompt** in the Django admin
-2. Create **DiffusionJobs** from a prompt (select model, optional LoRA, parameters)
-3. Jobs are auto-queued to Celery on save
-4. Generated images saved to `media/diffusion/` and viewable in admin
+### 1. Prompt Creation
+- Start with base concepts in the Django admin
+- Apply enhancement strategies (rule-based, LLM, or API)
+- Iterate through multiple refinement cycles
 
-## Model Comparison
+### 2. Model Experimentation
+- Select from multiple diffusion architectures
+- Apply architecture-compatible LoRAs
+- Adjust generation parameters for different creative outcomes
 
-| Model | Architecture | Steps | CFG | Neg Prompt | Best For |
-|-------|-------------|-------|-----|------------|----------|
-| Z-Image Turbo | Lumina/S3-DiT | 9 | 0.0 | No | Quick iterations |
-| Flux.1-dev | Flux.1 | 28 | 3.5 | No | General purpose |
-| Flux.2 Klein | Flux.1 | 28 | 3.5 | No | Lightweight Flux |
-| SDXL Turbo | SDXL | 4 | 0.0 | No | Fast SDXL |
-| Juggernaut XL v9 | SDXL | 30 | 7.0 | Yes | Photorealistic |
-| DreamShaper XL Lightning | SDXL | 4 | 2.0 | No | Fast stylized |
-| Realistic Vision v5.1 | SD 1.5 | 30 | 5.0 | Yes | Photorealistic (SD 1.5) |
+### 3. Batch Exploration
+- Create multiple job variations from a single prompt
+- Queue systematic experiments across models and parameters
+- Review results and refine creative direction
 
-## Configuration
+## Model Palette
 
-### Adding Models
+| Model | Architecture | Creative Character | Speed | Style Flexibility |
+|-------|-------------|-------------------|-------|-------------------|
+| Z-Image Turbo | Lumina/S3-DiT | Rapid ideation | ⚡⚡⚡ | Moderate |
+| Flux.1-dev | Flux.1 | Balanced creation | ⚡⚡ | High |
+| Flux.2 Klein | Flux.1 | Lightweight exploration | ⚡⚡ | High |
+| SDXL Turbo | SDXL | Fast prototyping | ⚡⚡⚡ | Moderate |
+| Juggernaut XL v9 | SDXL | Photorealistic detail | ⚡ | Very High |
+| DreamShaper XL Lightning | SDXL | Stylized speed | ⚡⚡⚡ | High |
+| Realistic Vision v5.1 | SD 1.5 | Classic photorealism | ⚡ | Very High |
 
-1. Add model config to `data/presets.json`
-2. Create `lib/models/newmodel.py` inheriting from `BaseModel`
-3. Register in `lib/models/__init__.py` `ModelFactory.create_model()`
-4. Run `uv run manage.py import_presets`
+### Creative Strategies by Model
 
-### Adding LoRAs
+- **Rapid Iteration**: Z-Image Turbo, SDXL Turbo for quick concept exploration
+- **Balanced Creation**: Flux.1-dev, Flux.2 Klein for general creative work
+- **Detailed Refinement**: Juggernaut XL, Realistic Vision for final output
+- **Stylized Experimentation**: DreamShaper XL Lightning for artistic variations
 
-Add to `data/presets.json` with a `base_architecture` field for compatibility:
+## Extending the Framework
+
+### Adding New Models
+
+The framework uses a Template Method pattern for easy model extension:
+
+```python
+# src/cw/lib/models/yourmodel.py
+from cw.lib.models.base import BaseModel
+
+class YourModel(BaseModel):
+    def _create_pipeline(self):
+        # Return your configured pipeline
+        return pipeline
+```
+
+1. Add model configuration to `data/presets.json`
+2. Implement model class inheriting from `BaseModel`
+3. Register in `ModelFactory.create_model()`
+4. Sync with `uv run manage.py import_presets`
+
+### Creative LoRA Integration
+
+Add style-specific LoRAs to `data/presets.json`:
 
 ```json
 {
-  "label": "My LoRA",
-  "path": "loras/my-lora.safetensors",
+  "label": "Artistic Style",
+  "path": "loras/artistic-style.safetensors",
   "base_architecture": "sdxl",
-  "prompt": "trigger words",
+  "prompt": "in the style of artistic movement",
   "settings": {"strength": 0.8}
 }
 ```
 
-LoRAs can also specify a CivitAI `air` URN for auto-download instead of a local path.
+- **Architecture Awareness**: LoRAs automatically filter by compatible base models
+- **CivitAI Integration**: Use `air` URNs for automatic community model downloads
+- **Creative Stacking**: Combine multiple LoRAs for unique style blends
 
-## Architecture
+### Custom Enhancement Strategies
 
-```
-cw/diffusion/       # Django app
-  models.py                 # DiffusionModel, LoraModel, Prompt, DiffusionJob
-  admin.py                  # Django Unfold admin (primary UI)
-  tasks.py                  # Celery tasks for generation and enhancement
-lib/models/                 # Model implementations
-  base.py                   # Abstract BaseModel
-  zimageturbo.py, flux.py, flux2klein.py, qwen.py,
-  sdxlturbo.py, sdxl.py, sd15.py
-lib/
-  config.py                 # Loads data/presets.json
-  prompt_enhancer.py        # Rule-based, HF, and Anthropic enhancers
-  civitai.py                # CivitAI LoRA downloader
-  loras/manager.py          # LoRA filtering by base architecture
+Extend prompt enhancement in `src/cw/lib/prompt_enhancer.py`:
+
+```python
+class CreativeEnhancer(BaseEnhancer):
+    def enhance(self, prompt: str) -> str:
+        # Implement your creative enhancement logic
+        return enhanced_prompt
 ```
 
-See [`CLAUDE.md`](CLAUDE.md) for detailed architecture documentation.
+## Framework Architecture
 
-## System Requirements
+```
+Creative Workflow Framework
+├── cw/diffusion/                    # Creative workflow orchestration
+│   ├── models.py                    # Core creative entities
+│   ├── admin.py                     # Django Unfold creative studio
+│   └── tasks.py                     # Asynchronous creative processes
+├── cw/lib/models/                   # Generative model implementations
+│   ├── base.py                      # Abstract creative model base
+│   ├── mixins.py                    # Shared creative behaviors
+│   └── [model implementations]     # Specific diffusion models
+├── cw/lib/                          # Creative utilities
+│   ├── config.py                    # Configuration management
+│   ├── prompt_enhancer.py           # Prompt transformation strategies
+│   ├── civitai.py                   # Community model integration
+│   └── loras/                       # Style enhancement management
+└── data/presets.json               # Creative configuration registry
+```
 
-- **Python**: 3.12+ via `uv`
-- **Services**: PostgreSQL, Valkey/Redis (provided via Docker Compose)
-- **GPU**: Apple Silicon (MPS) or CUDA
+### Design Patterns
+
+- **Template Method**: `BaseModel` provides generation workflow, models implement specifics
+- **Strategy Pattern**: Multiple prompt enhancement approaches
+- **Factory Pattern**: `ModelFactory` creates appropriate model instances
+- **Configuration-Driven**: JSON-based model and style definitions
+
+See [`AGENTS.md`](AGENTS.md) for development guidelines and patterns.
+
+## Environment Requirements
+
+- **Python**: 3.12+ via `uv` package manager
+- **Services**: PostgreSQL, Valkey/Redis (Docker Compose provided)
+- **GPU**: Apple Silicon (MPS) or CUDA for generation
 - **Storage**: ~15-30GB for model cache (`~/.cache/huggingface/`)
 
-## Development
+## Creative Development
 
 ```bash
-honcho start                              # Start all services
-uv run manage.py migrate                  # Run migrations
-uv run manage.py import_presets           # Sync presets.json to DB
-uv run manage.py preload_models           # Pre-download models to HF cache
-uv run manage.py import_prompts           # Bulk import prompts
-uv run manage.py export_prompts           # Export prompts
+# Full creative environment
+honcho start                              # Launch all creative services
+
+# Configuration management
+uv run manage.py migrate                  # Initialize database
+uv run manage.py import_presets           # Sync model configurations
+uv run manage.py preload_models           # Cache models for faster workflow
+
+# Creative content management
+uv run manage.py import_prompts           # Bulk import creative concepts
+uv run manage.py export_prompts           # Export creative experiments
 ```
 
-## Troubleshooting
+## Creative Troubleshooting
 
-**Model won't load?**
-- Verify HuggingFace authentication for Hub models
-- Check `MODEL_BASE_PATH` in `.env` for local `.safetensors` models
+**Model Loading Issues?**
+- Verify HuggingFace authentication for community models
+- Check `MODEL_BASE_PATH` in `.env` for local model files
+- Ensure model architecture matches available implementations
 
-**LoRA not appearing?**
-- Check `base_architecture` matches the model's architecture
-- Verify the file exists or the AIR URN is valid for CivitAI download
+**Style Enhancement Not Working?**
+- Verify LoRA `base_architecture` matches target model
+- Check CivitAI AIR URN validity for community downloads
+- Confirm LoRA strength settings are appropriate (0.0-1.0)
 
-**Out of memory?**
-- Use a turbo/lightning model with fewer steps
-- Only one model loads at a time (by design)
-- `torch.mps.empty_cache()` runs after each generation
+**Performance Optimization?**
+- Use turbo models for rapid iteration (fewer steps)
+- Only one model loads at a time (intentional design)
+- MPS cache automatically clears after each generation
+
+## Contributing to the Framework
+
+This is an open creative framework. Contributions welcome for:
+- New model implementations
+- Creative enhancement strategies
+- Workflow improvements
+- Documentation and examples
 
 ## License
 
-TBD
+TBD (Open source license planned)

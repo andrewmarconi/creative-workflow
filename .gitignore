@@ -34,6 +34,7 @@ outputs/
 *.jpg
 *.jpeg
 *.png
+!docs/_static/logo*.png
 *.webp
 
 # Checkpoint files
@@ -72,3 +73,6 @@ scripts.csv
 scripts.md
 script_adaptations.json
 data/adaptations.json
+
+# Sphinx documentation build
+docs/_build/
