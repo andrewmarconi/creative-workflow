@@ -95,14 +95,15 @@ Uses **src layout** for proper Python packaging:
 creative-workflow/
 ├── src/cw/              # Main package (Django project + apps + lib)
 │   ├── diffusion/       # Django app for image generation
+│   │   └── templates/   # App-specific admin templates
 │   ├── tvspots/         # Django app for TV spot management
+│   │   └── templates/   # App-specific admin templates
 │   └── lib/             # Supporting library modules
 │       ├── models/      # Diffusion model implementations
 │       ├── loras/       # LoRA management
 │       └── *.py         # Utilities (civitai, prompt_enhancer, etc.)
 ├── manage.py            # Django management script
-├── templates/           # Django templates
-├── staticfiles/         # Static files
+├── staticfiles/         # collectstatic output (not source files)
 ├── media/               # User-uploaded content
 ├── data/                # Configuration files (presets.json)
 └── logs/                # Application logs
