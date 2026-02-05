@@ -236,6 +236,12 @@ This is an open creative framework. Contributions welcome for:
 - Workflow improvements
 - Documentation and examples
 
-## License
+## License and Non-Commercial Use
 
-TBD (Open source license planned)
+Creative Workflow is provided as a **creative laboratory** for experimentation with generative AI workflows. It is licensed under the **Creative Workflow Non-Commercial License**, which permits use, modification, and distribution **only for Non-Commercial Purposes**.
+
+If you want to use Creative Workflow or derivatives of it in any commercial or production setting, you must obtain a separate commercial license from the project owner.
+
+By using or contributing to this repository, you agree to the terms of the Creative Workflow Non-Commercial License.
+
+See the [LICENSE](./LICENSE) file for full details.
