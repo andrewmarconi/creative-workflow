@@ -1,14 +1,51 @@
 #!/usr/bin/env python3
 """
-Prompt Enhancer for Diffusion Models
+Prompt enhancement for diffusion models.
 
 Expands simple text prompts into detailed, high-quality prompts optimized for
-diffusion models. Supports both rule-based and LLM-based enhancement.
+diffusion model image generation. Supports three enhancement strategies:
 
-Usage:
+1. **Rule-based** (:class:`PromptEnhancer`)
+   - No external dependencies
+   - Fast, deterministic
+   - Uses predefined quality tags and style descriptors
+
+2. **Local LLM** (:class:`HFPromptEnhancer`)
+   - Uses local HuggingFace models (Qwen2.5-3B recommended)
+   - Optimized for Apple Silicon (MPS)
+   - More creative and context-aware
+
+3. **Anthropic API** (:class:`LLMPromptEnhancer`)
+   - Uses Claude API
+   - Highest quality but requires API key
+   - Best for production use
+
+Supported Styles:
+    - ``auto``: Auto-detect from prompt keywords
+    - ``photography``: DSLR, bokeh, lighting terms
+    - ``artistic``: Concept art, illustration terms
+    - ``realistic``: Photorealistic, hyperrealistic
+    - ``cinematic``: Movie still, dramatic lighting
+    - ``coloring-book``: Line art, clean outlines
+
+CLI Usage::
+
+    # Rule-based (no dependencies)
     python prompt_enhancer.py "a cat"
-    python prompt_enhancer.py --file prompts.txt
-    python prompt_enhancer.py "a cat" --use-llm --api-key YOUR_KEY
+
+    # Local HuggingFace model (recommended)
+    python prompt_enhancer.py "a cat" --use-hf
+
+    # Anthropic API
+    python prompt_enhancer.py "a cat" --use-llm --api-key sk-xxx
+
+Programmatic Usage::
+
+    from cw.lib.prompt_enhancer import HFPromptEnhancer
+
+    enhancer = HFPromptEnhancer(style="photography")
+    result = enhancer.enhance_prompt("a cat on a windowsill")
+    print(result["enhanced_prompt"])
 """
 
 import argparse
@@ -19,11 +56,38 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
+from cw.lib.prompts import render_prompt
+
 logger = logging.getLogger(__name__)
 
 
 class PromptEnhancer:
-    """Enhances simple prompts for better diffusion model results."""
+    """
+    Rule-based prompt enhancer.
+
+    Adds quality tags, style descriptors, and technical enhancements
+    to simple prompts without requiring any external models.
+
+    The enhancer automatically detects style from keywords and adds
+    appropriate tags. For coloring-book style, special line-art
+    focused enhancements are applied.
+
+    Attributes:
+        style: Enhancement style (auto, photography, artistic, etc.)
+        creativity: Creativity level (0.0-1.0) affects number of tags
+        trigger_words: Optional LoRA trigger words to prepend
+
+    Example::
+
+        enhancer = PromptEnhancer(style="photography", creativity=0.8)
+        result = enhancer.enhance_prompt("a sunset over mountains")
+        # result = {
+        #     "original": "a sunset over mountains",
+        #     "enhanced_prompt": "masterpiece, best quality, ...",
+        #     "negative_prompt": "blurry, low quality, ...",
+        #     "detected_style": "photography"
+        # }
+    """
 
     # Quality and technical enhancement tags
     QUALITY_TAGS = [
@@ -437,50 +501,23 @@ class HFPromptEnhancer(PromptEnhancer):
 
         import torch
 
-        # Build style-specific guidance
-        style_guidance = ""
-        if self.style == "coloring-book":
-            style_guidance = """
-Special instructions for coloring book style:
-- Focus on LINE ART qualities: clean lines, clear outlines, bold boundaries
-- Emphasize simplicity and clarity for easy coloring
-- Avoid: shading, gradients, colors, textures, photorealism
-- Include: simple shapes, well-defined sections, distinct areas
-- Negative prompt should exclude: colored, shaded, gradient, soft edges, texture"""
-        else:
-            style_guidance = f"- Style preference: {self.style}"
+        # Determine effective style (auto-detect if needed)
+        effective_style = (
+            self._detect_style(simple_prompt) if self.style == "auto" else self.style
+        )
 
-        trigger_guidance = ""
-        if self.trigger_words:
-            trigger_guidance = f"""
-IMPORTANT: The enhanced prompt MUST start with these exact trigger words: "{self.trigger_words}"
-These are LoRA activation keywords and must appear at the beginning."""
+        # Render prompts from Jinja2 templates
+        system_message = render_prompt(
+            "prompt_enhancer_system.j2",
+            style=effective_style,
+            creativity=self.creativity,
+            trigger_words=self.trigger_words,
+        )
 
-        system_message = f"""You are an expert at writing prompts for diffusion models like Stable Diffusion, Flux, and similar image generators.
-
-Your task is to take a simple prompt and expand it into a detailed, high-quality prompt that will produce excellent results.
-
-Guidelines:
-- Add specific details about composition, lighting, style, and quality
-- Include technical photography/art terms when appropriate
-- Make prompts vivid and descriptive
-{style_guidance}
-- Creativity level: {self.creativity}/1.0 (higher = more creative additions)
-- Keep the core subject but add rich context
-- Format as comma-separated tags/phrases
-- DO NOT use conversational language, just descriptive tags
-{trigger_guidance}
-
-Also provide a negative prompt listing things to avoid (blur, low quality, artifacts, etc.)."""
-
-        user_message = f"""Simple prompt: {simple_prompt}
-
-Expand this into:
-1. An enhanced prompt (comma-separated descriptive tags)
-2. A negative prompt (comma-separated things to avoid)
-
-Format your response as JSON:
-{{"enhanced_prompt": "...", "negative_prompt": "..."}}"""
+        user_message = render_prompt(
+            "prompt_enhancer_user.j2",
+            simple_prompt=simple_prompt,
+        )
 
         # Format for chat models
         messages = [
@@ -599,50 +636,23 @@ class LLMPromptEnhancer(PromptEnhancer):
 
         client = anthropic.Anthropic(api_key=self.api_key)
 
-        # Build style-specific guidance
-        style_guidance = ""
-        if self.style == "coloring-book":
-            style_guidance = """
-Special instructions for coloring book style:
-- Focus on LINE ART qualities: clean lines, clear outlines, bold boundaries
-- Emphasize simplicity and clarity for easy coloring
-- Avoid: shading, gradients, colors, textures, photorealism
-- Include: simple shapes, well-defined sections, distinct areas
-- Negative prompt should exclude: colored, shaded, gradient, soft edges, texture"""
-        else:
-            style_guidance = f"- Style preference: {self.style}"
+        # Determine effective style (auto-detect if needed)
+        effective_style = (
+            self._detect_style(simple_prompt) if self.style == "auto" else self.style
+        )
 
-        trigger_guidance = ""
-        if self.trigger_words:
-            trigger_guidance = f"""
-IMPORTANT: The enhanced prompt MUST start with these exact trigger words: "{self.trigger_words}"
-These are LoRA activation keywords and must appear at the beginning."""
+        # Render prompts from Jinja2 templates
+        system_prompt = render_prompt(
+            "prompt_enhancer_system.j2",
+            style=effective_style,
+            creativity=self.creativity,
+            trigger_words=self.trigger_words,
+        )
 
-        system_prompt = f"""You are an expert at writing prompts for diffusion models like Stable Diffusion, Flux, and similar image generators.
-
-Your task is to take a simple prompt and expand it into a detailed, high-quality prompt that will produce excellent results.
-
-Guidelines:
-- Add specific details about composition, lighting, style, and quality
-- Include technical photography/art terms when appropriate
-- Make prompts vivid and descriptive
-{style_guidance}
-- Creativity level: {self.creativity}/1.0 (higher = more creative additions)
-- Keep the core subject but add rich context
-- Format as comma-separated tags/phrases
-- DO NOT use conversational language, just descriptive tags
-{trigger_guidance}
-
-Also provide a negative prompt listing things to avoid (blur, low quality, artifacts, etc.)."""
-
-        user_message = f"""Simple prompt: {simple_prompt}
-
-Expand this into:
-1. An enhanced prompt (comma-separated descriptive tags)
-2. A negative prompt (comma-separated things to avoid)
-
-Format your response as JSON:
-{{"enhanced_prompt": "...", "negative_prompt": "..."}}"""
+        user_message = render_prompt(
+            "prompt_enhancer_user.j2",
+            simple_prompt=simple_prompt,
+        )
 
         try:
             message = client.messages.create(

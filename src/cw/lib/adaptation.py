@@ -1,20 +1,58 @@
 """
-TV Spot Adaptation using LLM with Outlines for structured JSON output.
+TV Spot cultural adaptation using LLM with structured output.
 
-Uses local Qwen model with Outlines library to generate culturally-adapted
-versions of TV spot scripts with guaranteed valid JSON output.
+This module uses local Qwen models with the Outlines library to generate
+culturally-adapted versions of TV spot scripts. The Outlines library
+guarantees valid JSON output matching the Pydantic schema.
 
-Usage:
-    from lib.adaptation import AdaptationGenerator
+Key Features:
+    - Culturally-sensitive adaptations based on market rules
+    - Preserves original timing and structure
+    - Adapts language, idioms, visual cues, and references
+    - Generates Pydantic-validated output for type safety
+
+Classes:
+    :class:`ScriptRowOutput`
+        Pydantic model for a single adapted script row
+
+    :class:`AdaptationOutput`
+        Pydantic model for the complete adaptation
+
+    :class:`AdaptationGenerator`
+        Main generator class using Outlines for structured LLM output
+
+Usage::
+
+    from cw.lib.adaptation import AdaptationGenerator
 
     generator = AdaptationGenerator()
+
+    # origin_version: TvSpotVersion instance
+    # target_market: AdaptationMarket instance with rules
     result = generator.adapt(origin_version, target_market)
+
+    print(result.code)  # "US-HISP"
+    print(result.language)  # "es-MX"
+    for row in result.script_rows:
+        print(f"{row.shot_number}: {row.visual_text}")
+
+Singleton Access::
+
+    from cw.lib.adaptation import get_adaptation_generator
+
+    generator = get_adaptation_generator()  # Reuses existing instance
+
+Note:
+    Uses Qwen2.5-3B-Instruct by default for multilingual capabilities.
+    Optimized for Apple Silicon (MPS) with automatic device detection.
 """
 
 import logging
 from typing import Optional
 
 from pydantic import BaseModel, Field
+
+from cw.lib.prompts import render_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -213,60 +251,22 @@ class AdaptationGenerator:
         return result
 
     def _build_prompt(self, original_spot: dict, target_market, creativity: float) -> str:
-        """Build the adaptation prompt for the LLM."""
+        """Build the adaptation prompt using Jinja2 template."""
         import json
 
         logger.debug(f"_build_prompt: target_market={target_market.code}, creativity={creativity}")
         original_json = json.dumps(original_spot, indent=2, ensure_ascii=False)
         logger.debug(f"Original spot JSON length: {len(original_json)} chars")
 
-        prompt = f"""You are an expert advertising creative and localization strategist.
-
-Your task is to create a culturally sensitive, legally compliant, and creatively strong adaptation of a TV spot for a specified target market, while preserving the core brand idea and campaign objectives.
-
-## Target Market: {target_market.name}
-
-### Market Rules and Guidelines:
-{target_market.rules}
-
-## Original TV Spot:
-```json
-{original_json}
-```
-
-## Adaptation Requirements:
-
-1. **Preserve**:
-   - The core brand idea and primary call to action
-   - The emotional arc and key storytelling beats
-   - The overall timing and structure
-
-2. **Adapt**:
-   - Language to natural, idiomatic usage in the target market
-   - Humor, idioms, metaphors, and references for cultural relevance
-   - Settings, props, and lifestyle cues to feel authentic
-   - On-screen text and taglines to align with local expectations
-   - Visual details (gestures, symbols, colors) for cultural appropriateness
-
-3. **Avoid**:
-   - Stereotypes or exoticizing portrayals
-   - Sensitive imagery related to religion, politics, or historical trauma
-   - Claims that may be misleading in the target market
-
-## Output Requirements:
-
-Generate a JSON object with:
-- `code`: Market code for this adaptation (e.g., "{target_market.code.upper()}")
-- `name`: Human-readable name (e.g., "{target_market.name} Adaptation")
-- `language`: Primary language code for the adaptation
-- `visual_style_prompt`: A common prompt prefix for consistent storyboard generation
-- `script_rows`: Array of adapted rows, each with shot_number, timecode_start, duration_seconds, visual_text, audio_text
-
-Adapt all {len(original_spot['script_rows'])} script rows, maintaining the same structure and timing.
-
-Creativity level: {creativity}/1.0 (higher = more creative adaptations)
-
-Generate the adapted TV spot:"""
+        prompt = render_prompt(
+            "adaptation.j2",
+            target_market_name=target_market.name,
+            target_market_rules=target_market.rules,
+            target_market_code=target_market.code.upper(),
+            original_json=original_json,
+            num_script_rows=len(original_spot["script_rows"]),
+            creativity=creativity,
+        )
 
         return prompt
 

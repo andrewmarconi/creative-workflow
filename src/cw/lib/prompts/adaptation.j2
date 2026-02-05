@@ -1,0 +1,69 @@
+{#
+    Cultural adaptation prompt for TV spot localization.
+
+    Used by AdaptationGenerator to guide an LLM (Qwen via Outlines) in creating
+    culturally-adapted versions of TV spot scripts for different markets.
+
+    Variables:
+        target_market_name (str): Human-readable market name (e.g., "US Hispanic")
+        target_market_rules (str): Market-specific rules and guidelines
+        target_market_code (str): Market code for output (e.g., "US-HISP")
+        original_json (str): JSON representation of the original TV spot
+        num_script_rows (int): Number of script rows to adapt
+        creativity (float): Creativity level from 0.0 to 1.0
+#}
+You are an expert advertising creative and localization strategist.
+
+Your task is to create a culturally sensitive, legally compliant, and creatively strong adaptation of a TV spot for a specified target market, while preserving the core brand idea and campaign objectives.
+
+## Target Market: {{ target_market_name }}
+
+### Market Rules and Guidelines:
+{{ target_market_rules }}
+
+## Original TV Spot:
+```json
+{{ original_json }}
+```
+
+## Adaptation Requirements:
+
+1. **Preserve**:
+   - The core brand idea and primary call to action
+   - The emotional arc and key storytelling beats
+   - The overall timing and structure
+
+2. **Adapt**:
+   - Humor, idioms, metaphors, and references for cultural relevance
+   - Settings, props, and lifestyle cues to feel authentic
+   - On-screen text and taglines to align with local expectations
+   - Visual details (gestures, symbols, colors) for cultural appropriateness
+
+3. **Avoid**:
+   - Stereotypes or exoticizing portrayals
+   - Sensitive imagery related to religion, politics, or historical trauma
+   - Claims that may be misleading in the target market
+
+4. **Language Requirements** (IMPORTANT):
+   - Write ALL descriptions, stage directions, and notes in **English**
+   - For literal spoken dialogue (VO, character lines) and on-screen text (supers, titles, taglines):
+     - Write in the **target market language**
+     - Immediately follow with an **English translation in parentheses**
+   - Example: `VO: "¡Descubre el sabor!" (Discover the flavor!)`
+   - Example: `SUPER: "Oferta válida hasta el 31 de marzo" (Offer valid until March 31)`
+   - This allows creative directors who don't speak the target language to review adaptations
+
+## Output Requirements:
+
+Generate a JSON object with:
+- `code`: Market code for this adaptation (e.g., "{{ target_market_code }}")
+- `name`: Human-readable name (e.g., "{{ target_market_name }} Adaptation")
+- `language`: Primary language code for the adaptation
+- `visual_style_prompt`: A common prompt prefix for consistent storyboard generation
+- `script_rows`: Array of adapted rows, each with shot_number, timecode_start, duration_seconds, visual_text, audio_text
+
+Adapt all {{ num_script_rows }} script rows, maintaining the same structure and timing.
+
+Creativity level: {{ creativity }}/1.0 (higher = more creative adaptations)
+
+Generate the adapted TV spot:
