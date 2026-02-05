@@ -310,9 +310,111 @@ class LoraModelAdmin(ModelAdmin):
 
     # --- Bulk actions ---
 
+def _update_lora_fields_from_metadata(lora, extracted_metadata):
+    """
+    Update LoRA model fields from extracted CivitAI metadata.
+
+    Args:
+        lora: LoraModel instance to update
+        extracted_metadata: Dict of extracted metadata from CivitAI
+
+    Returns:
+        bool: True if any fields were changed, False otherwise
+    """
+    changed = False
+    field_updates = [
+        # (field_name, extracted_key, should_update_condition)
+        (
+            "label",
+            "label",
+            lambda: (not lora.label or lora.label.startswith("CivitAI Model"))
+            and extracted_metadata.get("label")
+            and extracted_metadata["label"] != lora.label,
+        ),
+        (
+            "base_architecture",
+            "base_architecture",
+            lambda: "base_architecture" in extracted_metadata
+            and lora.base_architecture != extracted_metadata["base_architecture"],
+        ),
+        (
+            "prompt_suffix",
+            "prompt_suffix",
+            lambda: "prompt_suffix" in extracted_metadata
+            and lora.prompt_suffix != extracted_metadata["prompt_suffix"],
+        ),
+        (
+            "negative_prompt_suffix",
+            "negative_prompt_suffix",
+            lambda: "negative_prompt_suffix" in extracted_metadata
+            and lora.negative_prompt_suffix != extracted_metadata["negative_prompt_suffix"],
+        ),
+        (
+            "guidance_scale",
+            "guidance_scale",
+            lambda: "guidance_scale" in extracted_metadata
+            and lora.guidance_scale != extracted_metadata.get("guidance_scale"),
+        ),
+    ]
+
+    # Process field updates
+    for field_name, extracted_key, should_update in field_updates:
+        if should_update():
+            setattr(lora, field_name, extracted_metadata[extracted_key])
+            changed = True
+
+    # Notes always updated if present (stats change frequently)
+    if "notes" in extracted_metadata:
+        lora.notes = extracted_metadata["notes"]
+        changed = True
+
+    return changed
+
+
+def _build_refresh_result_message(updated_count, skipped_count, failed_count, error_messages):
+    """
+    Build result message for metadata refresh operation.
+
+    Args:
+        updated_count: Number of LoRAs successfully updated
+        skipped_count: Number of LoRAs unchanged
+        failed_count: Number of LoRAs that failed
+        error_messages: List of error messages
+
+    Returns:
+        str: Formatted result message
+    """
+    messages_list = []
+    if updated_count > 0:
+        messages_list.append(f"{updated_count} LoRA(s) updated")
+    if skipped_count > 0:
+        messages_list.append(f"{skipped_count} unchanged")
+    if failed_count > 0:
+        messages_list.append(f"{failed_count} failed")
+
+    result_message = f"Metadata refresh complete: {', '.join(messages_list)}."
+
+    # Append error details if there are failures
+    if failed_count > 0:
+        if len(error_messages) <= 5:
+            result_message += f" Errors: {'; '.join(error_messages[:5])}"
+        else:
+            result_message += (
+                f" Errors: {'; '.join(error_messages[:5])} (and {failed_count - 5} more)"
+            )
+
+    return result_message
+
+
     @action(description=_("Refresh metadata from CivitAI"))
     def refresh_metadata_bulk_action(self, request, queryset):
-        """Refresh metadata from CivitAI for selected LoRAs."""
+        """
+        Refresh metadata from CivitAI for selected LoRAs.
+
+        Refactored to reduce complexity by extracting:
+        - Field update logic to _update_lora_fields_from_metadata()
+        - Message building to _build_refresh_result_message()
+        """
         from lib.civitai import (
             extract_lora_metadata,
             fetch_model_version_metadata,
@@ -321,7 +423,6 @@ class LoraModelAdmin(ModelAdmin):
 
         # Filter for LoRAs with AIRs
         loras_with_air = queryset.exclude(air="")
-        total_selected = queryset.count()
         processable = loras_with_air.count()
 
         if processable == 0:
@@ -332,59 +433,21 @@ class LoraModelAdmin(ModelAdmin):
             )
             return
 
+        # Initialize counters
         updated_count = 0
         failed_count = 0
         skipped_count = 0
         error_messages = []
 
+        # Process each LoRA
         for lora in loras_with_air:
             try:
                 model_id, version_id = parse_air(lora.air)
-
-                # Fetch fresh metadata from CivitAI
                 raw_metadata = fetch_model_version_metadata(version_id, settings.CIVITAI_API_KEY)
                 extracted = extract_lora_metadata(raw_metadata)
 
-                # Track if anything changed
-                changed = False
-
-                # Update label if it was auto-generated or empty
-                if not lora.label or lora.label.startswith("CivitAI Model"):
-                    if extracted.get("label") and extracted["label"] != lora.label:
-                        lora.label = extracted["label"]
-                        changed = True
-
-                # Update fields if they differ
-                if (
-                    "base_architecture" in extracted
-                    and lora.base_architecture != extracted["base_architecture"]
-                ):
-                    lora.base_architecture = extracted["base_architecture"]
-                    changed = True
-
-                if (
-                    "prompt_suffix" in extracted
-                    and lora.prompt_suffix != extracted["prompt_suffix"]
-                ):
-                    lora.prompt_suffix = extracted["prompt_suffix"]
-                    changed = True
-
-                if (
-                    "negative_prompt_suffix" in extracted
-                    and lora.negative_prompt_suffix != extracted["negative_prompt_suffix"]
-                ):
-                    lora.negative_prompt_suffix = extracted["negative_prompt_suffix"]
-                    changed = True
-
-                if "guidance_scale" in extracted and lora.guidance_scale != extracted.get(
-                    "guidance_scale"
-                ):
-                    lora.guidance_scale = extracted["guidance_scale"]
-                    changed = True
-
-                if "notes" in extracted:
-                    lora.notes = extracted["notes"]
-                    changed = True  # Always consider notes as updated (stats change)
+                # Update fields and track changes
+                changed = _update_lora_fields_from_metadata(lora, extracted)
 
                 if changed:
                     lora.save()
@@ -396,30 +459,20 @@ class LoraModelAdmin(ModelAdmin):
                 failed_count += 1
                 error_messages.append(f"{lora.label}: {str(e)}")
 
-        # Build result message
-        messages_list = []
+        # Build and display result message
+        result_message = _build_refresh_result_message(
+            updated_count, skipped_count, failed_count, error_messages
+        )
+
+        # Determine message level
         if updated_count > 0:
-            messages_list.append(f"{updated_count} LoRA(s) updated")
-        if skipped_count > 0:
-            messages_list.append(f"{skipped_count} unchanged")
-        if failed_count > 0:
-            messages_list.append(f"{failed_count} failed")
-
-        result_message = f"Metadata refresh complete: {', '.join(messages_list)}."
-
-        if failed_count > 0 and len(error_messages) <= 5:
-            result_message += f" Errors: {'; '.join(error_messages[:5])}"
-        elif failed_count > 5:
-            result_message += (
-                f" Errors: {'; '.join(error_messages[:5])} (and {failed_count - 5} more)"
-            )
-
-        if updated_count > 0:
-            self.message_user(request, result_message, level=messages.SUCCESS)
+            level = messages.SUCCESS
         elif skipped_count > 0:
-            self.message_user(request, result_message, level=messages.INFO)
+            level = messages.INFO
         else:
-            self.message_user(request, result_message, level=messages.WARNING)
+            level = messages.WARNING
+
+        self.message_user(request, result_message, level=level)
 
     def change_form_buttons(self, request, obj=None, add=False):
         """Add custom Download and Refresh Metadata buttons to the change form for LoRAs with AIR."""
