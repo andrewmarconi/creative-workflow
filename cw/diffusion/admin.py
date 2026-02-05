@@ -21,7 +21,7 @@ from django_celery_results.admin import GroupResultAdmin as BaseGroupResultAdmin
 from django_celery_results.admin import TaskResultAdmin as BaseTaskResultAdmin
 from django_celery_results.models import GroupResult, TaskResult
 from huggingface_hub import scan_cache_dir
-from unfold.admin import ModelAdmin, StackedInline, TabularInline
+from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
 
 from .models import (
@@ -197,7 +197,108 @@ class DiffusionModelAdmin(ModelAdmin):
 
 
 # ---------------------------------------------------------------------------
-# LoraModel
+# LoraModel Helper Functions
+# ---------------------------------------------------------------------------
+
+
+def _update_lora_fields_from_metadata(lora, extracted_metadata):
+    """
+    Update LoRA model fields from extracted CivitAI metadata.
+
+    Args:
+        lora: LoraModel instance to update
+        extracted_metadata: Dict of extracted metadata from CivitAI
+
+    Returns:
+        bool: True if any fields were changed, False otherwise
+    """
+    changed = False
+    field_updates = [
+        # (field_name, extracted_key, should_update_condition)
+        (
+            "label",
+            "label",
+            lambda: (not lora.label or lora.label.startswith("CivitAI Model"))
+            and extracted_metadata.get("label")
+            and extracted_metadata["label"] != lora.label,
+        ),
+        (
+            "base_architecture",
+            "base_architecture",
+            lambda: "base_architecture" in extracted_metadata
+            and lora.base_architecture != extracted_metadata["base_architecture"],
+        ),
+        (
+            "prompt_suffix",
+            "prompt_suffix",
+            lambda: "prompt_suffix" in extracted_metadata
+            and lora.prompt_suffix != extracted_metadata["prompt_suffix"],
+        ),
+        (
+            "negative_prompt_suffix",
+            "negative_prompt_suffix",
+            lambda: "negative_prompt_suffix" in extracted_metadata
+            and lora.negative_prompt_suffix != extracted_metadata["negative_prompt_suffix"],
+        ),
+        (
+            "guidance_scale",
+            "guidance_scale",
+            lambda: "guidance_scale" in extracted_metadata
+            and lora.guidance_scale != extracted_metadata.get("guidance_scale"),
+        ),
+    ]
+
+    # Process field updates
+    for field_name, extracted_key, should_update in field_updates:
+        if should_update():
+            setattr(lora, field_name, extracted_metadata[extracted_key])
+            changed = True
+
+    # Notes always updated if present (stats change frequently)
+    if "notes" in extracted_metadata:
+        lora.notes = extracted_metadata["notes"]
+        changed = True
+
+    return changed
+
+
+def _build_refresh_result_message(updated_count, skipped_count, failed_count, error_messages):
+    """
+    Build result message for metadata refresh operation.
+
+    Args:
+        updated_count: Number of LoRAs successfully updated
+        skipped_count: Number of LoRAs unchanged
+        failed_count: Number of LoRAs that failed
+        error_messages: List of error messages
+
+    Returns:
+        str: Formatted result message
+    """
+    messages_list = []
+    if updated_count > 0:
+        messages_list.append(f"{updated_count} LoRA(s) updated")
+    if skipped_count > 0:
+        messages_list.append(f"{skipped_count} unchanged")
+    if failed_count > 0:
+        messages_list.append(f"{failed_count} failed")
+
+    result_message = f"Metadata refresh complete: {', '.join(messages_list)}."
+
+    # Append error details if there are failures
+    if failed_count > 0:
+        if len(error_messages) <= 5:
+            result_message += f" Errors: {'; '.join(error_messages[:5])}"
+        else:
+            result_message += (
+                f" Errors: {'; '.join(error_messages[:5])} (and {failed_count - 5} more)"
+            )
+
+    return result_message
+
+
+# ---------------------------------------------------------------------------
+# LoraModel Admin
 # ---------------------------------------------------------------------------
 
 
@@ -309,102 +410,6 @@ class LoraModelAdmin(ModelAdmin):
         return redirect("admin:refresh_lora_metadata", object_id)
 
     # --- Bulk actions ---
-
-def _update_lora_fields_from_metadata(lora, extracted_metadata):
-    """
-    Update LoRA model fields from extracted CivitAI metadata.
-
-    Args:
-        lora: LoraModel instance to update
-        extracted_metadata: Dict of extracted metadata from CivitAI
-
-    Returns:
-        bool: True if any fields were changed, False otherwise
-    """
-    changed = False
-    field_updates = [
-        # (field_name, extracted_key, should_update_condition)
-        (
-            "label",
-            "label",
-            lambda: (not lora.label or lora.label.startswith("CivitAI Model"))
-            and extracted_metadata.get("label")
-            and extracted_metadata["label"] != lora.label,
-        ),
-        (
-            "base_architecture",
-            "base_architecture",
-            lambda: "base_architecture" in extracted_metadata
-            and lora.base_architecture != extracted_metadata["base_architecture"],
-        ),
-        (
-            "prompt_suffix",
-            "prompt_suffix",
-            lambda: "prompt_suffix" in extracted_metadata
-            and lora.prompt_suffix != extracted_metadata["prompt_suffix"],
-        ),
-        (
-            "negative_prompt_suffix",
-            "negative_prompt_suffix",
-            lambda: "negative_prompt_suffix" in extracted_metadata
-            and lora.negative_prompt_suffix != extracted_metadata["negative_prompt_suffix"],
-        ),
-        (
-            "guidance_scale",
-            "guidance_scale",
-            lambda: "guidance_scale" in extracted_metadata
-            and lora.guidance_scale != extracted_metadata.get("guidance_scale"),
-        ),
-    ]
-
-    # Process field updates
-    for field_name, extracted_key, should_update in field_updates:
-        if should_update():
-            setattr(lora, field_name, extracted_metadata[extracted_key])
-            changed = True
-
-    # Notes always updated if present (stats change frequently)
-    if "notes" in extracted_metadata:
-        lora.notes = extracted_metadata["notes"]
-        changed = True
-
-    return changed
-
-
-def _build_refresh_result_message(updated_count, skipped_count, failed_count, error_messages):
-    """
-    Build result message for metadata refresh operation.
-
-    Args:
-        updated_count: Number of LoRAs successfully updated
-        skipped_count: Number of LoRAs unchanged
-        failed_count: Number of LoRAs that failed
-        error_messages: List of error messages
-
-    Returns:
-        str: Formatted result message
-    """
-    messages_list = []
-    if updated_count > 0:
-        messages_list.append(f"{updated_count} LoRA(s) updated")
-    if skipped_count > 0:
-        messages_list.append(f"{skipped_count} unchanged")
-    if failed_count > 0:
-        messages_list.append(f"{failed_count} failed")
-
-    result_message = f"Metadata refresh complete: {', '.join(messages_list)}."
-
-    # Append error details if there are failures
-    if failed_count > 0:
-        if len(error_messages) <= 5:
-            result_message += f" Errors: {'; '.join(error_messages[:5])}"
-        else:
-            result_message += (
-                f" Errors: {'; '.join(error_messages[:5])} (and {failed_count - 5} more)"
-            )
-
-    return result_message
-
 
     @action(description=_("Refresh metadata from CivitAI"))
     def refresh_metadata_bulk_action(self, request, queryset):
