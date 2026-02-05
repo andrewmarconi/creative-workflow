@@ -31,6 +31,7 @@ Key Capabilities
    :caption: Contents:
 
    guides/index
+   architecture
    philosophy
    api/index
 

@@ -4,23 +4,32 @@ Quick Start
 Getting Started
 ---------------
 
-1. **Install dependencies**::
+1. **Clone the repository**::
+
+    git clone https://github.com/generative-creative-lab/generative-creative-lab.git
+    cd generative-creative-lab
+
+2. **Install dependencies**::
 
     uv sync
 
-2. **Start all services** (PostgreSQL, Valkey, Django, Celery workers)::
+3. **Start all services** (PostgreSQL, Valkey, Django, Celery workers)::
 
-    honcho start
+    uv run honcho start
 
-3. **Create a superuser**::
+4. **Run database migrations** (in a new terminal)::
+
+    uv run manage.py migrate
+
+5. **Create a superuser**::
 
     uv run manage.py createsuperuser
 
-4. **Import model presets**::
+6. **Import model presets**::
 
     uv run manage.py import_presets
 
-5. **Access the admin UI** at http://localhost:8000/admin/
+7. **Access the admin UI** at http://localhost:8000/admin/
 
 Creating Your First Image
 -------------------------

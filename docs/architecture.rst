@@ -59,7 +59,7 @@ Process Model
 -------------
 
 Generative Creative Lab runs four concurrent processes, defined in the ``Procfile``
-and launched via ``honcho start``:
+and launched via ``uv run honcho start``:
 
 .. mermaid::
 
@@ -213,7 +213,7 @@ LoRA Loading Flow
        D --> H["Apply to<br/>pipeline"]
 
 LoRAs can be auto-downloaded from CivitAI using AIR URNs. See
-:doc:`lora-management` for details.
+:doc:`guides/lora-management` for details.
 
 Model Architecture
 ------------------
@@ -291,7 +291,7 @@ A minimal model implementation requires only ~20 lines:
                 torch_dtype=self.dtype,
             )
 
-See :doc:`adding-models` for the complete guide.
+See :doc:`guides/adding-models` for the complete guide.
 
 Configuration Flags
 ~~~~~~~~~~~~~~~~~~~
@@ -384,7 +384,7 @@ For TV spot workflow, additional models exist in ``cw.tvspots``:
 - ``AdaptationMarket`` - Market-specific adaptation rules
 - ``StoryboardJob`` - Storyboard generation tracking
 
-See :doc:`tvspots-workflow` for details.
+See :doc:`guides/tvspots-workflow` for details.
 
 Observability
 -------------
@@ -414,13 +414,13 @@ The Docker Compose stack includes observability tools:
 
 Access Grafana at http://localhost:3000 (anonymous login enabled for dev).
 
-See :doc:`observability` for detailed usage.
+See :doc:`guides/observability` for detailed usage.
 
 Related Documentation
 ---------------------
 
-- :doc:`quickstart` - Getting started guide
-- :doc:`configuration` - Configuration reference
-- :doc:`adding-models` - Adding new diffusion models
+- :doc:`guides/quickstart` - Getting started guide
+- :doc:`guides/configuration` - Configuration reference
+- :doc:`guides/adding-models` - Adding new diffusion models
 - :doc:`/api/lib` - API reference for cw.lib
 - :doc:`/api/diffusion` - API reference for cw.diffusion

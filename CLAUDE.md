@@ -11,8 +11,8 @@ Generative Creative Lab is a Django + Celery application for multi-model diffusi
 ### Setup & Run
 ```bash
 uv sync                          # Install/sync dependencies
-honcho start                     # Start all processes (Docker, Django, Celery workers)
-honcho start docker django       # Start subset of processes (without workers)
+uv run honcho start                     # Start all processes (Docker, Django, Celery workers)
+uv run honcho start docker django       # Start subset of processes (without workers)
 ```
 
 ### Individual Processes (from Procfile)
@@ -73,7 +73,7 @@ cat logs/tasks.log | jq 'select(.levelname == "ERROR")'
 ## Architecture
 
 ### Process Model
-Four processes run concurrently (defined in `Procfile`, launched via `honcho start`):
+Four processes run concurrently (defined in `Procfile`, launched via `uv run honcho start`):
 1. **docker** — PostgreSQL 17 (port 5435) + Valkey (port 6379) + Grafana/Loki (log aggregation)
 2. **django** — Django dev server (port 8000)
 3. **worker** — Celery worker on `default` queue (image generation, GPU-intensive)
