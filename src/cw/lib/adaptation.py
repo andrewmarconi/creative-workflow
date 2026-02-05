@@ -95,6 +95,7 @@ class AdaptationGenerator:
         self,
         model_id: str = "Qwen/Qwen2.5-3B-Instruct",
         device: Optional[str] = None,
+        load_in_4bit: bool = False,
     ):
         """
         Initialize the adaptation generator.
@@ -102,12 +103,27 @@ class AdaptationGenerator:
         Args:
             model_id: HuggingFace model ID
             device: Device to use ('cpu', 'mps', 'cuda', or None for auto-detect)
+            load_in_4bit: Whether to load with 4-bit quantization (requires bitsandbytes)
         """
         self.model_id = model_id
         self.device = device
+        self.load_in_4bit = load_in_4bit
         self._model = None
         self._tokenizer = None
         self._generator = None
+
+    def _is_model_cached(self) -> bool:
+        """Check if the model is already cached locally."""
+        try:
+            from huggingface_hub import try_to_load_from_cache
+            from huggingface_hub.utils import LocalEntryNotFoundError
+
+            # Check for a file that should exist in any HF model
+            result = try_to_load_from_cache(self.model_id, "config.json")
+            return result is not None
+        except Exception:
+            # If we can't determine cache status, assume not cached
+            return False
 
     def _load_model(self):
         """Load the model and create Outlines generator."""
@@ -119,7 +135,13 @@ class AdaptationGenerator:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
-        logger.info(f"Loading model for adaptation: {self.model_id}")
+        # Check if model is cached locally
+        is_cached = self._is_model_cached()
+        if is_cached:
+            logger.info(f"Model '{self.model_id}' found in local cache, loading...")
+        else:
+            logger.info(f"Model '{self.model_id}' not in cache, downloading from HuggingFace Hub...")
+            logger.info("This may take several minutes depending on model size and connection speed.")
 
         # Detect device
         if self.device is None:
@@ -130,17 +152,41 @@ class AdaptationGenerator:
             else:
                 self.device = "cpu"
 
-        logger.info(f"Using device: {self.device}")
+        logger.info(f"Using device: {self.device}, load_in_4bit: {self.load_in_4bit}")
 
         # Load model and tokenizer with transformers
         dtype = torch.bfloat16 if self.device != "cpu" else torch.float32
+        model_kwargs = {
+            "torch_dtype": dtype,
+            "low_cpu_mem_usage": True,
+            "device_map": self.device if not self.load_in_4bit else "auto",
+        }
+
+        # Add 4-bit quantization config if enabled (requires CUDA and bitsandbytes)
+        if self.load_in_4bit:
+            if self.device != "cuda":
+                logger.warning(
+                    f"4-bit quantization requested but device is {self.device}. "
+                    "4-bit quantization requires CUDA. Falling back to standard loading."
+                )
+            else:
+                from transformers import BitsAndBytesConfig
+
+                logger.info("Using 4-bit quantization with bitsandbytes")
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=dtype,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_use_double_quant=True,
+                )
+
         logger.debug(f"Loading HuggingFace model with dtype={dtype}")
         hf_model = AutoModelForCausalLM.from_pretrained(
             self.model_id,
-            torch_dtype=dtype,
-            low_cpu_mem_usage=True,
-            device_map=self.device,
+            **model_kwargs,
         )
+        if not is_cached:
+            logger.info(f"Model '{self.model_id}' download complete.")
         logger.debug("HuggingFace model loaded, loading tokenizer")
         self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)
         logger.debug("Tokenizer loaded")
@@ -155,7 +201,10 @@ class AdaptationGenerator:
         self._generator = outlines.Generator(self._model, output_type=AdaptationOutput)
         logger.debug("Outlines Generator created")
 
-        logger.info("Adaptation model loaded successfully")
+        if is_cached:
+            logger.info(f"Adaptation model '{self.model_id}' loaded successfully from cache.")
+        else:
+            logger.info(f"Adaptation model '{self.model_id}' downloaded and loaded successfully.")
 
     def adapt(
         self,
@@ -189,12 +238,15 @@ class AdaptationGenerator:
         # Use the effective model from the job
         if effective_model:
             required_model = effective_model.model_id
-            if required_model != self.model_id:
+            required_4bit = getattr(effective_model, "load_in_4bit", False)
+            if required_model != self.model_id or required_4bit != self.load_in_4bit:
                 logger.info(
-                    f"Switching model for {effective_language.code}: {self.model_id} -> {required_model}"
+                    f"Switching model for {effective_language.code}: "
+                    f"{self.model_id} -> {required_model} (4bit: {required_4bit})"
                 )
                 self.clear_cache()
                 self.model_id = required_model
+                self.load_in_4bit = required_4bit
 
         self._load_model()
 
@@ -358,15 +410,22 @@ class AdaptationGenerator:
 _adaptation_generator: Optional[AdaptationGenerator] = None
 
 
-def get_adaptation_generator(model_id: str = "Qwen/Qwen2.5-3B-Instruct") -> AdaptationGenerator:
+def get_adaptation_generator(
+    model_id: str = "Qwen/Qwen2.5-3B-Instruct",
+    load_in_4bit: bool = False,
+) -> AdaptationGenerator:
     """Get or create the adaptation generator singleton."""
     global _adaptation_generator
 
-    logger.debug(f"get_adaptation_generator called with model_id={model_id}")
+    logger.debug(f"get_adaptation_generator called with model_id={model_id}, load_in_4bit={load_in_4bit}")
 
-    if _adaptation_generator is None or _adaptation_generator.model_id != model_id:
+    if (
+        _adaptation_generator is None
+        or _adaptation_generator.model_id != model_id
+        or _adaptation_generator.load_in_4bit != load_in_4bit
+    ):
         logger.debug("Creating new AdaptationGenerator instance")
-        _adaptation_generator = AdaptationGenerator(model_id=model_id)
+        _adaptation_generator = AdaptationGenerator(model_id=model_id, load_in_4bit=load_in_4bit)
     else:
         logger.debug("Returning existing AdaptationGenerator instance")
 
