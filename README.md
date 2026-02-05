@@ -244,4 +244,4 @@ If you want to use Creative Workflow or derivatives of it in any commercial or p
 
 By using or contributing to this repository, you agree to the terms of the Creative Workflow Non-Commercial License.
 
-See the [LICENSE](./LICENSE) file for full details.
+See the [LICENSE](./LICENSE.md) file for full details.
