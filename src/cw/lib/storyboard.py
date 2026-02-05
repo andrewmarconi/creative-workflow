@@ -5,7 +5,7 @@ Generates image prompts from script visual descriptions and creates
 DiffusionJobs for each storyboard frame.
 
 Usage:
-    from lib.storyboard import StoryboardGenerator
+    from cw.lib.storyboard import StoryboardGenerator
 
     generator = StoryboardGenerator()
     prompts = generator.generate_prompts(script_rows, visual_style_prompt)
@@ -48,7 +48,7 @@ class StoryboardGenerator:
         """Get or create the prompt enhancer."""
         if self._enhancer is None and self.use_llm:
             logger.debug(f"Creating HFPromptEnhancer with model: {self.model_id}")
-            from lib.prompt_enhancer import HFPromptEnhancer
+            from cw.lib.prompt_enhancer import HFPromptEnhancer
 
             self._enhancer = HFPromptEnhancer(
                 model_id=self.model_id,

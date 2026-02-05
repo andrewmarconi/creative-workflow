@@ -10,19 +10,12 @@ Usage:
     uv run manage.py preload_models --list
 """
 
-import sys
-from pathlib import Path
-
 import torch
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from cw.diffusion.models import DiffusionModel
-
-# Add lib/ to path for ModelFactory
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / "lib"))
-
-from models import ModelFactory
+from cw.lib.models import ModelFactory
 
 
 class Command(BaseCommand):

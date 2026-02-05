@@ -420,7 +420,7 @@ class LoraModelAdmin(ModelAdmin):
         - Field update logic to _update_lora_fields_from_metadata()
         - Message building to _build_refresh_result_message()
         """
-        from lib.civitai import (
+        from cw.lib.civitai import (
             extract_lora_metadata,
             fetch_model_version_metadata,
             parse_air,
@@ -563,7 +563,7 @@ class LoraModelAdmin(ModelAdmin):
             return redirect("admin:diffusion_loramodel_change", lora_id)
 
         try:
-            from lib.civitai import (
+            from cw.lib.civitai import (
                 extract_lora_metadata,
                 fetch_model_version_metadata,
                 parse_air,
@@ -647,7 +647,7 @@ class LoraModelAdmin(ModelAdmin):
 
             # Parse AIR to validate format
             try:
-                from lib.civitai import parse_air
+                from cw.lib.civitai import parse_air
 
                 model_id, version_id = parse_air(air)
             except ValueError as e:
@@ -706,7 +706,7 @@ class LoraModelAdmin(ModelAdmin):
         # If AIR is provided in query params, fetch metadata
         if initial_data["air"]:
             try:
-                from lib.civitai import (
+                from cw.lib.civitai import (
                     extract_lora_metadata,
                     fetch_model_version_metadata,
                     parse_air,

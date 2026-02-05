@@ -1,25 +1,18 @@
 """
 Celery tasks for TV spot adaptation and storyboard generation.
 
-These tasks integrate with lib modules:
-- lib/adaptation.py (AdaptationGenerator)
-- lib/storyboard.py (StoryboardGenerator)
+These tasks integrate with cw.lib modules:
+- cw.lib.adaptation (AdaptationGenerator)
+- cw.lib.storyboard (StoryboardGenerator)
 """
 
 import logging
-import sys
-from pathlib import Path
 
 from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
-
-# Add lib directory to Python path
-lib_path = Path(settings.BASE_DIR) / "lib"
-if str(lib_path) not in sys.path:
-    sys.path.insert(0, str(lib_path))
 
 
 # ---------------------------------------------------------------------------
@@ -57,7 +50,7 @@ def create_adaptation_task(self, origin_version_id, target_market_id):
 
     try:
         # Get the adaptation generator
-        from lib.adaptation import get_adaptation_generator
+        from cw.lib.adaptation import get_adaptation_generator
 
         generator = get_adaptation_generator()
 
@@ -145,7 +138,7 @@ def generate_storyboard_task(self, storyboard_job_id, enhance_prompts=True):
     """
     from cw.diffusion.tasks import generate_images_task
     from cw.tvspots.models import StoryboardJob
-    from lib.storyboard import StoryboardGenerator, create_storyboard_jobs
+    from cw.lib.storyboard import StoryboardGenerator, create_storyboard_jobs
 
     storyboard_job = StoryboardJob.objects.get(id=storyboard_job_id)
     tv_spot_version = storyboard_job.tv_spot_version

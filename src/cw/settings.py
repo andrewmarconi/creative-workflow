@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Build paths inside the project like this: PROJECT_ROOT / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent  # Points to src/
+PROJECT_ROOT = BASE_DIR.parent  # Points to project root (where manage.py lives)
 
 
 # Quick-start development settings - unsuitable for production
@@ -61,7 +62,7 @@ ROOT_URLCONF = "cw.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [PROJECT_ROOT / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,11 +128,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = PROJECT_ROOT / "staticfiles"
 
 # Media files (user-uploaded content)
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = PROJECT_ROOT / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
@@ -238,14 +239,14 @@ UNFOLD = {
 
 # Model and LoRA base path (for diffusion models)
 # This is where local model files and LoRAs are stored
-MODEL_BASE_PATH = Path(os.getenv("MODEL_BASE_PATH", BASE_DIR / "models"))
+MODEL_BASE_PATH = Path(os.getenv("MODEL_BASE_PATH", PROJECT_ROOT / "models"))
 CIVITAI_API_KEY = os.getenv("CIVITAI_API_KEY", "")
 
 
 # Logging Configuration
 # Creates logs directory and configures Django and Celery logging
 
-LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR = PROJECT_ROOT / "logs"
 LOGS_DIR.mkdir(exist_ok=True)
 
 LOGGING = {
@@ -304,27 +305,27 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
-        "lib.adaptation": {
+        "cw.lib.adaptation": {
             "handlers": ["console", "tasks_file"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "lib.models": {
+        "cw.lib.models": {
             "handlers": ["console", "tasks_file"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "lib.prompt_enhancer": {
+        "cw.lib.prompt_enhancer": {
             "handlers": ["console", "tasks_file"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "lib.storyboard": {
+        "cw.lib.storyboard": {
             "handlers": ["console", "tasks_file"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "lib.civitai": {
+        "cw.lib.civitai": {
             "handlers": ["console", "tasks_file"],
             "level": "DEBUG",
             "propagate": False,

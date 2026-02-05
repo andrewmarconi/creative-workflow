@@ -1,10 +1,10 @@
 """
 Celery tasks for diffusion image generation and prompt enhancement.
 
-These tasks integrate with the existing lib modules:
-- lib/models/base.py, lib/models/flux.py, lib/models/qwen.py, lib/models/zimageturbo.py
-- lib/loras/manager.py
-- lib/prompt_enhancer.py (HFPromptEnhancer)
+These tasks integrate with the cw.lib modules:
+- cw/lib/models/ (BaseModel, ModelFactory, Flux, Qwen, SDXL, etc.)
+- cw/lib/loras/manager.py
+- cw/lib/prompt_enhancer.py (HFPromptEnhancer)
 
 Celery is configured with 'solo' pool to avoid fork() issues with MPS on macOS.
 This allows tasks to use GPU acceleration (MPS on Apple Silicon, CUDA on NVIDIA).
@@ -12,7 +12,6 @@ This allows tasks to use GPU acceleration (MPS on Apple Silicon, CUDA on NVIDIA)
 
 import logging
 import os
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -20,15 +19,10 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 
+from cw.lib.civitai import download_lora, parse_air
+from cw.lib.prompt_enhancer import HFPromptEnhancer
+
 logger = logging.getLogger(__name__)
-
-# Add lib directory to Python path
-lib_path = Path(settings.BASE_DIR) / "lib"
-if str(lib_path) not in sys.path:
-    sys.path.insert(0, str(lib_path))
-
-from lib.civitai import download_lora, parse_air
-from lib.prompt_enhancer import HFPromptEnhancer
 
 # Module-level enhancer cache: keeps the LLM warm between task invocations.
 _enhancer_cache = {}  # {model_id: HFPromptEnhancer}
@@ -317,7 +311,7 @@ def _resolve_and_prepare_lora(lora_model, params):
             lora_path = lora_model.path
     elif lora_model.air:
         # No path set — derive filename from AIR URN
-        from lib.civitai import parse_air
+        from cw.lib.civitai import parse_air
 
         _, version_id = parse_air(lora_model.air)
         lora_path = str(settings.MODEL_BASE_PATH / "loras" / f"civitai_{version_id}.safetensors")
@@ -326,7 +320,7 @@ def _resolve_and_prepare_lora(lora_model, params):
 
     # Auto-download from CivitAI if file missing and AIR is set
     if not Path(lora_path).exists() and lora_model.air:
-        from lib.civitai import download_lora
+        from cw.lib.civitai import download_lora
 
         lora_path = download_lora(lora_model.air, lora_path, settings.CIVITAI_API_KEY)
 
@@ -565,7 +559,7 @@ def _load_model_instance(diffusion_model):
             pass
         del _model_cache[old_slug]
 
-    from lib.models import ModelFactory
+    from cw.lib.models import ModelFactory
 
     # Create model config dict
     model_config = {

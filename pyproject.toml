@@ -38,6 +38,9 @@ dependencies = [
     "outlines>=1.2.9",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [dependency-groups]
 dev = [
     "honcho>=2.0.0",

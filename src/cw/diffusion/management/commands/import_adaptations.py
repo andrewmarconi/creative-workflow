@@ -70,7 +70,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING(f"  LoRA not found, fetching from CivitAI..."))
 
         # Import CivitAI utilities
-        from lib.civitai import (
+        from cw.lib.civitai import (
             extract_lora_metadata,
             fetch_model_version_metadata,
             parse_air,

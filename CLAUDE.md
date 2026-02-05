@@ -81,17 +81,37 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 
 Access Grafana UI at http://localhost:3000 (anonymous login enabled for local dev).
 
+### Project Structure
+
+Uses **src layout** for proper Python packaging:
+```
+creative-workflow/
+├── src/cw/              # Main package (Django project + apps + lib)
+│   ├── diffusion/       # Django app for image generation
+│   ├── tvspots/         # Django app for TV spot management
+│   └── lib/             # Supporting library modules
+│       ├── models/      # Diffusion model implementations
+│       ├── loras/       # LoRA management
+│       └── *.py         # Utilities (civitai, prompt_enhancer, etc.)
+├── manage.py            # Django management script
+├── templates/           # Django templates
+├── staticfiles/         # Static files
+├── media/               # User-uploaded content
+├── data/                # Configuration files (presets.json)
+└── logs/                # Application logs
+```
+
 ### Model Architecture (Refactored 2026-02)
 
 **Template Method Pattern** - Eliminates 70%+ code duplication:
 
-**BaseModel** (`lib/models/base.py`) - Abstract base with concrete template methods:
+**BaseModel** (`src/cw/lib/models/base.py`) - Abstract base with concrete template methods:
 - `load_pipeline()` - Concrete template (calls `_create_pipeline()` hook)
 - `generate()` - Concrete template (calls `_build_prompts()`, `_build_pipeline_kwargs()`, etc.)
 - Common functionality: device setup, LoRA management, cache clearing, metadata building
 - Configuration-driven behavior via flags: `force_default_guidance`, `enable_debug_logging`, etc.
 
-**Mixins** (`lib/models/mixins.py`) - Shared behaviors via multiple inheritance:
+**Mixins** (`src/cw/lib/models/mixins.py`) - Shared behaviors via multiple inheritance:
 - `CompelPromptMixin` - Long prompt handling (>77 tokens) and prompt weighting for CLIP-based models using Compel library
 - `CLIPTokenLimitMixin` - (Legacy) 77-token truncation for SDXL/SD15 models (replaced by CompelPromptMixin)
 - `DebugLoggingMixin` - Debug print statements (enabled via config)
@@ -114,16 +134,16 @@ Access Grafana UI at http://localhost:3000 (anonymous login enabled for local de
 
 **Model Implementations**: ZImageTurboModel, FluxModel, Flux2KleinModel, QwenImageModel, SDXLModel, SDXLTurboModel, SD15Model
 
-**Factory**: `ModelFactory.create_model()` in `lib/models/__init__.py` dispatches by pipeline type
+**Factory**: `ModelFactory.create_model()` in `src/cw/lib/models/__init__.py` dispatches by pipeline type
 
 ### Key Code Paths
 
-**Django app** — `cw/diffusion/`:
+**Django app** — `src/cw/diffusion/`:
 - `models.py` — ORM models: `DiffusionModel`, `LoraModel` (with theme field for categorization), `Prompt`, `DiffusionJob`
 - `admin.py` — Django Unfold admin (primary UI for creating prompts, queuing jobs, viewing results)
 - `tasks.py` — Celery tasks: `generate_images_task(job_id)`, `enhance_prompt_task(prompt_id)`
 
-**Supporting libraries** — `lib/`:
+**Supporting libraries** — `src/cw/lib/`:
 - `config.py` — `PresetsConfig` loads `data/presets.json`
 - `prompt_enhancer.py` — Three enhancers: rule-based (`PromptEnhancer`), local LLM (`HFPromptEnhancer` using Qwen2.5-3B), Anthropic API (`LLMPromptEnhancer`)
 - `civitai.py` — Auto-download LoRAs from CivitAI by AIR URN
@@ -141,7 +161,7 @@ Access Grafana UI at http://localhost:3000 (anonymous login enabled for local de
 - `.env` — Environment variables:
   - **Required**: `POSTGRES_*`, `VALKEY_*`, `DJANGO_SECRET_KEY`
   - **Optional**: `ANTHROPIC_API_KEY` (for LLM prompt enhancement), `CIVITAI_API_KEY` (for auto-downloading LoRAs), `MODEL_BASE_PATH` (base directory for local `.safetensors` files)
-- `cw/settings.py` — Django settings including Celery config and Unfold admin setup
+- `src/cw/settings.py` — Django settings including Celery config and Unfold admin setup
 - `grafana/provisioning/` — Grafana datasource/dashboard provisioning (auto-configures Loki on startup)
 
 ### Model-Specific Notes
@@ -163,9 +183,9 @@ Access Grafana UI at http://localhost:3000 (anonymous login enabled for local de
 ### Adding New Models (Post-Refactoring)
 
 **Simple models** (most cases) - Just 10-20 lines:
-1. Create `lib/models/newmodel.py` inheriting from `BaseModel`
+1. Create `src/cw/lib/models/newmodel.py` inheriting from `BaseModel`
 2. Override `_create_pipeline()` to return your pipeline instance
-3. Add to `lib/models/__init__.py` exports and `ModelFactory.create_model()`
+3. Add to `src/cw/lib/models/__init__.py` exports and `ModelFactory.create_model()`
 4. Add model config to `data/presets.json` with appropriate flags
 5. Run `uv run manage.py import_presets` to sync to database
 
