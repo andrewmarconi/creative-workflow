@@ -706,7 +706,8 @@ def process_prompts_from_file(filepath: Path, enhancer: PromptEnhancer) -> List[
     return results
 
 
-def main():
+def _setup_argument_parser():
+    """Setup and return the argument parser for the CLI."""
     parser = argparse.ArgumentParser(
         description="Enhance image generation prompts for diffusion models",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -787,38 +788,44 @@ Examples:
     )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
 
-    args = parser.parse_args()
+    return parser
 
-    # Show recommended models and exit
-    if args.list_hf_models:
-        print("Recommended HuggingFace Models for Prompt Enhancement:\n")
-        print("1. Qwen/Qwen2.5-3B-Instruct (DEFAULT)")
-        print("   - Best overall choice, matches Qwen-Image ecosystem")
-        print("   - Size: 3B parameters (efficient on M4 Mac)")
-        print("   - Excellent instruction-following and creativity\n")
-        print("2. gokaygokay/Flux-Prompt-Enhance")
-        print("   - Specialized for Flux/Stable Diffusion prompts")
-        print("   - Size: ~8B parameters")
-        print("   - Purpose-built for image generation\n")
-        print("3. microsoft/Phi-3.5-mini-instruct")
-        print("   - Most efficient option")
-        print("   - Size: 3.8B parameters")
-        print("   - Optimized for Apple Silicon\n")
-        print("4. Qwen/Qwen2.5-7B-Instruct")
-        print("   - Higher quality, larger model")
-        print("   - Size: 7B parameters (works on 48GB RAM)")
-        print("   - More detailed and creative enhancements\n")
-        print("Usage: python prompt_enhancer.py 'a cat' --use-hf --hf-model MODEL_ID")
-        sys.exit(0)
 
-    # Validate mutually exclusive enhancement methods
-    if args.use_llm and args.use_hf:
-        print("Error: Cannot use both --use-llm and --use-hf. Choose one enhancement method.")
-        sys.exit(1)
+def _show_recommended_models():
+    """Display recommended HuggingFace models and exit."""
+    print("Recommended HuggingFace Models for Prompt Enhancement:\n")
+    print("1. Qwen/Qwen2.5-3B-Instruct (DEFAULT)")
+    print("   - Best overall choice, matches Qwen-Image ecosystem")
+    print("   - Size: 3B parameters (efficient on M4 Mac)")
+    print("   - Excellent instruction-following and creativity\n")
+    print("2. gokaygokay/Flux-Prompt-Enhance")
+    print("   - Specialized for Flux/Stable Diffusion prompts")
+    print("   - Size: ~8B parameters")
+    print("   - Purpose-built for image generation\n")
+    print("3. microsoft/Phi-3.5-mini-instruct")
+    print("   - Most efficient option")
+    print("   - Size: 3.8B parameters")
+    print("   - Optimized for Apple Silicon\n")
+    print("4. Qwen/Qwen2.5-7B-Instruct")
+    print("   - Higher quality, larger model")
+    print("   - Size: 7B parameters (works on 48GB RAM)")
+    print("   - More detailed and creative enhancements\n")
+    print("Usage: python prompt_enhancer.py 'a cat' --use-hf --hf-model MODEL_ID")
+    sys.exit(0)
 
-    # Initialize enhancer
+
+def _initialize_enhancer(args):
+    """
+    Initialize the appropriate prompt enhancer based on CLI arguments.
+
+    Args:
+        args: Parsed argument namespace
+
+    Returns:
+        PromptEnhancer instance (PromptEnhancer, LLMPromptEnhancer, or HFPromptEnhancer)
+    """
     if args.use_hf:
-        enhancer = HFPromptEnhancer(
+        return HFPromptEnhancer(
             model_id=args.hf_model,
             style=args.style,
             creativity=args.creativity,
@@ -832,7 +839,7 @@ Examples:
             print("Error: --api-key required or set ANTHROPIC_API_KEY environment variable")
             sys.exit(1)
 
-        enhancer = LLMPromptEnhancer(
+        return LLMPromptEnhancer(
             api_key=api_key,
             model=args.model,
             style=args.style,
@@ -840,18 +847,21 @@ Examples:
             trigger_words=args.trigger_words,
         )
     else:
-        enhancer = PromptEnhancer(
+        return PromptEnhancer(
             style=args.style, creativity=args.creativity, trigger_words=args.trigger_words
         )
 
-    # Process prompts
-    if args.file:
-        results = process_prompts_from_file(args.file, enhancer)
-    else:
-        results = [enhancer.enhance_prompt(args.prompt)]
 
-    # Output results
+def _output_results(results, args):
+    """
+    Output enhancement results in requested format.
+
+    Args:
+        results: List of enhancement result dicts
+        args: Parsed argument namespace
+    """
     if args.json or args.output:
+        # JSON output
         method = "rule-based"
         if args.use_llm:
             method = "llm"
@@ -895,6 +905,42 @@ Examples:
                 print(f"Model: {result['model']}")
             elif "method" in result:
                 print(f"Method: {result['method']}")
+
+
+def main():
+    """
+    CLI entry point for prompt enhancement.
+
+    Refactored to reduce complexity by extracting:
+    - Argument parser setup to _setup_argument_parser()
+    - Model recommendations display to _show_recommended_models()
+    - Enhancer initialization to _initialize_enhancer()
+    - Output formatting to _output_results()
+    """
+    # Setup CLI argument parser
+    parser = _setup_argument_parser()
+    args = parser.parse_args()
+
+    # Handle --list-hf-models flag
+    if args.list_hf_models:
+        _show_recommended_models()
+
+    # Validate mutually exclusive enhancement methods
+    if args.use_llm and args.use_hf:
+        print("Error: Cannot use both --use-llm and --use-hf. Choose one enhancement method.")
+        sys.exit(1)
+
+    # Initialize enhancer
+    enhancer = _initialize_enhancer(args)
+
+    # Process prompts
+    if args.file:
+        results = process_prompts_from_file(args.file, enhancer)
+    else:
+        results = [enhancer.enhance_prompt(args.prompt)]
+
+    # Output results
+    _output_results(results, args)
 
 
 if __name__ == "__main__":
