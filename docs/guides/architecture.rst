@@ -69,7 +69,7 @@ and launched via ``honcho start``:
            valkey["Valkey :6379"]
            subgraph observability["Observability"]
                loki["Loki :3100"]
-               promtail["Promtail"]
+               alloy["Alloy"]
                grafana["Grafana :3000"]
            end
        end
@@ -90,7 +90,7 @@ and launched via ``honcho start``:
        valkey --> gen
        valkey --> llm
        server --> pg
-       promtail --> loki
+       alloy --> loki
        grafana --> loki
 
 Procfile Configuration
@@ -409,7 +409,7 @@ Grafana + Loki
 The Docker Compose stack includes observability tools:
 
 - **Loki** (:3100) - Log aggregation backend
-- **Promtail** - Log collector shipping to Loki
+- **Alloy** - Unified observability collector shipping logs to Loki
 - **Grafana** (:3000) - Web UI for log search and dashboards
 
 Access Grafana at http://localhost:3000 (anonymous login enabled for dev).

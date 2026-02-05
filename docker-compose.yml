@@ -39,14 +39,18 @@ services:
     volumes:
       - loki_data:/loki
 
-  # Promtail - Log collector (ships logs to Loki)
-  promtail:
-    image: grafana/promtail:latest
-    container_name: cw_promtail
+  # Alloy - Unified observability collector (ships logs to Loki)
+  # Replaces Promtail (EOL March 2026)
+  alloy:
+    image: grafana/alloy:latest
+    container_name: cw_alloy
     volumes:
       - ./logs:/logs:ro
-      - ./promtail-config.yml:/etc/promtail/config.yml:ro
-    command: -config.file=/etc/promtail/config.yml
+      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
     depends_on:
       - loki
 

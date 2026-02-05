@@ -40,6 +40,13 @@ uv run manage.py createsuperuser                # Create admin user
 uv run python test_admin.py                     # Run admin tests
 ```
 
+### Documentation
+```bash
+cd docs && make html                            # Build HTML documentation
+open docs/_build/html/index.html                # View documentation
+cd docs && make clean                           # Clean build artifacts
+```
+
 ### Observability & Logging
 ```bash
 # View logs locally (JSON format)
@@ -53,7 +60,7 @@ tail -f logs/celery.log                         # Celery general logs
 cat logs/tasks.log | jq 'select(.levelname == "ERROR")'
 
 # Grafana Loki - Log aggregation & search
-# 1. Start docker-compose (includes Loki, Promtail, Grafana)
+# 1. Start docker-compose (includes Loki, Alloy, Grafana)
 # 2. Logs are automatically collected from logs/*.log
 # 3. Access Grafana UI at http://localhost:3000
 # 4. Navigate to Explore → select Loki data source
@@ -76,7 +83,7 @@ Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork
 
 **Grafana + Loki** (via `docker-compose.yml`, always enabled):
 - **Loki** (port 3100) — Log aggregation backend, stores all logs
-- **Promtail** — Collects logs from `logs/*.log` and ships to Loki
+- **Alloy** — Unified observability collector, ships logs from `logs/*.log` to Loki
 - **Grafana** (port 3000) — Web UI for searching and viewing logs
 
 Access Grafana UI at http://localhost:3000 (anonymous login enabled for local dev).

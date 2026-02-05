@@ -1,0 +1,112 @@
+// Grafana Alloy configuration for Creative Workflow
+// Migrated from Promtail - collects logs and ships to Loki
+
+// ============================================================================
+// Loki destination
+// ============================================================================
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// ============================================================================
+// Django logs
+// ============================================================================
+
+local.file_match "django" {
+  path_targets = [{
+    __address__ = "localhost",
+    __path__    = "/logs/django.log",
+    job         = "django",
+  }]
+}
+
+loki.source.file "django" {
+  targets    = local.file_match.django.targets
+  forward_to = [loki.process.json_logs.receiver]
+}
+
+// ============================================================================
+// Celery logs
+// ============================================================================
+
+local.file_match "celery" {
+  path_targets = [{
+    __address__ = "localhost",
+    __path__    = "/logs/celery.log",
+    job         = "celery",
+  }]
+}
+
+loki.source.file "celery" {
+  targets    = local.file_match.celery.targets
+  forward_to = [loki.process.json_logs.receiver]
+}
+
+// ============================================================================
+// Task execution logs
+// ============================================================================
+
+local.file_match "tasks" {
+  path_targets = [{
+    __address__ = "localhost",
+    __path__    = "/logs/tasks.log",
+    job         = "tasks",
+  }]
+}
+
+loki.source.file "tasks" {
+  targets    = local.file_match.tasks.targets
+  forward_to = [loki.process.json_logs.receiver]
+}
+
+// ============================================================================
+// Worker logs (default and enhancement queues)
+// ============================================================================
+
+local.file_match "workers" {
+  path_targets = [{
+    __address__ = "localhost",
+    __path__    = "/logs/worker_*.log",
+    job         = "workers",
+  }]
+}
+
+loki.source.file "workers" {
+  targets    = local.file_match.workers.targets
+  forward_to = [loki.process.json_logs.receiver]
+}
+
+// ============================================================================
+// JSON log processing pipeline
+// ============================================================================
+
+loki.process "json_logs" {
+  forward_to = [loki.write.default.receiver]
+
+  // Parse JSON logs and extract fields
+  stage.json {
+    expressions = {
+      level     = "levelname",
+      logger    = "name",
+      message   = "message",
+      timestamp = "asctime",
+    }
+  }
+
+  // Add extracted fields as labels
+  stage.labels {
+    values = {
+      level  = "",
+      logger = "",
+    }
+  }
+
+  // Parse timestamp from log entry
+  stage.timestamp {
+    source = "timestamp"
+    format = "2006-01-02 15:04:05,000"
+  }
+}
