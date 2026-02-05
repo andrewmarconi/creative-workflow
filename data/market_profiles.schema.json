@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/andrewmarconi/generative-creative-lab/schemas/market_profiles.schema.json",
+  "title": "Market Profiles",
+  "description": "Comprehensive market profiles for television commercial adaptation across linguistic-cultural zones",
+  "type": "object",
+  "required": ["markets"],
+  "properties": {
+    "markets": {
+      "type": "array",
+      "description": "Market profiles organized by linguistic-cultural zones",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/market"
+      }
+    },
+    "methodology_notes": {
+      "$ref": "#/$defs/methodologyNotes"
+    }
+  },
+  "$defs": {
+    "market": {
+      "type": "object",
+      "required": ["name", "code", "primary_regions", "rules"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the market zone"
+        },
+        "code": {
+          "type": "string",
+          "description": "Short identifier code for the market",
+          "pattern": "^[a-z]{2}(-[a-z]+)?$",
+          "examples": ["fr", "de", "jp", "us-hispanic", "zh-cn", "zh-hant", "pt-br", "es-latam", "es-es", "en-gb"]
+        },
+        "primary_regions": {
+          "type": "array",
+          "description": "Primary countries or regions covered by this profile",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "secondary_reach": {
+          "type": "array",
+          "description": "Secondary regions where this profile may apply",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "description": "Adaptation guidelines organized by category",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ruleCategory"
+          }
+        }
+      }
+    },
+    "ruleCategory": {
+      "type": "object",
+      "required": ["heading", "points"],
+      "properties": {
+        "heading": {
+          "type": "string",
+          "description": "Category name for the rules",
+          "examples": [
+            "Language segmentation",
+            "Tone and register",
+            "Cultural considerations",
+            "Regulatory and practical",
+            "Communication style",
+            "Visual and aesthetic norms",
+            "Representation"
+          ]
+        },
+        "points": {
+          "type": "array",
+          "description": "Individual guidance points within this category",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "methodologyNotes": {
+      "type": "object",
+      "description": "Framework approach and guiding principles",
+      "properties": {
+        "approach": {
+          "type": "string",
+          "description": "Overall methodology statement"
+        },
+        "anthropological_principles": {
+          "type": "array",
+          "description": "Guiding principles from cultural anthropology",
+          "items": {
+            "type": "string"
+          }
+        },
+        "avoiding_stereotypes": {
+          "type": "array",
+          "description": "Guidelines for avoiding stereotypes in adaptation",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -151,7 +151,7 @@ Getting Help
 If you're still stuck:
 
 1. Check the full logs at ``logs/*.log``
-2. Review the :doc:`/architecture` for system understanding
+2. Review the :doc:`/reference/architecture` for system understanding
 3. Open an issue on GitHub with:
    - Error messages and stack traces
    - Steps to reproduce

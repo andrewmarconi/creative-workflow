@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/andrewmarconi/generative-creative-lab/schemas/tvspot.schema.json",
+  "title": "TV Spot Script",
+  "description": "Television commercial script format for adaptation and storyboard generation",
+  "type": "object",
+  "required": ["client_name", "brand_name", "script_title", "total_runtime_seconds", "language", "script_rows"],
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Name of the client or company"
+    },
+    "brand_name": {
+      "type": "string",
+      "description": "Product or brand name featured in the spot"
+    },
+    "script_title": {
+      "type": "string",
+      "description": "Title of the TV spot with duration indicator"
+    },
+    "total_runtime_seconds": {
+      "type": "number",
+      "description": "Total duration of the spot in seconds",
+      "minimum": 1
+    },
+    "job_id": {
+      "type": "string",
+      "description": "Internal job or project identifier"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language/locale code (BCP 47 format)",
+      "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+      "examples": ["en-US", "es-MX", "fr-CA", "zh-CN"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional production notes or context"
+    },
+    "script_rows": {
+      "type": "array",
+      "description": "Sequential shots/scenes in the spot",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/scriptRow"
+      }
+    }
+  },
+  "$defs": {
+    "scriptRow": {
+      "type": "object",
+      "required": ["shot_number", "timecode_start", "duration_seconds", "visual_text", "audio_text"],
+      "properties": {
+        "shot_number": {
+          "type": "string",
+          "description": "Sequential shot identifier",
+          "pattern": "^\\d{2}$"
+        },
+        "timecode_start": {
+          "type": "string",
+          "description": "Start timecode in HH:MM:SS:FF format",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2}:\\d{2}$"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "description": "Duration of this shot in seconds",
+          "minimum": 0,
+          "exclusiveMinimum": true
+        },
+        "visual_text": {
+          "type": "string",
+          "description": "Visual description including shot type, action, talent direction, supers, and legal text"
+        },
+        "audio_text": {
+          "type": "string",
+          "description": "Audio elements including VO, SFX, and music direction"
+        }
+      }
+    }
+  }
+}

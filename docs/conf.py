@@ -50,6 +50,13 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
+# Suppress warnings from sphinx_autodoc_typehints for decorated functions
+# (Django Unfold's @action decorator doesn't use @functools.wraps)
+suppress_warnings = [
+    "sphinx_autodoc_typehints.local_function",
+    "sphinx_autodoc_typehints.forward_reference",
+]
+
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "sphinx_rtd_theme"
@@ -75,3 +82,10 @@ source_suffix = {
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "DOCUMENTATION_PLAN.md"]
+
+# -- Linkcheck configuration -------------------------------------------------
+
+linkcheck_ignore = [
+    r"^urn:air:.*",  # CivitAI AIR URN identifiers (not HTTP links)
+    r"^http://localhost.*",  # Local dev server links
+]

@@ -199,4 +199,4 @@ After importing a TV spot:
 2. Create market adaptations for localization
 3. Generate storyboards using diffusion models
 
-See the :doc:`../api/tvspots` documentation for programmatic access.
+See the :doc:`/reference/api/tvspots` documentation for programmatic access.

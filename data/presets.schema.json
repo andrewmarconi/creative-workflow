@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/andrewmarconi/generative-creative-lab/schemas/presets.schema.json",
+  "title": "Diffusion Model Presets",
+  "description": "Configuration for diffusion models and LoRAs available in Generative Creative Lab",
+  "type": "object",
+  "required": ["models", "loras"],
+  "properties": {
+    "models": {
+      "type": "array",
+      "description": "Available diffusion models",
+      "items": {
+        "$ref": "#/$defs/model"
+      }
+    },
+    "loras": {
+      "type": "array",
+      "description": "Available LoRA adapters",
+      "items": {
+        "$ref": "#/$defs/lora"
+      }
+    }
+  },
+  "$defs": {
+    "model": {
+      "type": "object",
+      "required": ["slug", "label", "path", "pipeline", "base_architecture", "settings"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "description": "Unique identifier for the model",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        "path": {
+          "type": "string",
+          "description": "HuggingFace model path or local .safetensors path"
+        },
+        "pipeline": {
+          "type": "string",
+          "description": "Diffusers pipeline class name",
+          "enum": [
+            "StableDiffusionPipeline",
+            "StableDiffusionXLPipeline",
+            "AutoPipelineForText2Image",
+            "FluxPipeline",
+            "QwenImagePipeline",
+            "ZImagePipeline"
+          ]
+        },
+        "base_architecture": {
+          "type": "string",
+          "description": "Base model architecture for LoRA compatibility",
+          "enum": ["sd15", "sdxl", "flux1", "qwen", "zimage"]
+        },
+        "settings": {
+          "$ref": "#/$defs/modelSettings"
+        }
+      }
+    },
+    "modelSettings": {
+      "type": "object",
+      "required": ["steps", "guidance_scale", "default_width", "default_height", "max_pixels", "dtype", "supports_negative_prompt", "scheduler", "token_window", "vram_usage"],
+      "properties": {
+        "steps": {
+          "type": "integer",
+          "description": "Default inference steps",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "guidance_scale": {
+          "type": "number",
+          "description": "Default classifier-free guidance scale",
+          "minimum": 0
+        },
+        "default_width": {
+          "type": "integer",
+          "description": "Default output width in pixels",
+          "minimum": 64
+        },
+        "default_height": {
+          "type": "integer",
+          "description": "Default output height in pixels",
+          "minimum": 64
+        },
+        "max_pixels": {
+          "type": "integer",
+          "description": "Maximum total pixels (width * height)",
+          "minimum": 1
+        },
+        "dtype": {
+          "type": "string",
+          "description": "Torch data type for inference",
+          "enum": ["float16", "bfloat16", "float32"]
+        },
+        "supports_negative_prompt": {
+          "type": "boolean",
+          "description": "Whether the model supports negative prompts"
+        },
+        "force_default_guidance": {
+          "type": "boolean",
+          "description": "Force use of default guidance_scale (for turbo models)"
+        },
+        "scheduler": {
+          "type": "string",
+          "description": "Diffusers scheduler class name"
+        },
+        "max_sequence_length": {
+          "type": "integer",
+          "description": "Maximum sequence length for Flux models",
+          "minimum": 1
+        },
+        "token_window": {
+          "type": "integer",
+          "description": "Token window size for the text encoder",
+          "minimum": 1
+        },
+        "vram_usage": {
+          "type": "integer",
+          "description": "Estimated VRAM usage in MB",
+          "minimum": 0
+        }
+      }
+    },
+    "lora": {
+      "type": "object",
+      "required": ["label", "base_architecture", "settings", "air"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        "base_architecture": {
+          "type": "string",
+          "description": "Compatible base model architecture",
+          "enum": ["sd15", "sdxl", "flux1", "qwen", "zimage"]
+        },
+        "theme": {
+          "type": "string",
+          "description": "Visual style category for filtering",
+          "enum": [
+            "abstract",
+            "anime",
+            "artistic",
+            "cinematic",
+            "comic",
+            "design",
+            "illustration",
+            "photorealistic",
+            "sketch"
+          ]
+        },
+        "settings": {
+          "$ref": "#/$defs/loraSettings"
+        },
+        "air": {
+          "type": "string",
+          "description": "CivitAI AIR URN for auto-download",
+          "pattern": "^urn:air:[a-z0-9]+:lora:civitai:\\d+@\\d+$"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Trigger words or prompt additions for this LoRA"
+        },
+        "negative_prompt": {
+          "type": "string",
+          "description": "Recommended negative prompt when using this LoRA"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes or CivitAI description"
+        }
+      }
+    },
+    "loraSettings": {
+      "type": "object",
+      "required": ["strength"],
+      "properties": {
+        "strength": {
+          "type": "number",
+          "description": "LoRA strength/weight multiplier",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "guidance_scale": {
+          "type": "number",
+          "description": "Recommended guidance scale when using this LoRA",
+          "minimum": 0
+        },
+        "clip_skip": {
+          "type": "integer",
+          "description": "CLIP skip value for SD15 models",
+          "minimum": 1,
+          "maximum": 4
+        }
+      }
+    }
+  }
+}

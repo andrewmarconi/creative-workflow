@@ -1,5 +1,5 @@
-Creative Framework Philosophy
-=============================
+Framework Philosophy
+====================
 
 Generative Creative Lab is designed as a **creative laboratory** - not merely a tool for generating images, but a comprehensive framework for exploring the intersection of different AI models, prompting strategies, and creative workflows.
 

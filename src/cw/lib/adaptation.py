@@ -47,6 +47,8 @@ Note:
     Optimized for Apple Silicon (MPS) with automatic device detection.
 """
 
+from __future__ import annotations
+
 import logging
 from typing import Optional
 

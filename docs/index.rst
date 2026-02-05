@@ -6,6 +6,7 @@ Generative Creative Lab
 =======================
 
 A modular framework for creative development, exploration, and experimentation using generative AI.
+---------------------------------------------------------------------------------------------------
 
 Generative Creative Lab is a flexible platform designed for creative experimentation with
 generative AI models. Built on Django and Celery, it provides a modular architecture
@@ -30,10 +31,10 @@ Key Capabilities
    :maxdepth: 2
    :caption: Contents:
 
-   guides/index
-   architecture
    philosophy
-   api/index
+   guides/index
+   reference/index
+   research/index
 
 Citing This Software
 ====================
