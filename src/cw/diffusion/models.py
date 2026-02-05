@@ -5,8 +5,6 @@ Models are based on the presets.json structure and integrate with
 the existing lib modules (models/*, loras/*, prompt_enhancer).
 """
 
-import json
-
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models

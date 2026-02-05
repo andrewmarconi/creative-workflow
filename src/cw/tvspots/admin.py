@@ -5,11 +5,9 @@ Uses Django Unfold for tabs, display decorators, and styled actions.
 """
 
 from django.contrib import admin, messages
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import path, reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display

@@ -1,3 +1,1 @@
-from django.test import TestCase
-
-# Create your tests here.
+# Tests for tvspots app - see issue #17

@@ -1,14 +1,42 @@
 """
-Storyboard generation from TV spot script rows.
+Storyboard generation from TV spot scripts.
 
-Generates image prompts from script visual descriptions and creates
-DiffusionJobs for each storyboard frame.
+This module generates image prompts from TV spot script visual descriptions
+and creates DiffusionJobs for storyboard frame generation.
 
-Usage:
-    from cw.lib.storyboard import StoryboardGenerator
+Key Features:
+    - Extracts visual elements from script descriptions
+    - Optional LLM enhancement for more detailed prompts
+    - Creates linked DiffusionJob records for each frame
+    - Supports visual style prefixes for consistency
 
-    generator = StoryboardGenerator()
-    prompts = generator.generate_prompts(script_rows, visual_style_prompt)
+Classes:
+    :class:`StoryboardGenerator`
+        Generates image prompts from script rows with optional LLM enhancement
+
+Functions:
+    :func:`create_storyboard_jobs`
+        Creates DiffusionJob and StoryboardImage records from prompts
+
+Workflow:
+    1. Extract visual elements from script row ``visual_text``
+    2. Add visual style prefix and cinematic quality keywords
+    3. Optionally enhance with LLM (HFPromptEnhancer)
+    4. Create DiffusionJob records linked to StoryboardJob
+
+Usage::
+
+    from cw.lib.storyboard import StoryboardGenerator, create_storyboard_jobs
+
+    # Generate prompts
+    generator = StoryboardGenerator(use_llm=True)
+    prompts = generator.generate_prompts_for_version(tv_spot_version)
+
+    # Create DiffusionJobs
+    jobs = create_storyboard_jobs(storyboard_job, prompts)
+
+Note:
+    Generated storyboard frames use 1280x720 (16:9) dimensions by default.
 """
 
 import logging
@@ -212,7 +240,6 @@ def create_storyboard_jobs(
         DiffusionJob,
         Prompt,
         StoryboardImage,
-        TvSpotScriptRow,
     )
 
     tv_spot_version = storyboard_job.tv_spot_version

@@ -1,14 +1,39 @@
 #!/usr/bin/env python3
 """
-Mixins for model implementations
-Shared behaviors that can be composed with BaseModel
+Mixins for model implementations.
+
+This module provides reusable behaviors that can be composed with
+:class:`~cw.lib.models.base.BaseModel` via multiple inheritance.
+
+Available Mixins:
+    :class:`CompelPromptMixin`
+        Long prompt handling (>77 tokens) and prompt weighting syntax
+        ``(word:1.3)`` for CLIP-based models. Recommended for SDXL/SD15.
+
+    :class:`CLIPTokenLimitMixin`
+        Simple 77-token truncation with LoRA suffix preservation.
+        Legacy mixin - prefer CompelPromptMixin for new models.
+
+    :class:`DebugLoggingMixin`
+        Conditional debug print statements via ``enable_debug_logging`` flag.
+
+Usage Example::
+
+    from cw.lib.models.base import BaseModel
+    from cw.lib.models.mixins import CompelPromptMixin
+
+    class MySDXLModel(CompelPromptMixin, BaseModel):
+        def _create_pipeline(self):
+            return StableDiffusionXLPipeline.from_pretrained(...)
+
+Note:
+    Mixins must be listed before BaseModel in the inheritance order
+    (MRO) to properly override BaseModel methods.
 """
 
 import logging
 import re
-from typing import Dict, Optional
-
-import torch
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 

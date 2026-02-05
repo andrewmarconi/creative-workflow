@@ -1,13 +1,31 @@
 #!/usr/bin/env python3
 """
-Base model class for Creative Workflow
-Abstract base class that all model implementations inherit from
+Base model class for diffusion pipelines.
+
+This module implements the Template Method pattern for diffusion model loading
+and image generation. All concrete model implementations inherit from
+:class:`BaseModel` and override specific hooks to customize behavior.
+
+The key methods are:
+
+- :meth:`BaseModel.load_pipeline` - Template method for loading (concrete)
+- :meth:`BaseModel.generate` - Template method for generation (concrete)
+- :meth:`BaseModel._create_pipeline` - Hook for pipeline creation (abstract)
+
+Example usage::
+
+    from cw.lib.models import ModelFactory
+
+    # Create model from presets config
+    model = ModelFactory.create_model(model_config, model_path)
+    model.load_pipeline()
+    image, metadata = model.generate("a beautiful sunset")
 """
 
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import torch
 from PIL import Image
@@ -16,7 +34,43 @@ logger = logging.getLogger(__name__)
 
 
 class BaseModel(ABC):
-    """Abstract base class for all diffusion models"""
+    """
+    Abstract base class for all diffusion models.
+
+    This class implements the Template Method pattern, providing a common
+    framework for pipeline loading and image generation. Subclasses only
+    need to override :meth:`_create_pipeline` and optionally customize
+    behavior through hooks.
+
+    Template Methods (do not override):
+        - :meth:`load_pipeline`: Handles device setup, pipeline creation, and optimizations
+        - :meth:`generate`: Handles parameter resolution, prompt building, and generation
+
+    Required Abstract Method:
+        - :meth:`_create_pipeline`: Return the specific pipeline instance
+
+    Optional Hooks (override for customization):
+        - :meth:`_build_prompts`: Customize prompt processing
+        - :meth:`_build_pipeline_kwargs`: Add model-specific pipeline parameters
+        - :meth:`_apply_device_optimizations`: Custom device optimizations
+        - :meth:`_handle_special_prompt_requirements`: Special prompt handling
+
+    Configuration Flags (set in presets.json settings):
+        - ``force_default_guidance``: Always use default guidance_scale (turbo models)
+        - ``use_sequential_cpu_offload``: Use sequential vs model CPU offload
+        - ``enable_vae_slicing``: Enable VAE slicing for memory efficiency
+        - ``enable_debug_logging``: Enable verbose debug output
+        - ``max_sequence_length``: Maximum sequence length for text encoder
+
+    Attributes:
+        config: Model configuration dictionary from presets.json
+        model_path: Path to model weights (local or HuggingFace ID)
+        pipeline: The loaded diffusion pipeline (None until load_pipeline called)
+        device: Torch device (mps, cuda, or cpu)
+        current_lora: Currently loaded LoRA configuration (or None)
+        settings: Model settings from config
+        dtype: Torch dtype for model weights
+    """
 
     def __init__(self, model_config: Dict, model_path: str):
         """

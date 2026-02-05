@@ -11,8 +11,6 @@ This allows tasks to use GPU acceleration (MPS on Apple Silicon, CUDA on NVIDIA)
 """
 
 import logging
-import os
-from datetime import datetime
 from pathlib import Path
 
 from celery import shared_task
