@@ -13,6 +13,7 @@ Usage:
 
 import logging
 from typing import Optional
+
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 class ScriptRowOutput(BaseModel):
     """Pydantic model for a single adapted script row."""
+
     shot_number: str = Field(description="Shot identifier (e.g., '01', '1A')")
     timecode_start: str = Field(default="", description="Start timecode")
     duration_seconds: Optional[float] = Field(default=None, description="Row duration in seconds")
@@ -29,12 +31,12 @@ class ScriptRowOutput(BaseModel):
 
 class AdaptationOutput(BaseModel):
     """Pydantic model for the complete adaptation output."""
+
     code: str = Field(description="Internal code for this adaptation (e.g., 'US-HISP', 'JP')")
     name: str = Field(description="Human-readable name (e.g., 'US Hispanic Adaptation')")
     language: str = Field(description="Primary language code (e.g., 'es-MX', 'ja')")
     visual_style_prompt: str = Field(
-        default="",
-        description="Common prompt prefix for storyboard generation consistency"
+        default="", description="Common prompt prefix for storyboard generation consistency"
     )
     script_rows: list[ScriptRowOutput] = Field(
         description="Adapted script rows maintaining original structure"
@@ -73,8 +75,8 @@ class AdaptationGenerator:
             logger.debug("Model already loaded, skipping _load_model")
             return
 
-        import torch
         import outlines
+        import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         logger.info(f"Loading model for adaptation: {self.model_id}")
@@ -154,12 +156,14 @@ class AdaptationGenerator:
                 {
                     "shot_number": row.shot_number,
                     "timecode_start": row.timecode_start,
-                    "duration_seconds": float(row.duration_seconds) if row.duration_seconds else None,
+                    "duration_seconds": (
+                        float(row.duration_seconds) if row.duration_seconds else None
+                    ),
                     "visual_text": row.visual_text,
                     "audio_text": row.audio_text,
                 }
-                for row in origin_version.script_rows.all().order_by('order_index')
-            ]
+                for row in origin_version.script_rows.all().order_by("order_index")
+            ],
         }
         logger.debug(f"Original spot has {len(original_spot['script_rows'])} script rows")
 
@@ -175,7 +179,7 @@ class AdaptationGenerator:
                 "origin_version_id": origin_version.pk,
                 "target_market": target_market.code,
                 "num_rows": len(original_spot["script_rows"]),
-            }
+            },
         )
 
         # Generate with Outlines (guaranteed valid JSON)
@@ -189,6 +193,7 @@ class AdaptationGenerator:
             logger.debug(f"Raw result is string, length={len(raw_result)} chars")
             logger.debug(f"Raw result preview: {raw_result[:500]}...")
             import json
+
             logger.debug("Parsing JSON and validating with Pydantic")
             result = AdaptationOutput.model_validate(json.loads(raw_result))
             logger.debug("Pydantic validation successful")
@@ -202,7 +207,7 @@ class AdaptationGenerator:
                 "adaptation_code": result.code,
                 "adaptation_language": result.language,
                 "num_adapted_rows": len(result.script_rows),
-            }
+            },
         )
 
         return result

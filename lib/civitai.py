@@ -5,6 +5,7 @@ AIR format: urn:air:{ecosystem}:{type}:civitai:{modelId}@{versionId}
 Download endpoint: GET https://civitai.com/api/download/models/{versionId}
 Metadata endpoint: GET https://civitai.com/api/v1/model-versions/{versionId}
 """
+
 import logging
 import re
 from pathlib import Path
@@ -28,7 +29,7 @@ def parse_air(air_urn: str) -> tuple[str, str]:
     Raises:
         ValueError: If the AIR URN cannot be parsed
     """
-    match = re.search(r'civitai:(\d+)@(\d+)', air_urn)
+    match = re.search(r"civitai:(\d+)@(\d+)", air_urn)
     if not match:
         raise ValueError(f"Cannot parse CivitAI AIR URN: {air_urn}")
     return match.group(1), match.group(2)
@@ -76,60 +77,60 @@ def extract_lora_metadata(metadata: dict) -> dict:
     """
     # Map CivitAI baseModel to our base_architecture choices
     base_model_map = {
-        'SD 1.5': 'sd15',
-        'SD 2.1': 'sd15',  # Close enough
-        'SDXL 1.0': 'sdxl',
-        'SDXL 0.9': 'sdxl',
-        'SDXL Turbo': 'sdxl',
-        'Pony': 'sdxl',  # Pony is SDXL-based
-        'Flux.1 D': 'flux1',
-        'Flux.1 S': 'flux1',
+        "SD 1.5": "sd15",
+        "SD 2.1": "sd15",  # Close enough
+        "SDXL 1.0": "sdxl",
+        "SDXL 0.9": "sdxl",
+        "SDXL Turbo": "sdxl",
+        "Pony": "sdxl",  # Pony is SDXL-based
+        "Flux.1 D": "flux1",
+        "Flux.1 S": "flux1",
     }
 
     # Extract base architecture
-    base_model = metadata.get('baseModel', '')
-    base_architecture = base_model_map.get(base_model, 'sdxl')  # Default to SDXL
+    base_model = metadata.get("baseModel", "")
+    base_architecture = base_model_map.get(base_model, "sdxl")  # Default to SDXL
 
     # Extract trigger words
-    trained_words = metadata.get('trainedWords', [])
-    prompt_suffix = ', '.join(trained_words) if trained_words else ''
+    trained_words = metadata.get("trainedWords", [])
+    prompt_suffix = ", ".join(trained_words) if trained_words else ""
 
     # Try to get guidance scale from example images
     guidance_scale = None
-    images = metadata.get('images', [])
+    images = metadata.get("images", [])
     if images and images[0]:
         # Look at the first image's meta for cfgScale
-        first_image_meta = images[0].get('meta') or {}
-        cfg = first_image_meta.get('cfgScale')
+        first_image_meta = images[0].get("meta") or {}
+        cfg = first_image_meta.get("cfgScale")
         if cfg:
             guidance_scale = float(cfg)
 
     # Extract negative prompt examples
-    negative_prompt_suffix = ''
+    negative_prompt_suffix = ""
     if images and images[0]:
-        first_image_meta = images[0].get('meta') or {}
-        neg_prompt = first_image_meta.get('negativePrompt', '')
+        first_image_meta = images[0].get("meta") or {}
+        neg_prompt = first_image_meta.get("negativePrompt", "")
         if neg_prompt:
             negative_prompt_suffix = neg_prompt
 
     # Build extracted metadata
     extracted = {
-        'label': metadata.get('name', ''),
-        'base_architecture': base_architecture,
-        'prompt_suffix': prompt_suffix,
-        'negative_prompt_suffix': negative_prompt_suffix,
-        'notes': metadata.get('description', ''),
+        "label": metadata.get("name", ""),
+        "base_architecture": base_architecture,
+        "prompt_suffix": prompt_suffix,
+        "negative_prompt_suffix": negative_prompt_suffix,
+        "notes": metadata.get("description", ""),
     }
 
     # Add guidance_scale only if we found it
     if guidance_scale:
-        extracted['guidance_scale'] = guidance_scale
+        extracted["guidance_scale"] = guidance_scale
 
     # Add stats for reference
-    stats = metadata.get('stats', {})
+    stats = metadata.get("stats", {})
     if stats:
         stats_text = f"\n\nCivitAI Stats: {stats.get('downloadCount', 0):,} downloads, {stats.get('rating', 0):.1f}★ ({stats.get('ratingCount', 0)} ratings)"
-        extracted['notes'] = (extracted['notes'] or '') + stats_text
+        extracted["notes"] = (extracted["notes"] or "") + stats_text
 
     return extracted
 
@@ -169,10 +170,10 @@ def download_lora(air_urn: str, dest_path: str, api_key: str) -> str:
     dest.parent.mkdir(parents=True, exist_ok=True)
 
     # Stream to a temp file then rename for atomicity
-    tmp_path = dest.with_suffix('.tmp')
+    tmp_path = dest.with_suffix(".tmp")
     size = 0
     try:
-        with open(tmp_path, 'wb') as f:
+        with open(tmp_path, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
                 size += len(chunk)

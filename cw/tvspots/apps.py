@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class TvspotsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'cw.tvspots'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "cw.tvspots"

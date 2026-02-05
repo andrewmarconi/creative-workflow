@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0003_lora_negative_prompt_suffix'),
+        ("diffusion", "0003_lora_negative_prompt_suffix"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='diffusionmodel',
-            name='dtype',
-            field=models.CharField(choices=[('bfloat16', 'BFloat16'), ('float16', 'Float16'), ('float32', 'Float32'), ('float8_e4m3fn', 'Float8 (E4M3)')], default='bfloat16', help_text='Data type for model weights', max_length=50),
+            model_name="diffusionmodel",
+            name="dtype",
+            field=models.CharField(
+                choices=[
+                    ("bfloat16", "BFloat16"),
+                    ("float16", "Float16"),
+                    ("float32", "Float32"),
+                    ("float8_e4m3fn", "Float8 (E4M3)"),
+                ],
+                default="bfloat16",
+                help_text="Data type for model weights",
+                max_length=50,
+            ),
         ),
     ]

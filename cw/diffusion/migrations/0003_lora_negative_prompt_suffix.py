@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0002_lora_path_optional'),
+        ("diffusion", "0002_lora_path_optional"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='loramodel',
-            name='negative_prompt_suffix',
-            field=models.TextField(blank=True, help_text='Terms to append to negative prompts (only applied when model supports negative prompts)'),
+            model_name="loramodel",
+            name="negative_prompt_suffix",
+            field=models.TextField(
+                blank=True,
+                help_text="Terms to append to negative prompts (only applied when model supports negative prompts)",
+            ),
         ),
     ]

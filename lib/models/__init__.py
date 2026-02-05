@@ -4,13 +4,13 @@ Modular model classes for different diffusion pipelines
 """
 
 from .base import BaseModel
-from .mixins import CLIPTokenLimitMixin, CompelPromptMixin, DebugLoggingMixin
-from .zimageturbo import ZImageTurboModel
 from .flux import FluxModel
+from .mixins import CLIPTokenLimitMixin, CompelPromptMixin, DebugLoggingMixin
 from .qwen import QwenImageModel
-from .sdxlturbo import SDXLTurboModel
-from .sdxl import SDXLModel
 from .sd15 import SD15Model
+from .sdxl import SDXLModel
+from .sdxlturbo import SDXLTurboModel
+from .zimageturbo import ZImageTurboModel
 
 
 class ModelFactory:

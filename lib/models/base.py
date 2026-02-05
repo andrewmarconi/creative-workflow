@@ -8,6 +8,7 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
 import torch
 from PIL import Image
 
@@ -76,7 +77,9 @@ class BaseModel(ABC):
 
         logger.info(f"Loading pipeline for {self.model_name}")
         logger.debug(f"Model path: {self.model_path}")
-        logger.debug(f"Model settings: steps={self.default_steps}, guidance={self.default_guidance}, dtype={self.dtype}")
+        logger.debug(
+            f"Model settings: steps={self.default_steps}, guidance={self.default_guidance}, dtype={self.dtype}"
+        )
 
         try:
             # Step 1: Device setup
@@ -94,9 +97,11 @@ class BaseModel(ABC):
             logger.debug(f"Pipeline created: {type(self.pipeline).__name__}")
 
             # Step 2.5: Store original scheduler config for potential restoration
-            if hasattr(self.pipeline, 'scheduler') and hasattr(self.pipeline.scheduler, 'config'):
+            if hasattr(self.pipeline, "scheduler") and hasattr(self.pipeline.scheduler, "config"):
                 self._original_scheduler_config = self.pipeline.scheduler.config
-                logger.debug(f"Stored original scheduler config: {self.pipeline.scheduler.__class__.__name__}")
+                logger.debug(
+                    f"Stored original scheduler config: {self.pipeline.scheduler.__class__.__name__}"
+                )
 
             # Step 2.6: Apply default scheduler if configured
             if self.default_scheduler:
@@ -161,8 +166,12 @@ class BaseModel(ABC):
             raise RuntimeError("Pipeline not loaded")
 
         logger.debug(f"generate() called for {self.model_name}")
-        logger.debug(f"Input prompt: {prompt[:100]}..." if len(prompt) > 100 else f"Input prompt: {prompt}")
-        logger.debug(f"Generation params: steps={steps}, guidance={guidance_scale}, size={width}x{height}, seed={seed}")
+        logger.debug(
+            f"Input prompt: {prompt[:100]}..." if len(prompt) > 100 else f"Input prompt: {prompt}"
+        )
+        logger.debug(
+            f"Generation params: steps={steps}, guidance={guidance_scale}, size={width}x{height}, seed={seed}"
+        )
 
         # Step 0: Apply scheduler override if provided
         scheduler_applied = None
@@ -173,12 +182,13 @@ class BaseModel(ABC):
         # Step 1: Apply parameter defaults and overrides
         logger.debug("Step 1: Preparing generation parameters")
         params = self._prepare_generation_params(
-            prompt, negative_prompt, steps, guidance_scale,
-            width, height, seed, clip_skip
+            prompt, negative_prompt, steps, guidance_scale, width, height, seed, clip_skip
         )
         # Track which scheduler is active for metadata
-        params['scheduler'] = scheduler_applied or self._get_current_scheduler_name()
-        logger.debug(f"Resolved params: steps={params['steps']}, guidance={params['guidance_scale']}, scheduler={params['scheduler']}")
+        params["scheduler"] = scheduler_applied or self._get_current_scheduler_name()
+        logger.debug(
+            f"Resolved params: steps={params['steps']}, guidance={params['guidance_scale']}, scheduler={params['scheduler']}"
+        )
 
         # Step 2: Build prompts with LoRA suffixes (hook for customization)
         logger.debug("Step 2: Building prompts with LoRA suffixes")
@@ -191,12 +201,16 @@ class BaseModel(ABC):
         logger.debug(f"Pipeline kwargs keys: {list(gen_kwargs.keys())}")
 
         # Step 3.5: Pre-generation VAE check (for debugging black images on MPS)
-        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
-            logger.debug(f"[MPS VAE check] device: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
+        if self.device.type == "mps" and hasattr(self.pipeline, "vae"):
+            logger.debug(
+                f"[MPS VAE check] device: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}"
+            )
             if self.pipeline.vae.dtype != torch.float32:
                 logger.warning(f"[MPS VAE check] VAE is NOT float32! Fixing now...")
                 self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
-                logger.debug(f"[MPS VAE check] VAE after fix: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}")
+                logger.debug(
+                    f"[MPS VAE check] VAE after fix: {self.pipeline.vae.device}, dtype: {self.pipeline.vae.dtype}"
+                )
 
         # Step 4: Generate image
         logger.debug("Step 4: Calling pipeline for generation")
@@ -211,7 +225,9 @@ class BaseModel(ABC):
         logger.debug("Step 6: Building metadata")
         metadata = self._build_metadata(params)
 
-        logger.info(f"Image generated successfully: {params['width']}x{params['height']}, {params['steps']} steps")
+        logger.info(
+            f"Image generated successfully: {params['width']}x{params['height']}, {params['steps']} steps"
+        )
         return image, metadata
 
     @abstractmethod
@@ -266,14 +282,14 @@ class BaseModel(ABC):
         effective_clip_skip = self.get_lora_clip_skip() or clip_skip
 
         return {
-            'prompt': prompt,
-            'negative_prompt': negative_prompt,
-            'steps': steps,
-            'guidance_scale': guidance_scale,
-            'width': width,
-            'height': height,
-            'seed': seed,
-            'clip_skip': effective_clip_skip,
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
+            "steps": steps,
+            "guidance_scale": guidance_scale,
+            "width": width,
+            "height": height,
+            "seed": seed,
+            "clip_skip": effective_clip_skip,
         }
 
     def _resolve_guidance_scale(self, guidance_scale: Optional[float]) -> float:
@@ -316,13 +332,13 @@ class BaseModel(ABC):
         # Append LoRA prompt suffix
         lora_suffix = self.get_lora_prompt_suffix()
         if lora_suffix:
-            params['prompt'] = f"{params['prompt']}, {lora_suffix}"
+            params["prompt"] = f"{params['prompt']}, {lora_suffix}"
 
         # Append LoRA negative prompt suffix (if model supports it)
-        if self.supports_negative_prompt and params['negative_prompt']:
+        if self.supports_negative_prompt and params["negative_prompt"]:
             lora_neg_suffix = self.get_lora_negative_prompt_suffix()
             if lora_neg_suffix:
-                params['negative_prompt'] = f"{params['negative_prompt']}, {lora_neg_suffix}"
+                params["negative_prompt"] = f"{params['negative_prompt']}, {lora_neg_suffix}"
 
         # Model-specific prompt handling (e.g., Qwen requires space for empty negative)
         params = self._handle_special_prompt_requirements(params)
@@ -360,32 +376,32 @@ class BaseModel(ABC):
         """
         # Setup generator
         generator = torch.Generator(device="cpu")
-        if params['seed'] is not None:
-            generator.manual_seed(params['seed'])
+        if params["seed"] is not None:
+            generator.manual_seed(params["seed"])
 
         # Base kwargs
         gen_kwargs = {
-            'num_inference_steps': params['steps'],
-            'guidance_scale': params['guidance_scale'],
-            'height': params['height'],
-            'width': params['width'],
-            'generator': generator,
+            "num_inference_steps": params["steps"],
+            "guidance_scale": params["guidance_scale"],
+            "height": params["height"],
+            "width": params["width"],
+            "generator": generator,
         }
 
         # Base kwargs
-        gen_kwargs['prompt'] = params['prompt']
+        gen_kwargs["prompt"] = params["prompt"]
 
         # Add negative prompt if supported
-        if self.supports_negative_prompt and params.get('negative_prompt'):
-            gen_kwargs['negative_prompt'] = params['negative_prompt']
+        if self.supports_negative_prompt and params.get("negative_prompt"):
+            gen_kwargs["negative_prompt"] = params["negative_prompt"]
 
         # Add clip_skip if set
-        if params['clip_skip'] is not None:
-            gen_kwargs['clip_skip'] = params['clip_skip']
+        if params["clip_skip"] is not None:
+            gen_kwargs["clip_skip"] = params["clip_skip"]
 
         # Add max_sequence_length if configured
         if self.max_sequence_length is not None:
-            gen_kwargs['max_sequence_length'] = self.max_sequence_length
+            gen_kwargs["max_sequence_length"] = self.max_sequence_length
 
         return gen_kwargs
 
@@ -400,24 +416,24 @@ class BaseModel(ABC):
             Metadata dictionary
         """
         metadata = {
-            'model': self.model_name,
-            'prompt': params['prompt'],
-            'steps': params['steps'],
-            'guidance_scale': params['guidance_scale'],
-            'width': params['width'],
-            'height': params['height'],
-            'seed': params['seed'],
-            'scheduler': params.get('scheduler'),
-            'lora': self.current_lora['label'] if self.current_lora else None,
+            "model": self.model_name,
+            "prompt": params["prompt"],
+            "steps": params["steps"],
+            "guidance_scale": params["guidance_scale"],
+            "width": params["width"],
+            "height": params["height"],
+            "seed": params["seed"],
+            "scheduler": params.get("scheduler"),
+            "lora": self.current_lora["label"] if self.current_lora else None,
         }
 
         # Add negative prompt if supported
         if self.supports_negative_prompt:
-            metadata['negative_prompt'] = params.get('negative_prompt')
+            metadata["negative_prompt"] = params.get("negative_prompt")
 
         # Add max_sequence_length if used
         if self.max_sequence_length is not None:
-            metadata['max_sequence_length'] = self.max_sequence_length
+            metadata["max_sequence_length"] = self.max_sequence_length
 
         return metadata
 
@@ -433,14 +449,14 @@ class BaseModel(ABC):
         if device.type == "mps":
             # For MPS, keep VAE on device but force float32 to avoid NaN values
             # Moving VAE to CPU causes device mismatch errors without offload
-            if hasattr(self.pipeline, 'vae'):
+            if hasattr(self.pipeline, "vae"):
                 logger.debug("[MPS] Converting VAE to float32 (keeping on MPS)")
                 self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
                 # Enable VAE slicing for better memory usage and numerical stability
-                if hasattr(self.pipeline.vae, 'enable_slicing'):
+                if hasattr(self.pipeline.vae, "enable_slicing"):
                     logger.debug("[MPS] Enabling VAE slicing")
                     self.pipeline.vae.enable_slicing()
-                if hasattr(self.pipeline.vae, 'enable_tiling'):
+                if hasattr(self.pipeline.vae, "enable_tiling"):
                     logger.debug("[MPS] Enabling VAE tiling")
                     self.pipeline.vae.enable_tiling()
 
@@ -451,7 +467,7 @@ class BaseModel(ABC):
             self.pipeline.enable_attention_slicing()
 
             # Ensure VAE is still float32 after pipeline.to()
-            if hasattr(self.pipeline, 'vae'):
+            if hasattr(self.pipeline, "vae"):
                 logger.debug("[MPS] Re-confirming VAE float32 after pipeline.to()")
                 self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
         elif device.type == "cuda":
@@ -485,7 +501,7 @@ class BaseModel(ABC):
             logger.debug("Cannot set scheduler: pipeline not loaded")
             return None
 
-        if not hasattr(self.pipeline, 'scheduler'):
+        if not hasattr(self.pipeline, "scheduler"):
             logger.debug("Cannot set scheduler: pipeline has no scheduler attribute")
             return None
 
@@ -497,7 +513,9 @@ class BaseModel(ABC):
 
             # Get the scheduler class by name
             if not hasattr(diffusers, scheduler_name):
-                logger.warning(f"Scheduler '{scheduler_name}' not found in diffusers, keeping current scheduler")
+                logger.warning(
+                    f"Scheduler '{scheduler_name}' not found in diffusers, keeping current scheduler"
+                )
                 return None
 
             scheduler_class = getattr(diffusers, scheduler_name)
@@ -517,7 +535,7 @@ class BaseModel(ABC):
 
     def _get_current_scheduler_name(self) -> Optional[str]:
         """Get the current scheduler's class name."""
-        if self.pipeline is None or not hasattr(self.pipeline, 'scheduler'):
+        if self.pipeline is None or not hasattr(self.pipeline, "scheduler"):
             return None
         return self.pipeline.scheduler.__class__.__name__
 
@@ -639,7 +657,7 @@ class BaseModel(ABC):
             logger.debug("No LoRA to unload")
             return "No LoRA loaded"
 
-        lora_label = self.current_lora.get('label', 'unknown')
+        lora_label = self.current_lora.get("label", "unknown")
         logger.info(f"Unloading LoRA: {lora_label}")
 
         try:

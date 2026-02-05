@@ -7,114 +7,330 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0016_add_job_identifier'),
+        ("diffusion", "0016_add_job_identifier"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AdaptationMarket',
+            name="AdaptationMarket",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text="Market name (e.g., 'US Hispanic', 'Japanese').", max_length=100, unique=True)),
-                ('code', models.CharField(help_text="Short code (e.g., 'us-hispanic', 'jp').", max_length=20, unique=True)),
-                ('rules', models.TextField(help_text='Markdown-formatted cultural/regulatory rules for adaptation.')),
-                ('is_active', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="Market name (e.g., 'US Hispanic', 'Japanese').",
+                        max_length=100,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "code",
+                    models.CharField(
+                        help_text="Short code (e.g., 'us-hispanic', 'jp').",
+                        max_length=20,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "rules",
+                    models.TextField(
+                        help_text="Markdown-formatted cultural/regulatory rules for adaptation."
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'verbose_name': 'Adaptation Market',
-                'verbose_name_plural': 'Adaptation Markets',
-                'ordering': ['name'],
+                "verbose_name": "Adaptation Market",
+                "verbose_name_plural": "Adaptation Markets",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='TvSpot',
+            name="TvSpot",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('client_name', models.CharField(max_length=255)),
-                ('brand_name', models.CharField(blank=True, max_length=255)),
-                ('script_title', models.CharField(max_length=255)),
-                ('total_runtime_seconds', models.PositiveIntegerField(help_text='Total runtime in seconds (typically 15, 30, 60, 90).')),
-                ('job_id', models.CharField(help_text="Internal project ID (e.g., 'ACME-2024-001').", max_length=100, unique=True)),
-                ('notes', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("client_name", models.CharField(max_length=255)),
+                ("brand_name", models.CharField(blank=True, max_length=255)),
+                ("script_title", models.CharField(max_length=255)),
+                (
+                    "total_runtime_seconds",
+                    models.PositiveIntegerField(
+                        help_text="Total runtime in seconds (typically 15, 30, 60, 90)."
+                    ),
+                ),
+                (
+                    "job_id",
+                    models.CharField(
+                        help_text="Internal project ID (e.g., 'ACME-2024-001').",
+                        max_length=100,
+                        unique=True,
+                    ),
+                ),
+                ("notes", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'verbose_name': 'TV Spot',
-                'verbose_name_plural': 'TV Spots',
-                'ordering': ['-created_at'],
+                "verbose_name": "TV Spot",
+                "verbose_name_plural": "TV Spots",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='TvSpotVersion',
+            name="TvSpotVersion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('version_type', models.CharField(choices=[('origin', 'Origin'), ('adaptation', 'Adaptation')], default='origin', max_length=20)),
-                ('code', models.CharField(help_text="Internal code (e.g., 'ORIGIN', 'US-HISP', 'JP').", max_length=50)),
-                ('name', models.CharField(help_text="Human label (e.g., 'US Hispanic Adaptation').", max_length=255)),
-                ('language', models.CharField(help_text="Primary language (e.g., 'en-US', 'es-MX', 'ja').", max_length=50)),
-                ('visual_style_prompt', models.TextField(blank=True, help_text='Common prompt prefix for storyboard generation consistency.')),
-                ('is_active', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('market', models.ForeignKey(blank=True, help_text='Target market for adaptation. Null for origin versions.', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='versions', to='diffusion.adaptationmarket')),
-                ('tv_spot', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='versions', to='diffusion.tvspot')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "version_type",
+                    models.CharField(
+                        choices=[("origin", "Origin"), ("adaptation", "Adaptation")],
+                        default="origin",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "code",
+                    models.CharField(
+                        help_text="Internal code (e.g., 'ORIGIN', 'US-HISP', 'JP').", max_length=50
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="Human label (e.g., 'US Hispanic Adaptation').", max_length=255
+                    ),
+                ),
+                (
+                    "language",
+                    models.CharField(
+                        help_text="Primary language (e.g., 'en-US', 'es-MX', 'ja').", max_length=50
+                    ),
+                ),
+                (
+                    "visual_style_prompt",
+                    models.TextField(
+                        blank=True,
+                        help_text="Common prompt prefix for storyboard generation consistency.",
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "market",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="Target market for adaptation. Null for origin versions.",
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="versions",
+                        to="diffusion.adaptationmarket",
+                    ),
+                ),
+                (
+                    "tv_spot",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="versions",
+                        to="diffusion.tvspot",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['tv_spot', 'version_type', 'code'],
-                'unique_together': {('tv_spot', 'code')},
+                "ordering": ["tv_spot", "version_type", "code"],
+                "unique_together": {("tv_spot", "code")},
             },
         ),
         migrations.CreateModel(
-            name='TvSpotScriptRow',
+            name="TvSpotScriptRow",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_index', models.PositiveIntegerField(help_text='Row order in script (0-indexed).')),
-                ('shot_number', models.CharField(blank=True, help_text="Shot identifier (e.g., '01', '1A', 'MONT-01').", max_length=20)),
-                ('timecode_start', models.CharField(blank=True, help_text="Start timecode (e.g., '00:00:05:00' or '5.0').", max_length=12)),
-                ('duration_seconds', models.DecimalField(blank=True, decimal_places=2, help_text='Row duration in seconds (e.g., 2.50).', max_digits=6, null=True)),
-                ('visual_text', models.TextField(help_text='Left column: visuals, shots, graphics, supers, VFX, locations.')),
-                ('audio_text', models.TextField(help_text='Right column: VO, dialogue, SFX, music cues, taglines.')),
-                ('tv_spot_version', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='script_rows', to='diffusion.tvspotversion')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "order_index",
+                    models.PositiveIntegerField(help_text="Row order in script (0-indexed)."),
+                ),
+                (
+                    "shot_number",
+                    models.CharField(
+                        blank=True,
+                        help_text="Shot identifier (e.g., '01', '1A', 'MONT-01').",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "timecode_start",
+                    models.CharField(
+                        blank=True,
+                        help_text="Start timecode (e.g., '00:00:05:00' or '5.0').",
+                        max_length=12,
+                    ),
+                ),
+                (
+                    "duration_seconds",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        help_text="Row duration in seconds (e.g., 2.50).",
+                        max_digits=6,
+                        null=True,
+                    ),
+                ),
+                (
+                    "visual_text",
+                    models.TextField(
+                        help_text="Left column: visuals, shots, graphics, supers, VFX, locations."
+                    ),
+                ),
+                (
+                    "audio_text",
+                    models.TextField(
+                        help_text="Right column: VO, dialogue, SFX, music cues, taglines."
+                    ),
+                ),
+                (
+                    "tv_spot_version",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="script_rows",
+                        to="diffusion.tvspotversion",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['tv_spot_version', 'order_index'],
-                'unique_together': {('tv_spot_version', 'order_index')},
+                "ordering": ["tv_spot_version", "order_index"],
+                "unique_together": {("tv_spot_version", "order_index")},
             },
         ),
         migrations.CreateModel(
-            name='StoryboardJob',
+            name="StoryboardJob",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('images_per_row', models.PositiveIntegerField(default=1, help_text='Number of images to generate per script row.')),
-                ('status', models.CharField(choices=[('pending', 'Pending'), ('processing', 'Processing'), ('completed', 'Completed'), ('failed', 'Failed')], default='pending', max_length=20)),
-                ('error_message', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('completed_at', models.DateTimeField(blank=True, null=True)),
-                ('diffusion_model', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='storyboard_jobs', to='diffusion.diffusionmodel')),
-                ('lora_model', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='storyboard_jobs', to='diffusion.loramodel')),
-                ('tv_spot_version', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='storyboard_jobs', to='diffusion.tvspotversion')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "images_per_row",
+                    models.PositiveIntegerField(
+                        default=1, help_text="Number of images to generate per script row."
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("processing", "Processing"),
+                            ("completed", "Completed"),
+                            ("failed", "Failed"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+                ("error_message", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("completed_at", models.DateTimeField(blank=True, null=True)),
+                (
+                    "diffusion_model",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="storyboard_jobs",
+                        to="diffusion.diffusionmodel",
+                    ),
+                ),
+                (
+                    "lora_model",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="storyboard_jobs",
+                        to="diffusion.loramodel",
+                    ),
+                ),
+                (
+                    "tv_spot_version",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="storyboard_jobs",
+                        to="diffusion.tvspotversion",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Storyboard Job',
-                'verbose_name_plural': 'Storyboard Jobs',
-                'ordering': ['-created_at'],
+                "verbose_name": "Storyboard Job",
+                "verbose_name_plural": "Storyboard Jobs",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='StoryboardImage',
+            name="StoryboardImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image_index', models.PositiveIntegerField(default=0, help_text='Image sequence within the row (for multiple images per row).')),
-                ('diffusion_job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='storyboard_images', to='diffusion.diffusionjob')),
-                ('storyboard_job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='diffusion.storyboardjob')),
-                ('script_row', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='storyboard_images', to='diffusion.tvspotscriptrow')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "image_index",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="Image sequence within the row (for multiple images per row).",
+                    ),
+                ),
+                (
+                    "diffusion_job",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="storyboard_images",
+                        to="diffusion.diffusionjob",
+                    ),
+                ),
+                (
+                    "storyboard_job",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="images",
+                        to="diffusion.storyboardjob",
+                    ),
+                ),
+                (
+                    "script_row",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="storyboard_images",
+                        to="diffusion.tvspotscriptrow",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['script_row__order_index', 'image_index'],
-                'unique_together': {('storyboard_job', 'script_row', 'image_index')},
+                "ordering": ["script_row__order_index", "image_index"],
+                "unique_together": {("storyboard_job", "script_row", "image_index")},
             },
         ),
     ]
