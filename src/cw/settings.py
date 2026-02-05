@@ -181,22 +181,22 @@ UNFOLD = {
                     {
                         "title": "TV Spots",
                         "icon": "live_tv",
-                        "link": "/admin/diffusion/tvspot/",
+                        "link": "/admin/tvspots/tvspot/",
                     },
                     {
                         "title": "Versions",
                         "icon": "description",
-                        "link": "/admin/diffusion/tvspotversion/",
+                        "link": "/admin/tvspots/tvspotversion/",
                     },
                     {
                         "title": "Storyboards",
                         "icon": "dashboard",
-                        "link": "/admin/diffusion/storyboardjob/",
+                        "link": "/admin/tvspots/storyboardjob/",
                     },
                     {
                         "title": "Markets",
                         "icon": "public",
-                        "link": "/admin/diffusion/adaptationmarket/",
+                        "link": "/admin/tvspots/adaptationmarket/",
                     },
                 ],
             },
