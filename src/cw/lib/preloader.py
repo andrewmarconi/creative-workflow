@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Creative Workflow - Model Preloader
+Generative Creative Lab - Model Preloader
 Downloads and caches all models from HuggingFace Hub
 
 This script pre-downloads all models configured in presets.json to the
@@ -48,7 +48,7 @@ class ModelPreloader:
         total = len(models)
 
         print(f"\n{'='*60}")
-        print(f"Creative Workflow - Model Preloader")
+        print(f"Generative Creative Lab - Model Preloader")
         print(f"{'='*60}")
         print(f"Models to download: {total}")
         print(f"Device: {self.device}")
@@ -128,7 +128,7 @@ class ModelPreloader:
             sys.exit(1)
 
         print(f"\n{'='*60}")
-        print(f"Creative Workflow - Model Preloader")
+        print(f"Generative Creative Lab - Model Preloader")
         print(f"{'='*60}")
         print(f"Loading: {model_config['label']}")
         print(f"Device: {self.device}")
@@ -147,7 +147,7 @@ class ModelPreloader:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description="Preload Creative Workflow models from HuggingFace Hub",
+        description="Preload Generative Creative Lab models from HuggingFace Hub",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

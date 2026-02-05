@@ -88,7 +88,7 @@ class Command(BaseCommand):
 
         total = len(models)
         self.stdout.write("=" * 60)
-        self.stdout.write("Creative Workflow - Model Preloader")
+        self.stdout.write("Generative Creative Lab - Model Preloader")
         self.stdout.write("=" * 60)
         self.stdout.write(f"Models to download: {total}")
         self.stdout.write(f"Device: {device}")

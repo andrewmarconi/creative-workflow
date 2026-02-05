@@ -1,12 +1,12 @@
-![Creative Workflow](docs/_static/logo-landscape.png)
+![Generative Creative Lab](docs/_static/logo-landscape.png)
 
-# Creative Workflow
+# Generative Creative Lab
 
 A modular framework for creative development, exploration, and experimentation using generative AI. Built with Django and Celery, this system provides a flexible platform for multi-model diffusion image generation with dynamic model composition, prompt enhancement, and extensible architecture.
 
 ## Philosophy
 
-Creative Workflow is designed as a **creative laboratory** - not just a tool for generating images, but a framework for exploring the intersection of different AI models, prompting strategies, and creative workflows. It enables rapid experimentation through:
+Generative Creative Lab is designed as a **creative laboratory** - not just a tool for generating images, but a framework for exploring the intersection of different AI models, prompting strategies, and creative workflows. It enables rapid experimentation through:
 
 - **Model Modularity**: Mix and match diffusion models, LoRAs, and enhancement strategies
 - **Prompt Evolution**: Transform and refine prompts using multiple enhancement approaches
@@ -73,7 +73,7 @@ honcho start
 honcho start docker django
 ```
 
-## Creative Workflow
+## Creative Process
 
 ### 1. Prompt Creation
 - Start with base concepts in the Django admin
@@ -162,8 +162,8 @@ class CreativeEnhancer(BaseEnhancer):
 ## Framework Architecture
 
 ```
-Creative Workflow Framework
-├── cw/diffusion/                    # Creative workflow orchestration
+Generative Creative Lab Framework
+├── cw/diffusion/                    # Creative process orchestration
 │   ├── models.py                    # Core creative entities
 │   ├── admin.py                     # Django Unfold creative studio
 │   └── tasks.py                     # Asynchronous creative processes
@@ -238,10 +238,10 @@ This is an open creative framework. Contributions welcome for:
 
 ## License and Non-Commercial Use
 
-Creative Workflow is provided as a **creative laboratory** for experimentation with generative AI workflows. It is licensed under the **Creative Workflow Non-Commercial License**, which permits use, modification, and distribution **only for Non-Commercial Purposes**.
+Generative Creative Lab is provided as a **creative laboratory** for experimentation with generative AI workflows. It is licensed under the **Generative Creative Lab Non-Commercial License**, which permits use, modification, and distribution **only for Non-Commercial Purposes**.
 
-If you want to use Creative Workflow or derivatives of it in any commercial or production setting, you must obtain a separate commercial license from the project owner.
+If you want to use Generative Creative Lab or derivatives of it in any commercial or production setting, you must obtain a separate commercial license from the project owner.
 
-By using or contributing to this repository, you agree to the terms of the Creative Workflow Non-Commercial License.
+By using or contributing to this repository, you agree to the terms of the Generative Creative Lab Non-Commercial License.
 
 See the [LICENSE](./LICENSE.md) file for full details.

@@ -144,8 +144,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # https://unfoldadmin.com/docs/configuration/
 
 UNFOLD = {
-    "SITE_TITLE": "Creative Workflow",
-    "SITE_HEADER": "Creative Workflow",
+    "SITE_TITLE": "Generative Creative Lab",
+    "SITE_HEADER": "Generative Creative Lab",
     "SITE_SUBHEADER": "Multi-Model Diffusion Pipeline",
     "SITE_DROPDOWN": [],
     "SIDEBAR": {

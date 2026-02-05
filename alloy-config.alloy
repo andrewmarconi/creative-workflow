@@ -1,4 +1,4 @@
-// Grafana Alloy configuration for Creative Workflow
+// Grafana Alloy configuration for Generative Creative Lab
 // Migrated from Promtail - collects logs and ships to Loki
 
 // ============================================================================

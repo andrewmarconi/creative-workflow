@@ -1,10 +1,10 @@
 # AGENTS.md
 
-This file provides guidance for agentic coding assistants working in the Creative Workflow repository.
+This file provides guidance for agentic coding assistants working in the Generative Creative Lab repository.
 
 ## Project Overview
 
-Creative Workflow is a Django + Celery application for multi-model diffusion image generation. Uses Django Unfold for admin UI, PostgreSQL for storage, and Valkey/Redis as Celery broker. Supports Z-Image Turbo, Flux.1-dev, Flux.2 Klein, Qwen-Image-2512, SDXL Turbo, and other diffusion models.
+Generative Creative Lab is a Django + Celery application for multi-model diffusion image generation. Uses Django Unfold for admin UI, PostgreSQL for storage, and Valkey/Redis as Celery broker. Supports Z-Image Turbo, Flux.1-dev, Flux.2 Klein, Qwen-Image-2512, SDXL Turbo, and other diffusion models.
 
 ## Build & Development Commands
 

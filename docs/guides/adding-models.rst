@@ -1,12 +1,12 @@
 Adding New Models
 =================
 
-This guide covers how to add new diffusion models to Creative Workflow.
+This guide covers how to add new diffusion models to Generative Creative Lab.
 
 Model Architecture
 ------------------
 
-Creative Workflow uses a **Template Method Pattern** for model implementations:
+Generative Creative Lab uses a **Template Method Pattern** for model implementations:
 
 - **BaseModel** (``cw.lib.models.base``) - Abstract base with concrete template methods
 - **Mixins** (``cw.lib.models.mixins``) - Shared behaviors via multiple inheritance

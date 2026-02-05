@@ -1,5 +1,5 @@
 [project]
-name = "creative-workflow"
+name = "generative-creative-lab"
 version = "0.1.0"
 description = "Django + Celery application for multi-model diffusion image generation"
 requires-python = ">=3.12"

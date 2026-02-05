@@ -1,5 +1,5 @@
 """
-Creative Workflow - LoRA Management
+Generative Creative Lab - LoRA Management
 LoRA filtering and loading utilities
 """
 

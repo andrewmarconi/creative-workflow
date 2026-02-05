@@ -1,5 +1,5 @@
 """
-Celery configuration for Creative Workflow.
+Celery configuration for Generative Creative Lab.
 
 This module configures Celery to work with Django and uses the 'solo' execution pool
 to avoid fork() issues with MPS (Metal Performance Shaders) on macOS.

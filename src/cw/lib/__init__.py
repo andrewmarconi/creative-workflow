@@ -1,1 +1,1 @@
-# cw.lib - Supporting library modules for Creative Workflow
+# cw.lib - Supporting library modules for Generative Creative Lab

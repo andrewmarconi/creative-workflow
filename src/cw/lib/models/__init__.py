@@ -1,5 +1,5 @@
 """
-Creative Workflow - Model Implementations
+Generative Creative Lab - Model Implementations
 Modular model classes for different diffusion pipelines
 """
 

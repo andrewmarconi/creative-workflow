@@ -1,4 +1,4 @@
-# Creative Workflow Library
+# Generative Creative Lab Library
 
 **A Collection of Modules to Enable Rapid Generative AI Workflows**
 

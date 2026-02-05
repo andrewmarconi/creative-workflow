@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Configuration loader and validator for Creative Workflow
+Configuration loader and validator for Generative Creative Lab
 Loads presets.json and provides access to model and LoRA configurations
 """
 

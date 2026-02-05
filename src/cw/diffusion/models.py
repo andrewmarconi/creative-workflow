@@ -1,5 +1,5 @@
 """
-Django models for Creative Workflow diffusion image generation system.
+Django models for Generative Creative Lab diffusion image generation system.
 
 Models are based on the presets.json structure and integrate with
 the existing lib modules (models/*, loras/*, prompt_enhancer).

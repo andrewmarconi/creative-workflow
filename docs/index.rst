@@ -1,13 +1,13 @@
 .. image:: _static/logo-landscape.png
-   :alt: Creative Workflow
+   :alt: Generative Creative Lab
    :align: center
 
-Creative Workflow Documentation
-===============================
+Generative Creative Lab Documentation
+=====================================
 
 A modular framework for creative development, exploration, and experimentation using generative AI.
 
-Creative Workflow is a flexible platform designed for creative experimentation with
+Generative Creative Lab is a flexible platform designed for creative experimentation with
 generative AI models. Built on Django and Celery, it provides a modular architecture
 for multi-model diffusion image generation, dynamic prompt enhancement, and systematic
 creative exploration through model composition and workflow orchestration.
@@ -22,7 +22,7 @@ creative exploration through model composition and workflow orchestration.
 Creative Framework Philosophy
 ------------------------------
 
-Creative Workflow is designed as a **creative laboratory** - not merely a tool for generating images, but a comprehensive framework for exploring the intersection of different AI models, prompting strategies, and creative workflows.
+Generative Creative Lab is designed as a **creative laboratory** - not merely a tool for generating images, but a comprehensive framework for exploring the intersection of different AI models, prompting strategies, and creative workflows.
 
 Core Principles
 ~~~~~~~~~~~~~~~~

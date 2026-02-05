@@ -1,5 +1,5 @@
 """
-Sphinx configuration for Creative Workflow documentation.
+Sphinx configuration for Generative Creative Lab documentation.
 """
 
 import os
@@ -16,7 +16,7 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "Creative Workflow"
+project = "Generative Creative Lab"
 copyright = "2026"
 author = "Andrew Marconi"
 release = "0.1.0"

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Creative Workflow is a Django + Celery application for multi-model diffusion image generation. It uses Django Unfold for the admin UI, PostgreSQL for storage, and Valkey/Redis as the Celery broker. Models supported: Z-Image Turbo, Flux.1-dev, Flux.2 Klein, Qwen-Image-2512, SDXL Turbo, DreamShaper XL Lightning, Juggernaut XL v9, Realistic Vision v5.1.
+Generative Creative Lab is a Django + Celery application for multi-model diffusion image generation. It uses Django Unfold for the admin UI, PostgreSQL for storage, and Valkey/Redis as the Celery broker. Models supported: Z-Image Turbo, Flux.1-dev, Flux.2 Klein, Qwen-Image-2512, SDXL Turbo, DreamShaper XL Lightning, Juggernaut XL v9, Realistic Vision v5.1.
 
 ## Commands
 
@@ -92,7 +92,7 @@ Access Grafana UI at http://localhost:3000 (anonymous login enabled for local de
 
 Uses **src layout** for proper Python packaging:
 ```
-creative-workflow/
+generative-creative-lab/
 ├── src/cw/              # Main package (Django project + apps + lib)
 │   ├── diffusion/       # Django app for image generation
 │   │   └── templates/   # App-specific admin templates

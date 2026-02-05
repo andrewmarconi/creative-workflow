@@ -1,4 +1,4 @@
-# Creative Workflow Django Project
+# Generative Creative Lab Django Project
 
 # This will make sure the app is always imported when
 # Django starts so that shared_task will use this app.

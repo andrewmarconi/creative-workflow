@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LoRA Manager for Creative Workflow
+LoRA Manager for Generative Creative Lab
 Handles LoRA filtering, loading, and compatibility checking
 """
 

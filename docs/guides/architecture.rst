@@ -1,7 +1,7 @@
 System Architecture
 ===================
 
-This guide provides a comprehensive overview of Creative Workflow's architecture,
+This guide provides a comprehensive overview of Generative Creative Lab's architecture,
 including the process model, data flow, and design patterns used throughout the system.
 
 .. contents:: Table of Contents
@@ -11,14 +11,14 @@ including the process model, data flow, and design patterns used throughout the 
 System Overview
 ---------------
 
-Creative Workflow is a Django + Celery application for multi-model diffusion image
+Generative Creative Lab is a Django + Celery application for multi-model diffusion image
 generation. The system is designed around asynchronous task processing to handle
 GPU-intensive operations without blocking the web interface.
 
 .. mermaid::
 
    flowchart TB
-       subgraph cw["Creative Workflow"]
+       subgraph cw["Generative Creative Lab"]
            admin["Django Admin UI<br/>:8000"]
            broker["Celery Broker<br/>(Valkey)"]
            workers["Celery Workers<br/>(GPU tasks)"]
@@ -58,7 +58,7 @@ Key Components
 Process Model
 -------------
 
-Creative Workflow runs four concurrent processes, defined in the ``Procfile``
+Generative Creative Lab runs four concurrent processes, defined in the ``Procfile``
 and launched via ``honcho start``:
 
 .. mermaid::
@@ -218,7 +218,7 @@ LoRAs can be auto-downloaded from CivitAI using AIR URNs. See
 Model Architecture
 ------------------
 
-Creative Workflow uses the **Template Method Pattern** for diffusion model
+Generative Creative Lab uses the **Template Method Pattern** for diffusion model
 implementations, reducing code duplication while allowing model-specific
 customization.
 
