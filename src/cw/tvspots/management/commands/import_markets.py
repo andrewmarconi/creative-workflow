@@ -1,12 +1,29 @@
 """
-Django management command to import adaptation markets from specs.
+Django management command to import adaptation markets from JSON.
 
 Usage:
     uv run manage.py import_markets
+    uv run manage.py import_markets --file data/custom_markets.json
     uv run manage.py import_markets --dry-run
+
+Expected JSON format (structured rules):
+    {
+        "markets": [
+            {
+                "name": "France",
+                "code": "fr",
+                "rules": [
+                    {"heading": "Language segmentation", "points": ["...", "..."]},
+                    {"heading": "Tone and register", "points": ["..."]}
+                ]
+            }
+        ]
+    }
+
+The command validates the rules structure before importing.
 """
 
-import re
+import json
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
@@ -15,15 +32,46 @@ from django.db import transaction
 from cw.tvspots.models import AdaptationMarket
 
 
+def validate_rules_structure(rules: list) -> list[str]:
+    """Validate that rules follow the expected structure.
+
+    Returns a list of validation errors (empty if valid).
+    """
+    errors = []
+
+    if not isinstance(rules, list):
+        errors.append(f"rules must be a list, got {type(rules).__name__}")
+        return errors
+
+    for i, section in enumerate(rules):
+        if not isinstance(section, dict):
+            errors.append(f"rules[{i}] must be a dict, got {type(section).__name__}")
+            continue
+
+        if "heading" not in section:
+            errors.append(f"rules[{i}] missing required 'heading' field")
+
+        if "points" not in section:
+            errors.append(f"rules[{i}] missing required 'points' field")
+        elif not isinstance(section.get("points"), list):
+            errors.append(f"rules[{i}].points must be a list")
+        else:
+            for j, point in enumerate(section["points"]):
+                if not isinstance(point, str):
+                    errors.append(f"rules[{i}].points[{j}] must be a string")
+
+    return errors
+
+
 class Command(BaseCommand):
-    help = "Import adaptation markets from specs/005_adaptations/adaptation_rules.md"
+    help = "Import adaptation markets from data/market_profiles.json"
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--file",
             type=str,
-            default="specs/005_adaptations/adaptation_rules.md",
-            help="Path to adaptation_rules.md",
+            default="data/market_profiles.json",
+            help="Path to market profiles JSON file",
         )
         parser.add_argument(
             "--dry-run",
@@ -42,8 +90,34 @@ class Command(BaseCommand):
         if dry_run:
             self.stdout.write(self.style.WARNING("DRY RUN - no changes will be made"))
 
-        # Parse the markdown file
-        markets = self._parse_adaptation_rules(file_path)
+        # Parse JSON file
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if "markets" not in data:
+            raise CommandError("JSON file must have a 'markets' key")
+
+        markets = []
+        for market in data["markets"]:
+            if not all(k in market for k in ("name", "code", "rules")):
+                raise CommandError(f"Market missing required fields: {market}")
+
+            # Validate the rules structure
+            rules = market["rules"]
+            validation_errors = validate_rules_structure(rules)
+            if validation_errors:
+                raise CommandError(
+                    f"Invalid rules structure for market '{market['name']}':\n"
+                    + "\n".join(f"  - {e}" for e in validation_errors)
+                )
+
+            markets.append(
+                {
+                    "name": market["name"],
+                    "code": market["code"],
+                    "rules": rules,
+                }
+            )
 
         if not markets:
             raise CommandError("No markets found in file")
@@ -52,7 +126,10 @@ class Command(BaseCommand):
 
         if dry_run:
             for market in markets:
-                self.stdout.write(f"  Would create: {market['name']} ({market['code']})")
+                num_sections = len(market["rules"]) if market["rules"] else 0
+                self.stdout.write(
+                    f"  Would create: {market['name']} ({market['code']}) - {num_sections} sections"
+                )
             return
 
         # Import within transaction
@@ -82,44 +159,3 @@ class Command(BaseCommand):
         self.stdout.write(f"  Created: {created_count}")
         self.stdout.write(f"  Updated: {updated_count}")
         self.stdout.write("=" * 60)
-
-    def _parse_adaptation_rules(self, file_path: Path) -> list:
-        """Parse adaptation_rules.md into market dicts."""
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        # Define markets with their codes and section headers
-        market_mappings = [
-            ("US Hispanic", "us-hispanic", "## US Hispanic Market"),
-            ("French & Benelux", "fr-benelux", "## 2. French & Benelux Market"),
-            ("Turkish", "tr", "## 3. Turkish Market"),
-            ("Japanese", "jp", "## 4. Japanese Market"),
-            ("South Korean", "kr", "## 5. South Korean Market"),
-        ]
-
-        markets = []
-
-        for name, code, section_header in market_mappings:
-            # Find section start
-            start_idx = content.find(section_header)
-            if start_idx == -1:
-                self.stdout.write(self.style.WARNING(f"  ⚠ Section not found: {section_header}"))
-                continue
-
-            # Find next section (or end of file)
-            remaining = content[start_idx + len(section_header) :]
-            next_section_match = re.search(r"\n## \d+\.", remaining)
-            if next_section_match:
-                rules_text = remaining[: next_section_match.start()]
-            else:
-                rules_text = remaining
-
-            markets.append(
-                {
-                    "name": name,
-                    "code": code,
-                    "rules": rules_text.strip(),
-                }
-            )
-
-        return markets

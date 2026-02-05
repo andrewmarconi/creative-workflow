@@ -261,7 +261,7 @@ class AdaptationGenerator:
         prompt = render_prompt(
             "adaptation.j2",
             target_market_name=target_market.name,
-            target_market_rules=target_market.rules,
+            target_market_rules=target_market.rules_as_markdown(),
             target_market_code=target_market.code.upper(),
             original_json=original_json,
             num_script_rows=len(original_spot["script_rows"]),

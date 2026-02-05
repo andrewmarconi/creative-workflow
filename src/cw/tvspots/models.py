@@ -6,6 +6,26 @@ class AdaptationMarket(models.Model):
 
     Contains cultural and regulatory rules for the LLM to follow when
     creating market-specific adaptations.
+
+    The rules field stores structured JSON with headings and points::
+
+        [
+            {
+                "heading": "Language segmentation",
+                "points": [
+                    "Belgium requires two distinct versions...",
+                    "Luxembourg prefers French and German..."
+                ]
+            },
+            {
+                "heading": "Tone and register",
+                "points": [
+                    "Belgians are more reserved, formal, and indirect..."
+                ]
+            }
+        ]
+
+    Use :meth:`rules_as_markdown` to render as markdown for display.
     """
 
     name = models.CharField(
@@ -14,8 +34,9 @@ class AdaptationMarket(models.Model):
     code = models.CharField(
         max_length=20, unique=True, help_text="Short code (e.g., 'us-hispanic', 'jp')."
     )
-    rules = models.TextField(
-        help_text="Markdown-formatted cultural/regulatory rules for adaptation."
+    rules = models.JSONField(
+        default=list,
+        help_text="Structured rules: list of {heading, points[]} objects for adaptation guidance.",
     )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,6 +50,37 @@ class AdaptationMarket(models.Model):
 
     def __str__(self):
         return self.name
+
+    def rules_as_markdown(self) -> str:
+        """Render structured rules as markdown for display or LLM consumption.
+
+        Returns:
+            Markdown string with ### headings and - bullet points.
+
+        Example output::
+
+            ### Language segmentation
+            - Belgium requires two distinct versions...
+            - Luxembourg prefers French and German...
+
+            ### Tone and register
+            - Belgians are more reserved, formal, and indirect...
+        """
+        if not self.rules:
+            return ""
+
+        sections = []
+        for section in self.rules:
+            heading = section.get("heading", "")
+            points = section.get("points", [])
+
+            if heading:
+                lines = [f"### {heading}"]
+                for point in points:
+                    lines.append(f"- {point}")
+                sections.append("\n".join(lines))
+
+        return "\n\n".join(sections)
 
 
 class TvSpot(models.Model):

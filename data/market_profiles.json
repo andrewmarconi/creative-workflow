@@ -1,0 +1,208 @@
+{
+  "markets": [
+    {
+      "name": "France",
+      "code": "fr",
+      "rules": [
+        {
+          "heading": "Language segmentation",
+          "points": [
+            "Belgium requires two distinct versions: Dutch (Flemish) for Flanders and French for Wallonia. Brussels is bilingual—default to dual-language assets or choose based on media buy.",
+            "Luxembourg prefers French and German; Luxembourgish is a bonus but not required. English is widely accepted in advertising due to high foreign-born population.",
+            "Netherlands uses Dutch but is highly English-proficient. English can work for global brands, but Dutch localizations perform better for emotional resonance.",
+            "France requires formal, polished French; informal registers are risky outside youth or digital-native contexts."
+          ]
+        },
+        {
+          "heading": "Tone and register",
+          "points": [
+            "Belgians are more reserved, formal, and indirect than the Dutch. Use a more formal register in Dutch campaigns for Belgium than you would in the Netherlands.",
+            "French Belgians and French audiences expect formal address (vous) in most advertising contexts. Informal (tu) may work in youth/social media but requires careful judgment.",
+            "Flemish audiences interact more with content (polls, shares, stories); French-speaking audiences are less engaged with interactive formats."
+          ]
+        },
+        {
+          "heading": "Cultural values",
+          "points": [
+            "Emphasize quality, craftsmanship, and heritage. Overt hard-sell tactics feel pushy; understatement and sophistication resonate.",
+            "Relationship-building matters in Wallonia and France; Flemish audiences are more receptive to direct product benefit messaging.",
+            "Avoid using \"Franglais\" excessively in France; it is more accepted among young, urban Belgians but can alienate older or rural French audiences."
+          ]
+        },
+        {
+          "heading": "Regulatory and practical",
+          "points": [
+            "French language laws (Toubon Law) may require French-language versions of all claims and supers for France-market assets.",
+            "Ensure all legal and disclaimer copy is adapted to local requirements per country (France, Belgium, Netherlands, Luxembourg each have distinct consumer protection norms)."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Japan",
+      "code": "jp",
+      "rules": [
+        {
+          "heading": "Communication style",
+          "points": [
+            "Modesty is essential. Avoid overt boasting about product superiority or aggressive comparative claims. Japanese advertising rarely directly criticizes competitors.",
+            "Indirect, suggestive storytelling is preferred over explicit benefit claims. Let viewers infer value rather than being told.",
+            "Use the celebrity halo effect—celebrities endorse products without detailed benefit explanations. The celebrity's credibility transfers to the brand implicitly."
+          ]
+        },
+        {
+          "heading": "Kawaii and mascots",
+          "points": [
+            "Cute characters, mascots, and anime-style illustrations are widely accepted and expected in many categories, even for adult audiences. They serve as trusted \"messengers\" for the brand.",
+            "\"Kawaii\" is nuanced: it includes imperfection, expressionlessness, and healing qualities—not just Western-style cuteness. Characters like Hello Kitty resonate because they allow emotional projection."
+          ]
+        },
+        {
+          "heading": "Visual and aesthetic norms",
+          "points": [
+            "Softer color palettes, minimalism, and nature imagery are common. Avoid aggressive, high-contrast Western ad aesthetics unless targeting a specific subculture.",
+            "Respect for traditional crafts is paramount. Do not depict traditional items (kimono, obi, tea ceremony objects) being misused or disrespected—this can cause brand damage."
+          ]
+        },
+        {
+          "heading": "Regulatory and social",
+          "points": [
+            "Stealth marketing is heavily criticized and self-regulated by JARO (Japan Advertising Review Organization). Influencer and native ads must be clearly disclosed.",
+            "Superlatives are restricted. Claims like \"No. 1\" or \"best\" require substantiation under the Act Against Unjustifiable Premiums and Misleading Representations.",
+            "Avoid sexualized imagery. While legal boundaries may be broader, such content increasingly faces public criticism and withdrawal pressure."
+          ]
+        },
+        {
+          "heading": "Language",
+          "points": [
+            "Use Japanese. English words may be sprinkled for style (loan words are common) but core messaging must be in natural Japanese.",
+            "Honorific language (keigo) is expected in formal or corporate contexts."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "South Korea",
+      "code": "kr",
+      "rules": [
+        {
+          "heading": "Hierarchy and respect",
+          "points": [
+            "Age and seniority are central to Korean social structure. Depict respectful relationships between generations; avoid scenarios where younger people dismiss or disrespect elders.",
+            "Use appropriate speech levels in dialogue: jondaetmal (formal/polite) for authority figures, elders, or professional contexts; banmal (casual) only among peers or close friends.",
+            "Avoid the \"kkondae\" stereotype (rigid, condescending older person) or \"ajumma\" caricatures—these are derogatory and may alienate audiences."
+          ]
+        },
+        {
+          "heading": "Hallyu and modernity",
+          "points": [
+            "Korean audiences are highly attuned to global trends but expect content that reflects Korean identity and pride. Hallyu (the Korean Wave) has elevated expectations for production quality and cultural authenticity.",
+            "K-pop and K-drama aesthetics (polished visuals, aspirational lifestyles, emotional storytelling) are benchmarks. Low-budget or dated creative will underperform.",
+            "Celebrity endorsements are powerful but must feel authentic. Koreans value idols who \"grow\" with their fans; perfection is expected but relatability matters."
+          ]
+        },
+        {
+          "heading": "Regulatory constraints",
+          "points": [
+            "Cosmetics and health claims are tightly regulated by the Ministry of Food and Drug Safety (MFDS). Avoid:",
+            "Medical endorsements (\"doctor recommended,\" \"hospital exclusive\").",
+            "Anti-aging exaggerations (\"reduces skin age by 10 years\").",
+            "Pharmaceutical-style claims (\"reduces inflammation,\" \"skin regeneration\").",
+            "Human-derived ingredient confusion (clarify plant- or milk-derived if using EXO, exosome, liposome references).",
+            "\"Natural\" and \"organic\" claims for cosmetics are being phased out; ensure compliance with current MFDS labeling rules."
+          ]
+        },
+        {
+          "heading": "Cultural values",
+          "points": [
+            "Collectivism and group harmony are valued. Depict teamwork, family cohesion, and social belonging.",
+            "Education and achievement are highly prized. Aspirational messaging around success, improvement, and self-betterment resonates.",
+            "Food and dining are social rituals. Shared meals (Korean BBQ, fried chicken and beer, home-cooked dishes) signal warmth and togetherness."
+          ]
+        },
+        {
+          "heading": "Language",
+          "points": [
+            "Use Korean. English words are common in youth and tech contexts but should not replace Korean for primary messaging.",
+            "Subtlety and understatement are appreciated; avoid overly aggressive or boastful copy."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Turkiye",
+      "code": "tr",
+      "rules": [
+        {
+          "heading": "Regulatory constraints",
+          "points": [
+            "Political content is prohibited in advertising. Do not include any political views, party references, or ideological messaging.",
+            "Obscene or adult content is strictly forbidden and criminalized under Turkish law. Avoid even mildly suggestive imagery.",
+            "Covert/surreptitious advertising is banned. Any advertisement must be clearly identifiable as an ad. Stealth marketing, native ads disguised as editorial, or influencer posts without disclosure violate Turkish law.",
+            "Avoid content that could be seen as exploiting children, the elderly, or disabled persons.",
+            "Advertising must not distort or denigrate cultural, moral, or positive social behaviors."
+          ]
+        },
+        {
+          "heading": "Cultural values",
+          "points": [
+            "Family, hospitality, and community are core values. Depict warm, multi-generational family settings where appropriate.",
+            "Respect for elders and authority figures is expected. Avoid generational conflict or disrespectful portrayals of older characters.",
+            "Modesty in dress and behavior is important. Even for fashion or beauty, avoid Western-style provocative imagery."
+          ]
+        },
+        {
+          "heading": "Religious and social sensitivity",
+          "points": [
+            "Turkey is a secular state but predominantly Muslim. Avoid imagery that conflicts with Islamic norms (alcohol consumption shown positively, pork products, revealing clothing, religious symbols used casually).",
+            "Ramadan and Eid are significant; adapt timing and messaging around these periods if relevant.",
+            "Do not reference Atatürk, the Turkish flag, or national symbols in ways that could be seen as trivializing or disrespectful."
+          ]
+        },
+        {
+          "heading": "Language",
+          "points": [
+            "Use Turkish throughout. English or mixed-language copy is acceptable for global brands targeting urban youth but should not replace Turkish for mass-market campaigns.",
+            "Formal, respectful tone is preferred in most contexts."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "US Hispanic",
+      "code": "us-hispanic",
+      "rules": [
+        {
+          "heading": "Language and acculturation",
+          "points": [
+            "Segment by acculturation level: Hispanic-dominant (prefer Spanish), bicultural (comfortable in both), and US-dominant (prefer English). Adapt language choice accordingly—Spanglish may resonate with bicultural audiences but alienate Hispanic-dominant viewers.",
+            "Avoid one-size-fits-all Spanish translations. Dialects vary significantly: Mexican Spanish differs from Cuban, Puerto Rican, Central American, and South American Spanish. Use region-appropriate vocabulary, slang, and expressions.",
+            "Respect the \"Spanglish\" register when appropriate—it signals cultural fluency but only works for bicultural segments. For Hispanic-dominant audiences, maintain clean, idiomatic Spanish."
+          ]
+        },
+        {
+          "heading": "Cultural values",
+          "points": [
+            "Familia is central. Multigenerational family depictions (grandparents, parents, children together) feel authentic. Isolated-individual narratives common in general-market US ads may feel cold or disconnected.",
+            "Emphasize community, tradition, and shared experiences—collective celebration over individual achievement.",
+            "Reference culturally meaningful moments: quinceañeras, Día de los Muertos, Fiestas Patrias, Carnaval, or regional traditions (Cuban coffee culture in Miami, Mexican breakfast rituals in Southern California)."
+          ]
+        },
+        {
+          "heading": "Humor and tone",
+          "points": [
+            "Humor often centers on family dynamics, cultural quirks, and shared generational experiences. Avoid sarcasm that could be misread or humor that plays on stereotypes.",
+            "Warm, emotionally resonant storytelling outperforms ironic or detached tones."
+          ]
+        },
+        {
+          "heading": "Representation",
+          "points": [
+            "Cast talent that reflects the diversity within Hispanic communities (Afro-Latino, Indigenous, mixed heritage, range of skin tones). Avoid homogenizing \"Hispanic\" as a single look.",
+            "Do not exoticize or reduce culture to costumes, accents, or food alone—depict people in everyday, aspirational contexts."
+          ]
+        }
+      ]
+    }
+  ]
+}
