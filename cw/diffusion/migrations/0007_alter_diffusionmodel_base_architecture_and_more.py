@@ -6,18 +6,40 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0006_diffusionmodel_token_window_and_more'),
+        ("diffusion", "0006_diffusionmodel_token_window_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='diffusionmodel',
-            name='base_architecture',
-            field=models.CharField(choices=[('sdxl', 'SDXL'), ('sd15', 'SD 1.5'), ('flux1', 'Flux.1'), ('qwen', 'Qwen'), ('zimage', 'Z-Image (Lumina/S3-DiT)')], default='sdxl', help_text='Base model architecture (determines LoRA compatibility)', max_length=20),
+            model_name="diffusionmodel",
+            name="base_architecture",
+            field=models.CharField(
+                choices=[
+                    ("sdxl", "SDXL"),
+                    ("sd15", "SD 1.5"),
+                    ("flux1", "Flux.1"),
+                    ("qwen", "Qwen"),
+                    ("zimage", "Z-Image (Lumina/S3-DiT)"),
+                ],
+                default="sdxl",
+                help_text="Base model architecture (determines LoRA compatibility)",
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='loramodel',
-            name='base_architecture',
-            field=models.CharField(choices=[('sdxl', 'SDXL'), ('sd15', 'SD 1.5'), ('flux1', 'Flux.1'), ('qwen', 'Qwen'), ('zimage', 'Z-Image (Lumina/S3-DiT)')], default='sdxl', help_text='Base model architecture this LoRA is trained for', max_length=20),
+            model_name="loramodel",
+            name="base_architecture",
+            field=models.CharField(
+                choices=[
+                    ("sdxl", "SDXL"),
+                    ("sd15", "SD 1.5"),
+                    ("flux1", "Flux.1"),
+                    ("qwen", "Qwen"),
+                    ("zimage", "Z-Image (Lumina/S3-DiT)"),
+                ],
+                default="sdxl",
+                help_text="Base model architecture this LoRA is trained for",
+                max_length=20,
+            ),
         ),
     ]

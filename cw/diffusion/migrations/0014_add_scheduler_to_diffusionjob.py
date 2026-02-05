@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0013_add_lora_theme'),
+        ("diffusion", "0013_add_lora_theme"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='diffusionjob',
-            name='scheduler',
-            field=models.CharField(blank=True, help_text="Override scheduler (e.g., 'EulerDiscreteScheduler'). Leave blank to use model default.", max_length=100),
+            model_name="diffusionjob",
+            name="scheduler",
+            field=models.CharField(
+                blank=True,
+                help_text="Override scheduler (e.g., 'EulerDiscreteScheduler'). Leave blank to use model default.",
+                max_length=100,
+            ),
         ),
     ]

@@ -17,10 +17,11 @@ Usage:
 import argparse
 import logging
 import sys
-import torch
 from pathlib import Path
 
+import torch
 from config import get_config
+
 from models import ModelFactory
 
 logger = logging.getLogger(__name__)
@@ -160,13 +161,11 @@ Available model slugs:
   zimageturbo  - Z-Image Turbo (~33GB)
   flux1_dev    - Flux.1 Dev (~24GB)
   qwen_image   - Qwen-Image-2512 (~38GB)
-        """
+        """,
     )
 
     parser.add_argument(
-        "--model",
-        type=str,
-        help="Model slug to preload (if not specified, loads all models)"
+        "--model", type=str, help="Model slug to preload (if not specified, loads all models)"
     )
 
     args = parser.parse_args()

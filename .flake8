@@ -1,0 +1,32 @@
+[flake8]
+# Match Black's line length
+max-line-length = 100
+
+# Extend ignore to work better with Black
+# E203: whitespace before ':' (Black formatting)
+# W503: line break before binary operator (Black style)
+extend-ignore = E203, W503
+
+# Exclude common directories
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    */migrations/*,
+    build,
+    dist,
+    *.egg-info
+
+# Set maximum complexity threshold
+max-complexity = 10
+
+# Show source code for each error
+show-source = True
+
+# Show statistics at the end
+statistics = True
+
+# Count errors
+count = True

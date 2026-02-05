@@ -6,8 +6,10 @@ Handles CLIP 77-token limit by prioritizing LoRA trigger words.
 """
 
 import logging
+
 import torch
 from diffusers import StableDiffusionPipeline
+
 from .base import BaseModel
 from .mixins import CLIPTokenLimitMixin
 
@@ -32,7 +34,7 @@ class SD15Model(CLIPTokenLimitMixin, BaseModel):
     def _post_lora_load_fixes(self) -> None:
         """Re-apply MPS VAE fix after LoRA loading"""
         # LoRA loading can change VAE dtype - restore float32
-        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+        if self.device.type == "mps" and hasattr(self.pipeline, "vae"):
             logger.info(f"[SD15 MPS Fix] Re-applying VAE float32 after LoRA load")
             logger.info(f"[SD15 MPS Fix] VAE dtype before: {self.pipeline.vae.dtype}")
             self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)
@@ -41,7 +43,7 @@ class SD15Model(CLIPTokenLimitMixin, BaseModel):
     def _post_lora_unload_fixes(self) -> None:
         """Re-apply MPS VAE fix after LoRA unloading"""
         # LoRA unloading can change VAE dtype - restore float32
-        if self.device.type == 'mps' and hasattr(self.pipeline, 'vae'):
+        if self.device.type == "mps" and hasattr(self.pipeline, "vae"):
             logger.info(f"[SD15 MPS Fix] Re-applying VAE float32 after LoRA unload")
             logger.info(f"[SD15 MPS Fix] VAE dtype before: {self.pipeline.vae.dtype}")
             self.pipeline.vae = self.pipeline.vae.to(dtype=torch.float32)

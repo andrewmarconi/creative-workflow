@@ -14,10 +14,10 @@ Usage:
 import argparse
 import json
 import logging
+import random
 import sys
 from pathlib import Path
 from typing import List, Optional
-import random
 
 logger = logging.getLogger(__name__)
 
@@ -27,62 +27,141 @@ class PromptEnhancer:
 
     # Quality and technical enhancement tags
     QUALITY_TAGS = [
-        "masterpiece", "best quality", "high quality", "highly detailed",
-        "professional", "award-winning", "stunning", "exceptional detail"
+        "masterpiece",
+        "best quality",
+        "high quality",
+        "highly detailed",
+        "professional",
+        "award-winning",
+        "stunning",
+        "exceptional detail",
     ]
 
     STYLE_DESCRIPTORS = {
         "photography": [
-            "professional photography", "DSLR", "sharp focus", "bokeh",
-            "perfectly composed", "rule of thirds", "golden hour lighting",
-            "studio lighting", "natural lighting", "cinematic lighting"
+            "professional photography",
+            "DSLR",
+            "sharp focus",
+            "bokeh",
+            "perfectly composed",
+            "rule of thirds",
+            "golden hour lighting",
+            "studio lighting",
+            "natural lighting",
+            "cinematic lighting",
         ],
         "artistic": [
-            "concept art", "digital art", "illustration", "artwork",
-            "trending on artstation", "by renowned artist", "gallery quality",
-            "fine art", "artistic composition"
+            "concept art",
+            "digital art",
+            "illustration",
+            "artwork",
+            "trending on artstation",
+            "by renowned artist",
+            "gallery quality",
+            "fine art",
+            "artistic composition",
         ],
         "realistic": [
-            "photorealistic", "hyperrealistic", "lifelike", "realistic details",
-            "accurate proportions", "natural colors", "true to life",
-            "8k resolution", "ultra HD"
+            "photorealistic",
+            "hyperrealistic",
+            "lifelike",
+            "realistic details",
+            "accurate proportions",
+            "natural colors",
+            "true to life",
+            "8k resolution",
+            "ultra HD",
         ],
         "cinematic": [
-            "cinematic", "movie still", "film grain", "wide angle",
-            "dramatic lighting", "atmospheric", "moody", "epic composition",
-            "depth of field"
+            "cinematic",
+            "movie still",
+            "film grain",
+            "wide angle",
+            "dramatic lighting",
+            "atmospheric",
+            "moody",
+            "epic composition",
+            "depth of field",
         ],
         "coloring-book": [
-            "line art", "clean lines", "clear outlines", "black and white",
-            "simple shapes", "well-defined edges", "bold outlines",
-            "coloring page style", "no shading", "flat design",
-            "easy to color", "distinct sections"
-        ]
+            "line art",
+            "clean lines",
+            "clear outlines",
+            "black and white",
+            "simple shapes",
+            "well-defined edges",
+            "bold outlines",
+            "coloring page style",
+            "no shading",
+            "flat design",
+            "easy to color",
+            "distinct sections",
+        ],
     }
 
     TECHNICAL_ENHANCEMENTS = [
-        "intricate details", "sharp focus", "crisp details", "perfect composition",
-        "balanced colors", "rich colors", "vibrant", "dynamic range",
-        "high contrast", "well-lit", "professional grade"
+        "intricate details",
+        "sharp focus",
+        "crisp details",
+        "perfect composition",
+        "balanced colors",
+        "rich colors",
+        "vibrant",
+        "dynamic range",
+        "high contrast",
+        "well-lit",
+        "professional grade",
     ]
 
     NEGATIVE_PROMPT_DEFAULTS = [
-        "blurry", "low quality", "worst quality", "low resolution",
-        "jpeg artifacts", "compression artifacts", "distorted", "deformed",
-        "ugly", "duplicate", "mutilated", "poorly drawn", "bad anatomy",
-        "bad proportions", "watermark", "signature", "text"
+        "blurry",
+        "low quality",
+        "worst quality",
+        "low resolution",
+        "jpeg artifacts",
+        "compression artifacts",
+        "distorted",
+        "deformed",
+        "ugly",
+        "duplicate",
+        "mutilated",
+        "poorly drawn",
+        "bad anatomy",
+        "bad proportions",
+        "watermark",
+        "signature",
+        "text",
     ]
 
     COLORING_BOOK_NEGATIVE_PROMPTS = [
-        "colored", "shaded", "shading", "gradient", "soft edges", "blurry lines",
-        "unclear outlines", "complex details", "texture", "photorealistic",
-        "detailed rendering", "colored pencil", "watercolor", "painted",
-        "low quality", "messy lines", "incomplete outlines", "bad anatomy",
-        "poorly drawn", "distorted", "watermark", "signature", "text"
+        "colored",
+        "shaded",
+        "shading",
+        "gradient",
+        "soft edges",
+        "blurry lines",
+        "unclear outlines",
+        "complex details",
+        "texture",
+        "photorealistic",
+        "detailed rendering",
+        "colored pencil",
+        "watercolor",
+        "painted",
+        "low quality",
+        "messy lines",
+        "incomplete outlines",
+        "bad anatomy",
+        "poorly drawn",
+        "distorted",
+        "watermark",
+        "signature",
+        "text",
     ]
 
-    def __init__(self, style: str = "auto", creativity: float = 0.7,
-                 trigger_words: Optional[str] = None):
+    def __init__(
+        self, style: str = "auto", creativity: float = 0.7, trigger_words: Optional[str] = None
+    ):
         """
         Initialize the prompt enhancer.
 
@@ -108,11 +187,7 @@ class PromptEnhancer:
         simple_prompt = simple_prompt.strip()
 
         if not simple_prompt:
-            return {
-                "original": "",
-                "enhanced_prompt": "",
-                "negative_prompt": ""
-            }
+            return {"original": "", "enhanced_prompt": "", "negative_prompt": ""}
 
         # Auto-detect style from prompt
         style = self._detect_style(simple_prompt) if self.style == "auto" else self.style
@@ -130,7 +205,9 @@ class PromptEnhancer:
         else:
             # Add quality tags (2-3 random ones based on creativity)
             num_quality = max(2, int(3 * self.creativity))
-            quality_tags = random.sample(self.QUALITY_TAGS, min(num_quality, len(self.QUALITY_TAGS)))
+            quality_tags = random.sample(
+                self.QUALITY_TAGS, min(num_quality, len(self.QUALITY_TAGS))
+            )
             components.extend(quality_tags)
 
             # Add the core prompt
@@ -142,15 +219,14 @@ class PromptEnhancer:
                 num_style = max(2, int(4 * self.creativity))
                 style_tags = random.sample(
                     self.STYLE_DESCRIPTORS[style],
-                    min(num_style, len(self.STYLE_DESCRIPTORS[style]))
+                    min(num_style, len(self.STYLE_DESCRIPTORS[style])),
                 )
                 components.extend(style_tags)
 
             # Add technical enhancements
             num_technical = max(2, int(4 * self.creativity))
             technical_tags = random.sample(
-                self.TECHNICAL_ENHANCEMENTS,
-                min(num_technical, len(self.TECHNICAL_ENHANCEMENTS))
+                self.TECHNICAL_ENHANCEMENTS, min(num_technical, len(self.TECHNICAL_ENHANCEMENTS))
             )
             components.extend(technical_tags)
 
@@ -167,7 +243,7 @@ class PromptEnhancer:
             "original": simple_prompt,
             "enhanced_prompt": enhanced_prompt,
             "negative_prompt": negative_prompt,
-            "detected_style": style
+            "detected_style": style,
         }
 
     def _enhance_coloring_book_prompt(self, prompt: str) -> List[str]:
@@ -186,14 +262,17 @@ class PromptEnhancer:
         num_style = max(3, int(5 * self.creativity))
         style_tags = random.sample(
             self.STYLE_DESCRIPTORS["coloring-book"],
-            min(num_style, len(self.STYLE_DESCRIPTORS["coloring-book"]))
+            min(num_style, len(self.STYLE_DESCRIPTORS["coloring-book"])),
         )
         components.extend(style_tags)
 
         # Quality tags specific to line art
         coloring_quality = [
-            "high quality line art", "professional coloring page",
-            "well-defined shapes", "clear boundaries", "printable quality"
+            "high quality line art",
+            "professional coloring page",
+            "well-defined shapes",
+            "clear boundaries",
+            "printable quality",
         ]
         num_quality = max(2, int(3 * self.creativity))
         components.extend(random.sample(coloring_quality, min(num_quality, len(coloring_quality))))
@@ -208,7 +287,9 @@ class PromptEnhancer:
         if any(word in prompt_lower for word in ["person", "woman", "man", "girl", "boy", "child"]):
             prompt += ", simple facial features, clear outlines"
 
-        if any(word in prompt_lower for word in ["animal", "cat", "dog", "bird", "butterfly", "fish"]):
+        if any(
+            word in prompt_lower for word in ["animal", "cat", "dog", "bird", "butterfly", "fish"]
+        ):
             prompt += ", simple shapes, easy-to-color sections"
 
         if any(word in prompt_lower for word in ["flower", "plant", "tree", "nature"]):
@@ -247,7 +328,9 @@ class PromptEnhancer:
         prompt_lower = prompt.lower()
 
         # Add contextual enhancements based on subject
-        if any(word in prompt_lower for word in ["person", "woman", "man", "girl", "boy", "portrait"]):
+        if any(
+            word in prompt_lower for word in ["person", "woman", "man", "girl", "boy", "portrait"]
+        ):
             prompt += ", detailed facial features, expressive eyes"
 
         if any(word in prompt_lower for word in ["landscape", "nature", "scenery", "outdoor"]):
@@ -265,10 +348,14 @@ class PromptEnhancer:
 class HFPromptEnhancer(PromptEnhancer):
     """Enhanced version using local HuggingFace models (optimized for Apple Silicon)."""
 
-    def __init__(self, model_id: str = "Qwen/Qwen2.5-3B-Instruct",
-                 style: str = "auto", creativity: float = 0.7,
-                 trigger_words: Optional[str] = None,
-                 device: Optional[str] = None):
+    def __init__(
+        self,
+        model_id: str = "Qwen/Qwen2.5-3B-Instruct",
+        style: str = "auto",
+        creativity: float = 0.7,
+        trigger_words: Optional[str] = None,
+        device: Optional[str] = None,
+    ):
         """
         Initialize HuggingFace model-based enhancer.
 
@@ -289,10 +376,12 @@ class HFPromptEnhancer(PromptEnhancer):
     def _load_model(self):
         """Load the HuggingFace model with MPS optimization for Apple Silicon."""
         try:
-            from transformers import AutoTokenizer, AutoModelForCausalLM
             import torch
+            from transformers import AutoModelForCausalLM, AutoTokenizer
         except ImportError:
-            logger.warning("transformers/torch not installed. Falling back to rule-based enhancement.")
+            logger.warning(
+                "transformers/torch not installed. Falling back to rule-based enhancement."
+            )
             logger.debug("Install with: uv add transformers torch accelerate")
             return
 
@@ -324,10 +413,7 @@ class HFPromptEnhancer(PromptEnhancer):
             logger.debug(f"Using dtype: {dtype}")
 
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id,
-                torch_dtype=dtype,
-                device_map=self.device,
-                low_cpu_mem_usage=True
+                self.model_id, torch_dtype=dtype, device_map=self.device, low_cpu_mem_usage=True
             )
             logger.debug("Model weights loaded")
 
@@ -399,16 +485,14 @@ Format your response as JSON:
         # Format for chat models
         messages = [
             {"role": "system", "content": system_message},
-            {"role": "user", "content": user_message}
+            {"role": "user", "content": user_message},
         ]
 
         try:
             logger.debug("Formatting prompt for model...")
             # Apply chat template
             text = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
+                messages, tokenize=False, add_generation_prompt=True
             )
 
             logger.debug("Tokenizing input...")
@@ -416,9 +500,12 @@ Format your response as JSON:
             inputs = self.tokenizer(text, return_tensors="pt").to(self.device)
             logger.debug(f"Input tokens: {inputs['input_ids'].shape[1]}")
 
-            logger.debug(f"Generating enhanced prompt (device={self.device}, creativity={self.creativity}, max_tokens=512)")
+            logger.debug(
+                f"Generating enhanced prompt (device={self.device}, creativity={self.creativity}, max_tokens=512)"
+            )
             # Generate
             import time
+
             start_time = time.time()
 
             with torch.no_grad():
@@ -428,7 +515,7 @@ Format your response as JSON:
                     temperature=self.creativity,
                     do_sample=True if self.creativity > 0 else False,
                     top_p=0.9,
-                    pad_token_id=self.tokenizer.eos_token_id
+                    pad_token_id=self.tokenizer.eos_token_id,
                 )
 
             generation_time = time.time() - start_time
@@ -436,12 +523,15 @@ Format your response as JSON:
 
             logger.debug("Decoding response...")
             # Decode
-            response = self.tokenizer.decode(outputs[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+            response = self.tokenizer.decode(
+                outputs[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
+            )
             logger.debug(f"Response length: {len(response)} chars")
 
             # Try to extract JSON
             import re
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+
+            json_match = re.search(r"\{.*\}", response, re.DOTALL)
             if json_match:
                 result = json.loads(json_match.group())
                 logger.debug("JSON parsed successfully")
@@ -451,28 +541,37 @@ Format your response as JSON:
                     torch.mps.empty_cache()
                     logger.debug("MPS cache cleared")
 
-                logger.info(f"Prompt enhanced successfully: {len(result.get('enhanced_prompt', ''))} chars")
+                logger.info(
+                    f"Prompt enhanced successfully: {len(result.get('enhanced_prompt', ''))} chars"
+                )
                 return {
                     "original": simple_prompt,
                     "enhanced_prompt": result.get("enhanced_prompt", ""),
                     "negative_prompt": result.get("negative_prompt", ""),
                     "method": "huggingface",
-                    "model": self.model_id
+                    "model": self.model_id,
                 }
             else:
                 raise ValueError("No JSON found in response")
 
         except Exception as e:
-            logger.warning(f"HuggingFace model enhancement failed: {e}. Falling back to rule-based.")
+            logger.warning(
+                f"HuggingFace model enhancement failed: {e}. Falling back to rule-based."
+            )
             return super().enhance_prompt(simple_prompt)
 
 
 class LLMPromptEnhancer(PromptEnhancer):
     """Enhanced version using LLM API for more sophisticated expansions."""
 
-    def __init__(self, api_key: str, model: str = "claude-3-5-sonnet-20241022",
-                 style: str = "auto", creativity: float = 0.7,
-                 trigger_words: Optional[str] = None):
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "claude-3-5-sonnet-20241022",
+        style: str = "auto",
+        creativity: float = 0.7,
+        trigger_words: Optional[str] = None,
+    ):
         """
         Initialize LLM-based enhancer.
 
@@ -492,7 +591,9 @@ class LLMPromptEnhancer(PromptEnhancer):
         try:
             import anthropic
         except ImportError:
-            logger.warning("anthropic package not installed. Falling back to rule-based enhancement.")
+            logger.warning(
+                "anthropic package not installed. Falling back to rule-based enhancement."
+            )
             logger.debug("Install with: uv add anthropic")
             return super().enhance_prompt(simple_prompt)
 
@@ -549,21 +650,22 @@ Format your response as JSON:
                 max_tokens=1024,
                 temperature=self.creativity,
                 system=system_prompt,
-                messages=[{"role": "user", "content": user_message}]
+                messages=[{"role": "user", "content": user_message}],
             )
 
             response_text = message.content[0].text
 
             # Try to extract JSON
             import re
-            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+
+            json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
             if json_match:
                 result = json.loads(json_match.group())
                 return {
                     "original": simple_prompt,
                     "enhanced_prompt": result.get("enhanced_prompt", ""),
                     "negative_prompt": result.get("negative_prompt", ""),
-                    "method": "llm"
+                    "method": "llm",
                 }
             else:
                 raise ValueError("No JSON found in response")
@@ -578,19 +680,21 @@ def process_prompts_from_file(filepath: Path, enhancer: PromptEnhancer) -> List[
     results = []
 
     # Count total prompts first
-    with open(filepath, 'r', encoding='utf-8') as f:
-        total_prompts = sum(1 for line in f if line.strip() and not line.strip().startswith('#'))
+    with open(filepath, "r", encoding="utf-8") as f:
+        total_prompts = sum(1 for line in f if line.strip() and not line.strip().startswith("#"))
 
     print(f"\nProcessing {total_prompts} prompts from {filepath}")
     print(f"{'='*60}\n")
 
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         current = 0
         for line in f:
             line = line.strip()
-            if line and not line.startswith('#'):  # Skip empty lines and comments
+            if line and not line.startswith("#"):  # Skip empty lines and comments
                 current += 1
-                print(f"[{current}/{total_prompts}] Processing: {line[:50]}{'...' if len(line) > 50 else ''}")
+                print(
+                    f"[{current}/{total_prompts}] Processing: {line[:50]}{'...' if len(line) > 50 else ''}"
+                )
                 result = enhancer.enhance_prompt(line)
                 results.append(result)
                 print()  # Blank line between prompts
@@ -602,7 +706,8 @@ def process_prompts_from_file(filepath: Path, enhancer: PromptEnhancer) -> List[
     return results
 
 
-def main():
+def _setup_argument_parser():
+    """Setup and return the argument parser for the CLI."""
     parser = argparse.ArgumentParser(
         description="Enhance image generation prompts for diffusion models",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -623,113 +728,140 @@ Examples:
 
   # With LoRA trigger words
   python prompt_enhancer.py "unicorn" --style coloring-book --trigger-words "sketch, rough sketch, pen sketch" --use-hf
-        """
+        """,
     )
 
     # Input options
     input_group = parser.add_mutually_exclusive_group(required=True)
-    input_group.add_argument("prompt", nargs='?', help="Single prompt to enhance")
+    input_group.add_argument("prompt", nargs="?", help="Single prompt to enhance")
     input_group.add_argument("--file", "-f", type=Path, help="File with prompts (one per line)")
 
     # Enhancement options
-    parser.add_argument("--style", "-s",
-                       choices=["auto", "photography", "artistic", "realistic", "cinematic", "coloring-book"],
-                       default="auto",
-                       help="Enhancement style (default: auto-detect)")
-    parser.add_argument("--creativity", "-c", type=float, default=0.7,
-                       help="Creativity level 0.0-1.0 (default: 0.7)")
-    parser.add_argument("--trigger-words", "-t", type=str,
-                       help="LoRA trigger words to include at start of prompt")
+    parser.add_argument(
+        "--style",
+        "-s",
+        choices=["auto", "photography", "artistic", "realistic", "cinematic", "coloring-book"],
+        default="auto",
+        help="Enhancement style (default: auto-detect)",
+    )
+    parser.add_argument(
+        "--creativity",
+        "-c",
+        type=float,
+        default=0.7,
+        help="Creativity level 0.0-1.0 (default: 0.7)",
+    )
+    parser.add_argument(
+        "--trigger-words", "-t", type=str, help="LoRA trigger words to include at start of prompt"
+    )
 
     # LLM options
-    parser.add_argument("--use-llm", action="store_true",
-                       help="Use Anthropic API for advanced enhancement")
+    parser.add_argument(
+        "--use-llm", action="store_true", help="Use Anthropic API for advanced enhancement"
+    )
     parser.add_argument("--api-key", help="Anthropic API key (or set ANTHROPIC_API_KEY env var)")
-    parser.add_argument("--model", default="claude-3-5-sonnet-20241022",
-                       help="Anthropic model to use (for --use-llm)")
+    parser.add_argument(
+        "--model",
+        default="claude-3-5-sonnet-20241022",
+        help="Anthropic model to use (for --use-llm)",
+    )
 
     # HuggingFace local model options
-    parser.add_argument("--use-hf", action="store_true",
-                       help="Use local HuggingFace model for enhancement (optimized for Apple Silicon)")
-    parser.add_argument("--hf-model", default="Qwen/Qwen2.5-3B-Instruct",
-                       help="HuggingFace model ID (default: Qwen/Qwen2.5-3B-Instruct)")
-    parser.add_argument("--list-hf-models", action="store_true",
-                       help="Show recommended HuggingFace models and exit")
+    parser.add_argument(
+        "--use-hf",
+        action="store_true",
+        help="Use local HuggingFace model for enhancement (optimized for Apple Silicon)",
+    )
+    parser.add_argument(
+        "--hf-model",
+        default="Qwen/Qwen2.5-3B-Instruct",
+        help="HuggingFace model ID (default: Qwen/Qwen2.5-3B-Instruct)",
+    )
+    parser.add_argument(
+        "--list-hf-models", action="store_true", help="Show recommended HuggingFace models and exit"
+    )
 
     # Output options
-    parser.add_argument("--output", "-o", type=Path,
-                       help="Save results to JSON file")
-    parser.add_argument("--show-negative", action="store_true",
-                       help="Show negative prompts in output")
-    parser.add_argument("--json", action="store_true",
-                       help="Output as JSON")
+    parser.add_argument("--output", "-o", type=Path, help="Save results to JSON file")
+    parser.add_argument(
+        "--show-negative", action="store_true", help="Show negative prompts in output"
+    )
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
 
-    args = parser.parse_args()
+    return parser
 
-    # Show recommended models and exit
-    if args.list_hf_models:
-        print("Recommended HuggingFace Models for Prompt Enhancement:\n")
-        print("1. Qwen/Qwen2.5-3B-Instruct (DEFAULT)")
-        print("   - Best overall choice, matches Qwen-Image ecosystem")
-        print("   - Size: 3B parameters (efficient on M4 Mac)")
-        print("   - Excellent instruction-following and creativity\n")
-        print("2. gokaygokay/Flux-Prompt-Enhance")
-        print("   - Specialized for Flux/Stable Diffusion prompts")
-        print("   - Size: ~8B parameters")
-        print("   - Purpose-built for image generation\n")
-        print("3. microsoft/Phi-3.5-mini-instruct")
-        print("   - Most efficient option")
-        print("   - Size: 3.8B parameters")
-        print("   - Optimized for Apple Silicon\n")
-        print("4. Qwen/Qwen2.5-7B-Instruct")
-        print("   - Higher quality, larger model")
-        print("   - Size: 7B parameters (works on 48GB RAM)")
-        print("   - More detailed and creative enhancements\n")
-        print("Usage: python prompt_enhancer.py 'a cat' --use-hf --hf-model MODEL_ID")
-        sys.exit(0)
 
-    # Validate mutually exclusive enhancement methods
-    if args.use_llm and args.use_hf:
-        print("Error: Cannot use both --use-llm and --use-hf. Choose one enhancement method.")
-        sys.exit(1)
+def _show_recommended_models():
+    """Display recommended HuggingFace models and exit."""
+    print("Recommended HuggingFace Models for Prompt Enhancement:\n")
+    print("1. Qwen/Qwen2.5-3B-Instruct (DEFAULT)")
+    print("   - Best overall choice, matches Qwen-Image ecosystem")
+    print("   - Size: 3B parameters (efficient on M4 Mac)")
+    print("   - Excellent instruction-following and creativity\n")
+    print("2. gokaygokay/Flux-Prompt-Enhance")
+    print("   - Specialized for Flux/Stable Diffusion prompts")
+    print("   - Size: ~8B parameters")
+    print("   - Purpose-built for image generation\n")
+    print("3. microsoft/Phi-3.5-mini-instruct")
+    print("   - Most efficient option")
+    print("   - Size: 3.8B parameters")
+    print("   - Optimized for Apple Silicon\n")
+    print("4. Qwen/Qwen2.5-7B-Instruct")
+    print("   - Higher quality, larger model")
+    print("   - Size: 7B parameters (works on 48GB RAM)")
+    print("   - More detailed and creative enhancements\n")
+    print("Usage: python prompt_enhancer.py 'a cat' --use-hf --hf-model MODEL_ID")
+    sys.exit(0)
 
-    # Initialize enhancer
+
+def _initialize_enhancer(args):
+    """
+    Initialize the appropriate prompt enhancer based on CLI arguments.
+
+    Args:
+        args: Parsed argument namespace
+
+    Returns:
+        PromptEnhancer instance (PromptEnhancer, LLMPromptEnhancer, or HFPromptEnhancer)
+    """
     if args.use_hf:
-        enhancer = HFPromptEnhancer(
+        return HFPromptEnhancer(
             model_id=args.hf_model,
             style=args.style,
             creativity=args.creativity,
-            trigger_words=args.trigger_words
+            trigger_words=args.trigger_words,
         )
     elif args.use_llm:
         import os
+
         api_key = args.api_key or os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             print("Error: --api-key required or set ANTHROPIC_API_KEY environment variable")
             sys.exit(1)
 
-        enhancer = LLMPromptEnhancer(
+        return LLMPromptEnhancer(
             api_key=api_key,
             model=args.model,
             style=args.style,
             creativity=args.creativity,
-            trigger_words=args.trigger_words
+            trigger_words=args.trigger_words,
         )
     else:
-        enhancer = PromptEnhancer(
-            style=args.style,
-            creativity=args.creativity,
-            trigger_words=args.trigger_words
+        return PromptEnhancer(
+            style=args.style, creativity=args.creativity, trigger_words=args.trigger_words
         )
 
-    # Process prompts
-    if args.file:
-        results = process_prompts_from_file(args.file, enhancer)
-    else:
-        results = [enhancer.enhance_prompt(args.prompt)]
 
-    # Output results
+def _output_results(results, args):
+    """
+    Output enhancement results in requested format.
+
+    Args:
+        results: List of enhancement result dicts
+        args: Parsed argument namespace
+    """
     if args.json or args.output:
+        # JSON output
         method = "rule-based"
         if args.use_llm:
             method = "llm"
@@ -741,13 +873,13 @@ Examples:
                 "style": args.style,
                 "creativity": args.creativity,
                 "method": method,
-                "model": args.hf_model if args.use_hf else (args.model if args.use_llm else None)
+                "model": args.hf_model if args.use_hf else (args.model if args.use_llm else None),
             },
-            "prompts": results
+            "prompts": results,
         }
 
         if args.output:
-            with open(args.output, 'w', encoding='utf-8') as f:
+            with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(output_data, f, indent=2, ensure_ascii=False)
             print(f"Results saved to {args.output}")
         else:
@@ -766,13 +898,49 @@ Examples:
             if args.show_negative:
                 print(f"\nNegative:\n{result['negative_prompt']}")
 
-            if 'detected_style' in result:
+            if "detected_style" in result:
                 print(f"\nDetected style: {result['detected_style']}")
 
-            if 'model' in result:
+            if "model" in result:
                 print(f"Model: {result['model']}")
-            elif 'method' in result:
+            elif "method" in result:
                 print(f"Method: {result['method']}")
+
+
+def main():
+    """
+    CLI entry point for prompt enhancement.
+
+    Refactored to reduce complexity by extracting:
+    - Argument parser setup to _setup_argument_parser()
+    - Model recommendations display to _show_recommended_models()
+    - Enhancer initialization to _initialize_enhancer()
+    - Output formatting to _output_results()
+    """
+    # Setup CLI argument parser
+    parser = _setup_argument_parser()
+    args = parser.parse_args()
+
+    # Handle --list-hf-models flag
+    if args.list_hf_models:
+        _show_recommended_models()
+
+    # Validate mutually exclusive enhancement methods
+    if args.use_llm and args.use_hf:
+        print("Error: Cannot use both --use-llm and --use-hf. Choose one enhancement method.")
+        sys.exit(1)
+
+    # Initialize enhancer
+    enhancer = _initialize_enhancer(args)
+
+    # Process prompts
+    if args.file:
+        results = process_prompts_from_file(args.file, enhancer)
+    else:
+        results = [enhancer.enhance_prompt(args.prompt)]
+
+    # Output results
+    _output_results(results, args)
 
 
 if __name__ == "__main__":

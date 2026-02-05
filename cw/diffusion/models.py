@@ -4,11 +4,12 @@ Django models for Creative Workflow diffusion image generation system.
 Models are based on the presets.json structure and integrate with
 the existing lib modules (models/*, loras/*, prompt_enhancer).
 """
-from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.postgres.fields import ArrayField
+
 import json
 
+from django.contrib.postgres.fields import ArrayField
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 BASE_ARCHITECTURE_CHOICES = [
     ("sdxl", "SDXL"),
@@ -54,48 +55,46 @@ class DiffusionModel(models.Model):
         max_length=20,
         choices=BASE_ARCHITECTURE_CHOICES,
         default="sdxl",
-        help_text="Base model architecture (determines LoRA compatibility)"
+        help_text="Base model architecture (determines LoRA compatibility)",
     )
     path = models.CharField(
         max_length=500,
-        help_text="HuggingFace model ID (e.g., 'Qwen/Qwen-Image-2512') or local path"
+        help_text="HuggingFace model ID (e.g., 'Qwen/Qwen-Image-2512') or local path",
     )
     pipeline = models.CharField(
-        max_length=100,
-        help_text="Pipeline class name (e.g., 'ZImagePipeline', 'FluxPipeline')"
+        max_length=100, help_text="Pipeline class name (e.g., 'ZImagePipeline', 'FluxPipeline')"
     )
 
     # Settings (stored as JSON for flexibility)
     steps = models.IntegerField(
         default=28,
         validators=[MinValueValidator(1), MaxValueValidator(200)],
-        help_text="Default number of inference steps"
+        help_text="Default number of inference steps",
     )
     guidance_scale = models.FloatField(
         default=3.5,
         validators=[MinValueValidator(0.0), MaxValueValidator(20.0)],
-        help_text="Default guidance scale (CFG)"
+        help_text="Default guidance scale (CFG)",
     )
     default_width = models.IntegerField(
         default=1024,
         validators=[MinValueValidator(256), MaxValueValidator(4096)],
-        help_text="Default image width in pixels"
+        help_text="Default image width in pixels",
     )
     default_height = models.IntegerField(
         default=1024,
         validators=[MinValueValidator(256), MaxValueValidator(4096)],
-        help_text="Default image height in pixels"
+        help_text="Default image height in pixels",
     )
     max_pixels = models.IntegerField(
-        default=1048576,
-        help_text="Maximum total pixels (width * height)"
+        default=1048576, help_text="Maximum total pixels (width * height)"
     )
     scheduler = models.CharField(
         max_length=100,
         blank=True,
         default="",
         choices=SCHEDULER_CHOICES,
-        help_text="Default scheduler for this model"
+        help_text="Default scheduler for this model",
     )
     dtype = models.CharField(
         max_length=50,
@@ -106,30 +105,25 @@ class DiffusionModel(models.Model):
             ("float32", "Float32"),
             ("float8_e4m3fn", "Float8 (E4M3)"),
         ],
-        help_text="Data type for model weights"
+        help_text="Data type for model weights",
     )
     supports_negative_prompt = models.BooleanField(
-        default=False,
-        help_text="Whether this model supports negative prompts"
+        default=False, help_text="Whether this model supports negative prompts"
     )
     force_default_guidance = models.BooleanField(
         default=False,
-        help_text="Force model's default guidance_scale (Turbo models). Prevents LoRA/job overrides."
+        help_text="Force model's default guidance_scale (Turbo models). Prevents LoRA/job overrides.",
     )
     max_sequence_length = models.IntegerField(
-        blank=True,
-        null=True,
-        help_text="Maximum sequence length for text encoder"
+        blank=True, null=True, help_text="Maximum sequence length for text encoder"
     )
     token_window = models.IntegerField(
         blank=True,
         null=True,
-        help_text="Maximum tokens for prompt input (e.g. 77 for CLIP, 512 for T5)"
+        help_text="Maximum tokens for prompt input (e.g. 77 for CLIP, 512 for T5)",
     )
     vram_usage = models.IntegerField(
-        blank=True,
-        null=True,
-        help_text="Minimum VRAM required in MB (e.g. 8192 for 8GB)"
+        blank=True, null=True, help_text="Minimum VRAM required in MB (e.g. 8192 for 8GB)"
     )
 
     # Metadata
@@ -140,7 +134,7 @@ class DiffusionModel(models.Model):
     class Meta:
         verbose_name = "Diffusion Model"
         verbose_name_plural = "Diffusion Models"
-        ordering = ['label']
+        ordering = ["label"]
 
     def __str__(self):
         return self.label
@@ -172,56 +166,50 @@ class LoraModel(models.Model):
     path = models.CharField(
         max_length=500,
         blank=True,
-        help_text="Path to LoRA file (relative to base_model_path or HF model ID). Optional if AIR is provided."
+        help_text="Path to LoRA file (relative to base_model_path or HF model ID). Optional if AIR is provided.",
     )
-    air = models.CharField(
-        max_length=500,
-        blank=True,
-        help_text="AIR (AI Resource) URN identifier"
-    )
+    air = models.CharField(max_length=500, blank=True, help_text="AIR (AI Resource) URN identifier")
 
     # Compatibility
     base_architecture = models.CharField(
         max_length=20,
         choices=BASE_ARCHITECTURE_CHOICES,
         default="sdxl",
-        help_text="Base model architecture this LoRA is trained for"
+        help_text="Base model architecture this LoRA is trained for",
     )
 
     # Prompt and settings
     prompt_suffix = models.TextField(
-        blank=True,
-        help_text="Trigger words and style description to append to prompts"
+        blank=True, help_text="Trigger words and style description to append to prompts"
     )
     negative_prompt_suffix = models.TextField(
         blank=True,
-        help_text="Terms to append to negative prompts (only applied when model supports negative prompts)"
+        help_text="Terms to append to negative prompts (only applied when model supports negative prompts)",
     )
     default_strength = models.FloatField(
         default=0.8,
         validators=[MinValueValidator(0.0), MaxValueValidator(2.0)],
-        help_text="Default LoRA strength/weight"
+        help_text="Default LoRA strength/weight",
     )
     guidance_scale = models.FloatField(
         null=True,
         blank=True,
         validators=[MinValueValidator(0.0), MaxValueValidator(20.0)],
-        help_text="Override guidance scale (CFG) when using this LoRA. Leave blank to use model/job default."
+        help_text="Override guidance scale (CFG) when using this LoRA. Leave blank to use model/job default.",
     )
     clip_skip = models.IntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(12)],
-        help_text="Number of CLIP layers to skip (1-12). Leave blank to use model default. Commonly 1 or 2 for anime/artistic styles."
+        help_text="Number of CLIP layers to skip (1-12). Leave blank to use model default. Commonly 1 or 2 for anime/artistic styles.",
     )
     notes = models.TextField(
-        blank=True,
-        help_text="Internal notes about this LoRA (usage tips, characteristics, etc.)"
+        blank=True, help_text="Internal notes about this LoRA (usage tips, characteristics, etc.)"
     )
     theme = models.CharField(
         max_length=100,
         blank=True,
-        help_text="Theme or category for filtering (e.g., 'anime', 'photorealistic', 'fantasy')"
+        help_text="Theme or category for filtering (e.g., 'anime', 'photorealistic', 'fantasy')",
     )
 
     # Metadata
@@ -232,16 +220,14 @@ class LoraModel(models.Model):
     class Meta:
         verbose_name = "LoRA Model"
         verbose_name_plural = "LoRA Models"
-        ordering = ['label']
+        ordering = ["label"]
 
     def __str__(self):
         return self.label
 
     def get_settings_dict(self):
         """Return settings as a dictionary matching presets.json format."""
-        settings = {
-            "strength": self.default_strength
-        }
+        settings = {"strength": self.default_strength}
         if self.guidance_scale is not None:
             settings["guidance_scale"] = self.guidance_scale
         if self.clip_skip is not None:
@@ -253,51 +239,42 @@ class Prompt(models.Model):
     """Stores prompts with enhancement tracking."""
 
     STYLE_CHOICES = [
-        ('auto', 'Auto-detect'),
-        ('photography', 'Photography'),
-        ('artistic', 'Artistic'),
-        ('realistic', 'Realistic'),
-        ('cinematic', 'Cinematic'),
-        ('coloring-book', 'Coloring Book'),
+        ("auto", "Auto-detect"),
+        ("photography", "Photography"),
+        ("artistic", "Artistic"),
+        ("realistic", "Realistic"),
+        ("cinematic", "Cinematic"),
+        ("coloring-book", "Coloring Book"),
     ]
 
     ENHANCEMENT_METHOD_CHOICES = [
-        ('none', 'No Enhancement'),
-        ('rule-based', 'Rule-based'),
-        ('huggingface', 'HuggingFace Local Model'),
-        ('llm', 'LLM API'),
+        ("none", "No Enhancement"),
+        ("rule-based", "Rule-based"),
+        ("huggingface", "HuggingFace Local Model"),
+        ("llm", "LLM API"),
     ]
 
     # Source prompt
     source_prompt = models.TextField(help_text="Original user-provided prompt")
 
     # Enhanced versions
-    enhanced_prompt = models.TextField(
-        blank=True,
-        help_text="AI-enhanced version of the prompt"
-    )
-    negative_prompt = models.TextField(
-        blank=True,
-        help_text="Negative prompt (things to avoid)"
-    )
+    enhanced_prompt = models.TextField(blank=True, help_text="AI-enhanced version of the prompt")
+    negative_prompt = models.TextField(blank=True, help_text="Negative prompt (things to avoid)")
 
     # Enhancement settings
     enhancement_style = models.CharField(
-        max_length=50,
-        choices=STYLE_CHOICES,
-        default='auto',
-        help_text="Style used for enhancement"
+        max_length=50, choices=STYLE_CHOICES, default="auto", help_text="Style used for enhancement"
     )
     enhancement_method = models.CharField(
         max_length=50,
         choices=ENHANCEMENT_METHOD_CHOICES,
-        default='none',
-        help_text="Method used to enhance the prompt"
+        default="none",
+        help_text="Method used to enhance the prompt",
     )
     creativity = models.FloatField(
         default=0.7,
         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
-        help_text="Creativity level for enhancement (0.0-1.0)"
+        help_text="Creativity level for enhancement (0.0-1.0)",
     )
 
     # Metadata
@@ -307,10 +284,12 @@ class Prompt(models.Model):
     class Meta:
         verbose_name = "Prompt"
         verbose_name_plural = "Prompts"
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.source_prompt[:50]}..." if len(self.source_prompt) > 50 else self.source_prompt
+        return (
+            f"{self.source_prompt[:50]}..." if len(self.source_prompt) > 50 else self.source_prompt
+        )
 
 
 class DiffusionJob(models.Model):
@@ -320,39 +299,39 @@ class DiffusionJob(models.Model):
     """
 
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('queued', 'Queued'),
-        ('processing', 'Processing'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
-        ('cancelled', 'Cancelled'),
+        ("pending", "Pending"),
+        ("queued", "Queued"),
+        ("processing", "Processing"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+        ("cancelled", "Cancelled"),
     ]
 
     # Job configuration
     diffusion_model = models.ForeignKey(
         DiffusionModel,
         on_delete=models.PROTECT,
-        related_name='jobs',
-        help_text="Model to use for generation"
+        related_name="jobs",
+        help_text="Model to use for generation",
     )
     lora_model = models.ForeignKey(
         LoraModel,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='jobs',
-        help_text="Optional LoRA to apply"
+        related_name="jobs",
+        help_text="Optional LoRA to apply",
     )
     prompt = models.ForeignKey(
         Prompt,
         on_delete=models.PROTECT,
-        related_name='jobs',
-        help_text="Prompt to use for generation"
+        related_name="jobs",
+        help_text="Prompt to use for generation",
     )
     identifier = models.CharField(
         max_length=100,
         blank=True,
-        help_text="Optional identifier for file naming (e.g., 'hero-shot', 'product-v2')"
+        help_text="Optional identifier for file naming (e.g., 'hero-shot', 'product-v2')",
     )
 
     # Generation parameters (override model defaults if set)
@@ -360,61 +339,56 @@ class DiffusionJob(models.Model):
         null=True,
         blank=True,
         validators=[MinValueValidator(256), MaxValueValidator(4096)],
-        help_text="Image width (uses model default if not set)"
+        help_text="Image width (uses model default if not set)",
     )
     height = models.IntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(256), MaxValueValidator(4096)],
-        help_text="Image height (uses model default if not set)"
+        help_text="Image height (uses model default if not set)",
     )
     steps = models.IntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(200)],
-        help_text="Number of steps (uses model default if not set)"
+        help_text="Number of steps (uses model default if not set)",
     )
     guidance_scale = models.FloatField(
         null=True,
         blank=True,
         validators=[MinValueValidator(0.0), MaxValueValidator(20.0)],
-        help_text="Guidance scale (uses model default if not set)"
+        help_text="Guidance scale (uses model default if not set)",
     )
     lora_strength = models.FloatField(
         null=True,
         blank=True,
         validators=[MinValueValidator(0.0), MaxValueValidator(2.0)],
-        help_text="LoRA strength (uses LoRA default if not set)"
+        help_text="LoRA strength (uses LoRA default if not set)",
     )
     seed = models.BigIntegerField(
-        null=True,
-        blank=True,
-        help_text="Random seed for reproducibility (random if not set)"
+        null=True, blank=True, help_text="Random seed for reproducibility (random if not set)"
     )
     scheduler = models.CharField(
         max_length=100,
         blank=True,
         default="",
         choices=SCHEDULER_CHOICES,
-        help_text="Override scheduler. Leave blank to use model default."
+        help_text="Override scheduler. Leave blank to use model default.",
     )
     num_images = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(10)],
-        help_text="Number of images to generate"
+        help_text="Number of images to generate",
     )
 
     # Job status
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending',
-        help_text="Current job status"
+        max_length=20, choices=STATUS_CHOICES, default="pending", help_text="Current job status"
     )
     rq_job_id = models.CharField(
         max_length=255,
         blank=True,
-        help_text="Celery task ID for tracking (field name retained for compatibility)"
+        help_text="Celery task ID for tracking (field name retained for compatibility)",
     )
 
     # Results
@@ -422,17 +396,14 @@ class DiffusionJob(models.Model):
         models.CharField(max_length=500),
         blank=True,
         default=list,
-        help_text="List of generated image paths"
+        help_text="List of generated image paths",
     )
     generation_metadata = models.JSONField(
         null=True,
         blank=True,
-        help_text="Complete generation settings used (prompt, seed, parameters, etc.)"
+        help_text="Complete generation settings used (prompt, seed, parameters, etc.)",
     )
-    error_message = models.TextField(
-        blank=True,
-        help_text="Error message if job failed"
-    )
+    error_message = models.TextField(blank=True, help_text="Error message if job failed")
 
     # Timing
     created_at = models.DateTimeField(auto_now_add=True)
@@ -442,7 +413,7 @@ class DiffusionJob(models.Model):
     class Meta:
         verbose_name = "Diffusion Job"
         verbose_name_plural = "Diffusion Jobs"
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"Job #{self.pk} - {self.get_status_display()} ({self.diffusion_model.label})"
@@ -450,28 +421,26 @@ class DiffusionJob(models.Model):
     def get_generation_params(self):
         """Return complete generation parameters, using model/LoRA defaults where needed."""
         params = {
-            'model_slug': self.diffusion_model.slug,
-            'prompt': self.prompt.enhanced_prompt or self.prompt.source_prompt,
-            'width': self.width or self.diffusion_model.default_width,
-            'height': self.height or self.diffusion_model.default_height,
-            'steps': self.steps or self.diffusion_model.steps,
-            'guidance_scale': self.guidance_scale or self.diffusion_model.guidance_scale,
-            'seed': self.seed,
-            'num_images': self.num_images,
+            "model_slug": self.diffusion_model.slug,
+            "prompt": self.prompt.enhanced_prompt or self.prompt.source_prompt,
+            "width": self.width or self.diffusion_model.default_width,
+            "height": self.height or self.diffusion_model.default_height,
+            "steps": self.steps or self.diffusion_model.steps,
+            "guidance_scale": self.guidance_scale or self.diffusion_model.guidance_scale,
+            "seed": self.seed,
+            "num_images": self.num_images,
         }
 
         # Scheduler: job override → model default → None (use pipeline default)
         scheduler = self.scheduler or self.diffusion_model.scheduler
         if scheduler:
-            params['scheduler'] = scheduler
+            params["scheduler"] = scheduler
 
         if self.diffusion_model.supports_negative_prompt and self.prompt.negative_prompt:
-            params['negative_prompt'] = self.prompt.negative_prompt
+            params["negative_prompt"] = self.prompt.negative_prompt
 
         if self.lora_model:
-            params['lora_path'] = self.lora_model.path
-            params['lora_strength'] = self.lora_strength or self.lora_model.default_strength
+            params["lora_path"] = self.lora_model.path
+            params["lora_strength"] = self.lora_strength or self.lora_model.default_strength
 
         return params
-
-

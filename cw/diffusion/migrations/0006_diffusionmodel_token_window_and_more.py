@@ -6,18 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0005_remove_loramodel_compatible_models_and_more'),
+        ("diffusion", "0005_remove_loramodel_compatible_models_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='diffusionmodel',
-            name='token_window',
-            field=models.IntegerField(blank=True, help_text='Maximum tokens for prompt input (e.g. 77 for CLIP, 512 for T5)', null=True),
+            model_name="diffusionmodel",
+            name="token_window",
+            field=models.IntegerField(
+                blank=True,
+                help_text="Maximum tokens for prompt input (e.g. 77 for CLIP, 512 for T5)",
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='diffusionmodel',
-            name='vram_usage',
-            field=models.IntegerField(blank=True, help_text='Minimum VRAM required in MB (e.g. 8192 for 8GB)', null=True),
+            model_name="diffusionmodel",
+            name="vram_usage",
+            field=models.IntegerField(
+                blank=True, help_text="Minimum VRAM required in MB (e.g. 8192 for 8GB)", null=True
+            ),
         ),
     ]

@@ -5,6 +5,7 @@ Distilled model optimized for fast generation (4 steps, guidance_scale=1.0)
 """
 
 from diffusers import Flux2KleinPipeline
+
 from .base import BaseModel
 
 

@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0015_add_scheduler_choices'),
+        ("diffusion", "0015_add_scheduler_choices"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='diffusionjob',
-            name='identifier',
-            field=models.CharField(blank=True, help_text="Optional identifier for file naming (e.g., 'hero-shot', 'product-v2')", max_length=100),
+            model_name="diffusionjob",
+            name="identifier",
+            field=models.CharField(
+                blank=True,
+                help_text="Optional identifier for file naming (e.g., 'hero-shot', 'product-v2')",
+                max_length=100,
+            ),
         ),
     ]
