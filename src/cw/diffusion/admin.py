@@ -71,6 +71,7 @@ class JobInline(TabularInline):
     """Inline display of jobs for Prompts."""
 
     model = DiffusionJob
+    tab = True
     extra = 0
     fields = ["diffusion_model", "lora_model", "status", "num_images", "created_at"]
     readonly_fields = ["status", "created_at"]

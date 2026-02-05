@@ -79,12 +79,9 @@ if [ -f "data/adaptations.json" ]; then
     echo ""
 fi
 
-# Check if markets data file exists before importing
-if [ -f "data/markets.json" ]; then
-    echo "Importing markets..."
-    uv run manage.py import_markets || echo "  (No markets to import or import failed)"
-    echo ""
-fi
+echo "Importing market profiles..."
+uv run manage.py import_markets
+echo ""
 
 # Create superuser
 echo "Creating admin superuser (username: admin, password: admin)..."

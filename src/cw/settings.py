@@ -202,6 +202,22 @@ UNFOLD = {
                 ],
             },
             {
+                "title": "Core",
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Languages",
+                        "icon": "translate",
+                        "link": "/admin/core/language/",
+                    },
+                    {
+                        "title": "LLM Models",
+                        "icon": "smart_toy",
+                        "link": "/admin/core/llmmodel/",
+                    },
+                ],
+            },
+            {
                 "title": "Celery",
                 "collapsible": True,
                 "items": [

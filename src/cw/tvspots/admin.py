@@ -86,6 +86,7 @@ class TvSpotScriptRowInline(TabularInline):
     """Inline display of script rows for TvSpotVersion."""
 
     model = TvSpotScriptRow
+    tab = True
     extra = 0
     fields = [
         "shot_number",
@@ -101,6 +102,7 @@ class TvSpotVersionInline(TabularInline):
     """Inline display of versions for TvSpot."""
 
     model = TvSpotVersion
+    tab = True
     extra = 0
     fields = ["code", "name", "version_type", "market", "language", "is_active"]
     readonly_fields = ["code", "name", "version_type", "market", "language"]
@@ -115,6 +117,7 @@ class AdaptationJobInline(TabularInline):
     """Inline display of adaptation jobs for TvSpot."""
 
     model = AdaptationJob
+    tab = True
     extra = 0
     fields = ["target_market", "show_status", "result_version", "created_at"]
     readonly_fields = ["target_market", "show_status", "result_version", "created_at"]
@@ -797,6 +800,7 @@ class StoryboardImageInline(TabularInline):
     """Inline display of images for StoryboardJob."""
 
     model = StoryboardImage
+    tab = True
     extra = 0
     fields = ["script_row", "image_index", "diffusion_job", "show_status"]
     readonly_fields = ["script_row", "image_index", "diffusion_job", "show_status"]
