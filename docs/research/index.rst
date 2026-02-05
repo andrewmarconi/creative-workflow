@@ -7,3 +7,4 @@ Background research and reference materials supporting the platform's creative a
    :maxdepth: 2
 
    AdaptationProfiles
+   multilingual-models-guide
