@@ -49,6 +49,7 @@ class StoryboardGenerator:
         if self._enhancer is None and self.use_llm:
             logger.debug(f"Creating HFPromptEnhancer with model: {self.model_id}")
             from lib.prompt_enhancer import HFPromptEnhancer
+
             self._enhancer = HFPromptEnhancer(
                 model_id=self.model_id,
                 style="cinematic",
@@ -95,10 +96,10 @@ class StoryboardGenerator:
         full_prompt = f"{full_prompt}, {quality_suffix}"
 
         result = {
-            'prompt': full_prompt,
-            'negative_prompt': "blurry, low quality, amateur, distorted, watermark, text overlay",
-            'source_visual': visual_text,
-            'source_audio': audio_text,
+            "prompt": full_prompt,
+            "negative_prompt": "blurry, low quality, amateur, distorted, watermark, text overlay",
+            "source_visual": visual_text,
+            "source_audio": audio_text,
         }
 
         # Optionally enhance with LLM
@@ -108,16 +109,20 @@ class StoryboardGenerator:
                 enhancer = self._get_enhancer()
                 if enhancer:
                     enhanced = enhancer.enhance_prompt(full_prompt)
-                    result['prompt'] = enhanced.get('enhanced_prompt', full_prompt)
-                    result['negative_prompt'] = enhanced.get('negative_prompt', result['negative_prompt'])
-                    result['enhanced'] = True
-                    logger.debug(f"LLM enhancement successful, prompt length: {len(result['prompt'])}")
+                    result["prompt"] = enhanced.get("enhanced_prompt", full_prompt)
+                    result["negative_prompt"] = enhanced.get(
+                        "negative_prompt", result["negative_prompt"]
+                    )
+                    result["enhanced"] = True
+                    logger.debug(
+                        f"LLM enhancement successful, prompt length: {len(result['prompt'])}"
+                    )
             except Exception as e:
                 logger.warning(f"LLM enhancement failed, using base prompt: {e}")
-                result['enhanced'] = False
+                result["enhanced"] = False
         else:
             logger.debug("Skipping LLM enhancement (disabled)")
-            result['enhanced'] = False
+            result["enhanced"] = False
 
         return result
 
@@ -133,17 +138,18 @@ class StoryboardGenerator:
 
         # Remove timing references like "00:00:05:00" or "(5.0s)"
         import re
-        text = re.sub(r'\d{2}:\d{2}:\d{2}:\d{2}', '', text)
-        text = re.sub(r'\(\d+\.?\d*s\)', '', text)
+
+        text = re.sub(r"\d{2}:\d{2}:\d{2}:\d{2}", "", text)
+        text = re.sub(r"\(\d+\.?\d*s\)", "", text)
 
         # Remove shot type prefixes (these are useful context but not for image gen)
         # Keep them but normalize - they add context
-        shot_types = ['CU', 'MCU', 'MS', 'WS', 'ECU', 'EWS', 'MWS', 'POV', 'OTS']
+        shot_types = ["CU", "MCU", "MS", "WS", "ECU", "EWS", "MWS", "POV", "OTS"]
         for shot in shot_types:
-            text = re.sub(rf'\b{shot}\b[:\s]*', f'{shot}: ', text, flags=re.IGNORECASE)
+            text = re.sub(rf"\b{shot}\b[:\s]*", f"{shot}: ", text, flags=re.IGNORECASE)
 
         # Clean up extra whitespace
-        text = ' '.join(text.split())
+        text = " ".join(text.split())
 
         return text.strip()
 
@@ -167,19 +173,21 @@ class StoryboardGenerator:
         visual_style = tv_spot_version.visual_style_prompt or ""
         logger.debug(f"Visual style prompt: {visual_style[:50] if visual_style else '(none)'}...")
 
-        script_rows = list(tv_spot_version.script_rows.all().order_by('order_index'))
+        script_rows = list(tv_spot_version.script_rows.all().order_by("order_index"))
         logger.debug(f"Processing {len(script_rows)} script rows")
 
         for idx, row in enumerate(script_rows):
-            logger.debug(f"Generating prompt for row {idx + 1}/{len(script_rows)}: shot {row.shot_number}")
+            logger.debug(
+                f"Generating prompt for row {idx + 1}/{len(script_rows)}: shot {row.shot_number}"
+            )
             prompt_data = self.generate_prompt(
                 visual_text=row.visual_text,
                 audio_text=row.audio_text,
                 visual_style_prompt=visual_style,
                 enhance=enhance,
             )
-            prompt_data['row_index'] = row.order_index
-            prompt_data['shot_number'] = row.shot_number
+            prompt_data["row_index"] = row.order_index
+            prompt_data["shot_number"] = row.shot_number
             prompts.append(prompt_data)
 
         logger.info(f"Generated {len(prompts)} prompts for version {tv_spot_version.code}")
@@ -200,7 +208,12 @@ def create_storyboard_jobs(
     Returns:
         List of created DiffusionJob instances
     """
-    from cw.diffusion.models import Prompt, DiffusionJob, StoryboardImage, TvSpotScriptRow
+    from cw.diffusion.models import (
+        DiffusionJob,
+        Prompt,
+        StoryboardImage,
+        TvSpotScriptRow,
+    )
 
     tv_spot_version = storyboard_job.tv_spot_version
     tv_spot = tv_spot_version.tv_spot
@@ -212,8 +225,8 @@ def create_storyboard_jobs(
     script_rows = {row.order_index: row for row in tv_spot_version.script_rows.all()}
 
     for prompt_data in prompts:
-        row_index = prompt_data['row_index']
-        shot_number = prompt_data.get('shot_number', f"{row_index + 1:02d}")
+        row_index = prompt_data["row_index"]
+        shot_number = prompt_data.get("shot_number", f"{row_index + 1:02d}")
         script_row = script_rows.get(row_index)
 
         if not script_row:
@@ -222,14 +235,16 @@ def create_storyboard_jobs(
 
         for img_idx in range(images_per_row):
             # Create identifier: {job_id}_{version_code}_row-{NN}_img-{NN}
-            identifier = f"{tv_spot.job_id}_{tv_spot_version.code}_row-{shot_number}_img-{img_idx + 1:02d}"
+            identifier = (
+                f"{tv_spot.job_id}_{tv_spot_version.code}_row-{shot_number}_img-{img_idx + 1:02d}"
+            )
 
             # Create Prompt record
             prompt_record = Prompt.objects.create(
-                source_prompt=prompt_data['prompt'],
-                enhanced_prompt=prompt_data['prompt'],  # Already enhanced if using LLM
-                negative_prompt=prompt_data.get('negative_prompt', ''),
-                enhancement_method='huggingface' if prompt_data.get('enhanced') else 'none',
+                source_prompt=prompt_data["prompt"],
+                enhanced_prompt=prompt_data["prompt"],  # Already enhanced if using LLM
+                negative_prompt=prompt_data.get("negative_prompt", ""),
+                enhancement_method="huggingface" if prompt_data.get("enhanced") else "none",
             )
 
             # Create DiffusionJob with 16:9 storyboard dimensions
@@ -238,7 +253,7 @@ def create_storyboard_jobs(
                 lora_model=lora_model,
                 prompt=prompt_record,
                 identifier=identifier,
-                status='pending',
+                status="pending",
                 width=1280,
                 height=720,
             )
@@ -260,7 +275,7 @@ def create_storyboard_jobs(
                     "diffusion_job_id": diffusion_job.pk,
                     "row_index": row_index,
                     "image_index": img_idx,
-                }
+                },
             )
 
     return created_jobs

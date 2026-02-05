@@ -189,9 +189,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "order_index",
-                    models.PositiveIntegerField(
-                        help_text="Row order in script (0-indexed)."
-                    ),
+                    models.PositiveIntegerField(help_text="Row order in script (0-indexed)."),
                 ),
                 (
                     "shot_number",

@@ -5,6 +5,7 @@ Uses distilled guidance (guidance_scale=3.5) with 28 steps optimal
 """
 
 from diffusers import FluxPipeline
+
 from .base import BaseModel
 
 

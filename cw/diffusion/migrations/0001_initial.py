@@ -27,15 +27,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "label",
-                    models.CharField(
-                        help_text="Display name for the model", max_length=255
-                    ),
+                    models.CharField(help_text="Display name for the model", max_length=255),
                 ),
                 (
                     "slug",
-                    models.SlugField(
-                        help_text="Unique identifier", max_length=100, unique=True
-                    ),
+                    models.SlugField(help_text="Unique identifier", max_length=100, unique=True),
                 ),
                 (
                     "path",
@@ -141,9 +137,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "is_active",
-                    models.BooleanField(
-                        default=True, help_text="Enable/disable this model"
-                    ),
+                    models.BooleanField(default=True, help_text="Enable/disable this model"),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
@@ -172,15 +166,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "enhanced_prompt",
-                    models.TextField(
-                        blank=True, help_text="AI-enhanced version of the prompt"
-                    ),
+                    models.TextField(blank=True, help_text="AI-enhanced version of the prompt"),
                 ),
                 (
                     "negative_prompt",
-                    models.TextField(
-                        blank=True, help_text="Negative prompt (things to avoid)"
-                    ),
+                    models.TextField(blank=True, help_text="Negative prompt (things to avoid)"),
                 ),
                 (
                     "enhancement_style",
@@ -246,9 +236,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "label",
-                    models.CharField(
-                        help_text="Display name for the LoRA", max_length=255
-                    ),
+                    models.CharField(help_text="Display name for the LoRA", max_length=255),
                 ),
                 (
                     "path",
@@ -285,9 +273,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "is_active",
-                    models.BooleanField(
-                        default=True, help_text="Enable/disable this LoRA"
-                    ),
+                    models.BooleanField(default=True, help_text="Enable/disable this LoRA"),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
@@ -430,9 +416,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "error_message",
-                    models.TextField(
-                        blank=True, help_text="Error message if job failed"
-                    ),
+                    models.TextField(blank=True, help_text="Error message if job failed"),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("started_at", models.DateTimeField(blank=True, null=True)),

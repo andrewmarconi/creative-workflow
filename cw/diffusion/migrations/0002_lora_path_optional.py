@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('diffusion', '0001_initial'),
+        ("diffusion", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='diffusionjob',
-            name='rq_job_id',
-            field=models.CharField(blank=True, help_text='Celery task ID for tracking (field name retained for compatibility)', max_length=255),
+            model_name="diffusionjob",
+            name="rq_job_id",
+            field=models.CharField(
+                blank=True,
+                help_text="Celery task ID for tracking (field name retained for compatibility)",
+                max_length=255,
+            ),
         ),
         migrations.AlterField(
-            model_name='loramodel',
-            name='path',
-            field=models.CharField(blank=True, help_text='Path to LoRA file (relative to base_model_path or HF model ID). Optional if AIR is provided.', max_length=500),
+            model_name="loramodel",
+            name="path",
+            field=models.CharField(
+                blank=True,
+                help_text="Path to LoRA file (relative to base_model_path or HF model ID). Optional if AIR is provided.",
+                max_length=500,
+            ),
         ),
     ]

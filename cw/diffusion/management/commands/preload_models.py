@@ -9,33 +9,35 @@ Usage:
     uv run manage.py preload_models --model zimageturbo
     uv run manage.py preload_models --list
 """
+
 import sys
-import torch
 from pathlib import Path
+
+import torch
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from cw.diffusion.models import DiffusionModel
 
 # Add lib/ to path for ModelFactory
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / 'lib'))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / "lib"))
 
 from models import ModelFactory
 
 
 class Command(BaseCommand):
-    help = 'Download and cache diffusion models from HuggingFace Hub'
+    help = "Download and cache diffusion models from HuggingFace Hub"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--model',
+            "--model",
             type=str,
-            help='Model slug to preload (if not specified, loads all active models)',
+            help="Model slug to preload (if not specified, loads all active models)",
         )
         parser.add_argument(
-            '--list',
-            action='store_true',
-            help='List available models and exit',
+            "--list",
+            action="store_true",
+            help="List available models and exit",
         )
 
     def _get_device(self):
@@ -76,15 +78,15 @@ class Command(BaseCommand):
         device = self._get_device()
         models = DiffusionModel.objects.filter(is_active=True)
 
-        if options['list']:
+        if options["list"]:
             self.stdout.write("Available models:")
             for m in models:
                 self.stdout.write(f"  {m.slug}: {m.label}")
             return
 
-        if options['model']:
+        if options["model"]:
             try:
-                models = [models.get(slug=options['model'])]
+                models = [models.get(slug=options["model"])]
             except DiffusionModel.DoesNotExist:
                 raise CommandError(
                     f"Model '{options['model']}' not found. "
@@ -113,6 +115,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Path: {model_path}")
 
             try:
+
                 def progress_callback(progress, desc):
                     percentage = int(progress * 100)
                     self.stdout.write(f"  [{percentage:3d}%] {desc}")

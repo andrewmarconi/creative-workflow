@@ -23,7 +23,7 @@ class PresetsConfig:
             raise FileNotFoundError(f"Presets file not found: {self.presets_path}")
 
         try:
-            with open(self.presets_path, 'r') as f:
+            with open(self.presets_path, "r") as f:
                 self._config = json.load(f)
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in presets file: {e}")
@@ -93,8 +93,10 @@ class PresetsConfig:
         """Check if model path is a HuggingFace Hub ID"""
         path = model["path"]
         # Check for "Hugginface:" prefix or standard HF format "org/model"
-        return path.startswith("Hugginface:") or path.startswith("Huggingface:") or (
-            "/" in path and not path.endswith(".safetensors")
+        return (
+            path.startswith("Hugginface:")
+            or path.startswith("Huggingface:")
+            or ("/" in path and not path.endswith(".safetensors"))
         )
 
     def get_model_path(self, model: Dict) -> str:
