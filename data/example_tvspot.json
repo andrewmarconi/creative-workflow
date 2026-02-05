@@ -1,0 +1,67 @@
+{
+  "client_name": "Acme Corporation",
+  "brand_name": "Acme Energy Drink",
+  "script_title": "Morning Boost 30s",
+  "total_runtime_seconds": 30,
+  "job_id": "ACME-2024-001",
+  "language": "en-US",
+  "notes": "Q1 2024 campaign launch spot",
+  "script_rows": [
+    {
+      "shot_number": "01",
+      "timecode_start": "00:00:00:00",
+      "duration_seconds": 3.0,
+      "visual_text": "Wide shot: Urban apartment, early morning. Sunlight streaming through windows. TALENT (30s, professional) wakes up groggy, reaches for alarm clock.",
+      "audio_text": "SFX: Alarm buzzing\nMUSIC: Soft, building instrumental"
+    },
+    {
+      "shot_number": "02",
+      "timecode_start": "00:00:03:00",
+      "duration_seconds": 4.0,
+      "visual_text": "Medium shot: Kitchen counter. TALENT opens refrigerator, pulls out ACME ENERGY DRINK can. Product hero shot with condensation.",
+      "audio_text": "SFX: Refrigerator opening, can crack\nMUSIC: Energy builds"
+    },
+    {
+      "shot_number": "03",
+      "timecode_start": "00:00:07:00",
+      "duration_seconds": 3.0,
+      "visual_text": "Close-up: TALENT drinks. Expression transforms from tired to energized. Eyes brighten.",
+      "audio_text": "VO: \"Acme Energy. The boost you need.\"\nMUSIC: Peak energy"
+    },
+    {
+      "shot_number": "04",
+      "timecode_start": "00:00:10:00",
+      "duration_seconds": 5.0,
+      "visual_text": "Montage: TALENT moving through morning routine with energy - shower, getting dressed, grabbing bag. Quick cuts, dynamic movement.",
+      "audio_text": "MUSIC: Upbeat, driving tempo\nSFX: Quick whoosh transitions"
+    },
+    {
+      "shot_number": "05",
+      "timecode_start": "00:00:15:00",
+      "duration_seconds": 4.0,
+      "visual_text": "Wide shot: City street. TALENT walks confidently to work, passing others who look tired. TALENT smiles, energetic stride.",
+      "audio_text": "VO: \"Start your day the Acme way.\"\nMUSIC: Continues upbeat"
+    },
+    {
+      "shot_number": "06",
+      "timecode_start": "00:00:19:00",
+      "duration_seconds": 3.0,
+      "visual_text": "Medium shot: Office environment. TALENT enters, greets colleagues enthusiastically. Others react positively.",
+      "audio_text": "SFX: Office ambience, greetings\nMUSIC: Settling to confident tone"
+    },
+    {
+      "shot_number": "07",
+      "timecode_start": "00:00:22:00",
+      "duration_seconds": 5.0,
+      "visual_text": "Product shot: ACME ENERGY DRINK can on desk, office in soft focus behind. Logo prominent.\nSUPER: \"ACME ENERGY - BOOST YOUR MORNING\"\nSUPER: \"Available everywhere\"",
+      "audio_text": "VO: \"Acme Energy. Available everywhere.\"\nMUSIC: Resolve to tagline sting"
+    },
+    {
+      "shot_number": "08",
+      "timecode_start": "00:00:27:00",
+      "duration_seconds": 3.0,
+      "visual_text": "End card: ACME logo center frame, product can beside it.\nSUPER: \"acme-energy.com\"\nLEGAL: \"Drink responsibly. Not for children under 16.\"",
+      "audio_text": "MUSIC: Final tag\nSFX: Subtle energy whoosh"
+    }
+  ]
+}
