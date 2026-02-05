@@ -1,35 +1,73 @@
 Quick Start
 ===========
 
-Getting Started
----------------
+Get up and running with Generative Creative Lab in minutes.
+
+Prerequisites
+-------------
+
+- Python 3.12+ (managed via ``uv``)
+- Docker and Docker Compose (for PostgreSQL and Valkey)
+- GPU: Apple Silicon (MPS) or NVIDIA (CUDA)
+- ~15-30GB storage for model cache
+
+Installation
+------------
 
 1. **Clone the repository**::
 
-    git clone https://github.com/generative-creative-lab/generative-creative-lab.git
+    git clone https://github.com/andrewmarconi/generative-creative-lab.git
     cd generative-creative-lab
 
 2. **Install dependencies**::
 
     uv sync
 
-3. **Start all services** (PostgreSQL, Valkey, Django, Celery workers)::
+3. **Configure environment**::
 
-    uv run honcho start
+    cp .env.example .env
+    # Edit .env with your settings (see Configuration below)
 
-4. **Run database migrations** (in a new terminal)::
+4. **Authenticate with HuggingFace** (required for Hub models)::
+
+    huggingface-cli login
+
+5. **Start all services**::
+
+    ./start.sh
+    # Or: uv run honcho start
+
+6. **Initialize database** (in a new terminal)::
 
     uv run manage.py migrate
-
-5. **Create a superuser**::
-
     uv run manage.py createsuperuser
-
-6. **Import model presets**::
-
     uv run manage.py import_presets
 
 7. **Access the admin UI** at http://localhost:8000/admin/
+
+Service Architecture
+--------------------
+
+The ``start.sh`` script (or ``honcho start``) launches four processes:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 50
+
+   * - Process
+     - Function
+   * - **docker**
+     - Data persistence (PostgreSQL + Valkey) and observability (Grafana/Loki)
+   * - **django**
+     - Creative studio interface at http://localhost:8000/admin/
+   * - **worker**
+     - Image generation execution (``default`` queue)
+   * - **enhancement**
+     - Prompt transformation via local LLM (``enhancement`` queue)
+
+For minimal setup (configuration only, no generation)::
+
+    uv run honcho start docker django
 
 Creating Your First Image
 -------------------------
@@ -47,12 +85,44 @@ Creating Your First Image
 Configuration
 -------------
 
-Environment variables (set in ``.env``):
+Environment variables in ``.env``:
 
-- ``POSTGRES_*`` - Database connection
+**Required**
+
+- ``POSTGRES_*`` - Database connection (defaults work with Docker Compose)
 - ``VALKEY_*`` - Redis/Valkey broker connection
-- ``CIVITAI_API_KEY`` - For auto-downloading LoRA models
-- ``ANTHROPIC_API_KEY`` - For LLM prompt enhancement
-- ``MODEL_BASE_PATH`` - Base directory for local model files
+- ``DJANGO_SECRET_KEY`` - Django secret key
 
-See ``CLAUDE.md`` for full documentation.
+**Optional**
+
+- ``CIVITAI_API_KEY`` - Enable auto-downloading LoRA models from CivitAI
+- ``ANTHROPIC_API_KEY`` - Enable LLM-powered prompt enhancement
+- ``MODEL_BASE_PATH`` - Base directory for local ``.safetensors`` files
+
+Common Commands
+---------------
+
+**Development**::
+
+    ./start.sh                          # Start all services
+    uv run honcho start docker django   # Minimal setup (no workers)
+
+**Database & Configuration**::
+
+    uv run manage.py migrate            # Run database migrations
+    uv run manage.py import_presets     # Sync model configurations
+    uv run manage.py preload_models     # Pre-download models to cache
+    uv run manage.py createsuperuser    # Create admin user
+
+**Content Management**::
+
+    uv run manage.py import_prompts     # Bulk import prompts
+    uv run manage.py export_prompts     # Export prompts to file
+
+Next Steps
+----------
+
+- :doc:`model-reference` - Learn about available models and their characteristics
+- :doc:`adding-models` - Extend the framework with new models
+- :doc:`troubleshooting` - Common issues and solutions
+- :doc:`/architecture` - Deep dive into system architecture
