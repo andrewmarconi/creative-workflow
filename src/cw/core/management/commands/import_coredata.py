@@ -1,13 +1,13 @@
 """
-Django management command to import languages and LLM models.
+Django management command to import core data (languages and LLM models).
 
 Supports both JSON and CSV formats.
 
 Usage:
-    uv run manage.py import_languages                              # Default: data/core_data.json
-    uv run manage.py import_languages --file data/custom.json      # Custom JSON file
-    uv run manage.py import_languages --csv languages.csv   # Custom CSV file
-    uv run manage.py import_languages --dry-run                    # Preview changes
+    uv run manage.py import_coredata                              # Default: data/core_data.json
+    uv run manage.py import_coredata --file data/custom.json      # Custom JSON file
+    uv run manage.py import_coredata --csv languages.csv          # Custom CSV file
+    uv run manage.py import_coredata --dry-run                    # Preview changes
 
 JSON format:
     {
@@ -57,7 +57,7 @@ def model_id_to_name(model_id: str) -> str:
 
 
 class Command(BaseCommand):
-    help = "Import languages and LLM models from JSON or CSV"
+    help = "Import core data (languages and LLM models) from JSON or CSV"
 
     def add_arguments(self, parser):
         parser.add_argument(

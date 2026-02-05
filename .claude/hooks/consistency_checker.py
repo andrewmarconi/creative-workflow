@@ -364,7 +364,7 @@ class ConsistencyChecker:
                 CheckResult(
                     name="Data: core_data.json",
                     status="warn",
-                    message="File not found (run export_languages to create)",
+                    message="File not found (run export_coredata to create)",
                 )
             )
             return

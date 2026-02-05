@@ -1,11 +1,11 @@
 """
-Django management command to export languages and LLM models to JSON.
+Django management command to export core data (languages and LLM models) to JSON.
 
 Usage:
-    uv run manage.py export_languages                      # Default: data/core_data.json
-    uv run manage.py export_languages --file backup.json   # Custom output file
-    uv run manage.py export_languages --models-only        # Export only LLM models
-    uv run manage.py export_languages --languages-only     # Export only languages
+    uv run manage.py export_coredata                      # Default: data/core_data.json
+    uv run manage.py export_coredata --file backup.json   # Custom output file
+    uv run manage.py export_coredata --models-only        # Export only LLM models
+    uv run manage.py export_coredata --languages-only     # Export only languages
 
 Output format:
     {
@@ -33,7 +33,7 @@ from cw.core.models import Language, LLMModel
 
 
 class Command(BaseCommand):
-    help = "Export languages and LLM models to JSON"
+    help = "Export core data (languages and LLM models) to JSON"
 
     def add_arguments(self, parser):
         parser.add_argument(
