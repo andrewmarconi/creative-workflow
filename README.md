@@ -1,4 +1,4 @@
-![Generative Creative Lab](docs/_static/logo-landscape.png)
+![Generative Creative Lab](docs/_static/logo-wide.png)
 
 # Generative Creative Lab
 

@@ -1,4 +1,4 @@
-.. image:: _static/logo-landscape.png
+.. image:: _static/logo-wide.png
    :alt: Generative Creative Lab
    :align: center
 
