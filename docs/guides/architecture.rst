@@ -15,31 +15,23 @@ Creative Workflow is a Django + Celery application for multi-model diffusion ima
 generation. The system is designed around asynchronous task processing to handle
 GPU-intensive operations without blocking the web interface.
 
-.. code-block:: text
+.. mermaid::
 
-    ┌─────────────────────────────────────────────────────────────────────┐
-    │                        Creative Workflow                             │
-    ├─────────────────────────────────────────────────────────────────────┤
-    │                                                                      │
-    │  ┌──────────────┐     ┌──────────────┐     ┌──────────────────────┐ │
-    │  │   Django     │     │   Celery     │     │   Celery             │ │
-    │  │   Admin UI   │────▶│   Broker     │────▶│   Workers            │ │
-    │  │   :8000      │     │  (Valkey)    │     │   (GPU tasks)        │ │
-    │  └──────────────┘     └──────────────┘     └──────────────────────┘ │
-    │         │                                           │                │
-    │         │                                           │                │
-    │         ▼                                           ▼                │
-    │  ┌──────────────┐                          ┌──────────────────────┐ │
-    │  │  PostgreSQL  │                          │   HuggingFace        │ │
-    │  │  Database    │                          │   Models + LoRAs     │ │
-    │  └──────────────┘                          └──────────────────────┘ │
-    │                                                     │                │
-    │                                                     ▼                │
-    │                                            ┌──────────────────────┐ │
-    │                                            │   Generated Images   │ │
-    │                                            │   (media/diffusion)  │ │
-    │                                            └──────────────────────┘ │
-    └─────────────────────────────────────────────────────────────────────┘
+   flowchart TB
+       subgraph cw["Creative Workflow"]
+           admin["Django Admin UI<br/>:8000"]
+           broker["Celery Broker<br/>(Valkey)"]
+           workers["Celery Workers<br/>(GPU tasks)"]
+           db["PostgreSQL<br/>Database"]
+           models["HuggingFace<br/>Models + LoRAs"]
+           images["Generated Images<br/>(media/diffusion)"]
+       end
+
+       admin --> broker
+       broker --> workers
+       admin --> db
+       workers --> models
+       workers --> images
 
 Key Components
 ~~~~~~~~~~~~~~
@@ -69,25 +61,37 @@ Process Model
 Creative Workflow runs four concurrent processes, defined in the ``Procfile``
 and launched via ``honcho start``:
 
-.. code-block:: text
+.. mermaid::
 
-    ┌─────────────────────────────────────────────────────────────────────┐
-    │                         Process Model                                │
-    ├─────────────────────────────────────────────────────────────────────┤
-    │                                                                      │
-    │  docker        PostgreSQL 17 (:5435) + Valkey (:6379) + Grafana     │
-    │  ──────────────────────────────────────────────────────────────────  │
-    │                                                                      │
-    │  django        Django dev server (:8000)                             │
-    │  ──────────────────────────────────────────────────────────────────  │
-    │                                                                      │
-    │  worker        Celery worker on 'default' queue (image generation)   │
-    │  ──────────────────────────────────────────────────────────────────  │
-    │                                                                      │
-    │  enhancement   Celery worker on 'enhancement' queue (prompt LLM)     │
-    │  ──────────────────────────────────────────────────────────────────  │
-    │                                                                      │
-    └─────────────────────────────────────────────────────────────────────┘
+   flowchart LR
+       subgraph docker["docker"]
+           pg["PostgreSQL :5435"]
+           valkey["Valkey :6379"]
+           subgraph observability["Observability"]
+               loki["Loki :3100"]
+               promtail["Promtail"]
+               grafana["Grafana :3000"]
+           end
+       end
+
+       subgraph django["django"]
+           server["Django Dev Server :8000"]
+       end
+
+       subgraph worker["worker"]
+           gen["Image Generation<br/>(default queue)"]
+       end
+
+       subgraph enhancement["enhancement"]
+           llm["Prompt Enhancement<br/>(enhancement queue)"]
+       end
+
+       server --> valkey
+       valkey --> gen
+       valkey --> llm
+       server --> pg
+       promtail --> loki
+       grafana --> loki
 
 Procfile Configuration
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -137,18 +141,15 @@ Image Generation Pipeline
 
 The typical flow from user input to generated image:
 
-.. code-block:: text
+.. mermaid::
 
-    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-    │   Create    │     │   Create    │     │   Celery    │     │   Model     │
-    │   Prompt    │────▶│   Job       │────▶│   Task      │────▶│   Generate  │
-    │   (Admin)   │     │   (Admin)   │     │   Queued    │     │   Images    │
-    └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-                                                                       │
-    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐            │
-    │   View in   │◀────│   Status    │◀────│   Save to   │◀───────────┘
-    │   Admin     │     │   Updated   │     │   Media     │
-    └─────────────┘     └─────────────┘     └─────────────┘
+   flowchart LR
+       A["Create Prompt<br/>(Admin)"] --> B["Create Job<br/>(Admin)"]
+       B --> C["Celery Task<br/>Queued"]
+       C --> D["Model<br/>Generate"]
+       D --> E["Save to<br/>Media"]
+       E --> F["Status<br/>Updated"]
+       F --> G["View in<br/>Admin"]
 
 **Step-by-step:**
 
@@ -199,24 +200,17 @@ Models are cached in memory to avoid repeated loading:
 LoRA Loading Flow
 ~~~~~~~~~~~~~~~~~
 
-.. code-block:: text
+.. mermaid::
 
-    ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-    │   Job has       │     │   Check if      │     │   Download      │
-    │   LoRA set?     │────▶│   file exists   │────▶│   from CivitAI  │
-    └─────────────────┘     └─────────────────┘     └─────────────────┘
-           │ no                    │ yes                    │
-           ▼                       ▼                        ▼
-    ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-    │   Skip LoRA     │     │   Load LoRA     │     │   Extract       │
-    │   loading       │     │   weights       │     │   metadata      │
-    └─────────────────┘     └─────────────────┘     └─────────────────┘
-                                   │                        │
-                                   ▼                        ▼
-                            ┌─────────────────┐     ┌─────────────────┐
-                            │   Apply to      │     │   Update DB     │
-                            │   pipeline      │     │   record        │
-                            └─────────────────┘     └─────────────────┘
+   flowchart TD
+       A{"Job has<br/>LoRA set?"} -->|No| B["Skip LoRA<br/>loading"]
+       A -->|Yes| C{"File<br/>exists?"}
+       C -->|Yes| D["Load LoRA<br/>weights"]
+       C -->|No| E["Download from<br/>CivitAI"]
+       E --> F["Extract<br/>metadata"]
+       F --> G["Update DB<br/>record"]
+       G --> D
+       D --> H["Apply to<br/>pipeline"]
 
 LoRAs can be auto-downloaded from CivitAI using AIR URNs. See
 :doc:`lora-management` for details.
@@ -231,29 +225,39 @@ customization.
 Class Hierarchy
 ~~~~~~~~~~~~~~~
 
-.. code-block:: text
+.. mermaid::
 
-    ┌─────────────────────────────────────────────────────────────────────┐
-    │                        BaseModel (Abstract)                          │
-    │  ─────────────────────────────────────────────────────────────────── │
-    │  Template Methods (concrete):                                        │
-    │    load_pipeline()  →  calls _create_pipeline()                      │
-    │    generate()       →  calls _build_prompts(), _build_pipeline_kwargs│
-    │                                                                      │
-    │  Hook Methods (override in subclasses):                              │
-    │    _create_pipeline()           [abstract, required]                 │
-    │    _build_prompts()             [optional]                           │
-    │    _build_pipeline_kwargs()     [optional]                           │
-    │    _apply_device_optimizations()[optional]                           │
-    └─────────────────────────────────────────────────────────────────────┘
-                                    │
-            ┌───────────────────────┼───────────────────────┐
-            │                       │                       │
-            ▼                       ▼                       ▼
-    ┌───────────────┐       ┌───────────────┐       ┌───────────────┐
-    │ ZImageTurbo   │       │ FluxModel     │       │ SDXLModel     │
-    │ Model         │       │               │       │ + CompelMixin │
-    └───────────────┘       └───────────────┘       └───────────────┘
+   classDiagram
+       class BaseModel {
+           <<abstract>>
+           +load_pipeline()
+           +generate()
+           #_create_pipeline()*
+           #_build_prompts()
+           #_build_pipeline_kwargs()
+           #_apply_device_optimizations()
+       }
+
+       class CompelPromptMixin {
+           +_build_prompts()
+       }
+
+       class ZImageTurboModel {
+           #_create_pipeline()
+       }
+
+       class FluxModel {
+           #_create_pipeline()
+       }
+
+       class SDXLModel {
+           #_create_pipeline()
+       }
+
+       BaseModel <|-- ZImageTurboModel
+       BaseModel <|-- FluxModel
+       BaseModel <|-- SDXLModel
+       CompelPromptMixin <|-- SDXLModel
 
 Mixins
 ~~~~~~
@@ -317,31 +321,44 @@ Database Schema
 Core Models
 ~~~~~~~~~~~
 
-.. code-block:: text
+.. mermaid::
 
-    ┌─────────────────┐         ┌─────────────────┐
-    │ DiffusionModel  │         │    LoraModel    │
-    ├─────────────────┤         ├─────────────────┤
-    │ label           │         │ label           │
-    │ slug            │◀───┐    │ base_architecture│
-    │ pipeline        │    │    │ civitai_air     │
-    │ path            │    │    │ prompt_suffix   │
-    │ settings (JSON) │    │    │ theme           │
-    └─────────────────┘    │    └─────────────────┘
-            │              │            │
-            │              │            │
-            ▼              │            ▼
-    ┌─────────────────┐    │    ┌─────────────────┐
-    │     Prompt      │    │    │  DiffusionJob   │
-    ├─────────────────┤    │    ├─────────────────┤
-    │ text            │    │    │ prompt (FK)     │
-    │ enhanced_text   │    └────│ model (FK)      │
-    │ negative_prompt │         │ lora (FK)       │
-    │ enhancement_*   │         │ status          │
-    └─────────────────┘         │ images (JSON)   │
-                                │ width, height   │
-                                │ steps, cfg, seed│
-                                └─────────────────┘
+   erDiagram
+       DiffusionModel {
+           string label
+           string slug PK
+           string pipeline
+           string path
+           json settings
+       }
+
+       LoraModel {
+           string label
+           string base_architecture
+           string civitai_air
+           string prompt_suffix
+           string theme
+       }
+
+       Prompt {
+           string text
+           string enhanced_text
+           string negative_prompt
+       }
+
+       DiffusionJob {
+           string status
+           json images
+           int width
+           int height
+           int steps
+           float cfg
+           int seed
+       }
+
+       DiffusionModel ||--o{ DiffusionJob : "model"
+       LoraModel ||--o{ DiffusionJob : "lora"
+       Prompt ||--o{ DiffusionJob : "prompt"
 
 **DiffusionModel**
     Represents a diffusion model configuration. Synced from ``presets.json``

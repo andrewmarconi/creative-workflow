@@ -49,4 +49,5 @@ dev = [
     "sphinx-rtd-theme>=3.0",
     "sphinx-autodoc-typehints>=2.0",
     "myst-parser>=4.0",
+    "sphinxcontrib-mermaid>=2.0.0",
 ]
