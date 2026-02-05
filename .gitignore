@@ -76,3 +76,6 @@ data/adaptations.json
 
 # Sphinx documentation build
 docs/_build/
+
+# Local work files (not committed)
+local_workfiles/
