@@ -151,7 +151,11 @@ class Command(BaseCommand):
         for model in data.get("llm_models", []):
             model_id = model.get("model_id", "").strip()
             if model_id:
-                models_to_create[model_id] = model.get("notes", "")
+                models_to_create[model_id] = {
+                    "notes": model.get("notes", ""),
+                    "is_active": model.get("is_active", True),
+                    "load_in_4bit": model.get("load_in_4bit", False),
+                }
 
         languages_to_create = []
         for lang in data.get("languages", []):
@@ -162,12 +166,12 @@ class Command(BaseCommand):
             if not code or not name or not primary:
                 continue
 
-            # Also collect models referenced by languages
+            # Also collect models referenced by languages (with default settings)
             if primary and primary not in models_to_create:
-                models_to_create[primary] = ""
+                models_to_create[primary] = {"notes": "", "is_active": True, "load_in_4bit": False}
             for alt in lang.get("alternative_models", []):
                 if alt and alt not in models_to_create:
-                    models_to_create[alt] = ""
+                    models_to_create[alt] = {"notes": "", "is_active": True, "load_in_4bit": False}
 
             languages_to_create.append(
                 {
@@ -210,13 +214,14 @@ class Command(BaseCommand):
             # Create/update LLM models first
             self.stdout.write(self.style.MIGRATE_HEADING("Importing LLM Models:"))
             model_objects = {}
-            for model_id, notes in models_to_create.items():
+            for model_id, model_data in models_to_create.items():
                 model, created = LLMModel.objects.update_or_create(
                     model_id=model_id,
                     defaults={
                         "name": model_id_to_name(model_id),
-                        "notes": notes,
-                        "is_active": True,
+                        "notes": model_data.get("notes", ""),
+                        "is_active": model_data.get("is_active", True),
+                        "load_in_4bit": model_data.get("load_in_4bit", False),
                     },
                 )
                 model_objects[model_id] = model

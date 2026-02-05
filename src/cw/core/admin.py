@@ -14,8 +14,8 @@ from .models import Language, LLMModel
 
 @admin.register(LLMModel)
 class LLMModelAdmin(ModelAdmin):
-    list_display = ["name", "model_id", "show_active", "show_language_count", "updated_at"]
-    list_filter = ["is_active"]
+    list_display = ["name", "model_id", "show_4bit", "show_active", "show_language_count", "updated_at"]
+    list_filter = ["is_active", "load_in_4bit"]
     search_fields = ["name", "model_id", "notes"]
     readonly_fields = ["created_at", "updated_at"]
 
@@ -24,7 +24,7 @@ class LLMModelAdmin(ModelAdmin):
             _("Model"),
             {
                 "classes": ["tab"],
-                "fields": ("model_id", "name", "is_active"),
+                "fields": ("model_id", "name", ("is_active", "load_in_4bit")),
             },
         ),
         (
@@ -42,6 +42,10 @@ class LLMModelAdmin(ModelAdmin):
             },
         ),
     )
+
+    @display(description=_("4-bit"), boolean=True)
+    def show_4bit(self, obj):
+        return obj.load_in_4bit
 
     @display(description=_("Active"), boolean=True)
     def show_active(self, obj):

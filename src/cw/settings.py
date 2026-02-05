@@ -152,7 +152,7 @@ UNFOLD = {
     "SIDEBAR": {
         "navigation": [
             {
-                "title": "Diffusion",
+                "title": "Generative AI",
                 "items": [
                     {
                         "title": "Prompts",
@@ -165,7 +165,7 @@ UNFOLD = {
                         "link": "/admin/diffusion/diffusionjob/",
                     },
                     {
-                        "title": "Models",
+                        "title": "Diffusion Models",
                         "icon": "neurology",
                         "link": "/admin/diffusion/diffusionmodel/",
                     },
@@ -177,20 +177,25 @@ UNFOLD = {
                 ],
             },
             {
-                "title": "TV Spots",
+                "title": "TV Adaptations",
                 "items": [
                     {
-                        "title": "TV Spots",
+                        "title": "TVC Projects",
                         "icon": "live_tv",
                         "link": "/admin/tvspots/tvspot/",
                     },
                     {
-                        "title": "Versions",
+                        "title": "TVC Versions",
                         "icon": "description",
                         "link": "/admin/tvspots/tvspotversion/",
                     },
                     {
-                        "title": "Storyboards",
+                        "title": "Adaptation Jobs",
+                        "icon": "g_translate",
+                        "link": "/admin/tvspots/adaptationjob/",
+                    },
+                    {
+                        "title": "Version Storyboards",
                         "icon": "dashboard",
                         "link": "/admin/tvspots/storyboardjob/",
                     },
@@ -203,7 +208,6 @@ UNFOLD = {
             },
             {
                 "title": "Core",
-                "collapsible": True,
                 "items": [
                     {
                         "title": "Languages",

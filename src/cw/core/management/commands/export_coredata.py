@@ -78,6 +78,7 @@ class Command(BaseCommand):
                     "name": m.name,
                     "notes": m.notes,
                     "is_active": m.is_active,
+                    "load_in_4bit": m.load_in_4bit,
                 }
                 for m in models_qs.order_by("name")
             ]

@@ -6,6 +6,7 @@ Generative Creative Lab is designed as a **creative laboratory** - not merely a 
 Core Principles
 ---------------
 
+- **Human-Centered Creativity**: AI and ML are tools - just another paintbrush in the creative professional's toolkit. This framework augments human creativity, not replaces it. The creative vision, artistic judgment, and final decisions always belong to the human artist.
 - **Model Modularity**: Mix and match diffusion models, LoRAs, and enhancement strategies
 - **Prompt Evolution**: Transform and refine prompts using multiple enhancement approaches
 - **Workflow Orchestration**: Queue-based processing for batch experimentation

@@ -1,86 +1,70 @@
 {
   "llm_models": [
     {
-      "model_id": "CohereLabs/Aya-Expanse-8B-Q4",
-      "name": "Aya Expanse 8B Q 4",
-      "notes": "",
-      "is_active": true
+      "model_id": "CohereForAI/aya-expanse-8b",
+      "name": "Aya Expanse 8B",
+      "notes": "Excellent multilingual support for 23 languages",
+      "is_active": true,
+      "load_in_4bit": true
     },
     {
-      "model_id": "google/Gemma-2-9B-Q4",
-      "name": "Gemma 2 9B Q 4",
-      "notes": "",
-      "is_active": true
+      "model_id": "google/gemma-2-9b-it",
+      "name": "Gemma 2 9B",
+      "notes": "Good for Slovenian, Swahili, Uzbek",
+      "is_active": true,
+      "load_in_4bit": true
     },
     {
-      "model_id": "meta-llama/Llama-3.2-3B",
+      "model_id": "meta-llama/Llama-3.2-3B-Instruct-Instruct",
       "name": "Llama 3.2 3B",
-      "notes": "",
-      "is_active": true
+      "notes": "Officially supports Hindi, Thai",
+      "is_active": true,
+      "load_in_4bit": false
     },
     {
-      "model_id": "mistralai/Mistral-7B-v0.3-Q4",
-      "name": "Mistral 7B v 0.3 Q 4",
-      "notes": "",
-      "is_active": true
+      "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+      "name": "Mistral 7B v0.3",
+      "notes": "Excels with German, good with fine-tuning",
+      "is_active": true,
+      "load_in_4bit": true
     },
     {
-      "model_id": "mistralai/Mistral-7B-v0.3-Q4 (fine-tuned)",
-      "name": "Mistral 7B v 0.3 Q 4 (fine tuned)",
-      "notes": "",
-      "is_active": true
-    },
-    {
-      "model_id": "facebook/NLLB-200-1.3B",
+      "model_id": "facebook/nllb-200-1.3B",
       "name": "NLLB 200 1.3B",
-      "notes": "",
-      "is_active": true
+      "notes": "Translation-focused, fallback for low-resource languages",
+      "is_active": true,
+      "load_in_4bit": false
     },
     {
-      "model_id": "microsoft/Phi-3.5 covers Danish",
-      "name": "Phi 3.5 covers Danish",
-      "notes": "",
-      "is_active": true
-    },
-    {
-      "model_id": "microsoft/Phi-3.5 covers Hungarian",
-      "name": "Phi 3.5 covers Hungarian",
-      "notes": "",
-      "is_active": true
-    },
-    {
-      "model_id": "microsoft/Phi-3.5 major improvement",
-      "name": "Phi 3.5 major improvement",
-      "notes": "",
-      "is_active": true
-    },
-    {
-      "model_id": "microsoft/Phi-3.5-mini",
-      "name": "Phi 3.5 mini",
-      "notes": "",
-      "is_active": true
+      "model_id": "microsoft/Phi-3.5-mini-instruct-instruct",
+      "name": "Phi 3.5 Mini",
+      "notes": "Good Nordic/European language support",
+      "is_active": true,
+      "load_in_4bit": true
     },
     {
       "model_id": "Qwen/Qwen2.5-3B-Instruct",
-      "name": "Qwen 2.5 3B Instruct",
-      "notes": "",
-      "is_active": true
+      "name": "Qwen 2.5 3B",
+      "notes": "Lightweight default model",
+      "is_active": true,
+      "load_in_4bit": false
     },
     {
-      "model_id": "Qwen/Qwen2.5-7B-Instruct-Q4",
-      "name": "Qwen 2.5 7B Instruct Q 4",
-      "notes": "",
-      "is_active": true
+      "model_id": "Qwen/Qwen2.5-7B-Instruct",
+      "name": "Qwen 2.5 7B",
+      "notes": "Strong multilingual, best for CJK languages",
+      "is_active": true,
+      "load_in_4bit": true
     }
   ],
   "languages": [
     {
       "code": "ar",
       "name": "Arabic",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "microsoft/Phi-3.5-mini"
+        "CohereForAI/aya-expanse-8b",
+        "microsoft/Phi-3.5-mini-instruct"
       ],
       "notes": "microsoft/Phi-3.5 improved significantly",
       "is_active": true
@@ -88,9 +72,9 @@
     {
       "code": "bn",
       "name": "Bengali",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "Limited general model support",
       "is_active": true
@@ -98,9 +82,9 @@
     {
       "code": "my",
       "name": "Burmese",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "Very limited creative support",
       "is_active": true
@@ -108,7 +92,7 @@
     {
       "code": "zh",
       "name": "Chinese",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
         "Qwen/Qwen2.5-3B-Instruct"
       ],
@@ -118,9 +102,9 @@
     {
       "code": "cs",
       "name": "Czech",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "microsoft/Phi-3.5 covers Czech",
       "is_active": true
@@ -128,9 +112,9 @@
     {
       "code": "da",
       "name": "Danish",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "microsoft/Phi-3.5 covers Danish"
+        "microsoft/Phi-3.5-mini-instruct"
       ],
       "notes": "",
       "is_active": true
@@ -138,9 +122,9 @@
     {
       "code": "nl",
       "name": "Dutch",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "Qwen/Qwen2.5-7B-Instruct-Q4"
+        "Qwen/Qwen2.5-7B-Instruct"
       ],
       "notes": "microsoft/Phi-3.5 25-50% improvement",
       "is_active": true
@@ -148,9 +132,9 @@
     {
       "code": "fi",
       "name": "Finnish",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "microsoft/Phi-3.5 major improvement"
+        "microsoft/Phi-3.5-mini-instruct"
       ],
       "notes": "",
       "is_active": true
@@ -158,10 +142,10 @@
     {
       "code": "fr",
       "name": "French",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "mistralai/Mistral-7B-v0.3-Q4"
+        "CohereForAI/aya-expanse-8b",
+        "mistralai/Mistral-7B-Instruct-v0.3"
       ],
       "notes": "Most models handle well",
       "is_active": true
@@ -169,10 +153,10 @@
     {
       "code": "de",
       "name": "German",
-      "primary_model": "mistralai/Mistral-7B-v0.3-Q4",
+      "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
       "alternative_models": [
-        "meta-llama/Llama-3.2-3B",
-        "Qwen/Qwen2.5-7B-Instruct-Q4"
+        "meta-llama/Llama-3.2-3B-Instruct",
+        "Qwen/Qwen2.5-7B-Instruct"
       ],
       "notes": "mistralai/Mistral excels with fine-tuning",
       "is_active": true
@@ -180,9 +164,9 @@
     {
       "code": "he",
       "name": "Hebrew",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "microsoft/Phi-3.5 covers Hebrew",
       "is_active": true
@@ -190,10 +174,10 @@
     {
       "code": "hi",
       "name": "Hindi",
-      "primary_model": "meta-llama/Llama-3.2-3B",
+      "primary_model": "meta-llama/Llama-3.2-3B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "Qwen/Qwen2.5-7B-Instruct-Q4"
+        "CohereForAI/aya-expanse-8b",
+        "Qwen/Qwen2.5-7B-Instruct"
       ],
       "notes": "meta-llama/Llama 3.2 officially supports",
       "is_active": true
@@ -201,9 +185,9 @@
     {
       "code": "hu",
       "name": "Hungarian",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "microsoft/Phi-3.5 covers Hungarian"
+        "microsoft/Phi-3.5-mini-instruct"
       ],
       "notes": "",
       "is_active": true
@@ -211,9 +195,9 @@
     {
       "code": "id",
       "name": "Indonesian",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "Qwen/Qwen covers Indonesian",
       "is_active": true
@@ -221,10 +205,10 @@
     {
       "code": "it",
       "name": "Italian",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "google/Gemma-2-9B-Q4",
-        "meta-llama/Llama-3.2-3B"
+        "google/gemma-2-9b-it",
+        "meta-llama/Llama-3.2-3B-Instruct"
       ],
       "notes": "Good coverage",
       "is_active": true
@@ -232,9 +216,9 @@
     {
       "code": "ja",
       "name": "Japanese",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "Qwen best, avoid Mistral",
       "is_active": true
@@ -242,9 +226,9 @@
     {
       "code": "km",
       "name": "Khmer",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "Very limited creative support",
       "is_active": true
@@ -252,9 +236,9 @@
     {
       "code": "ko",
       "name": "Korean",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "Qwen/Qwen best for Korean",
       "is_active": true
@@ -262,9 +246,9 @@
     {
       "code": "lo",
       "name": "Lao",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "Very limited creative support",
       "is_active": true
@@ -272,9 +256,9 @@
     {
       "code": "ms",
       "name": "Malay",
-      "primary_model": "mistralai/Mistral-7B-v0.3-Q4 (fine-tuned)",
+      "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "Malaysian Mistral exists",
       "is_active": true
@@ -282,7 +266,7 @@
     {
       "code": "no",
       "name": "Norwegian",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [],
       "notes": "Nordic language support",
       "is_active": true
@@ -290,9 +274,9 @@
     {
       "code": "fa",
       "name": "Persian",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "CohereLabs/Aya covers Persian",
       "is_active": true
@@ -300,21 +284,21 @@
     {
       "code": "pl",
       "name": "Polish",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "Qwen/Qwen2.5-7B-Instruct-Q4"
+        "CohereForAI/aya-expanse-8b",
+        "Qwen/Qwen2.5-7B-Instruct"
       ],
-      "notes": "microsoft/Phi-3.5 major improvement",
+      "notes": "microsoft/Phi-3.5-mini-instruct",
       "is_active": true
     },
     {
       "code": "pt",
       "name": "Portuguese",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "meta-llama/Llama-3.2-3B"
+        "CohereForAI/aya-expanse-8b",
+        "meta-llama/Llama-3.2-3B-Instruct"
       ],
       "notes": "Good coverage",
       "is_active": true
@@ -322,10 +306,10 @@
     {
       "code": "ru",
       "name": "Russian",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "google/Gemma-2-9B-Q4"
+        "CohereForAI/aya-expanse-8b",
+        "google/gemma-2-9b-it"
       ],
       "notes": "Qwen strong, Gemma good",
       "is_active": true
@@ -333,9 +317,9 @@
     {
       "code": "sl",
       "name": "Slovenian",
-      "primary_model": "google/Gemma-2-9B-Q4",
+      "primary_model": "google/gemma-2-9b-it",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "google/Gemma first model with good Slovenian",
       "is_active": true
@@ -343,10 +327,10 @@
     {
       "code": "es",
       "name": "Spanish",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "mistralai/Mistral-7B-v0.3-Q4"
+        "CohereForAI/aya-expanse-8b",
+        "mistralai/Mistral-7B-Instruct-v0.3"
       ],
       "notes": "Most models handle well",
       "is_active": true
@@ -354,9 +338,9 @@
     {
       "code": "sw",
       "name": "Swahili",
-      "primary_model": "google/Gemma-2-9B-Q4",
+      "primary_model": "google/gemma-2-9b-it",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "google/Gemma fine-tuned excels",
       "is_active": true
@@ -364,9 +348,9 @@
     {
       "code": "sv",
       "name": "Swedish",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "Qwen/Qwen2.5-7B-Instruct-Q4"
+        "Qwen/Qwen2.5-7B-Instruct"
       ],
       "notes": "Nordic language support",
       "is_active": true
@@ -374,9 +358,9 @@
     {
       "code": "tl",
       "name": "Tagalog",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "Limited general support",
       "is_active": true
@@ -384,10 +368,10 @@
     {
       "code": "th",
       "name": "Thai",
-      "primary_model": "meta-llama/Llama-3.2-3B",
+      "primary_model": "meta-llama/Llama-3.2-3B-Instruct",
       "alternative_models": [
-        "microsoft/Phi-3.5-mini",
-        "Qwen/Qwen2.5-7B-Instruct-Q4"
+        "microsoft/Phi-3.5-mini-instruct",
+        "Qwen/Qwen2.5-7B-Instruct"
       ],
       "notes": "microsoft/Phi-3.5 25-50% improvement",
       "is_active": true
@@ -395,10 +379,10 @@
     {
       "code": "tr",
       "name": "Turkish",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4",
-        "microsoft/Phi-3.5-mini"
+        "CohereForAI/aya-expanse-8b",
+        "microsoft/Phi-3.5-mini-instruct"
       ],
       "notes": "Qwen/Qwen strong on Turkish MMLU",
       "is_active": true
@@ -406,19 +390,19 @@
     {
       "code": "uk",
       "name": "Ukrainian",
-      "primary_model": "microsoft/Phi-3.5-mini",
+      "primary_model": "microsoft/Phi-3.5-mini-instruct",
       "alternative_models": [
-        "meta-llama/Llama-3.2-3B"
+        "meta-llama/Llama-3.2-3B-Instruct"
       ],
-      "notes": "microsoft/Phi-3.5 major improvement",
+      "notes": "microsoft/Phi-3.5-mini-instruct",
       "is_active": true
     },
     {
       "code": "ur",
       "name": "Urdu",
-      "primary_model": "CohereLabs/Aya-Expanse-8B-Q4",
+      "primary_model": "CohereForAI/aya-expanse-8b",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "Limited support",
       "is_active": true
@@ -426,9 +410,9 @@
     {
       "code": "uz",
       "name": "Uzbek",
-      "primary_model": "google/Gemma-2-9B-Q4",
+      "primary_model": "google/gemma-2-9b-it",
       "alternative_models": [
-        "facebook/NLLB-200-1.3B"
+        "facebook/nllb-200-1.3B"
       ],
       "notes": "google/Gemma first with usable Uzbek",
       "is_active": true
@@ -436,9 +420,9 @@
     {
       "code": "vi",
       "name": "Vietnamese",
-      "primary_model": "Qwen/Qwen2.5-7B-Instruct-Q4",
+      "primary_model": "Qwen/Qwen2.5-7B-Instruct",
       "alternative_models": [
-        "CohereLabs/Aya-Expanse-8B-Q4"
+        "CohereForAI/aya-expanse-8b"
       ],
       "notes": "Qwen/Qwen covers Vietnamese",
       "is_active": true

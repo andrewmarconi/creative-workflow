@@ -40,6 +40,10 @@ class LLMModel(models.Model):
         default=True,
         help_text="Whether this model is available for use.",
     )
+    load_in_4bit = models.BooleanField(
+        default=False,
+        help_text="Load model with 4-bit quantization (requires bitsandbytes).",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

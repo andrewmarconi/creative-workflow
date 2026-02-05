@@ -78,6 +78,99 @@ class AdaptationMarketAdmin(ModelAdmin):
 
 
 # ---------------------------------------------------------------------------
+# AdaptationJob
+# ---------------------------------------------------------------------------
+
+
+@admin.register(AdaptationJob)
+class AdaptationJobAdmin(ModelAdmin):
+    list_display = [
+        "show_id",
+        "show_tvspot",
+        "target_market",
+        "show_language",
+        "show_status",
+        "created_at",
+        "completed_at",
+    ]
+    list_filter = ["status", "target_market", "created_at"]
+    search_fields = ["tv_spot__script_title", "target_market__name", "error_message"]
+    readonly_fields = [
+        "tv_spot",
+        "origin_version",
+        "target_market",
+        "language",
+        "llm_model",
+        "result_version",
+        "status",
+        "celery_task_id",
+        "error_message",
+        "created_at",
+        "started_at",
+        "completed_at",
+    ]
+
+    fieldsets = (
+        (
+            _("Request"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "tv_spot",
+                    "origin_version",
+                    "target_market",
+                    ("language", "llm_model"),
+                ),
+            },
+        ),
+        (
+            _("Status"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "status",
+                    "celery_task_id",
+                    "error_message",
+                    "result_version",
+                ),
+            },
+        ),
+        (
+            _("Timing"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "started_at", "completed_at"),
+            },
+        ),
+    )
+
+    @display(description=_("ID"))
+    def show_id(self, obj):
+        return f"#{obj.pk}"
+
+    @display(description=_("TV Spot"))
+    def show_tvspot(self, obj):
+        return obj.tv_spot.script_title
+
+    @display(description=_("Language"))
+    def show_language(self, obj):
+        lang = obj.effective_language
+        return f"{lang.name} ({lang.code})" if lang else "—"
+
+    @display(
+        description=_("Status"),
+        label={
+            "Pending": "info",
+            "Processing": "warning",
+            "Completed": "success",
+            "Failed": "danger",
+        },
+    )
+    def show_status(self, obj):
+        return obj.get_status_display()
+
+
+# ---------------------------------------------------------------------------
 # TV Spot Inlines
 # ---------------------------------------------------------------------------
 
