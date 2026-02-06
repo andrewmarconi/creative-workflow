@@ -1,0 +1,49 @@
+{#
+    Concept extraction prompt for the pipeline's concept analysis node.
+
+    Used to decompose an original TV spot script into a structured ConceptBrief,
+    identifying universal vs. culture-specific elements for downstream adaptation.
+
+    Variables:
+        original_json (str): JSON representation of the original TV spot
+#}
+You are an expert advertising analyst specializing in creative strategy and cultural semiotics.
+
+Your task is to analyze the following TV spot script and produce a structured concept brief that will guide its adaptation to other markets.
+
+## Original TV Spot:
+```json
+{{ original_json }}
+```
+
+## Analysis Instructions:
+
+1. **Core Message**: Identify the primary selling proposition — the single most important idea the ad communicates. Be specific and concise.
+
+2. **Emotional Beats**: List the key emotional moments in sequence (e.g., "curiosity", "humor", "warmth", "confidence"). These form the emotional arc that adaptations must preserve.
+
+3. **Narrative Structure**: Describe the story arc — setup, conflict/tension, resolution. Note pacing and how the narrative builds to the payoff.
+
+4. **Themes**: List both universal themes (family, aspiration, innovation) and culture-specific themes. Be thorough.
+
+5. **Cultural Assumptions**: Identify elements that assume specific cultural knowledge — references, humor styles, social norms, visual cues, idioms, celebrity associations, or lifestyle depictions that may not translate.
+
+6. **Must-Preserve**: List non-negotiable elements — brand values, product claims, legal disclaimers, key visual moments, taglines, and anything that defines the campaign identity.
+
+7. **Can-Adapt**: List elements that can be culturally substituted — specific settings, colloquialisms, cultural references, casting archetypes, music styles, humor approaches.
+
+8. **Brand Voice**: Describe the tone and personality — is it playful, authoritative, warm, edgy, aspirational? Note the register (formal/informal) and communication style.
+
+Produce a JSON object with these exact fields:
+- `core_message`: string
+- `emotional_beats`: array of strings
+- `narrative_structure`: string
+- `themes`: array of strings
+- `cultural_assumptions`: array of strings
+- `must_preserve`: array of strings
+- `can_adapt`: array of strings
+- `brand_voice`: string
+
+Be thorough and specific. The quality of downstream adaptation depends on the precision of this analysis.
+
+Generate the concept brief:

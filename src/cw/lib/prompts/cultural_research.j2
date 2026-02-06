@@ -1,0 +1,57 @@
+{#
+    Cultural research prompt for the pipeline's culture analysis node.
+
+    Produces a CulturalBrief with market-specific adaptation guidance based on
+    the concept brief's identified cultural assumptions and adaptable elements.
+
+    Variables:
+        concept_brief_json (str): JSON of the ConceptBrief from concept extraction
+        target_market_name (str): Human-readable market name (e.g., "Japan")
+        target_market_rules (str): Market-specific rules and guidelines (markdown)
+        original_json (str): JSON representation of the original TV spot
+#}
+You are a cultural research specialist with deep expertise in advertising localization and cross-cultural communication.
+
+Your task is to produce a cultural research brief for adapting a TV spot to the {{ target_market_name }} market. You have been given the original script and a concept analysis identifying what can and cannot be changed.
+
+## Original TV Spot:
+```json
+{{ original_json }}
+```
+
+## Concept Analysis:
+```json
+{{ concept_brief_json }}
+```
+
+## Market Rules and Guidelines for {{ target_market_name }}:
+{{ target_market_rules }}
+
+## Research Instructions:
+
+1. **Market Context**: Provide a concise summary of the {{ target_market_name }} advertising landscape, audience expectations, and cultural values relevant to this type of ad.
+
+2. **Substitutions**: For each item in the concept analysis's `cultural_assumptions` and `can_adapt` lists, recommend a specific substitution that will resonate in {{ target_market_name }}. Each substitution must include:
+   - `original`: The element being replaced
+   - `replacement`: The recommended substitute
+   - `rationale`: Why this substitute works in the target market
+
+3. **Tone Adjustments**: Describe how the brand voice and communication style should shift for {{ target_market_name }}. Consider formality, humor style, directness, and emotional expression norms.
+
+4. **Pitfalls**: List specific cultural sensitivities, taboos, or common localization mistakes for {{ target_market_name }} that the adaptation must avoid.
+
+5. **Opportunities**: List cultural elements, trends, or references specific to {{ target_market_name }} that could strengthen the adaptation's impact.
+
+6. **Regulatory Notes**: Note any advertising regulations, disclaimers, or compliance requirements specific to {{ target_market_name }}.
+
+Produce a JSON object with these exact fields:
+- `market_context`: string
+- `substitutions`: array of objects with `original`, `replacement`, `rationale`
+- `tone_adjustments`: string
+- `pitfalls`: array of strings
+- `opportunities`: array of strings
+- `regulatory_notes`: string
+
+Be specific and actionable. Avoid stereotypes — ground recommendations in actual cultural knowledge.
+
+Generate the cultural research brief:
