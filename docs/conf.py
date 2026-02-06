@@ -22,6 +22,8 @@ author = "Andrew Marconi"
 release = "0.1.0"
 
 github_url = "https://github.com/andrewmarconi/generative-creative-lab"
+html_logo = "_static/logo.png"
+html_title = "Generative Creative Lab"
 
 # -- General configuration ---------------------------------------------------
 
@@ -63,6 +65,7 @@ suppress_warnings = [
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 
 # RTD theme options
 html_theme_options = {
@@ -70,6 +73,8 @@ html_theme_options = {
     "collapse_navigation": False,  # Keep navigation expanded
     "sticky_navigation": True,  # Sticky sidebar
     "includehidden": True,  # Include hidden toctrees in navigation
+    "logo_only": True,  # True = hide project name, show only logo
+    "style_external_links": True,  # Add icon to external links
 }
 
 # -- Intersphinx mapping -----------------------------------------------------

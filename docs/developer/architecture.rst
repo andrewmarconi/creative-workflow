@@ -290,7 +290,7 @@ A minimal model implementation requires only ~20 lines:
                 torch_dtype=self.dtype,
             )
 
-See :doc:`/guides/adding-models` for the complete guide.
+See :doc:`/user/guides/adding-models` for the complete guide.
 
 Configuration Flags
 ~~~~~~~~~~~~~~~~~~~
@@ -992,12 +992,12 @@ The Docker Compose stack includes observability tools:
 
 Access Grafana at http://localhost:3000 (anonymous login enabled for dev).
 
-See :doc:`/guides/quickstart` for setup instructions.
+See :doc:`/user/quickstart` for setup instructions.
 
 Related Documentation
 ---------------------
 
-- :doc:`/guides/quickstart` - Getting started guide
-- :doc:`/guides/adding-models` - Adding new diffusion models
+- :doc:`/user/quickstart` - Getting started guide
+- :doc:`/user/guides/adding-models` - Adding new diffusion models
 - :doc:`api/lib` - API reference for cw.lib
 - :doc:`api/diffusion` - API reference for cw.diffusion

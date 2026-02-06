@@ -1,9 +1,14 @@
-.. image:: _static/logo-wide.png
-   :alt: Generative Creative Lab
-   :align: center
+.. meta ::
+   :title: Generative Creative Lab
+
+.. rst-class:: hidden-title
 
 Generative Creative Lab
 =======================
+
+.. image:: _static/logo-wide.png
+   :alt: Generative Creative Lab
+   :align: center
 
 A modular framework for creative development, exploration, and experimentation using generative AI.
 ---------------------------------------------------------------------------------------------------
@@ -51,8 +56,9 @@ If you use this software in your research, please cite it using the following Bi
    :caption: About
    :hidden:
 
-   philosophy
+   about/philosophy
    research/index
+   about/roadmap
 
 
 .. toctree::

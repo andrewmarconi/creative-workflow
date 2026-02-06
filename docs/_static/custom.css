@@ -1,0 +1,4 @@
+/* Hide the main title on index page only (shown in logo instead) */
+.hidden-title + h1 {
+    display: none;
+}
