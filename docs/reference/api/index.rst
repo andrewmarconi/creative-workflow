@@ -8,5 +8,6 @@ modules in the Generative Creative Lab codebase.
    :maxdepth: 2
 
    lib
+   core
    diffusion
    tvspots
