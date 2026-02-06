@@ -12,6 +12,11 @@
         original_json (str): JSON representation of the original TV spot
         num_script_rows (int): Number of script rows to adapt
         creativity (float): Creativity level from 0.0 to 1.0
+
+    Pipeline-only variables (optional, absent in single-step path):
+        concept_brief (str|None): JSON of ConceptBrief from concept extraction
+        cultural_brief (str|None): JSON of CulturalBrief from cultural research
+        revision_feedback (str|None): JSON of EvaluationResult feedback for revisions
 #}
 You are an expert advertising creative and localization strategist.
 
@@ -27,6 +32,22 @@ Your task is to create a culturally sensitive, legally compliant, and creatively
 ```json
 {{ original_json }}
 ```
+
+{% if concept_brief %}
+## Concept Analysis
+The following concept analysis was extracted from the original script. Your adaptation MUST preserve these elements:
+{{ concept_brief }}
+{% endif %}
+{% if cultural_brief %}
+## Cultural Research
+The following cultural research was conducted for the target market. Follow these recommendations:
+{{ cultural_brief }}
+{% endif %}
+{% if revision_feedback %}
+## Revision Required
+Your previous adaptation was reviewed and needs changes. Address ALL of the following issues:
+{{ revision_feedback }}
+{% endif %}
 
 ## Adaptation Requirements:
 

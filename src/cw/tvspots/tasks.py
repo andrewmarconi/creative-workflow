@@ -24,29 +24,65 @@ def create_adaptation_task(self, adaptation_job_id):
     """
     Create a culturally-adapted TV spot version using LLM.
 
+    Routes to either the multi-agent pipeline (``use_pipeline=True``)
+    or the existing single-step path based on the job's feature flag.
+
     Args:
         adaptation_job_id: ID of the AdaptationJob to process
 
     Returns:
         Dict with adaptation results
     """
-    from cw.tvspots.models import AdaptationJob, TvSpotScriptRow, TvSpotVersion
+    from cw.tvspots.models import AdaptationJob
 
     adaptation_job = AdaptationJob.objects.get(id=adaptation_job_id)
+
+    logger.info(
+        f"Starting adaptation of '{adaptation_job.tv_spot.script_title}' "
+        f"to {adaptation_job.target_market.name} "
+        f"(pipeline={adaptation_job.use_pipeline})",
+        extra={
+            "adaptation_job_id": adaptation_job_id,
+            "use_pipeline": adaptation_job.use_pipeline,
+        },
+    )
+
+    if adaptation_job.use_pipeline:
+        from cw.lib.pipeline import run_adaptation_pipeline
+
+        try:
+            run_adaptation_pipeline(adaptation_job)
+            return {
+                "status": "success",
+                "adaptation_job_id": adaptation_job_id,
+                "pipeline": True,
+            }
+        except Exception as e:
+            adaptation_job.status = "failed"
+            adaptation_job.error_message = str(e)
+            adaptation_job.completed_at = timezone.now()
+            adaptation_job.save(update_fields=["status", "error_message", "completed_at"])
+
+            logger.error(f"Pipeline adaptation failed: {e}", extra={
+                "adaptation_job_id": adaptation_job_id, "error": str(e),
+            })
+            return {
+                "status": "failed",
+                "adaptation_job_id": adaptation_job_id,
+                "pipeline": True,
+                "error": str(e),
+            }
+    else:
+        return _run_single_step_adaptation(adaptation_job)
+
+
+def _run_single_step_adaptation(adaptation_job):
+    """Run the original single-step adaptation path (unchanged logic)."""
+    from cw.tvspots.models import TvSpotScriptRow, TvSpotVersion
+
     origin_version = adaptation_job.origin_version
     target_market = adaptation_job.target_market
     tv_spot = adaptation_job.tv_spot
-
-    logger.info(
-        f"Starting adaptation of '{tv_spot.script_title}' to {target_market.name}",
-        extra={
-            "adaptation_job_id": adaptation_job_id,
-            "tv_spot_id": tv_spot.pk,
-            "origin_version_id": origin_version.pk,
-            "target_market_id": target_market.pk,
-            "target_market_code": target_market.code,
-        },
-    )
 
     # Update job status to processing
     adaptation_job.status = "processing"
@@ -54,15 +90,11 @@ def create_adaptation_task(self, adaptation_job_id):
     adaptation_job.save(update_fields=["status", "started_at"])
 
     try:
-        # Get the adaptation generator
         from cw.lib.adaptation import get_adaptation_generator
 
         generator = get_adaptation_generator()
-
-        # Generate the adaptation using job's effective language and model
         result = generator.adapt(adaptation_job)
 
-        # Create the new TvSpotVersion
         new_version = TvSpotVersion.objects.create(
             tv_spot=tv_spot,
             version_type="adaptation",
@@ -74,7 +106,6 @@ def create_adaptation_task(self, adaptation_job_id):
             is_active=True,
         )
 
-        # Create the adapted script rows
         for idx, row_data in enumerate(result.script_rows):
             TvSpotScriptRow.objects.create(
                 tv_spot_version=new_version,
@@ -86,7 +117,6 @@ def create_adaptation_task(self, adaptation_job_id):
                 audio_text=row_data.audio_text,
             )
 
-        # Update job as completed
         adaptation_job.status = "completed"
         adaptation_job.result_version = new_version
         adaptation_job.completed_at = timezone.now()
@@ -95,8 +125,7 @@ def create_adaptation_task(self, adaptation_job_id):
         logger.info(
             f"Adaptation created successfully: {new_version.name}",
             extra={
-                "adaptation_job_id": adaptation_job_id,
-                "tv_spot_id": tv_spot.pk,
+                "adaptation_job_id": adaptation_job.pk,
                 "new_version_id": new_version.pk,
                 "adaptation_code": new_version.code,
                 "num_rows": len(result.script_rows),
@@ -105,7 +134,7 @@ def create_adaptation_task(self, adaptation_job_id):
 
         return {
             "status": "success",
-            "adaptation_job_id": adaptation_job_id,
+            "adaptation_job_id": adaptation_job.pk,
             "tv_spot_id": tv_spot.pk,
             "origin_version_id": origin_version.pk,
             "new_version_id": new_version.pk,
@@ -115,7 +144,6 @@ def create_adaptation_task(self, adaptation_job_id):
         }
 
     except Exception as e:
-        # Update job as failed
         adaptation_job.status = "failed"
         adaptation_job.error_message = str(e)
         adaptation_job.completed_at = timezone.now()
@@ -124,18 +152,15 @@ def create_adaptation_task(self, adaptation_job_id):
         logger.error(
             f"Adaptation failed: {e}",
             extra={
-                "adaptation_job_id": adaptation_job_id,
-                "tv_spot_id": tv_spot.pk,
-                "origin_version_id": origin_version.pk,
-                "target_market_id": target_market.pk,
+                "adaptation_job_id": adaptation_job.pk,
                 "error": str(e),
             },
         )
         return {
             "status": "failed",
-            "adaptation_job_id": adaptation_job_id,
+            "adaptation_job_id": adaptation_job.pk,
             "origin_version_id": origin_version.pk,
-            "target_market_id": target_market.pk,
+            "target_market_id": adaptation_job.target_market.pk,
             "error": str(e),
         }
 

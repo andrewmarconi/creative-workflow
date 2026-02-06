@@ -89,11 +89,12 @@ class AdaptationJobAdmin(ModelAdmin):
         "show_tvspot",
         "target_market",
         "show_language",
+        "show_pipeline",
         "show_status",
         "created_at",
         "completed_at",
     ]
-    list_filter = ["status", "target_market", "created_at"]
+    list_filter = ["status", "use_pipeline", "target_market", "created_at"]
     search_fields = ["tv_spot__script_title", "target_market__name", "error_message"]
     readonly_fields = [
         "tv_spot",
@@ -108,6 +109,10 @@ class AdaptationJobAdmin(ModelAdmin):
         "created_at",
         "started_at",
         "completed_at",
+        "concept_brief",
+        "cultural_brief",
+        "evaluation_history",
+        "pipeline_metadata",
     ]
 
     fieldsets = (
@@ -120,6 +125,7 @@ class AdaptationJobAdmin(ModelAdmin):
                     "origin_version",
                     "target_market",
                     ("language", "llm_model"),
+                    "use_pipeline",
                 ),
             },
         ),
@@ -142,6 +148,38 @@ class AdaptationJobAdmin(ModelAdmin):
                 "fields": ("created_at", "started_at", "completed_at"),
             },
         ),
+        (
+            _("Concept Brief"),
+            {
+                "classes": ["tab"],
+                "fields": ("concept_brief",),
+                "description": "Output of the concept extraction pipeline node.",
+            },
+        ),
+        (
+            _("Cultural Brief"),
+            {
+                "classes": ["tab"],
+                "fields": ("cultural_brief",),
+                "description": "Output of the cultural research pipeline node.",
+            },
+        ),
+        (
+            _("Evaluation History"),
+            {
+                "classes": ["tab"],
+                "fields": ("evaluation_history",),
+                "description": "Chronological evaluation results from pipeline review nodes.",
+            },
+        ),
+        (
+            _("Pipeline Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("pipeline_metadata",),
+                "description": "Models used, revision counts, and timing per pipeline phase.",
+            },
+        ),
     )
 
     @display(description=_("ID"))
@@ -157,6 +195,10 @@ class AdaptationJobAdmin(ModelAdmin):
         lang = obj.effective_language
         return f"{lang.name} ({lang.code})" if lang else "—"
 
+    @display(description=_("Pipeline"), boolean=True)
+    def show_pipeline(self, obj):
+        return obj.use_pipeline
+
     @display(
         description=_("Status"),
         label={
@@ -164,6 +206,12 @@ class AdaptationJobAdmin(ModelAdmin):
             "Processing": "warning",
             "Completed": "success",
             "Failed": "danger",
+            "Concept Analysis": "warning",
+            "Cultural Analysis": "warning",
+            "Writing": "warning",
+            "Cultural Evaluation": "warning",
+            "Concept Evaluation": "warning",
+            "Revising": "warning",
         },
     )
     def show_status(self, obj):
@@ -212,8 +260,8 @@ class AdaptationJobInline(TabularInline):
     model = AdaptationJob
     tab = True
     extra = 0
-    fields = ["target_market", "show_status", "result_version", "created_at"]
-    readonly_fields = ["target_market", "show_status", "result_version", "created_at"]
+    fields = ["target_market", "show_pipeline", "show_status", "result_version", "created_at"]
+    readonly_fields = ["target_market", "show_pipeline", "show_status", "result_version", "created_at"]
     can_delete = False
     show_change_link = True
     verbose_name = "Adaptation Request"
@@ -222,6 +270,10 @@ class AdaptationJobInline(TabularInline):
     def has_add_permission(self, request, obj=None):
         return False
 
+    @display(description=_("Pipeline"), boolean=True)
+    def show_pipeline(self, obj):
+        return obj.use_pipeline
+
     @display(
         description=_("Status"),
         label={
@@ -229,6 +281,12 @@ class AdaptationJobInline(TabularInline):
             "Processing": "warning",
             "Completed": "success",
             "Failed": "danger",
+            "Concept Analysis": "warning",
+            "Cultural Analysis": "warning",
+            "Writing": "warning",
+            "Cultural Evaluation": "warning",
+            "Concept Evaluation": "warning",
+            "Revising": "warning",
         },
     )
     def show_status(self, obj):
@@ -523,6 +581,7 @@ class TvSpotAdmin(ModelAdmin):
             market_id = request.POST.get("market")
             language_id = request.POST.get("language")
             llm_model_id = request.POST.get("llm_model")
+            use_pipeline = request.POST.get("use_pipeline") == "on"
 
             if not market_id:
                 messages.error(request, "Please select a target market.")
@@ -565,6 +624,7 @@ class TvSpotAdmin(ModelAdmin):
                 target_market=market,
                 language=language,
                 llm_model=llm_model,
+                use_pipeline=use_pipeline,
                 status="pending",
             )
 

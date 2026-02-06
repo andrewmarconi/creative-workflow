@@ -201,6 +201,13 @@ class AdaptationJob(models.Model):
         ("processing", "Processing"),
         ("completed", "Completed"),
         ("failed", "Failed"),
+        # Pipeline-specific statuses
+        ("concept_analysis", "Concept Analysis"),
+        ("cultural_analysis", "Cultural Analysis"),
+        ("writing", "Writing"),
+        ("cultural_evaluation", "Cultural Evaluation"),
+        ("concept_evaluation", "Concept Evaluation"),
+        ("revising", "Revising"),
     ]
 
     tv_spot = models.ForeignKey(
@@ -243,7 +250,7 @@ class AdaptationJob(models.Model):
         help_text="The created adaptation version (set on completion).",
     )
     status = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=STATUS_CHOICES,
         default="pending",
     )
@@ -256,6 +263,28 @@ class AdaptationJob(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+
+    # Pipeline fields
+    use_pipeline = models.BooleanField(
+        default=False,
+        help_text="Use multi-agent pipeline instead of single-step adaptation.",
+    )
+    concept_brief = models.JSONField(
+        null=True, blank=True,
+        help_text="Concept extraction output (populated by pipeline).",
+    )
+    cultural_brief = models.JSONField(
+        null=True, blank=True,
+        help_text="Cultural research output (populated by pipeline).",
+    )
+    evaluation_history = models.JSONField(
+        default=list, blank=True,
+        help_text="Chronological list of evaluation results from pipeline.",
+    )
+    pipeline_metadata = models.JSONField(
+        default=dict, blank=True,
+        help_text="Pipeline timing, revision counts, and model info.",
+    )
 
     class Meta:
         db_table = "diffusion_adaptationjob"

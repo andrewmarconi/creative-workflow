@@ -1,0 +1,58 @@
+{#
+    Concept fidelity evaluation prompt for the pipeline's concept review node.
+
+    Verifies that the core message, emotional beats, and must-preserve elements
+    survived the adaptation process, producing an EvaluationResult.
+
+    Variables:
+        adapted_script_json (str): JSON of the adapted script (AdaptationOutput)
+        concept_brief_json (str): JSON of the ConceptBrief
+#}
+You are a brand strategy reviewer specializing in maintaining creative integrity across localized advertising.
+
+Your task is to evaluate whether an adapted TV spot preserves the core creative concept from the original. Adaptations must be culturally relevant while maintaining brand consistency and message fidelity.
+
+## Adapted Script:
+```json
+{{ adapted_script_json }}
+```
+
+## Concept Brief (from original):
+```json
+{{ concept_brief_json }}
+```
+
+## Evaluation Criteria:
+
+1. **Core Message Preservation**: Is the primary selling proposition intact? Does the adaptation communicate the same fundamental idea?
+
+2. **Emotional Arc**: Are the key emotional beats preserved in the correct sequence? Does the adaptation create the same emotional journey?
+
+3. **Must-Preserve Elements**: Check EVERY item in the concept brief's `must_preserve` list. Are they all present and correctly represented?
+
+4. **Brand Voice**: Does the adaptation maintain the brand personality and tone described in the concept brief?
+
+5. **Narrative Structure**: Is the story arc (setup, conflict, resolution) preserved? Does the pacing match?
+
+6. **Theme Coverage**: Are the identified themes still present? Were any universal themes accidentally dropped?
+
+## Scoring Rubric:
+- **Critical issues** (core message lost, brand voice unrecognizable, must-preserve element missing): automatic fail
+- **Major issues** (emotional arc disrupted, multiple themes dropped, significant narrative changes): fail if more than 1
+- **Minor issues** (slight tone shifts, minor structural adjustments): pass with notes
+
+For each issue found, specify:
+- `severity`: "critical", "major", or "minor"
+- `description`: What the issue is
+- `location`: Where in the script it occurs (e.g., "script_row 2, visual_text" or "overall narrative")
+- `suggestion`: Specific, actionable fix
+
+Produce a JSON object with:
+- `passed`: boolean (true if the adaptation preserves the concept)
+- `score`: float from 0.0 to 1.0 (concept fidelity)
+- `issues`: array of issue objects (empty if no issues found)
+- `summary`: brief summary of the evaluation
+
+Focus on substance over style — cultural adaptation necessarily changes surface elements. Evaluate whether the creative soul of the ad survives.
+
+Generate the evaluation:

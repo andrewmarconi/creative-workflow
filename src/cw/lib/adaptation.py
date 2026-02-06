@@ -89,6 +89,9 @@ class AdaptationGenerator:
 
     Uses Qwen model for multilingual capabilities and Outlines library
     to guarantee valid JSON output matching the expected schema.
+
+    Delegates model loading to :class:`PipelineModelLoader` for shared use
+    across both single-step and pipeline adaptation paths.
     """
 
     def __init__(
@@ -105,106 +108,27 @@ class AdaptationGenerator:
             device: Device to use ('cpu', 'mps', 'cuda', or None for auto-detect)
             load_in_4bit: Whether to load with 4-bit quantization (requires bitsandbytes)
         """
+        from cw.lib.pipeline.model_loader import PipelineModelLoader
+
         self.model_id = model_id
-        self.device = device
         self.load_in_4bit = load_in_4bit
-        self._model = None
-        self._tokenizer = None
+        self._loader = PipelineModelLoader(model_id=model_id, device=device, load_in_4bit=load_in_4bit)
         self._generator = None
 
-    def _is_model_cached(self) -> bool:
-        """Check if the model is already cached locally."""
-        try:
-            from huggingface_hub import try_to_load_from_cache
-            from huggingface_hub.utils import LocalEntryNotFoundError
+    @property
+    def device(self):
+        return self._loader.device
 
-            # Check for a file that should exist in any HF model
-            result = try_to_load_from_cache(self.model_id, "config.json")
-            return result is not None
-        except Exception:
-            # If we can't determine cache status, assume not cached
-            return False
+    @device.setter
+    def device(self, value):
+        self._loader.device = value
 
     def _load_model(self):
-        """Load the model and create Outlines generator."""
+        """Load the model and create Outlines generator for AdaptationOutput."""
         if self._generator is not None:
-            logger.debug("Model already loaded, skipping _load_model")
+            logger.debug("Generator already loaded, skipping _load_model")
             return
-
-        import outlines
-        import torch
-        from transformers import AutoModelForCausalLM, AutoTokenizer
-
-        # Check if model is cached locally
-        is_cached = self._is_model_cached()
-        if is_cached:
-            logger.info(f"Model '{self.model_id}' found in local cache, loading...")
-        else:
-            logger.info(f"Model '{self.model_id}' not in cache, downloading from HuggingFace Hub...")
-            logger.info("This may take several minutes depending on model size and connection speed.")
-
-        # Detect device
-        if self.device is None:
-            if torch.backends.mps.is_available():
-                self.device = "mps"
-            elif torch.cuda.is_available():
-                self.device = "cuda"
-            else:
-                self.device = "cpu"
-
-        logger.info(f"Using device: {self.device}, load_in_4bit: {self.load_in_4bit}")
-
-        # Load model and tokenizer with transformers
-        dtype = torch.bfloat16 if self.device != "cpu" else torch.float32
-        model_kwargs = {
-            "torch_dtype": dtype,
-            "low_cpu_mem_usage": True,
-            "device_map": self.device if not self.load_in_4bit else "auto",
-        }
-
-        # Add 4-bit quantization config if enabled (requires CUDA and bitsandbytes)
-        if self.load_in_4bit:
-            if self.device != "cuda":
-                logger.warning(
-                    f"4-bit quantization requested but device is {self.device}. "
-                    "4-bit quantization requires CUDA. Falling back to standard loading."
-                )
-            else:
-                from transformers import BitsAndBytesConfig
-
-                logger.info("Using 4-bit quantization with bitsandbytes")
-                model_kwargs["quantization_config"] = BitsAndBytesConfig(
-                    load_in_4bit=True,
-                    bnb_4bit_compute_dtype=dtype,
-                    bnb_4bit_quant_type="nf4",
-                    bnb_4bit_use_double_quant=True,
-                )
-
-        logger.debug(f"Loading HuggingFace model with dtype={dtype}")
-        hf_model = AutoModelForCausalLM.from_pretrained(
-            self.model_id,
-            **model_kwargs,
-        )
-        if not is_cached:
-            logger.info(f"Model '{self.model_id}' download complete.")
-        logger.debug("HuggingFace model loaded, loading tokenizer")
-        self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)
-        logger.debug("Tokenizer loaded")
-
-        # Wrap with Outlines
-        logger.debug("Wrapping model with outlines.from_transformers")
-        self._model = outlines.from_transformers(hf_model, self._tokenizer, device_dtype=dtype)
-        logger.debug("Outlines model wrapper created")
-
-        # Create generator with JSON schema output type
-        logger.debug("Creating Outlines Generator with AdaptationOutput schema")
-        self._generator = outlines.Generator(self._model, output_type=AdaptationOutput)
-        logger.debug("Outlines Generator created")
-
-        if is_cached:
-            logger.info(f"Adaptation model '{self.model_id}' loaded successfully from cache.")
-        else:
-            logger.info(f"Adaptation model '{self.model_id}' downloaded and loaded successfully.")
+        self._generator = self._loader.get_generator(AdaptationOutput)
 
     def adapt(
         self,
@@ -247,6 +171,7 @@ class AdaptationGenerator:
                 self.clear_cache()
                 self.model_id = required_model
                 self.load_in_4bit = required_4bit
+                self._loader.switch_model(required_model, required_4bit)
 
         self._load_model()
 
@@ -366,7 +291,7 @@ class AdaptationGenerator:
             {"role": "user", "content": user_prompt},
         ]
 
-        prompt = self._tokenizer.apply_chat_template(
+        prompt = self._loader.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
             add_generation_prompt=True,
@@ -377,33 +302,13 @@ class AdaptationGenerator:
 
     def clear_cache(self):
         """Clear the model from memory."""
-        import torch
-
         logger.debug("clear_cache() called")
 
         if self._generator is not None:
-            logger.debug("Deleting generator")
             del self._generator
             self._generator = None
 
-        if self._model is not None:
-            logger.debug("Deleting model")
-            del self._model
-            self._model = None
-
-        if self._tokenizer is not None:
-            logger.debug("Deleting tokenizer")
-            del self._tokenizer
-            self._tokenizer = None
-
-        if self.device == "mps":
-            logger.debug("Clearing MPS cache")
-            torch.mps.empty_cache()
-        elif self.device == "cuda":
-            logger.debug("Clearing CUDA cache")
-            torch.cuda.empty_cache()
-
-        logger.info("Adaptation model cache cleared")
+        self._loader.clear_cache()
 
 
 # Module-level singleton for reuse across tasks
