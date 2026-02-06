@@ -178,7 +178,6 @@ generative-creative-lab/
 |-------|----------|-------|-----|-----------------|--------------|
 | Z-Image Turbo | ZImagePipeline | 9 | 0.0 | No | zimage |
 | Flux.1-dev | FluxPipeline | 28 | 3.5 | No | flux1 |
-| Flux.2 Klein | FluxPipeline | 28 | 3.5 | No | flux1 |
 | Qwen-Image-2512 | QwenImagePipeline | 50 | 4.5 | Yes | qwen |
 | SDXL Turbo | AutoPipelineForText2Image | 4 | 0.0 | No | sdxl |
 | Juggernaut XL v9 | StableDiffusionXLPipeline | 30 | 7.0 | Yes | sdxl |
