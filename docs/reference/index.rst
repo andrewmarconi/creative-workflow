@@ -7,6 +7,5 @@ Technical specifications and schema definitions.
    :maxdepth: 2
 
    architecture
-   database-schema
    data-schemas
    api/index

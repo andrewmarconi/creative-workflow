@@ -317,73 +317,652 @@ Model behavior can be customized via flags in ``presets.json``:
 Database Schema
 ---------------
 
-Core Models
-~~~~~~~~~~~
+The platform uses three Django apps with distinct responsibilities. This section provides
+detailed entity-relationship diagrams and field-level documentation for each app.
+
+Diffusion App (cw.diffusion)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Core models for image generation: model configuration, LoRA adapters, prompts, and jobs.
 
 .. mermaid::
 
    erDiagram
        DiffusionModel {
-           string label
-           string slug PK
-           string pipeline
-           string path
-           json settings
+           bigint id PK
+           varchar label
+           varchar slug UK
+           varchar base_architecture
+           varchar path
+           varchar pipeline
+           int steps
+           float guidance_scale
+           int default_width
+           int default_height
+           int max_pixels
+           varchar scheduler
+           varchar dtype
+           bool supports_negative_prompt
+           bool force_default_guidance
+           int max_sequence_length
+           int token_window
+           int vram_usage
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
        }
 
        LoraModel {
-           string label
-           string base_architecture
-           string civitai_air
-           string prompt_suffix
-           string theme
+           bigint id PK
+           varchar label
+           varchar path
+           varchar air
+           varchar base_architecture
+           text prompt_suffix
+           text negative_prompt_suffix
+           float default_strength
+           float guidance_scale
+           int clip_skip
+           text notes
+           varchar theme
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
        }
 
        Prompt {
-           string text
-           string enhanced_text
-           string negative_prompt
+           bigint id PK
+           text source_prompt
+           text enhanced_prompt
+           text negative_prompt
+           varchar enhancement_style
+           varchar enhancement_method
+           float creativity
+           timestamp created_at
+           timestamp updated_at
        }
 
        DiffusionJob {
-           string status
-           json images
+           bigint id PK
+           bigint diffusion_model_id FK
+           bigint lora_model_id FK
+           bigint prompt_id FK
+           varchar identifier
            int width
            int height
            int steps
-           float cfg
-           int seed
+           float guidance_scale
+           float lora_strength
+           bigint seed
+           varchar scheduler
+           int num_images
+           varchar status
+           varchar rq_job_id
+           array result_images
+           json generation_metadata
+           text error_message
+           timestamp created_at
+           timestamp started_at
+           timestamp completed_at
        }
 
-       DiffusionModel ||--o{ DiffusionJob : "model"
-       LoraModel ||--o{ DiffusionJob : "lora"
-       Prompt ||--o{ DiffusionJob : "prompt"
+       DiffusionModel ||--o{ DiffusionJob : "generates"
+       LoraModel ||--o{ DiffusionJob : "applies to"
+       Prompt ||--o{ DiffusionJob : "uses"
 
 **DiffusionModel**
-    Represents a diffusion model configuration. Synced from ``presets.json``
-    via ``manage.py import_presets``.
+   Configuration for a diffusion model (Flux, SDXL, SD1.5, etc.). Models are imported from
+   ``data/presets.json`` via the ``import_presets`` management command.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``label``
+        - varchar(255)
+        - Display name for the model
+      * - ``slug``
+        - varchar(100)
+        - Unique identifier (e.g., 'flux1_dev', 'sdxl_turbo')
+      * - ``base_architecture``
+        - varchar(20)
+        - Architecture type: sdxl, sd15, flux1, qwen, zimage
+      * - ``path``
+        - varchar(500)
+        - HuggingFace model ID or local .safetensors path
+      * - ``pipeline``
+        - varchar(100)
+        - Pipeline class name (e.g., 'FluxPipeline', 'StableDiffusionXLPipeline')
+      * - ``steps``
+        - int
+        - Default number of inference steps (1-200)
+      * - ``guidance_scale``
+        - float
+        - Default CFG value (0.0-20.0)
+      * - ``default_width``
+        - int
+        - Default image width in pixels (256-4096)
+      * - ``default_height``
+        - int
+        - Default image height in pixels (256-4096)
+      * - ``max_pixels``
+        - int
+        - Maximum total pixels (width × height)
+      * - ``scheduler``
+        - varchar(100)
+        - Default scheduler (e.g., 'FlowMatchEulerDiscreteScheduler')
+      * - ``dtype``
+        - varchar(50)
+        - Data type: bfloat16, float16, float32, float8_e4m3fn
+      * - ``supports_negative_prompt``
+        - bool
+        - Whether model accepts negative prompts
+      * - ``force_default_guidance``
+        - bool
+        - Force model's default guidance_scale (for Turbo models)
+      * - ``max_sequence_length``
+        - int
+        - Maximum sequence length for text encoder
+      * - ``token_window``
+        - int
+        - Maximum tokens for prompt (77 for CLIP, 512 for T5)
+      * - ``vram_usage``
+        - int
+        - Minimum VRAM required in MB
+      * - ``is_active``
+        - bool
+        - Enable/disable model in admin
 
 **LoraModel**
-    Represents a LoRA adapter with compatibility and trigger word settings.
+   Low-Rank Adaptation models that modify base model behavior. Can be auto-downloaded from
+   CivitAI using AIR URNs.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``label``
+        - varchar(255)
+        - Display name for the LoRA
+      * - ``path``
+        - varchar(500)
+        - Path to LoRA file or HF model ID
+      * - ``air``
+        - varchar(500)
+        - AIR (AI Resource) URN identifier for CivitAI downloads
+      * - ``base_architecture``
+        - varchar(20)
+        - Compatible architecture: sdxl, sd15, flux1, qwen, zimage
+      * - ``prompt_suffix``
+        - text
+        - Trigger words and style description to append to prompts
+      * - ``negative_prompt_suffix``
+        - text
+        - Terms to append to negative prompts
+      * - ``default_strength``
+        - float
+        - Default LoRA strength/weight (0.0-2.0)
+      * - ``guidance_scale``
+        - float
+        - Override guidance scale when using this LoRA
+      * - ``clip_skip``
+        - int
+        - Number of CLIP layers to skip (1-12, typically 1-2 for anime)
+      * - ``notes``
+        - text
+        - Internal notes (usage tips, characteristics, stats)
+      * - ``theme``
+        - varchar(100)
+        - Theme for filtering: 'anime', 'photorealistic', 'fantasy'
+      * - ``is_active``
+        - bool
+        - Enable/disable LoRA in admin
 
 **Prompt**
-    Stores user prompts with optional enhancement tracking.
+   User prompts with optional AI enhancement. Supports multiple enhancement methods.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``source_prompt``
+        - text
+        - Original user-provided prompt
+      * - ``enhanced_prompt``
+        - text
+        - AI-enhanced version of the prompt
+      * - ``negative_prompt``
+        - text
+        - Negative prompt (things to avoid)
+      * - ``enhancement_style``
+        - varchar(50)
+        - Style preset: auto, photography, artistic, realistic, cinematic, coloring-book
+      * - ``enhancement_method``
+        - varchar(50)
+        - Method: none, rule-based, huggingface, llm
+      * - ``creativity``
+        - float
+        - Creativity level for enhancement (0.0-1.0)
 
 **DiffusionJob**
-    Tracks generation jobs with all parameters and results.
+   Tracks image generation tasks processed by Celery workers. Links a prompt to a model
+   (and optional LoRA), stores parameter overrides, and tracks status/results.
 
-TV Spots Models (Optional)
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``diffusion_model``
+        - FK
+        - Model to use for generation (PROTECT on delete)
+      * - ``lora_model``
+        - FK
+        - Optional LoRA to apply (SET_NULL on delete)
+      * - ``prompt``
+        - FK
+        - Prompt to use for generation (PROTECT on delete)
+      * - ``identifier``
+        - varchar(100)
+        - Optional identifier for file naming
+      * - ``width``
+        - int
+        - Image width override (uses model default if not set)
+      * - ``height``
+        - int
+        - Image height override (uses model default if not set)
+      * - ``steps``
+        - int
+        - Steps override (uses model default if not set)
+      * - ``guidance_scale``
+        - float
+        - Guidance scale override (uses model default if not set)
+      * - ``lora_strength``
+        - float
+        - LoRA strength override (uses LoRA default if not set)
+      * - ``seed``
+        - bigint
+        - Random seed for reproducibility (random if not set)
+      * - ``scheduler``
+        - varchar(100)
+        - Scheduler override (uses model default if not set)
+      * - ``num_images``
+        - int
+        - Number of images to generate (1-10)
+      * - ``status``
+        - varchar(20)
+        - Job status: pending, queued, processing, completed, failed, cancelled
+      * - ``rq_job_id``
+        - varchar(255)
+        - Celery task ID for tracking
+      * - ``result_images``
+        - array
+        - List of generated image paths
+      * - ``generation_metadata``
+        - json
+        - Complete generation settings used
+      * - ``error_message``
+        - text
+        - Error message if job failed
+      * - ``started_at``
+        - timestamp
+        - When job processing started
+      * - ``completed_at``
+        - timestamp
+        - When job finished
+
+TV Spots App (cw.tvspots)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For TV spot workflow, additional models exist in ``cw.tvspots``:
+Models for TV commercial workflow: spots, versions, scripts, adaptations, and storyboard generation.
 
-- ``TvSpot`` - TV spot script metadata
-- ``TvSpotVersion`` - Version/adaptation of a spot
-- ``ScriptRow`` - Individual rows in a script
-- ``AdaptationMarket`` - Market-specific adaptation rules
-- ``StoryboardJob`` - Storyboard generation tracking
+.. mermaid::
 
-See :doc:`/guides/importing-tvspots` for details.
+   erDiagram
+       AdaptationMarket {
+           bigint id PK
+           varchar name UK
+           varchar code UK
+           bigint default_language_id FK
+           json rules
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       TvSpot {
+           bigint id PK
+           varchar client_name
+           varchar brand_name
+           varchar script_title
+           int total_runtime_seconds
+           varchar job_id UK
+           text notes
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       TvSpotVersion {
+           bigint id PK
+           bigint tv_spot_id FK
+           varchar version_type
+           bigint market_id FK
+           varchar code
+           varchar name
+           varchar language
+           text visual_style_prompt
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       TvSpotScriptRow {
+           bigint id PK
+           bigint tv_spot_version_id FK
+           int order_index
+           varchar shot_number
+           varchar timecode_start
+           decimal duration_seconds
+           text visual_text
+           text audio_text
+       }
+
+       AdaptationJob {
+           bigint id PK
+           bigint tv_spot_id FK
+           bigint origin_version_id FK
+           bigint target_market_id FK
+           bigint language_id FK
+           bigint llm_model_id FK
+           bigint result_version_id FK
+           varchar status
+           varchar celery_task_id
+           text error_message
+           timestamp created_at
+           timestamp started_at
+           timestamp completed_at
+       }
+
+       StoryboardJob {
+           bigint id PK
+           bigint tv_spot_version_id FK
+           bigint diffusion_model_id FK
+           bigint lora_model_id FK
+           int images_per_row
+           varchar status
+           text error_message
+           timestamp created_at
+           timestamp completed_at
+       }
+
+       StoryboardImage {
+           bigint id PK
+           bigint storyboard_job_id FK
+           bigint script_row_id FK
+           bigint diffusion_job_id FK
+           int image_index
+       }
+
+       TvSpot ||--o{ TvSpotVersion : "has versions"
+       TvSpot ||--o{ AdaptationJob : "requests"
+       AdaptationMarket ||--o{ TvSpotVersion : "target for"
+       AdaptationMarket ||--o{ AdaptationJob : "target for"
+       TvSpotVersion ||--o{ TvSpotScriptRow : "contains"
+       TvSpotVersion ||--o{ StoryboardJob : "generates"
+       TvSpotVersion ||--o{ AdaptationJob : "origin for"
+       AdaptationJob ||--o| TvSpotVersion : "creates"
+       StoryboardJob ||--o{ StoryboardImage : "produces"
+       TvSpotScriptRow ||--o{ StoryboardImage : "source for"
+
+**AdaptationMarket**
+   Target markets for TV spot localization with structured cultural and regulatory rules.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``name``
+        - varchar(100)
+        - Market name (e.g., 'US Hispanic', 'Japanese')
+      * - ``code``
+        - varchar(20)
+        - Short code (e.g., 'us-hispanic', 'jp')
+      * - ``default_language``
+        - FK
+        - Default language for adaptations in this market
+      * - ``rules``
+        - json
+        - Structured rules: list of {heading, points[]} for adaptation guidance
+      * - ``is_active``
+        - bool
+        - Enable/disable market in admin
+
+**TvSpot**
+   Project-level metadata for a TV commercial. Created via JSON import.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``client_name``
+        - varchar(255)
+        - Client name
+      * - ``brand_name``
+        - varchar(255)
+        - Brand name
+      * - ``script_title``
+        - varchar(255)
+        - Title of the script
+      * - ``total_runtime_seconds``
+        - int
+        - Total runtime in seconds (typically 15, 30, 60, 90)
+      * - ``job_id``
+        - varchar(100)
+        - Internal project ID (e.g., 'ACME-2024-001')
+      * - ``notes``
+        - text
+        - Additional notes
+
+**TvSpotVersion**
+   A version of a spot - either the origin or a market adaptation. Each version has its
+   own script rows.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``tv_spot``
+        - FK
+        - Parent TV spot (CASCADE on delete)
+      * - ``version_type``
+        - varchar(20)
+        - Type: 'origin' or 'adaptation'
+      * - ``market``
+        - FK
+        - Target market for adaptation (null for origin, PROTECT on delete)
+      * - ``code``
+        - varchar(50)
+        - Internal code (e.g., 'ORIGIN', 'US-HISP', 'JP')
+      * - ``name``
+        - varchar(255)
+        - Human label (e.g., 'US Hispanic Adaptation')
+      * - ``language``
+        - varchar(50)
+        - Primary language code (e.g., 'en-US', 'es-MX', 'ja')
+      * - ``visual_style_prompt``
+        - text
+        - Common prompt prefix for storyboard generation consistency
+      * - ``is_active``
+        - bool
+        - Enable/disable version
+
+**TvSpotScriptRow**
+   A single row in the two-column A/V script format. Left column (visual) and right
+   column (audio) keep content aligned with timing metadata.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``tv_spot_version``
+        - FK
+        - Parent version (CASCADE on delete)
+      * - ``order_index``
+        - int
+        - Row order in script (0-indexed)
+      * - ``shot_number``
+        - varchar(20)
+        - Shot identifier (e.g., '01', '1A', 'MONT-01')
+      * - ``timecode_start``
+        - varchar(12)
+        - Start timecode (e.g., '00:00:05:00' or '5.0')
+      * - ``duration_seconds``
+        - decimal
+        - Row duration in seconds
+      * - ``visual_text``
+        - text
+        - Left column: visuals, shots, graphics, supers, VFX, locations
+      * - ``audio_text``
+        - text
+        - Right column: VO, dialogue, SFX, music cues, taglines
+
+**AdaptationJob**
+   Tracks adaptation requests from origin version to target market. Created when user
+   requests an adaptation, updated by Celery task.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``tv_spot``
+        - FK
+        - Parent TV spot (CASCADE on delete)
+      * - ``origin_version``
+        - FK
+        - Origin version to adapt from (CASCADE on delete)
+      * - ``target_market``
+        - FK
+        - Target market for adaptation (PROTECT on delete)
+      * - ``language``
+        - FK
+        - Override market's default language (PROTECT on delete)
+      * - ``llm_model``
+        - FK
+        - Override language's primary model (PROTECT on delete)
+      * - ``result_version``
+        - FK
+        - Created adaptation version (SET_NULL on delete)
+      * - ``status``
+        - varchar(20)
+        - Job status: pending, processing, completed, failed
+      * - ``celery_task_id``
+        - varchar(255)
+        - Celery task ID for tracking
+      * - ``error_message``
+        - text
+        - Error message if job failed
+      * - ``started_at``
+        - timestamp
+        - When job processing started
+      * - ``completed_at``
+        - timestamp
+        - When job finished
+
+**StoryboardJob**
+   Coordinates storyboard generation for a TvSpotVersion. Creates one DiffusionJob per
+   script row (multiplied by ``images_per_row``).
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``tv_spot_version``
+        - FK
+        - Version to generate storyboard for (CASCADE on delete)
+      * - ``diffusion_model``
+        - FK
+        - Model to use for generation (PROTECT on delete)
+      * - ``lora_model``
+        - FK
+        - Optional LoRA to apply (SET_NULL on delete)
+      * - ``images_per_row``
+        - int
+        - Number of images to generate per script row
+      * - ``status``
+        - varchar(20)
+        - Job status: pending, processing, completed, failed
+      * - ``error_message``
+        - text
+        - Error message if job failed
+      * - ``completed_at``
+        - timestamp
+        - When job finished
+
+**StoryboardImage**
+   Junction table linking StoryboardJob, TvSpotScriptRow, and DiffusionJob. Allows
+   multiple images per row and multiple storyboard runs per version.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``storyboard_job``
+        - FK
+        - Parent storyboard job (CASCADE on delete)
+      * - ``script_row``
+        - FK
+        - Source script row (CASCADE on delete)
+      * - ``diffusion_job``
+        - FK
+        - Image generation job (CASCADE on delete)
+      * - ``image_index``
+        - int
+        - Image sequence within the row (for multiple images per row)
+
+Cross-App References
+~~~~~~~~~~~~~~~~~~~~
+
+The ``tvspots`` app references models from the ``diffusion`` app to integrate storyboard
+generation with the core image generation system:
+
+- ``StoryboardJob.diffusion_model`` → ``DiffusionModel``
+- ``StoryboardJob.lora_model`` → ``LoraModel``
+- ``StoryboardImage.diffusion_job`` → ``DiffusionJob``
+
+This creates a clean separation where ``diffusion`` handles image generation and
+``tvspots`` handles TV commercial workflow orchestration.
 
 Observability
 -------------
