@@ -27,15 +27,6 @@ Key Capabilities
    local context—giving creative teams a starting point for refinement. Generate visual
    storyboards for each variation to accelerate internal concepting and client discussions.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   philosophy
-   guides/index
-   reference/index
-   research/index
-
 Citing This Software
 ====================
 
@@ -54,9 +45,30 @@ If you use this software in your research, please cite it using the following Bi
 | **Marconi, A.** (2026). *Generative Creative Lab* [Interactive web project].
 | Retrieved from https://andrewmarconi.github.io/generative-creative-lab
 
-Indices and tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+   :maxdepth: 2
+   :caption: About
+   :hidden:
+
+   philosophy
+   research/index
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User Documentation
+   :hidden:
+
+   user/quickstart
+   user/guides/index
+   user/troubleshooting
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Documentation
+   :hidden:
+
+   developer/architecture
+   developer/data-schemas
+   developer/api/index

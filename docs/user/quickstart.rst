@@ -125,4 +125,4 @@ Next Steps
 - :doc:`model-reference` - Learn about available models and their characteristics
 - :doc:`adding-models` - Extend the framework with new models
 - :doc:`troubleshooting` - Common issues and solutions
-- :doc:`/reference/architecture` - Deep dive into system architecture
+- :doc:`/developer/architecture` - Deep dive into system architecture

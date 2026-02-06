@@ -17,9 +17,11 @@ django.setup()
 # -- Project information -----------------------------------------------------
 
 project = "Generative Creative Lab"
-copyright = "2026"
+copyright = "2026, Andrew Marconi"
 author = "Andrew Marconi"
 release = "0.1.0"
+
+github_url = "https://github.com/andrewmarconi/generative-creative-lab"
 
 # -- General configuration ---------------------------------------------------
 
@@ -61,6 +63,14 @@ suppress_warnings = [
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+
+# RTD theme options
+html_theme_options = {
+    "navigation_depth": 4,  # Show up to 4 levels in sidebar
+    "collapse_navigation": False,  # Keep navigation expanded
+    "sticky_navigation": True,  # Sticky sidebar
+    "includehidden": True,  # Include hidden toctrees in navigation
+}
 
 # -- Intersphinx mapping -----------------------------------------------------
 
