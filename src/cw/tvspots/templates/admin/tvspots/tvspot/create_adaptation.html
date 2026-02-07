@@ -99,13 +99,20 @@
         </form>
 
         <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <h3 class="text-blue-800 dark:text-blue-300 font-medium mb-2">{% trans "How it works" %}</h3>
+            <h3 class="text-blue-800 dark:text-blue-300 font-medium mb-2">{% trans "Multi-Agent Pipeline Process" %}</h3>
+            <p class="text-blue-700 dark:text-blue-400 text-sm mb-3">
+                {% trans "This adaptation uses a multi-agent pipeline for high-quality results:" %}
+            </p>
             <ul class="list-disc list-inside text-blue-700 dark:text-blue-400 text-sm space-y-1">
-                <li>{% trans "The LLM will analyze the origin script and market rules" %}</li>
-                <li>{% trans "Language, visuals, and cultural references will be adapted" %}</li>
-                <li>{% trans "A new TvSpotVersion will be created with adapted script rows" %}</li>
-                <li>{% trans "Processing happens in the background (may take 1-2 minutes)" %}</li>
+                <li>{% trans "Concept Analysis: Extract core creative concepts from the origin script" %}</li>
+                <li>{% trans "Cultural Research: Analyze target market insights and cultural requirements" %}</li>
+                <li>{% trans "Adaptive Writing: Create culturally-appropriate script adaptations" %}</li>
+                <li>{% trans "Dual Evaluation: Verify cultural and conceptual alignment" %}</li>
+                <li>{% trans "Iterative Refinement: Automatically revise until quality thresholds are met" %}</li>
             </ul>
+            <p class="text-blue-700 dark:text-blue-400 text-sm mt-3">
+                {% trans "Processing time: 2-5 minutes depending on complexity" %}
+            </p>
         </div>
     </div>
 </div>

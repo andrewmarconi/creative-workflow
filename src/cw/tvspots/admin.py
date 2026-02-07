@@ -634,7 +634,6 @@ class TvSpotAdmin(ModelAdmin):
             market_id = request.POST.get("market")
             language_id = request.POST.get("language")
             llm_model_id = request.POST.get("llm_model")
-            use_pipeline = request.POST.get("use_pipeline") == "on"
 
             if not market_id:
                 messages.error(request, "Please select a target market.")
@@ -670,14 +669,14 @@ class TvSpotAdmin(ModelAdmin):
                 )
                 return redirect("admin:tvspots_adaptationjob_change", pending_job.pk)
 
-            # Create AdaptationJob to track the request
+            # Create AdaptationJob to track the request (always use pipeline)
             adaptation_job = AdaptationJob.objects.create(
                 tv_spot=tv_spot,
                 origin_version=origin_version,
                 target_market=market,
                 language=language,
                 llm_model=llm_model,
-                use_pipeline=use_pipeline,
+                use_pipeline=True,  # Always use multi-agent pipeline
                 status="pending",
             )
 
