@@ -20,35 +20,50 @@
             {% csrf_token %}
 
             <div>
-                <label for="market" class="block text-sm font-medium mb-2">
-                    {% trans "Target Market" %}
+                <label for="region" class="block text-sm font-medium mb-2">
+                    {% trans "Region" %} <span class="text-red-500">*</span>
                 </label>
                 <select
-                    name="market"
-                    id="market"
+                    name="region"
+                    id="region"
                     required
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
-                    <option value="" data-default-language="">{% trans "Select a market..." %}</option>
-                    {% for market in markets %}
-                    <option value="{{ market.id }}" data-default-language="{{ market.default_language_id|default:'' }}">
-                        {{ market.name }} ({{ market.code }}){% if market.default_language %} - {{ market.default_language.name }}{% endif %}
-                    </option>
+                    <option value="">{% trans "Select a region..." %}</option>
+                    {% for region in regions %}
+                    <option value="{{ region.id }}">{{ region.name }} ({{ region.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="country" class="block text-sm font-medium mb-2">
+                    {% trans "Country" %}
+                    <span class="text-gray-500 font-normal">(optional)</span>
+                </label>
+                <select
+                    name="country"
+                    id="country"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "No specific country" %}</option>
+                    {% for country in countries %}
+                    <option value="{{ country.id }}">{{ country.name }} ({{ country.code }})</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div>
                 <label for="language" class="block text-sm font-medium mb-2">
-                    {% trans "Language" %}
-                    <span class="text-gray-500 font-normal">(defaults to market's language)</span>
+                    {% trans "Language" %} <span class="text-red-500">*</span>
                 </label>
                 <select
                     name="language"
                     id="language"
+                    required
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
-                    <option value="">{% trans "Use market default" %}</option>
+                    <option value="">{% trans "Select a language..." %}</option>
                     {% for lang in languages %}
                     <option value="{{ lang.id }}" data-primary-model="{{ lang.primary_model_id }}">
                         {{ lang.name }} ({{ lang.code }})
@@ -72,15 +87,18 @@
                 <p id="model-loading" class="text-sm text-gray-500 mt-1 hidden">Loading models...</p>
             </div>
 
-            {% if existing_adaptations %}
+            {% if pending_jobs %}
             <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                <h3 class="text-yellow-800 dark:text-yellow-300 font-medium mb-2">{% trans "Existing Adaptations" %}</h3>
+                <h3 class="text-yellow-800 dark:text-yellow-300 font-medium mb-2">{% trans "Pending Adaptations" %}</h3>
                 <p class="text-yellow-700 dark:text-yellow-400 text-sm mb-2">
-                    {% trans "The following adaptations already exist for this TV spot:" %}
+                    {% trans "The following adaptation jobs are already in progress:" %}
                 </p>
                 <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 text-sm">
-                    {% for adaptation in existing_adaptations %}
-                    <li>{{ adaptation.name }} ({{ adaptation.market.code }})</li>
+                    {% for job in pending_jobs %}
+                    <li>
+                        {{ job.region.name }}{% if job.country %} / {{ job.country.name }}{% endif %} ({{ job.language.code }})
+                        - {{ job.get_status_display }}
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -119,31 +137,16 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const marketSelect = document.getElementById('market');
     const languageSelect = document.getElementById('language');
     const modelSelect = document.getElementById('llm_model');
     const modelLoading = document.getElementById('model-loading');
-
-    // When market changes, set the language to match market's default
-    marketSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const defaultLanguageId = selectedOption.dataset.defaultLanguage;
-
-        if (defaultLanguageId) {
-            languageSelect.value = defaultLanguageId;
-            languageSelect.dispatchEvent(new Event('change'));
-        } else {
-            languageSelect.value = '';
-            resetModelSelect();
-        }
-    });
 
     // When language changes, fetch available models via AJAX
     languageSelect.addEventListener('change', function() {
         const languageId = this.value;
 
         if (!languageId) {
-            resetModelSelect();
+            modelSelect.innerHTML = '<option value="">Select a language first</option>';
             return;
         }
 
@@ -171,10 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 modelSelect.disabled = false;
             });
     });
-
-    function resetModelSelect() {
-        modelSelect.innerHTML = '<option value="">Select a language first</option>';
-    }
 });
 </script>
 {% endblock %}

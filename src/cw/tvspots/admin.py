@@ -116,19 +116,21 @@ class AdaptationJobAdmin(ModelAdmin):
     list_display = [
         "show_id",
         "show_tvspot",
-        "target_market",
+        "show_region",
+        "show_country",
         "show_language",
         "show_pipeline",
         "show_status",
         "created_at",
         "completed_at",
     ]
-    list_filter = ["status", "use_pipeline", "target_market", "created_at"]
-    search_fields = ["tv_spot__script_title", "target_market__name", "error_message"]
+    list_filter = ["status", "use_pipeline", "region", "country", "language", "created_at"]
+    search_fields = ["tv_spot__script_title", "region__name", "country__name", "language__name", "error_message"]
     readonly_fields = [
         "tv_spot",
         "origin_version",
-        "target_market",
+        "region",
+        "country",
         "language",
         "llm_model",
         "result_version",
@@ -152,7 +154,7 @@ class AdaptationJobAdmin(ModelAdmin):
                 "fields": (
                     "tv_spot",
                     "origin_version",
-                    "target_market",
+                    ("region", "country"),
                     ("language", "llm_model"),
                     "use_pipeline",
                 ),
@@ -219,10 +221,17 @@ class AdaptationJobAdmin(ModelAdmin):
     def show_tvspot(self, obj):
         return obj.tv_spot.script_title
 
+    @display(description=_("Region"))
+    def show_region(self, obj):
+        return obj.region.name if obj.region else "—"
+
+    @display(description=_("Country"))
+    def show_country(self, obj):
+        return obj.country.name if obj.country else "—"
+
     @display(description=_("Language"))
     def show_language(self, obj):
-        lang = obj.effective_language
-        return f"{lang.name} ({lang.code})" if lang else "—"
+        return f"{obj.language.name} ({obj.language.code})" if obj.language else "—"
 
     @display(description=_("Pipeline"), boolean=True)
     def show_pipeline(self, obj):
@@ -289,8 +298,8 @@ class AdaptationJobInline(TabularInline):
     model = AdaptationJob
     tab = True
     extra = 0
-    fields = ["target_market", "show_pipeline", "show_status", "result_version", "created_at"]
-    readonly_fields = ["target_market", "show_pipeline", "show_status", "result_version", "created_at"]
+    fields = ["show_target", "show_pipeline", "show_status", "result_version", "created_at"]
+    readonly_fields = ["show_target", "show_pipeline", "show_status", "result_version", "created_at"]
     can_delete = False
     show_change_link = True
     verbose_name = "Adaptation Request"
@@ -298,6 +307,14 @@ class AdaptationJobInline(TabularInline):
 
     def has_add_permission(self, request, obj=None):
         return False
+
+    @display(description=_("Target"))
+    def show_target(self, obj):
+        parts = [obj.region.name] if obj.region else []
+        if obj.country:
+            parts.append(obj.country.name)
+        parts.append(f"({obj.language.code})")
+        return " / ".join(parts)
 
     @display(description=_("Pipeline"), boolean=True)
     def show_pipeline(self, obj):
@@ -631,40 +648,39 @@ class TvSpotAdmin(ModelAdmin):
             return redirect("admin:tvspots_tvspot_change", object_id)
 
         if request.method == "POST":
-            market_id = request.POST.get("market")
+            from cw.core.models import Country, Region
+
+            region_id = request.POST.get("region")
+            country_id = request.POST.get("country")
             language_id = request.POST.get("language")
             llm_model_id = request.POST.get("llm_model")
 
-            if not market_id:
-                messages.error(request, "Please select a target market.")
+            # Validate required fields
+            if not region_id or not language_id:
+                messages.error(request, "Please select a region and language.")
                 return redirect("admin:tvspots_tvspot_create_adaptation", object_id)
 
-            market = AdaptationMarket.objects.get(pk=market_id)
+            # Get the dimension objects
+            region = Region.objects.get(pk=region_id)
+            country = Country.objects.filter(pk=country_id).first() if country_id else None
+            language = Language.objects.get(pk=language_id)
+            llm_model = LLMModel.objects.filter(pk=llm_model_id).first() if llm_model_id else None
 
-            # Get optional language and model overrides
-            language = None
-            llm_model = None
-            if language_id:
-                language = Language.objects.filter(pk=language_id).first()
-            if llm_model_id:
-                llm_model = LLMModel.objects.filter(pk=llm_model_id).first()
-
-            # Check if adaptation already exists for this market
-            existing = tv_spot.versions.filter(market=market).first()
-            if existing:
-                messages.warning(
-                    request, f"An adaptation for {market.name} already exists: {existing.name}"
-                )
-                return redirect("admin:tvspots_tvspotversion_change", existing.pk)
-
-            # Check for pending/processing adaptation job for this market
+            # Check for pending/processing adaptation job with same dimensions
             pending_job = tv_spot.adaptation_jobs.filter(
-                target_market=market, status__in=["pending", "processing"]
+                region=region,
+                country=country,
+                language=language,
+                status__in=["pending", "processing"]
             ).first()
             if pending_job:
+                target_desc = f"{region.name}"
+                if country:
+                    target_desc += f" / {country.name}"
+                target_desc += f" ({language.code})"
                 messages.warning(
                     request,
-                    f"An adaptation to {market.name} is already in progress "
+                    f"An adaptation to {target_desc} is already in progress "
                     f"(status: {pending_job.get_status_display()}).",
                 )
                 return redirect("admin:tvspots_adaptationjob_change", pending_job.pk)
@@ -673,7 +689,8 @@ class TvSpotAdmin(ModelAdmin):
             adaptation_job = AdaptationJob.objects.create(
                 tv_spot=tv_spot,
                 origin_version=origin_version,
-                target_market=market,
+                region=region,
+                country=country,
                 language=language,
                 llm_model=llm_model,
                 use_pipeline=True,  # Always use multi-agent pipeline
@@ -689,34 +706,29 @@ class TvSpotAdmin(ModelAdmin):
             adaptation_job.celery_task_id = result.id
             adaptation_job.save(update_fields=["celery_task_id"])
 
+            target_desc = f"{region.name}"
+            if country:
+                target_desc += f" / {country.name}"
+            target_desc += f" ({language.code})"
+
             messages.success(
                 request,
-                f"Adaptation to {market.name} queued for processing. "
+                f"Adaptation to {target_desc} queued for processing. "
                 f"Track progress in the Adaptation Requests section below.",
             )
             return redirect("admin:tvspots_tvspot_change", object_id)
 
-        # Get available markets (exclude markets with existing adaptations or pending jobs)
-        existing_market_ids = tv_spot.versions.exclude(market__isnull=True).values_list(
-            "market_id", flat=True
-        )
-        pending_market_ids = tv_spot.adaptation_jobs.filter(
-            status__in=["pending", "processing"]
-        ).values_list("target_market_id", flat=True)
+        # Get available dimensions
+        from cw.core.models import Country, Region
 
-        markets = AdaptationMarket.objects.filter(is_active=True).exclude(
-            id__in=list(existing_market_ids) + list(pending_market_ids)
-        ).select_related("default_language")
+        regions = Region.objects.filter(is_active=True).order_by("name")
+        countries = Country.objects.filter(is_active=True).order_by("name")
+        languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
 
-        # Get all active languages for the dropdown
-        languages = Language.objects.filter(is_active=True).select_related("primary_model")
-
-        existing_adaptations = tv_spot.versions.filter(version_type="adaptation").select_related(
-            "market"
-        )
+        # Get pending jobs to show
         pending_jobs = tv_spot.adaptation_jobs.filter(
             status__in=["pending", "processing"]
-        ).select_related("target_market")
+        ).select_related("region", "country", "language")
 
         return TemplateResponse(
             request,
@@ -727,9 +739,9 @@ class TvSpotAdmin(ModelAdmin):
                 "opts": self.model._meta,
                 "tv_spot": tv_spot,
                 "origin_version": origin_version,
-                "markets": markets,
+                "regions": regions,
+                "countries": countries,
                 "languages": languages,
-                "existing_adaptations": existing_adaptations,
                 "pending_jobs": pending_jobs,
             },
         )

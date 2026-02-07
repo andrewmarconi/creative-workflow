@@ -244,18 +244,25 @@ class AdaptationJob(models.Model):
         on_delete=models.CASCADE,
         related_name="adaptation_jobs_as_origin",
     )
-    target_market = models.ForeignKey(
-        AdaptationMarket,
+    region = models.ForeignKey(
+        "core.Region",
         on_delete=models.PROTECT,
         related_name="adaptation_jobs",
+        help_text="Target region for this adaptation (required, for insights composition).",
+    )
+    country = models.ForeignKey(
+        "core.Country",
+        on_delete=models.PROTECT,
+        related_name="adaptation_jobs",
+        null=True,
+        blank=True,
+        help_text="Target country for this adaptation (optional, for insights composition).",
     )
     language = models.ForeignKey(
         "core.Language",
         on_delete=models.PROTECT,
         related_name="adaptation_jobs",
-        null=True,
-        blank=True,
-        help_text="Override market's default language (e.g., for multi-language markets like Canada).",
+        help_text="Target language for this adaptation (required).",
     )
     llm_model = models.ForeignKey(
         "core.LLMModel",
@@ -317,17 +324,15 @@ class AdaptationJob(models.Model):
         verbose_name_plural = "Adaptation Jobs"
 
     def __str__(self):
-        return f"Adaptation to {self.target_market.name} ({self.get_status_display()})"
-
-    @property
-    def effective_language(self):
-        """Get the language to use (override or market default)."""
-        return self.language or self.target_market.default_language
+        target = self.language.name
+        if self.country:
+            target = f"{self.country.name} ({self.language.code})"
+        return f"Adaptation to {target} ({self.get_status_display()})"
 
     @property
     def effective_llm_model(self):
         """Get the LLM model to use (override or language's primary)."""
-        return self.llm_model or self.effective_language.primary_model
+        return self.llm_model or self.language.primary_model
 
 
 class TvSpotScriptRow(models.Model):
