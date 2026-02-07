@@ -183,8 +183,11 @@ class TvSpotVersion(models.Model):
     name = models.CharField(
         max_length=255, help_text="Human label (e.g., 'US Hispanic Adaptation')."
     )
-    language = models.CharField(
-        max_length=50, help_text="Primary language (e.g., 'en-US', 'es-MX', 'ja')."
+    language = models.ForeignKey(
+        "core.Language",
+        on_delete=models.PROTECT,
+        related_name="tvspot_versions",
+        help_text="Language for this version",
     )
     visual_style_prompt = models.TextField(
         blank=True, help_text="Common prompt prefix for storyboard generation consistency."
