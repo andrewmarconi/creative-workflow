@@ -210,6 +210,21 @@ UNFOLD = {
                 "title": "Core",
                 "items": [
                     {
+                        "title": "Regions",
+                        "icon": "public",
+                        "link": "/admin/core/region/",
+                    },
+                    {
+                        "title": "Countries",
+                        "icon": "flag",
+                        "link": "/admin/core/country/",
+                    },
+                    {
+                        "title": "Cultures",
+                        "icon": "diversity_3",
+                        "link": "/admin/core/culture/",
+                    },
+                    {
                         "title": "Languages",
                         "icon": "translate",
                         "link": "/admin/core/language/",
