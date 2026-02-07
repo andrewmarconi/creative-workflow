@@ -78,3 +78,11 @@ If you use this software in your research, please cite it using the following Bi
    developer/architecture
    developer/data-schemas
    developer/api/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Experiments
+   :hidden:
+
+   experiments/044-expanded-context-metadata/index
+   experiments/026-multi-model-pipeline/index
