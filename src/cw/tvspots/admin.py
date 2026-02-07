@@ -493,6 +493,19 @@ class TvSpotAdmin(ModelAdmin):
             # Create records
             try:
                 with transaction.atomic():
+                    from cw.core.models import Language
+
+                    # Lookup Language by code
+                    language_code = data.get("language", "en-US")
+                    try:
+                        language = Language.objects.get(code=language_code)
+                    except Language.DoesNotExist:
+                        messages.error(
+                            request,
+                            f"Language '{language_code}' not found. Please create it first or use an existing language code.",
+                        )
+                        return redirect("admin:tvspots_tvspot_import")
+
                     tv_spot = TvSpot.objects.create(
                         client_name=data["client_name"],
                         brand_name=data.get("brand_name", ""),
@@ -507,7 +520,7 @@ class TvSpotAdmin(ModelAdmin):
                         version_type="origin",
                         code="ORIGIN",
                         name="Origin",
-                        language=data.get("language", "en-US"),
+                        language=language,
                     )
 
                     for idx, row_data in enumerate(data["script_rows"]):
