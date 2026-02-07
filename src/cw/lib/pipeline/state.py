@@ -98,7 +98,12 @@ def save_pipeline_result(job, final_state: PipelineState):
     adapted_json = final_state.get("adapted_script")
 
     if adapted_json:
+        from cw.core.models import Language
+
         result = AdaptationOutput.model_validate_json(adapted_json)
+
+        # Lookup Language by code
+        language_obj = Language.objects.get(code=result.language)
 
         new_version = TvSpotVersion.objects.create(
             tv_spot=job.tv_spot,
@@ -106,7 +111,7 @@ def save_pipeline_result(job, final_state: PipelineState):
             market=job.target_market,
             code=result.code,
             name=result.name,
-            language=result.language,
+            language=language_obj,
             visual_style_prompt=result.visual_style_prompt,
             is_active=True,
         )

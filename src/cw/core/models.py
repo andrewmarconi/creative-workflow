@@ -97,7 +97,7 @@ class Region(models.Model):
         verbose_name_plural = "Regions"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.code})"
 
     def insights_as_markdown(self) -> str:
         """Render structured insights as markdown."""
@@ -176,7 +176,7 @@ class Country(models.Model):
         verbose_name_plural = "Countries"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.code})"
 
     def insights_as_markdown(self) -> str:
         """Render structured insights as markdown."""
@@ -242,7 +242,7 @@ class Culture(models.Model):
         verbose_name_plural = "Cultures"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.code})"
 
 
 class Language(models.Model):

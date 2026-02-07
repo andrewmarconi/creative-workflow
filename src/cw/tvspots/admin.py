@@ -1152,7 +1152,6 @@ class TVSpotAdaptationAdmin(ModelAdmin):
         count = obj.cultures.count()
         return str(count) if count > 0 else "-"
 
-    @action(description=_("Create child adaptation"))
     def create_child_adaptation(self, request, queryset):
         """Admin action to create a child adaptation from selected parent."""
         if queryset.count() != 1:
@@ -1168,7 +1167,8 @@ class TVSpotAdaptationAdmin(ModelAdmin):
         url = reverse("admin:tvspots_tvspotadaptation_add")
         return redirect(f"{url}?source_adaptation={parent.pk}")
 
-    @action(description=_("View adaptation chain"))
+    create_child_adaptation.short_description = _("Create child adaptation")
+
     def view_adaptation_chain(self, request, queryset):
         """Display the full adaptation chain for selected adaptations."""
         if queryset.count() != 1:
@@ -1188,5 +1188,7 @@ class TVSpotAdaptationAdmin(ModelAdmin):
             f"Adaptation chain ({len(chain)} levels): {chain_display}",
             level=messages.INFO,
         )
+
+    view_adaptation_chain.short_description = _("View adaptation chain")
 
     actions = [create_child_adaptation, view_adaptation_chain]
