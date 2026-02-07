@@ -478,3 +478,110 @@ class StoryboardImage(models.Model):
 
     def __str__(self):
         return f"{self.script_row} - Image {self.image_index + 1}"
+
+
+class TVSpotAdaptation(models.Model):
+    """Alternative flat adaptation model with flexible dimensional tagging.
+
+    Provides a simpler, more flexible structure than TvSpotVersion for tracking
+    adaptations with optional dimensional context (region, country, language, cultures).
+
+    Use cases:
+    - Tracking adaptation chains (master → regional → country)
+    - Multi-market rollouts with dimensional tagging
+    - Historical tracking of adaptation lineage
+
+    The script_data field stores the full script content as JSON, eliminating
+    the need for separate script row models.
+    """
+
+    job_id = models.CharField(
+        max_length=100,
+        unique=True,
+        help_text="Internal tracking ID for this adaptation",
+    )
+    title = models.CharField(
+        max_length=200,
+        help_text="Descriptive title (e.g., 'Nordic Holiday Campaign 2024')",
+    )
+    source_adaptation = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="child_adaptations",
+        help_text="Parent adaptation this was derived from (for adaptation chains)",
+    )
+
+    # Optional dimensional tagging - use what applies
+    region = models.ForeignKey(
+        "core.Region",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="adaptations",
+        help_text="Optional: Primary region this adaptation targets",
+    )
+    country = models.ForeignKey(
+        "core.Country",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="adaptations",
+        help_text="Optional: Primary country this adaptation targets",
+    )
+    language = models.ForeignKey(
+        "core.Language",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="adaptations",
+        help_text="Optional: Primary language for this adaptation",
+    )
+    cultures = models.ManyToManyField(
+        "core.Culture",
+        blank=True,
+        related_name="adaptations",
+        help_text="Optional: Cultural characteristics relevant to this adaptation",
+    )
+
+    # Content
+    adaptation_notes = models.TextField(
+        blank=True,
+        help_text="Notes about this adaptation (creative direction, client feedback, etc.)",
+    )
+    script_data = models.JSONField(
+        help_text="Full script content as JSON (structure matches TvSpot import format)",
+    )
+
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "diffusion_tvspotadaptation"
+        ordering = ["-created_at"]
+        verbose_name = "TV Spot Adaptation"
+        verbose_name_plural = "TV Spot Adaptations"
+
+    def __str__(self):
+        return self.title
+
+    def get_adaptation_chain(self):
+        """Return the full adaptation chain from root to this adaptation.
+
+        Returns:
+            List of TVSpotAdaptation instances from root ancestor to self
+        """
+        chain = [self]
+        current = self.source_adaptation
+
+        while current:
+            chain.insert(0, current)
+            current = current.source_adaptation
+
+        return chain
+
+    def get_depth(self):
+        """Get the depth of this adaptation in the chain (0 = root)."""
+        return len(self.get_adaptation_chain()) - 1

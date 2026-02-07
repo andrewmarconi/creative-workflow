@@ -17,6 +17,7 @@ from .models import (
     AdaptationMarket,
     StoryboardImage,
     StoryboardJob,
+    TVSpotAdaptation,
     TvSpot,
     TvSpotScriptRow,
     TvSpotVersion,
@@ -1070,3 +1071,122 @@ class StoryboardJobAdmin(ModelAdmin):
             generate_storyboard_task.apply_async(
                 args=[obj.pk, True], queue="enhancement"  # enhance_prompts=True by default
             )
+
+
+# ---------------------------------------------------------------------------
+# TVSpotAdaptation
+# ---------------------------------------------------------------------------
+
+
+@admin.register(TVSpotAdaptation)
+class TVSpotAdaptationAdmin(ModelAdmin):
+    """Admin for the flat TVSpotAdaptation model with dimensional tagging."""
+
+    list_display = [
+        "title",
+        "job_id",
+        "show_region",
+        "show_country",
+        "show_language",
+        "show_depth",
+        "show_cultures_count",
+        "created_at",
+    ]
+    list_filter = ["region", "country", "language", "cultures"]
+    search_fields = ["job_id", "title", "adaptation_notes"]
+    readonly_fields = ["created_at", "updated_at"]
+    autocomplete_fields = ["source_adaptation", "region", "country", "language"]
+    filter_horizontal = ["cultures"]
+
+    fieldsets = (
+        (
+            _("Identification"),
+            {
+                "classes": ["tab"],
+                "fields": ("job_id", "title", "source_adaptation"),
+            },
+        ),
+        (
+            _("Dimensional Context"),
+            {
+                "classes": ["tab"],
+                "fields": ("region", "country", "language", "cultures"),
+                "description": "Tag this adaptation with relevant dimensions (all optional)",
+            },
+        ),
+        (
+            _("Content"),
+            {
+                "classes": ["tab"],
+                "fields": ("script_data", "adaptation_notes"),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    @display(description=_("Region"))
+    def show_region(self, obj):
+        return obj.region.name if obj.region else "-"
+
+    @display(description=_("Country"))
+    def show_country(self, obj):
+        return obj.country.name if obj.country else "-"
+
+    @display(description=_("Language"))
+    def show_language(self, obj):
+        return obj.language.code if obj.language else "-"
+
+    @display(description=_("Depth"))
+    def show_depth(self, obj):
+        depth = obj.get_depth()
+        return f"Level {depth}" if depth > 0 else "Root"
+
+    @display(description=_("Cultures"))
+    def show_cultures_count(self, obj):
+        count = obj.cultures.count()
+        return str(count) if count > 0 else "-"
+
+    @action(description=_("Create child adaptation"))
+    def create_child_adaptation(self, request, queryset):
+        """Admin action to create a child adaptation from selected parent."""
+        if queryset.count() != 1:
+            self.message_user(
+                request,
+                "Please select exactly one adaptation to use as parent",
+                level=messages.WARNING,
+            )
+            return
+
+        parent = queryset.first()
+        # Redirect to add page with parent pre-filled (requires custom add view)
+        url = reverse("admin:tvspots_tvspotadaptation_add")
+        return redirect(f"{url}?source_adaptation={parent.pk}")
+
+    @action(description=_("View adaptation chain"))
+    def view_adaptation_chain(self, request, queryset):
+        """Display the full adaptation chain for selected adaptations."""
+        if queryset.count() != 1:
+            self.message_user(
+                request,
+                "Please select exactly one adaptation to view its chain",
+                level=messages.WARNING,
+            )
+            return
+
+        adaptation = queryset.first()
+        chain = adaptation.get_adaptation_chain()
+
+        chain_display = " → ".join([a.title for a in chain])
+        self.message_user(
+            request,
+            f"Adaptation chain ({len(chain)} levels): {chain_display}",
+            level=messages.INFO,
+        )
+
+    actions = [create_child_adaptation, view_adaptation_chain]
