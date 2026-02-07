@@ -9,6 +9,27 @@ echo "  Generative Creative Lab - Onboarding"
 echo "========================================"
 echo ""
 
+# Check for existing Python virtual environment
+if [ -d ".venv" ]; then
+    echo "Found existing Python virtual environment (.venv)"
+    echo ""
+    echo "Options:"
+    echo "  1) Delete .venv and resync (fresh install)"
+    echo "  2) Keep .venv and resync (update packages)"
+    echo ""
+    read -p "Choose option (1/2) [2]: " VENV_OPTION
+    VENV_OPTION=${VENV_OPTION:-2}
+
+    if [ "$VENV_OPTION" = "1" ]; then
+        echo "Deleting .venv directory..."
+        rm -rf .venv
+        echo "Virtual environment deleted."
+    else
+        echo "Keeping existing virtual environment."
+    fi
+    echo ""
+fi
+
 # Get the project name prefix for docker volumes
 PROJECT_NAME=$(basename "$(pwd)" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]//g')
 # Docker Compose uses directory name for volume prefix
