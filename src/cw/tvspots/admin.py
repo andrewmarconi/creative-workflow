@@ -454,10 +454,21 @@ class TvSpotAdmin(ModelAdmin):
         from django.template.response import TemplateResponse
 
         if request.method == "POST":
-            json_data = request.POST.get("json_data", "").strip()
+            # Check for uploaded file first, then fallback to pasted JSON
+            json_file = request.FILES.get("json_file")
+            json_data = None
+
+            if json_file:
+                try:
+                    json_data = json_file.read().decode("utf-8")
+                except Exception as e:
+                    messages.error(request, f"Error reading file: {e}")
+                    return redirect("admin:tvspots_tvspot_import")
+            else:
+                json_data = request.POST.get("json_data", "").strip()
 
             if not json_data:
-                messages.error(request, "JSON data is required.")
+                messages.error(request, "JSON data or file is required.")
                 return redirect("admin:tvspots_tvspot_import")
 
             try:
