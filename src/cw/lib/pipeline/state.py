@@ -12,6 +12,8 @@ from typing import TYPE_CHECKING, Optional
 
 from django.utils import timezone
 
+from cw.lib.insights import compose_insights_as_markdown
+
 if TYPE_CHECKING:
     from cw.lib.pipeline.schemas import PipelineState
 
@@ -37,7 +39,7 @@ def build_initial_state(job) -> PipelineState:
         "brand_name": tv_spot.brand_name,
         "script_title": tv_spot.script_title,
         "total_runtime_seconds": tv_spot.total_runtime_seconds,
-        "language": origin_version.language,
+        "language": origin_version.language.code,
         "script_rows": [
             {
                 "shot_number": row.shot_number,
@@ -54,6 +56,9 @@ def build_initial_state(job) -> PipelineState:
     model_id = effective_model.model_id if effective_model else "Qwen/Qwen2.5-3B-Instruct"
     load_in_4bit = getattr(effective_model, "load_in_4bit", False) if effective_model else False
 
+    # Compose insights from all levels (region → country → language → market)
+    insights_markdown = compose_insights_as_markdown(job)
+
     return {
         # Input
         "job_id": job.pk,
@@ -62,7 +67,7 @@ def build_initial_state(job) -> PipelineState:
         "original_script": json.dumps(original_spot, indent=2, ensure_ascii=False),
         "target_market_name": target_market.name,
         "target_market_code": target_market.code.upper(),
-        "target_market_rules": target_market.rules_as_markdown(),
+        "target_market_rules": insights_markdown,  # Now uses composed hierarchical insights
         "target_market_language": language_code,
         "language_code": language_code,
         "num_script_rows": len(original_spot["script_rows"]),

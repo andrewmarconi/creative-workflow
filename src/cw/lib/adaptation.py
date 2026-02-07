@@ -185,7 +185,7 @@ class AdaptationGenerator:
             "brand_name": tv_spot.brand_name,
             "script_title": tv_spot.script_title,
             "total_runtime_seconds": tv_spot.total_runtime_seconds,
-            "language": origin_version.language,
+            "language": origin_version.language.code,
             "script_rows": [
                 {
                     "shot_number": row.shot_number,
@@ -203,7 +203,7 @@ class AdaptationGenerator:
 
         # Build the prompt
         logger.debug("Building LLM prompt")
-        prompt = self._build_prompt(original_spot, target_market, effective_language, creativity)
+        prompt = self._build_prompt(original_spot, adaptation_job, creativity)
         logger.debug(f"Prompt built, length={len(prompt)} chars")
 
         logger.info(
@@ -246,16 +246,20 @@ class AdaptationGenerator:
 
         return result
 
-    def _build_prompt(self, original_spot: dict, target_market, language, creativity: float) -> str:
+    def _build_prompt(self, original_spot: dict, adaptation_job, creativity: float) -> str:
         """Build the adaptation prompt using Jinja2 template with chat formatting.
 
         Args:
             original_spot: Dict with original TV spot data
-            target_market: AdaptationMarket instance
-            language: Language instance (the effective language for the adaptation)
+            adaptation_job: AdaptationJob instance with target_market and effective_language
             creativity: Temperature for generation
         """
         import json
+
+        from cw.lib.insights import compose_insights_as_markdown
+
+        target_market = adaptation_job.target_market
+        language = adaptation_job.effective_language
 
         language_code = language.code if language else "en"
         language_name = language.name if language else "English"
@@ -264,11 +268,15 @@ class AdaptationGenerator:
         original_json = json.dumps(original_spot, indent=2, ensure_ascii=False)
         logger.debug(f"Original spot JSON length: {len(original_json)} chars")
 
+        # Compose insights from all levels (region → country → language → market)
+        insights_markdown = compose_insights_as_markdown(adaptation_job)
+        logger.debug(f"Composed insights from {len(insights_markdown.split('## '))-1} levels")
+
         user_prompt = render_prompt(
             "adaptation.j2",
             target_market_name=target_market.name,
             target_market_language=language_code,
-            target_market_rules=target_market.rules_as_markdown(),
+            target_market_rules=insights_markdown,  # Now uses composed hierarchical insights
             target_market_code=target_market.code.upper(),
             original_json=original_json,
             num_script_rows=len(original_spot["script_rows"]),
