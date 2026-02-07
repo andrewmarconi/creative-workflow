@@ -150,13 +150,20 @@ class PipelineTestMixin:
             is_active=True,
         )
 
-        # Language
+        # Languages
         self.japanese = Language.objects.create(
             code="ja",
             name="Japanese",
             primary_model=self.primary_model,
         )
         self.japanese.alternative_models.add(self.alt_model)
+
+        self.english = Language.objects.create(
+            code="en-US",
+            name="English (United States)",
+            base_language="en",
+            primary_model=self.primary_model,
+        )
 
         # Market
         self.japan_market = AdaptationMarket.objects.create(
@@ -193,7 +200,7 @@ class PipelineTestMixin:
             version_type="origin",
             code="ORIGIN",
             name="Global Master",
-            language="en-US",
+            language=self.english,
         )
 
         # Script rows
@@ -314,7 +321,7 @@ class EndToEndPipelineTest(PipelineTestMixin, TestCase):
         self.assertEqual(result_version.version_type, "adaptation")
         self.assertEqual(result_version.market, self.japan_market)
         self.assertEqual(result_version.code, "JP")
-        self.assertEqual(result_version.language, "ja")
+        self.assertEqual(result_version.language.code, "ja")
 
         # Verify TvSpotScriptRow records
         rows = result_version.script_rows.all().order_by("order_index")
@@ -492,13 +499,15 @@ class SideBySideComparisonTest(PipelineTestMixin, TestCase):
         from cw.lib.adaptation import AdaptationOutput
 
         result = AdaptationOutput.model_validate(adapted)
+        # Lookup Language by code from result
+        language_obj = Language.objects.get(code=result.language)
         single_version = TvSpotVersion.objects.create(
             tv_spot=self.tv_spot,
             version_type="adaptation",
             market=self.japan_market,
             code=result.code + "-SS",
             name=result.name + " (Single-Step)",
-            language=result.language,
+            language=language_obj,
             visual_style_prompt=result.visual_style_prompt,
         )
         for idx, row_data in enumerate(result.script_rows):

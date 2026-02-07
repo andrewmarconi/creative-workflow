@@ -12,6 +12,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from cw.core.models import Language
 from cw.tvspots.models import TvSpot, TvSpotScriptRow, TvSpotVersion
 
 
@@ -80,15 +81,24 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"\n  ✓ Created TvSpot #{tv_spot.pk}"))
 
             # Create origin version
+            language_code = data.get("language", "en-US")
+            try:
+                language = Language.objects.get(code=language_code)
+            except Language.DoesNotExist:
+                raise CommandError(
+                    f"Language '{language_code}' not found in database. "
+                    f"Run 'manage.py import_reference_data' first to populate languages."
+                )
+
             version = TvSpotVersion.objects.create(
                 tv_spot=tv_spot,
                 version_type="origin",
                 code="ORIGIN",
                 name="Origin",
-                language=data.get("language", "en-US"),
+                language=language,
             )
             self.stdout.write(
-                self.style.SUCCESS(f"  ✓ Created TvSpotVersion #{version.pk} (origin)")
+                self.style.SUCCESS(f"  ✓ Created TvSpotVersion #{version.pk} (origin, language={language.code})")
             )
 
             # Create script rows
