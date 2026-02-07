@@ -9,7 +9,17 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin
 from unfold.decorators import display
 
-from .models import Language, LLMModel
+from .models import (
+    Country,
+    CountryLanguage,
+    CountryRegion,
+    Culture,
+    Language,
+    LanguageAlternativeModel,
+    LLMModel,
+    Region,
+    RegionCulture,
+)
 
 
 @admin.register(LLMModel)
@@ -67,35 +77,53 @@ class LLMModelAdmin(ModelAdmin):
         return "0"
 
 
+class LanguageAlternativeModelInline(admin.TabularInline):
+    """Inline for managing alternative LLM models for a language."""
+
+    model = LanguageAlternativeModel
+    extra = 1
+    autocomplete_fields = ["llmmodel"]
+    verbose_name = "Alternative Model"
+    verbose_name_plural = "Alternative Models"
+
+
 @admin.register(Language)
 class LanguageAdmin(ModelAdmin):
     list_display = [
         "name",
         "code",
+        "base_language",
         "primary_model",
         "show_alternatives_count",
         "show_active",
         "updated_at",
     ]
-    list_filter = ["is_active", "primary_model"]
-    search_fields = ["name", "code", "notes"]
+    list_filter = ["is_active", "base_language", "primary_model"]
+    search_fields = ["name", "code", "base_language", "notes"]
     readonly_fields = ["created_at", "updated_at"]
-    filter_horizontal = ["alternative_models"]
     autocomplete_fields = ["primary_model"]
+    inlines = [LanguageAlternativeModelInline]
 
     fieldsets = (
         (
             _("Language"),
             {
                 "classes": ["tab"],
-                "fields": ("code", "name", "is_active"),
+                "fields": ("code", "name", "base_language", "is_active"),
             },
         ),
         (
             _("Models"),
             {
                 "classes": ["tab"],
-                "fields": ("primary_model", "alternative_models"),
+                "fields": ("primary_model",),
+            },
+        ),
+        (
+            _("Insights"),
+            {
+                "classes": ["tab"],
+                "fields": ("insights",),
             },
         ),
         (
