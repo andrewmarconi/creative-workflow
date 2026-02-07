@@ -46,6 +46,27 @@ class AdaptationMarket(models.Model):
         default=list,
         help_text="Structured rules: list of {heading, points[]} objects for adaptation guidance.",
     )
+
+    # Multi-dimensional context (optional tagging)
+    regions = models.ManyToManyField(
+        "core.Region",
+        blank=True,
+        related_name="markets",
+        help_text="Regions this market targets (e.g., North America, Nordics)",
+    )
+    countries = models.ManyToManyField(
+        "core.Country",
+        blank=True,
+        related_name="markets",
+        help_text="Countries this market targets",
+    )
+    cultures = models.ManyToManyField(
+        "core.Culture",
+        blank=True,
+        related_name="markets",
+        help_text="Cultural characteristics relevant to this market",
+    )
+
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

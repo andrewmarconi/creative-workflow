@@ -29,11 +29,21 @@ from .models import (
 
 @admin.register(AdaptationMarket)
 class AdaptationMarketAdmin(ModelAdmin):
-    list_display = ["name", "code", "default_language", "show_active", "show_versions_count", "updated_at"]
-    list_filter = ["is_active", "default_language"]
+    list_display = [
+        "name",
+        "code",
+        "default_language",
+        "show_regions_count",
+        "show_countries_count",
+        "show_active",
+        "show_versions_count",
+        "updated_at",
+    ]
+    list_filter = ["is_active", "default_language", "regions", "countries"]
     search_fields = ["name", "code", "rules"]
     readonly_fields = ["created_at", "updated_at"]
     autocomplete_fields = ["default_language"]
+    filter_horizontal = ["regions", "countries", "cultures"]
 
     fieldsets = (
         (
@@ -41,6 +51,14 @@ class AdaptationMarketAdmin(ModelAdmin):
             {
                 "classes": ["tab"],
                 "fields": ("name", "code", "default_language", "is_active"),
+            },
+        ),
+        (
+            _("Dimensional Context"),
+            {
+                "classes": ["tab"],
+                "fields": ("regions", "countries", "cultures"),
+                "description": "Optional: Tag this market with regions, countries, and cultural characteristics",
             },
         ),
         (
@@ -62,6 +80,16 @@ class AdaptationMarketAdmin(ModelAdmin):
     @display(description=_("Active"), boolean=True)
     def show_active(self, obj):
         return obj.is_active
+
+    @display(description=_("Regions"))
+    def show_regions_count(self, obj):
+        count = obj.regions.count()
+        return str(count) if count > 0 else "-"
+
+    @display(description=_("Countries"))
+    def show_countries_count(self, obj):
+        count = obj.countries.count()
+        return str(count) if count > 0 else "-"
 
     @display(description=_("Versions"))
     def show_versions_count(self, obj):
