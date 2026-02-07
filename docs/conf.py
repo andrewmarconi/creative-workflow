@@ -35,6 +35,7 @@ extensions = [
     "sphinx_autodoc_typehints",  # Type hints in docs
     "myst_parser",  # Markdown support
     "sphinxcontrib.mermaid",  # Mermaid diagrams
+    "sphinx_jinja",  # Jinja2 template support in docs
 ]
 
 # Mermaid settings
@@ -104,3 +105,27 @@ linkcheck_ignore = [
     r"^urn:air:.*",  # CivitAI AIR URN identifiers (not HTTP links)
     r"^http://localhost.*",  # Local dev server links
 ]
+
+# -- Jinja2 configuration ----------------------------------------------------
+
+# Define Jinja2 context variables available in documentation
+jinja_contexts = {
+    "default": {
+        "project_name": project,
+        "version": release,
+        "github_url": github_url,
+        "python_version": "3.12+",
+        "django_version": "6.0+",
+    }
+}
+
+# File patterns for Jinja2 rendering
+jinja_file_patterns = ["*.rst.jinja2", "*.md.jinja2"]
+
+# -- Pygments configuration --------------------------------------------------
+
+# Add 'jinja2' as an alias for the 'jinja' lexer
+from pygments.lexers import get_lexer_by_name
+from sphinx.highlighting import lexers
+
+lexers["jinja2"] = get_lexer_by_name("jinja")

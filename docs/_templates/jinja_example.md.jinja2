@@ -1,0 +1,31 @@
+# Jinja2 Template Example
+
+This is an example of using Jinja2 variables in documentation.
+
+## Project Information
+
+- **Project Name**: {{ project_name }}
+- **Version**: {{ version }}
+- **Python Version**: {{ python_version }}
+- **Django Version**: {{ django_version }}
+- **Repository**: [GitHub]({{ github_url }})
+
+## Dynamic Content
+
+You can use Jinja2 for:
+
+{% for item in ["Variables", "Loops", "Conditionals", "Filters", "Macros"] %}
+- {{ item }}
+{% endfor %}
+
+## Conditional Rendering
+
+{% if version.startswith('0.') %}
+**Note**: This is a pre-release version.
+{% else %}
+**Note**: This is a stable release.
+{% endif %}
+
+## Custom Variables
+
+To add more variables, edit `jinja_contexts` in `docs/conf.py`.
