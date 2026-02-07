@@ -13,12 +13,10 @@ from .models import (
     Country,
     CountryLanguage,
     CountryRegion,
-    Culture,
     Language,
     LanguageAlternativeModel,
     LLMModel,
     Region,
-    RegionCulture,
 )
 
 
@@ -107,16 +105,6 @@ class CountryLanguageInline(admin.TabularInline):
     verbose_name_plural = "Languages"
 
 
-class RegionCultureInline(admin.TabularInline):
-    """Inline for managing region-culture relationships."""
-
-    model = RegionCulture
-    extra = 1
-    autocomplete_fields = ["culture"]
-    verbose_name = "Culture"
-    verbose_name_plural = "Cultures"
-
-
 @admin.register(Language)
 class LanguageAdmin(ModelAdmin):
     list_display = [
@@ -184,11 +172,11 @@ class LanguageAdmin(ModelAdmin):
 
 @admin.register(Region)
 class RegionAdmin(ModelAdmin):
-    list_display = ["name", "code", "show_countries_count", "show_cultures_count", "show_active", "updated_at"]
+    list_display = ["name", "code", "show_countries_count", "show_active", "updated_at"]
     list_filter = ["is_active"]
     search_fields = ["name", "code", "description"]
     readonly_fields = ["created_at", "updated_at"]
-    inlines = [CountryRegionInline, RegionCultureInline]
+    inlines = [CountryRegionInline]
 
     fieldsets = (
         (
@@ -222,11 +210,6 @@ class RegionAdmin(ModelAdmin):
     @display(description=_("Countries"))
     def show_countries_count(self, obj):
         count = obj.countries.count()
-        return str(count)
-
-    @display(description=_("Cultures"))
-    def show_cultures_count(self, obj):
-        count = obj.cultures.count()
         return str(count)
 
 
@@ -291,38 +274,4 @@ class CountryAdmin(ModelAdmin):
     @display(description=_("Languages"))
     def show_languages_count(self, obj):
         count = obj.languages.count()
-        return str(count)
-
-
-@admin.register(Culture)
-class CultureAdmin(ModelAdmin):
-    list_display = ["name", "code", "show_regions_count", "show_active", "updated_at"]
-    list_filter = ["is_active"]
-    search_fields = ["name", "code", "description"]
-    readonly_fields = ["created_at", "updated_at"]
-
-    fieldsets = (
-        (
-            _("Culture"),
-            {
-                "classes": ["tab"],
-                "fields": ("code", "name", "description", "is_active"),
-            },
-        ),
-        (
-            _("Metadata"),
-            {
-                "classes": ["tab"],
-                "fields": ("created_at", "updated_at"),
-            },
-        ),
-    )
-
-    @display(description=_("Active"), boolean=True)
-    def show_active(self, obj):
-        return obj.is_active
-
-    @display(description=_("Regions"))
-    def show_regions_count(self, obj):
-        count = obj.regions.count()
         return str(count)

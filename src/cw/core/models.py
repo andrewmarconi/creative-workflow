@@ -4,8 +4,8 @@ Core models for language and LLM model management.
 This module provides database models for tracking:
 - LLM models (HuggingFace model IDs) used for text generation
 - Languages with their recommended LLM models for adaptations
-- Regions, Countries, and Cultures for multi-dimensional adaptation context
-- Compositional insights at each level
+- Regions and Countries for multi-dimensional adaptation context
+- Compositional insights at each level (Region → Country → Language)
 """
 
 from django.db import models
@@ -201,50 +201,6 @@ class Country(models.Model):
         return self.languages.filter(countrylanguage__is_primary=True)
 
 
-class Culture(models.Model):
-    """Cultural theme/characteristic that can span multiple regions.
-
-    Examples: Nordic Minimalism, Germanic Formality, Latin Warmth
-
-    Cultures are cross-cutting characteristics that can be associated with
-    multiple regions and referenced by markets.
-    """
-
-    code = models.CharField(
-        max_length=50,
-        unique=True,
-        help_text="Slug identifier (e.g., 'nordic-minimalism')",
-    )
-    name = models.CharField(
-        max_length=100,
-        help_text="Display name (e.g., 'Nordic Minimalism')",
-    )
-    description = models.TextField(
-        help_text="Description of cultural characteristics"
-    )
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    # M2M relationships
-    regions = models.ManyToManyField(
-        Region,
-        through="RegionCulture",
-        related_name="cultures",
-        blank=True,
-        help_text="Regions associated with this culture",
-    )
-
-    class Meta:
-        db_table = "core_culture"
-        ordering = ["name"]
-        verbose_name = "Culture"
-        verbose_name_plural = "Cultures"
-
-    def __str__(self):
-        return f"{self.name} ({self.code})"
-
-
 class Language(models.Model):
     """Language variant with locale code and LLM model recommendations.
 
@@ -382,26 +338,6 @@ class CountryLanguage(models.Model):
     def __str__(self):
         primary_marker = " (primary)" if self.is_primary else ""
         return f"{self.country.code} → {self.language.code}{primary_marker}"
-
-
-class RegionCulture(models.Model):
-    """Many-to-many through table for Region ↔ Culture relationship.
-
-    Associates cultural characteristics with regions (e.g., Nordics associated
-    with "Nordic Minimalism").
-    """
-
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    culture = models.ForeignKey(Culture, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "core_region_culture"
-        unique_together = [["region", "culture"]]
-        verbose_name = "Region-Culture Mapping"
-        verbose_name_plural = "Region-Culture Mappings"
-
-    def __str__(self):
-        return f"{self.region.code} → {self.culture.code}"
 
 
 class LanguageAlternativeModel(models.Model):

@@ -27,7 +27,6 @@ def build_initial_state(job) -> PipelineState:
     the pipeline nodes receive the same origin data the single-step path uses.
     """
     origin_version = job.origin_version
-    target_market = job.target_market
     tv_spot = origin_version.tv_spot
 
     effective_language = job.effective_language
@@ -56,8 +55,24 @@ def build_initial_state(job) -> PipelineState:
     model_id = effective_model.model_id if effective_model else "Qwen/Qwen2.5-3B-Instruct"
     load_in_4bit = getattr(effective_model, "load_in_4bit", False) if effective_model else False
 
-    # Compose insights from all levels (region → country → language → market)
+    # Compose insights from all levels (region → country → language)
     insights_markdown = compose_insights_as_markdown(job)
+
+    # Build target market name from region/country/language
+    target_parts = []
+    if job.region:
+        target_parts.append(job.region.name)
+    if job.country:
+        target_parts.append(job.country.name)
+    target_market_name = " / ".join(target_parts) if target_parts else effective_language.name
+
+    # Build target market code from region/country codes
+    code_parts = []
+    if job.region:
+        code_parts.append(job.region.code)
+    if job.country:
+        code_parts.append(job.country.code)
+    target_market_code = "-".join(code_parts).upper() if code_parts else language_code.upper()
 
     return {
         # Input
@@ -65,9 +80,9 @@ def build_initial_state(job) -> PipelineState:
         "model_id": model_id,
         "load_in_4bit": load_in_4bit,
         "original_script": json.dumps(original_spot, indent=2, ensure_ascii=False),
-        "target_market_name": target_market.name,
-        "target_market_code": target_market.code.upper(),
-        "target_market_rules": insights_markdown,  # Now uses composed hierarchical insights
+        "target_market_name": target_market_name,
+        "target_market_code": target_market_code,
+        "target_market_rules": insights_markdown,  # Hierarchical insights from region → country → language
         "target_market_language": language_code,
         "language_code": language_code,
         "num_script_rows": len(original_spot["script_rows"]),
@@ -105,10 +120,20 @@ def save_pipeline_result(job, final_state: PipelineState):
         # Lookup Language by code
         language_obj = Language.objects.get(code=result.language)
 
+        # Try to find matching AdaptationMarket for backward compatibility
+        # New adaptations don't require a market
+        market = None
+        if hasattr(job, 'target_market'):
+            market = job.target_market
+        else:
+            # Try to find market by language (for backward compatibility)
+            from cw.tvspots.models import AdaptationMarket
+            market = AdaptationMarket.objects.filter(default_language=language_obj).first()
+
         new_version = TvSpotVersion.objects.create(
             tv_spot=job.tv_spot,
             version_type="adaptation",
-            market=job.target_market,
+            market=market,  # May be None for new Region/Country/Language adaptations
             code=result.code,
             name=result.name,
             language=language_obj,

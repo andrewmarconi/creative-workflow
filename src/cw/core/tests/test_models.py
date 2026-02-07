@@ -1,6 +1,6 @@
 """Tests for core dimensional models (Issue #44).
 
-Tests the Region, Country, Culture, Language models and their relationships.
+Tests the Region, Country, Language models and their relationships.
 
 Run with:
     uv run manage.py test cw.core.tests.test_models -v2
@@ -8,7 +8,7 @@ Run with:
 
 from django.test import TestCase
 
-from cw.core.models import Country, Culture, Language, LLMModel, Region
+from cw.core.models import Country, Language, LLMModel, Region
 
 
 class RegionModelTest(TestCase):
@@ -97,40 +97,6 @@ class CountryModelTest(TestCase):
     def test_country_str_representation(self):
         """Test string representation."""
         self.assertEqual(str(self.country), "Canada (CA)")
-
-
-class CultureModelTest(TestCase):
-    """Test Culture model and relationships."""
-
-    def setUp(self):
-        """Create test culture with regions."""
-        self.region1 = Region.objects.create(code="NA", name="North America")
-        self.region2 = Region.objects.create(code="LA", name="Latin America")
-        self.culture = Culture.objects.create(
-            code="hispanic-us",
-            name="Hispanic American",
-            description="Cultural characteristics of Hispanic Americans",
-        )
-        self.culture.regions.add(self.region1, self.region2)
-
-    def test_culture_creation(self):
-        """Test culture is created correctly."""
-        self.assertEqual(self.culture.code, "hispanic-us")
-        self.assertEqual(self.culture.name, "Hispanic American")
-        self.assertEqual(
-            self.culture.description, "Cultural characteristics of Hispanic Americans"
-        )
-
-    def test_culture_region_relationship(self):
-        """Test M2M relationship with multiple regions."""
-        regions = self.culture.regions.all()
-        self.assertEqual(regions.count(), 2)
-        self.assertIn(self.region1, regions)
-        self.assertIn(self.region2, regions)
-
-    def test_culture_str_representation(self):
-        """Test string representation."""
-        self.assertEqual(str(self.culture), "Hispanic American (hispanic-us)")
 
 
 class LanguageModelTest(TestCase):

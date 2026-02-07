@@ -9,7 +9,7 @@ Run with:
 
 from django.test import TestCase
 
-from cw.core.models import Country, Culture, Language, LLMModel, Region
+from cw.core.models import Country, Language, LLMModel, Region
 from cw.tvspots.models import TVSpotAdaptation
 
 
@@ -54,7 +54,6 @@ class TVSpotAdaptationCreationTest(TestCase):
         region = Region.objects.create(code="EU", name="Europe")
         country = Country.objects.create(code="DE", name="Germany")
         country.regions.add(region)
-        culture = Culture.objects.create(code="german", name="German Culture")
 
         adaptation = TVSpotAdaptation.objects.create(
             job_id="TEST-002",
@@ -64,12 +63,10 @@ class TVSpotAdaptationCreationTest(TestCase):
             language=self.language,
             script_data={"script_rows": []},
         )
-        adaptation.cultures.add(culture)
 
         self.assertEqual(adaptation.region, region)
         self.assertEqual(adaptation.country, country)
         self.assertEqual(adaptation.language, self.language)
-        self.assertIn(culture, adaptation.cultures.all())
 
     def test_adaptation_unique_job_id(self):
         """Test job_id uniqueness constraint."""
@@ -269,11 +266,6 @@ class TVSpotAdaptationWithDimensionsTest(TestCase):
             primary_model=self.model,
         )
         self.language.countries.add(self.country, through_defaults={"is_primary": True})
-        self.culture = Culture.objects.create(
-            code="scandinavian",
-            name="Scandinavian Culture",
-        )
-        self.culture.regions.add(self.region)
 
     def test_dimensional_reverse_relationships(self):
         """Test reverse relationships from dimensions to adaptations."""
@@ -285,29 +277,11 @@ class TVSpotAdaptationWithDimensionsTest(TestCase):
             language=self.language,
             script_data={},
         )
-        adaptation.cultures.add(self.culture)
 
         # Test reverse relationships
         self.assertIn(adaptation, self.region.adaptations.all())
         self.assertIn(adaptation, self.country.adaptations.all())
         self.assertIn(adaptation, self.language.adaptations.all())
-        self.assertIn(adaptation, self.culture.adaptations.all())
-
-    def test_multiple_cultures_per_adaptation(self):
-        """Test adaptation with multiple cultures."""
-        culture2 = Culture.objects.create(code="modern-urban", name="Modern Urban")
-
-        adaptation = TVSpotAdaptation.objects.create(
-            job_id="MULTI-CULTURE-001",
-            title="Multi-Cultural Adaptation",
-            script_data={},
-        )
-        adaptation.cultures.add(self.culture, culture2)
-
-        cultures = adaptation.cultures.all()
-        self.assertEqual(cultures.count(), 2)
-        self.assertIn(self.culture, cultures)
-        self.assertIn(culture2, cultures)
 
     def test_protect_deletion_of_referenced_dimensions(self):
         """Test PROTECT constraint prevents deletion of referenced dimensions."""

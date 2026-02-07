@@ -44,7 +44,7 @@ class AdaptationMarketAdmin(ModelAdmin):
     search_fields = ["name", "code", "rules"]
     readonly_fields = ["created_at", "updated_at"]
     autocomplete_fields = ["default_language"]
-    filter_horizontal = ["regions", "countries", "cultures"]
+    filter_horizontal = ["regions", "countries"]
 
     fieldsets = (
         (
@@ -58,8 +58,8 @@ class AdaptationMarketAdmin(ModelAdmin):
             _("Dimensional Context"),
             {
                 "classes": ["tab"],
-                "fields": ("regions", "countries", "cultures"),
-                "description": "Optional: Tag this market with regions, countries, and cultural characteristics",
+                "fields": ("regions", "countries"),
+                "description": "Optional: Tag this market with regions and countries",
             },
         ),
         (
@@ -634,6 +634,8 @@ class TvSpotAdmin(ModelAdmin):
 
     def create_adaptation_view(self, request, object_id):
         """Handle creating an adaptation of a TV spot."""
+        import json
+
         from django.template.response import TemplateResponse
 
         from cw.core.models import Language, LLMModel
@@ -719,11 +721,25 @@ class TvSpotAdmin(ModelAdmin):
             return redirect("admin:tvspots_tvspot_change", object_id)
 
         # Get available dimensions
-        from cw.core.models import Country, Region
+        from cw.core.models import Country, CountryLanguage, CountryRegion, Region
 
         regions = Region.objects.filter(is_active=True).order_by("name")
         countries = Country.objects.filter(is_active=True).order_by("name")
         languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
+
+        # Build region → countries mapping
+        region_countries = {}
+        for cr in CountryRegion.objects.select_related("region", "country"):
+            if cr.region_id not in region_countries:
+                region_countries[cr.region_id] = []
+            region_countries[cr.region_id].append(cr.country_id)
+
+        # Build country → languages mapping (with primary languages first)
+        country_languages = {}
+        for cl in CountryLanguage.objects.select_related("country", "language").order_by("-is_primary"):
+            if cl.country_id not in country_languages:
+                country_languages[cl.country_id] = []
+            country_languages[cl.country_id].append(cl.language_id)
 
         # Get pending jobs to show
         pending_jobs = tv_spot.adaptation_jobs.filter(
@@ -743,6 +759,8 @@ class TvSpotAdmin(ModelAdmin):
                 "countries": countries,
                 "languages": languages,
                 "pending_jobs": pending_jobs,
+                "region_countries_json": json.dumps(region_countries),
+                "country_languages_json": json.dumps(country_languages),
             },
         )
 
@@ -1124,14 +1142,12 @@ class TVSpotAdaptationAdmin(ModelAdmin):
         "show_country",
         "show_language",
         "show_depth",
-        "show_cultures_count",
         "created_at",
     ]
-    list_filter = ["region", "country", "language", "cultures"]
+    list_filter = ["region", "country", "language"]
     search_fields = ["job_id", "title", "adaptation_notes"]
     readonly_fields = ["created_at", "updated_at"]
     autocomplete_fields = ["source_adaptation", "region", "country", "language"]
-    filter_horizontal = ["cultures"]
 
     fieldsets = (
         (
@@ -1145,7 +1161,7 @@ class TVSpotAdaptationAdmin(ModelAdmin):
             _("Dimensional Context"),
             {
                 "classes": ["tab"],
-                "fields": ("region", "country", "language", "cultures"),
+                "fields": ("region", "country", "language"),
                 "description": "Tag this adaptation with relevant dimensions (all optional)",
             },
         ),
@@ -1181,11 +1197,6 @@ class TVSpotAdaptationAdmin(ModelAdmin):
     def show_depth(self, obj):
         depth = obj.get_depth()
         return f"Level {depth}" if depth > 0 else "Root"
-
-    @display(description=_("Cultures"))
-    def show_cultures_count(self, obj):
-        count = obj.cultures.count()
-        return str(count) if count > 0 else "-"
 
     def create_child_adaptation(self, request, queryset):
         """Admin action to create a child adaptation from selected parent."""

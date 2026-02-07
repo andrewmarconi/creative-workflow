@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Country-Language Mappings Schema",
+  "description": "Schema for many-to-many mappings between countries and languages with primary language flag",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["country_code", "language_code", "is_primary"],
+    "properties": {
+      "country_code": {
+        "type": "string",
+        "description": "ISO 3166-1 alpha-2 country code (references countries.code)",
+        "minLength": 2,
+        "maxLength": 2,
+        "pattern": "^[A-Z]{2}$"
+      },
+      "language_code": {
+        "type": "string",
+        "description": "Language code in locale format (references languages.code)",
+        "minLength": 2,
+        "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+      },
+      "is_primary": {
+        "type": "boolean",
+        "description": "Whether this is the primary/default language for the country"
+      }
+    },
+    "additionalProperties": false
+  }
+}

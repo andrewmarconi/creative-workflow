@@ -22,9 +22,17 @@ def run_adaptation_pipeline(job):
     from .graph import build_adaptation_graph
     from .state import build_initial_state, save_pipeline_result
 
+    # Build target description for logging
+    target_parts = []
+    if job.region:
+        target_parts.append(job.region.code)
+    if job.country:
+        target_parts.append(job.country.code)
+    target_code = "-".join(target_parts) if target_parts else job.language.code
+
     logger.info(
         f"Pipeline starting for job {job.pk}",
-        extra={"job_id": job.pk, "market": job.target_market.code},
+        extra={"job_id": job.pk, "target": target_code},
     )
 
     job.status = "processing"

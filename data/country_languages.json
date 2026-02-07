@@ -1,0 +1,617 @@
+[
+  {
+    "country_code": "AE",
+    "language_code": "ar-AE",
+    "is_primary": true
+  },
+  {
+    "country_code": "AE",
+    "language_code": "en-US",
+    "is_primary": false
+  },
+  {
+    "country_code": "AR",
+    "language_code": "es-AR",
+    "is_primary": true
+  },
+  {
+    "country_code": "AT",
+    "language_code": "de-AT",
+    "is_primary": true
+  },
+  {
+    "country_code": "AU",
+    "language_code": "en-AU",
+    "is_primary": true
+  },
+  {
+    "country_code": "BD",
+    "language_code": "bn-BD",
+    "is_primary": true
+  },
+  {
+    "country_code": "BE",
+    "language_code": "nl-BE",
+    "is_primary": true
+  },
+  {
+    "country_code": "BE",
+    "language_code": "fr-BE",
+    "is_primary": false
+  },
+  {
+    "country_code": "BG",
+    "language_code": "bg-BG",
+    "is_primary": true
+  },
+  {
+    "country_code": "BH",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "BH",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "BO",
+    "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "BR",
+    "language_code": "pt-BR",
+    "is_primary": true
+  },
+  {
+    "country_code": "CA",
+    "language_code": "en-CA",
+    "is_primary": true
+  },
+  {
+    "country_code": "CA",
+    "language_code": "fr-CA",
+    "is_primary": false
+  },
+  {
+    "country_code": "CH",
+    "language_code": "de-CH",
+    "is_primary": true
+  },
+  {
+    "country_code": "CH",
+    "language_code": "fr-CH",
+    "is_primary": false
+  },
+  {
+    "country_code": "CH",
+    "language_code": "it-CH",
+    "is_primary": false
+  },
+  {
+    "country_code": "CL",
+    "language_code": "es-CL",
+    "is_primary": true
+  },
+  {
+    "country_code": "CN",
+    "language_code": "zh-CN",
+    "is_primary": true
+  },
+  {
+    "country_code": "CO",
+    "language_code": "es-CO",
+    "is_primary": true
+  },
+  {
+    "country_code": "CR",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "CU",
+    "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "CY",
+    "language_code": "el-GR",
+    "is_primary": true
+  },
+  {
+    "country_code": "CY",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "CZ",
+    "language_code": "cs-CZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "DE",
+    "language_code": "de-DE",
+    "is_primary": true
+  },
+  {
+    "country_code": "DK",
+    "language_code": "da-DK",
+    "is_primary": true
+  },
+  {
+    "country_code": "DO",
+    "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "DZ",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "DZ",
+    "language_code": "fr-FR",
+    "is_primary": false
+  },
+  {
+    "country_code": "EC",
+    "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "EE",
+    "language_code": "et-EE",
+    "is_primary": true
+  },
+  {
+    "country_code": "EG",
+    "language_code": "ar-EG",
+    "is_primary": true
+  },
+  {
+    "country_code": "ES",
+    "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "ET",
+    "language_code": "am-ET",
+    "is_primary": true
+  },
+  {
+    "country_code": "FI",
+    "language_code": "fi-FI",
+    "is_primary": true
+  },
+  {
+    "country_code": "FR",
+    "language_code": "fr-FR",
+    "is_primary": true
+  },
+  {
+    "country_code": "GB",
+    "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "GH",
+    "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "GR",
+    "language_code": "el-GR",
+    "is_primary": true
+  },
+  {
+    "country_code": "GT",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "HK",
+    "language_code": "zh-HK",
+    "is_primary": true
+  },
+  {
+    "country_code": "HK",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "HN",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "HR",
+    "language_code": "hr-HR",
+    "is_primary": true
+  },
+  {
+    "country_code": "HU",
+    "language_code": "hu-HU",
+    "is_primary": true
+  },
+  {
+    "country_code": "ID",
+    "language_code": "id-ID",
+    "is_primary": true
+  },
+  {
+    "country_code": "IE",
+    "language_code": "en-IE",
+    "is_primary": true
+  },
+  {
+    "country_code": "IL",
+    "language_code": "he-IL",
+    "is_primary": true
+  },
+  {
+    "country_code": "IL",
+    "language_code": "ar-SA",
+    "is_primary": false
+  },
+  {
+    "country_code": "IN",
+    "language_code": "hi-IN",
+    "is_primary": true
+  },
+  {
+    "country_code": "IN",
+    "language_code": "bn-BD",
+    "is_primary": false
+  },
+  {
+    "country_code": "IN",
+    "language_code": "en-IN",
+    "is_primary": false
+  },
+  {
+    "country_code": "IN",
+    "language_code": "mr-IN",
+    "is_primary": false
+  },
+  {
+    "country_code": "IN",
+    "language_code": "ta-IN",
+    "is_primary": false
+  },
+  {
+    "country_code": "IN",
+    "language_code": "te-IN",
+    "is_primary": false
+  },
+  {
+    "country_code": "IR",
+    "language_code": "fa-IR",
+    "is_primary": true
+  },
+  {
+    "country_code": "IS",
+    "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "IT",
+    "language_code": "it-IT",
+    "is_primary": true
+  },
+  {
+    "country_code": "JO",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "JP",
+    "language_code": "ja-JP",
+    "is_primary": true
+  },
+  {
+    "country_code": "KE",
+    "language_code": "sw-KE",
+    "is_primary": true
+  },
+  {
+    "country_code": "KE",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "KR",
+    "language_code": "ko-KR",
+    "is_primary": true
+  },
+  {
+    "country_code": "KW",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "LB",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "LB",
+    "language_code": "fr-FR",
+    "is_primary": false
+  },
+  {
+    "country_code": "LT",
+    "language_code": "lt-LT",
+    "is_primary": true
+  },
+  {
+    "country_code": "LU",
+    "language_code": "fr-FR",
+    "is_primary": true
+  },
+  {
+    "country_code": "LU",
+    "language_code": "de-DE",
+    "is_primary": false
+  },
+  {
+    "country_code": "LV",
+    "language_code": "lv-LV",
+    "is_primary": true
+  },
+  {
+    "country_code": "MA",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "MA",
+    "language_code": "fr-FR",
+    "is_primary": false
+  },
+  {
+    "country_code": "MT",
+    "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "MX",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "MY",
+    "language_code": "ms-MY",
+    "is_primary": true
+  },
+  {
+    "country_code": "MY",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "NG",
+    "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "NI",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "NL",
+    "language_code": "nl-NL",
+    "is_primary": true
+  },
+  {
+    "country_code": "NO",
+    "language_code": "nb-NO",
+    "is_primary": true
+  },
+  {
+    "country_code": "NO",
+    "language_code": "nn-NO",
+    "is_primary": false
+  },
+  {
+    "country_code": "NZ",
+    "language_code": "en-NZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "OM",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "PA",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "PE",
+    "language_code": "es-PE",
+    "is_primary": true
+  },
+  {
+    "country_code": "PH",
+    "language_code": "tl-PH",
+    "is_primary": true
+  },
+  {
+    "country_code": "PH",
+    "language_code": "en-US",
+    "is_primary": false
+  },
+  {
+    "country_code": "PK",
+    "language_code": "ur-PK",
+    "is_primary": true
+  },
+  {
+    "country_code": "PK",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "PL",
+    "language_code": "pl-PL",
+    "is_primary": true
+  },
+  {
+    "country_code": "PR",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "PR",
+    "language_code": "en-US",
+    "is_primary": false
+  },
+  {
+    "country_code": "PT",
+    "language_code": "pt-PT",
+    "is_primary": true
+  },
+  {
+    "country_code": "PY",
+    "language_code": "es-AR",
+    "is_primary": true
+  },
+  {
+    "country_code": "QA",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "QA",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "RO",
+    "language_code": "ro-RO",
+    "is_primary": true
+  },
+  {
+    "country_code": "RS",
+    "language_code": "sr-RS",
+    "is_primary": true
+  },
+  {
+    "country_code": "RU",
+    "language_code": "ru-RU",
+    "is_primary": true
+  },
+  {
+    "country_code": "SA",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "SE",
+    "language_code": "sv-SE",
+    "is_primary": true
+  },
+  {
+    "country_code": "SG",
+    "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "SG",
+    "language_code": "ms-MY",
+    "is_primary": false
+  },
+  {
+    "country_code": "SG",
+    "language_code": "zh-CN",
+    "is_primary": false
+  },
+  {
+    "country_code": "SI",
+    "language_code": "sl-SI",
+    "is_primary": true
+  },
+  {
+    "country_code": "SK",
+    "language_code": "sk-SK",
+    "is_primary": true
+  },
+  {
+    "country_code": "SV",
+    "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "TH",
+    "language_code": "th-TH",
+    "is_primary": true
+  },
+  {
+    "country_code": "TN",
+    "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "TN",
+    "language_code": "fr-FR",
+    "is_primary": false
+  },
+  {
+    "country_code": "TR",
+    "language_code": "tr-TR",
+    "is_primary": true
+  },
+  {
+    "country_code": "TW",
+    "language_code": "zh-TW",
+    "is_primary": true
+  },
+  {
+    "country_code": "UA",
+    "language_code": "uk-UA",
+    "is_primary": true
+  },
+  {
+    "country_code": "US",
+    "language_code": "en-US",
+    "is_primary": true
+  },
+  {
+    "country_code": "US",
+    "language_code": "es-MX",
+    "is_primary": false
+  },
+  {
+    "country_code": "UY",
+    "language_code": "es-AR",
+    "is_primary": true
+  },
+  {
+    "country_code": "VE",
+    "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "VN",
+    "language_code": "vi-VN",
+    "is_primary": true
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "en-ZA",
+    "is_primary": true
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "af-ZA",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "zu-ZA",
+    "is_primary": false
+  }
+]

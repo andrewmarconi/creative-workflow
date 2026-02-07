@@ -1,0 +1,316 @@
+{
+  "regions": [
+    {
+      "code": "NA",
+      "name": "North America",
+      "countries": [
+        "US",
+        "CA",
+        "MX"
+      ]
+    },
+    {
+      "code": "LATAM",
+      "name": "Latin America",
+      "countries": [
+        "MX",
+        "AR",
+        "BR",
+        "CL",
+        "CO",
+        "PE",
+        "VE",
+        "EC",
+        "BO",
+        "UY",
+        "PY",
+        "CR",
+        "PA",
+        "GT",
+        "HN",
+        "SV",
+        "NI",
+        "CU",
+        "DO",
+        "PR"
+      ]
+    },
+    {
+      "code": "EMEA",
+      "name": "Europe, Middle East, and Africa",
+      "countries": [
+        "GB",
+        "FR",
+        "DE",
+        "IT",
+        "ES",
+        "NL",
+        "BE",
+        "CH",
+        "AT",
+        "SE",
+        "DK",
+        "NO",
+        "FI",
+        "PL",
+        "CZ",
+        "SK",
+        "HU",
+        "RO",
+        "BG",
+        "HR",
+        "RS",
+        "SI",
+        "EE",
+        "LV",
+        "LT",
+        "GR",
+        "TR",
+        "RU",
+        "UA",
+        "PT",
+        "IE",
+        "LU",
+        "IS",
+        "MT",
+        "CY",
+        "SA",
+        "AE",
+        "EG",
+        "IL",
+        "QA",
+        "KW",
+        "BH",
+        "OM",
+        "JO",
+        "LB",
+        "MA",
+        "TN",
+        "DZ",
+        "ZA",
+        "KE",
+        "NG",
+        "GH",
+        "ET"
+      ]
+    },
+    {
+      "code": "APAC",
+      "name": "Asia-Pacific",
+      "countries": [
+        "JP",
+        "CN",
+        "KR",
+        "AU",
+        "NZ",
+        "IN",
+        "SG",
+        "HK",
+        "TW",
+        "TH",
+        "VN",
+        "ID",
+        "MY",
+        "PH",
+        "BD",
+        "PK"
+      ]
+    },
+    {
+      "code": "EU",
+      "name": "European Union",
+      "countries": [
+        "FR",
+        "DE",
+        "IT",
+        "ES",
+        "NL",
+        "BE",
+        "AT",
+        "SE",
+        "DK",
+        "FI",
+        "PL",
+        "CZ",
+        "SK",
+        "HU",
+        "RO",
+        "BG",
+        "HR",
+        "SI",
+        "EE",
+        "LV",
+        "LT",
+        "GR",
+        "PT",
+        "IE",
+        "LU",
+        "MT",
+        "CY"
+      ]
+    },
+    {
+      "code": "NORDICS",
+      "name": "Nordic Countries",
+      "countries": [
+        "SE",
+        "NO",
+        "DK",
+        "FI",
+        "IS"
+      ]
+    },
+    {
+      "code": "BENELUX",
+      "name": "Benelux",
+      "countries": [
+        "BE",
+        "NL",
+        "LU"
+      ]
+    },
+    {
+      "code": "DACH",
+      "name": "DACH Region",
+      "countries": [
+        "DE",
+        "AT",
+        "CH"
+      ]
+    },
+    {
+      "code": "UK_IE",
+      "name": "United Kingdom and Ireland",
+      "countries": [
+        "GB",
+        "IE"
+      ]
+    },
+    {
+      "code": "MENA",
+      "name": "Middle East and North Africa",
+      "countries": [
+        "SA",
+        "AE",
+        "EG",
+        "IL",
+        "QA",
+        "KW",
+        "BH",
+        "OM",
+        "JO",
+        "LB",
+        "MA",
+        "TN",
+        "DZ",
+        "TR"
+      ]
+    },
+    {
+      "code": "GCC",
+      "name": "Gulf Cooperation Council",
+      "countries": [
+        "SA",
+        "AE",
+        "QA",
+        "KW",
+        "BH",
+        "OM"
+      ]
+    },
+    {
+      "code": "CEE",
+      "name": "Central and Eastern Europe",
+      "countries": [
+        "PL",
+        "CZ",
+        "SK",
+        "HU",
+        "RO",
+        "BG",
+        "HR",
+        "RS",
+        "SI",
+        "EE",
+        "LV",
+        "LT"
+      ]
+    },
+    {
+      "code": "BALTICS",
+      "name": "Baltic States",
+      "countries": [
+        "EE",
+        "LV",
+        "LT"
+      ]
+    },
+    {
+      "code": "SEA",
+      "name": "Southeast Asia",
+      "countries": [
+        "SG",
+        "TH",
+        "VN",
+        "ID",
+        "MY",
+        "PH"
+      ]
+    },
+    {
+      "code": "ANZ",
+      "name": "Australia and New Zealand",
+      "countries": [
+        "AU",
+        "NZ"
+      ]
+    },
+    {
+      "code": "CANZUK",
+      "name": "CANZUK",
+      "countries": [
+        "CA",
+        "AU",
+        "NZ",
+        "GB"
+      ]
+    },
+    {
+      "code": "GREATER_CHINA",
+      "name": "Greater China",
+      "countries": [
+        "CN",
+        "HK",
+        "TW"
+      ]
+    },
+    {
+      "code": "SSA",
+      "name": "Sub-Saharan Africa",
+      "countries": [
+        "ZA",
+        "KE",
+        "NG",
+        "GH",
+        "ET"
+      ]
+    },
+    {
+      "code": "IBERIA",
+      "name": "Iberian Peninsula",
+      "countries": [
+        "ES",
+        "PT"
+      ]
+    },
+    {
+      "code": "SOUTH_ASIA",
+      "name": "South Asia",
+      "countries": [
+        "IN",
+        "PK",
+        "BD"
+      ]
+    }
+  ]
+}

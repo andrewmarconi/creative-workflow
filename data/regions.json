@@ -1,0 +1,629 @@
+[
+  {
+    "code": "NA",
+    "name": "North America",
+    "description": "USA, Canada, and northern Mexico market cluster",
+    "insights": [
+      {
+        "points": [
+          "Direct, benefit-oriented messaging resonates",
+          "Casual tone and informal address acceptable in most contexts",
+          "Aspirational optimism and personal achievement themes",
+          "Fast-paced, attention-grabbing creative preferred"
+        ],
+        "heading": "Cultural values"
+      },
+      {
+        "points": [
+          "Highly fragmented media landscape across digital and traditional",
+          "Short-form content (15s, 30s) dominates",
+          "Regional diversity significant: Northeast formal, West Coast casual, South traditional"
+        ],
+        "heading": "Media environment"
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "LATAM",
+    "name": "Latin America",
+    "description": "Spanish and Portuguese-speaking Americas",
+    "insights": [
+      {
+        "points": [
+          "Family-oriented messaging resonates strongly ('familia' as central value)",
+          "Warm, relationship-focused tone preferred over transactional",
+          "Emotional storytelling and music/celebration cultural touchpoints",
+          "Respect for tradition alongside aspirational modernity"
+        ],
+        "heading": "Cultural values"
+      },
+      {
+        "points": [
+          "Mexican Spanish differs from Argentine, Colombian, or Caribbean variants",
+          "Brazil (Portuguese) requires separate creative from Spanish LATAM",
+          "Socioeconomic diversity wide - avoid one-size-fits-all approaches"
+        ],
+        "heading": "Regional diversity"
+      },
+      {
+        "heading": "Language segmentation",
+        "points": [
+          "Latin American Spanish differs from European Spanish in vocabulary, grammar, and pronoun usage. 'Ustedes' replaces 'vosotros' for plural address across Latin America.",
+          "'Neutral' Latin American Spanish can work for broad regional campaigns but sounds generic. For emotional resonance, localize to specific markets.",
+          "Major dialect groups: Mexican Spanish (largest market, 126M), Rioplatense (Argentina/Uruguay, distinct voseo usage), Andean (Peru/Ecuador/Bolivia), Caribbean (Cuba/Dominican Republic/Puerto Rico), Central American, Colombian.",
+          "Vocabulary differences are significant: 'carro' vs 'coche' vs 'auto' (car), 'computadora' vs 'ordenador' (computer). Use market-appropriate terminology."
+        ]
+      },
+      {
+        "heading": "Cultural considerations by region",
+        "points": [
+          "Mexico: Largest Spanish-language market. Strong national identity, family orientation, regional cuisine traditions, telenovela and entertainment industry influence.",
+          "Argentina/Uruguay: Distinct Rioplatense accent and vocabulary. European cultural influences, mate culture, football passion, tango heritage.",
+          "Colombia: Growing advertising market, diverse regional cultures (Caribbean coast vs. Andean interior vs. Pacific), music culture (salsa, cumbia, reggaeton).",
+          "Andean region: Indigenous cultural influences remain visible, distinct food traditions, altitude and geography shape lifestyle.",
+          "Central America and Caribbean: Each country has distinct identity despite linguistic similarity. Do not homogenize."
+        ]
+      },
+      {
+        "heading": "Shared cultural values",
+        "points": [
+          "Family (familia) is central across Latin America. Multi-generational bonds, extended family connections, and familial loyalty resonate emotionally.",
+          "Music and celebration are woven into daily life. Advertising that incorporates authentic musical elements connects culturally.",
+          "Football (soccer) is cultural infrastructure across most of the region (except Caribbean baseball cultures). Partnership opportunities but authenticity is essential.",
+          "Regional food traditions carry deep identity significance. Respect local cuisines rather than generic 'Latin' food imagery."
+        ]
+      },
+      {
+        "heading": "Practical recommendations",
+        "points": [
+          "For pan-Latin American campaigns, Mexican Spanish often serves as the base due to market size and media influence (Televisa, Netflix content).",
+          "For single-market depth, invest in local adaptation with local voice talent, cultural references, and terminology.",
+          "Telenovela conventions remain influential in advertising aesthetics, though contemporary content is diversifying visual language.",
+          "Digital advertising is growing rapidly (Mexico +16% in 2023), with social media engagement high across the region."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "EMEA",
+    "name": "Europe, Middle East, and Africa",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "APAC",
+    "name": "Asia-Pacific",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "EU",
+    "name": "European Union",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "NORDICS",
+    "name": "Nordic Countries",
+    "description": "Scandinavian countries: Sweden, Norway, Denmark, Finland, Iceland",
+    "insights": [
+      {
+        "points": [
+          "Egalitarianism and modesty (Jantelagen) - avoid bragging or superiority claims",
+          "Nature and sustainability deeply valued across all Nordic countries",
+          "High trust in institutions and preference for evidence-based messaging",
+          "Quality and functionality emphasized over luxury or status",
+          "Egalitarianism and Janteloven (tall poppy/modesty) culture mean boastful or flashy messaging falls flat. Understatement and authenticity are valued.",
+          "Environmental sustainability is a mainstream expectation, not a differentiator. Greenwashing will be scrutinized.",
+          "Work-life balance, outdoor activities, and connection to nature are shared cultural priorities.",
+          "Design aesthetics favor minimalism, functionality, and clean visual language—Scandinavian design principles extend to advertising."
+        ],
+        "heading": "Cultural values"
+      },
+      {
+        "points": [
+          "Clean, minimalist design language resonates strongly",
+          "Muted color palettes preferred over bright, saturated colors",
+          "Functionality emphasized over decoration",
+          "Simplicity and clarity valued in messaging"
+        ],
+        "heading": "Visual aesthetics"
+      },
+      {
+        "heading": "Language segmentation",
+        "points": [
+          "Each market requires its own language: Swedish, Norwegian (Bokmål or Nynorsk), Danish, Finnish. Despite cultural similarities, languages are distinct.",
+          "Swedish, Norwegian, and Danish have some mutual intelligibility but advertising should use the local language for authenticity.",
+          "Finnish is completely unrelated to Scandinavian languages (Finno-Ugric origin). Finland requires separate Finnish-language content; Swedish is an official minority language.",
+          "English proficiency is high across all markets, but local languages perform better for emotional resonance and trust-building."
+        ]
+      },
+      {
+        "heading": "Market differences",
+        "points": [
+          "Denmark often leads regional trends. What works there may arrive in Sweden and Norway in 2-3 years, Finland slightly later.",
+          "Finland: Print and traditional media remain relatively stronger than other Nordic markets. Linear TV still reaches broad audiences.",
+          "Sweden: Largest market with most developed digital advertising. Commercial-free paid TV has reduced traditional TV advertising reach.",
+          "Norway: Strong public broadcasting tradition. High disposable income and premium positioning opportunities."
+        ]
+      },
+      {
+        "heading": "Regulatory framework",
+        "points": [
+          "All Nordic markets have strong consumer protection and self-regulatory advertising bodies.",
+          "Children's advertising faces restrictions across the region, particularly in Sweden.",
+          "GDPR applies throughout (EU members Sweden, Denmark, Finland; EEA member Norway). Privacy compliance is essential."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "BENELUX",
+    "name": "Benelux",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "DACH",
+    "name": "DACH Region",
+    "description": "Germany, Austria, Switzerland (German-speaking)",
+    "insights": [
+      {
+        "points": [
+          "Precision, engineering excellence, and quality craftsmanship resonate",
+          "Formal address (Sie) expected in most advertising contexts",
+          "Factual accuracy and substantive claims valued over emotional appeals",
+          "Privacy and data protection paramount concerns"
+        ],
+        "heading": "Cultural values"
+      },
+      {
+        "points": [
+          "German audiences value informative advertising with clear product benefits",
+          "Austrian audiences appreciate warmth alongside quality",
+          "Swiss audiences prioritize discretion, reliability, and understatement",
+          "German audiences value precision, factual accuracy, and substantive claims. Advertising should be informative and deliver clear product benefits.",
+          "Austrian audiences appreciate warmth and tradition alongside quality. Messaging can be slightly more relationship-oriented than in Germany.",
+          "Swiss audiences prioritize discretion, reliability, and quality. Understatement is valued; avoid superlatives without substantiation."
+        ],
+        "heading": "Tone and register"
+      },
+      {
+        "heading": "Language segmentation",
+        "points": [
+          "Germany and Austria use Standard German (Hochdeutsch) for advertising, though regional expressions add local flavor. Formal German is expected in business and most consumer contexts.",
+          "Swiss German (Schweizerdeutsch) is significantly different from Standard German. Written advertising typically uses Standard German, but spoken content (TV, radio) may require Swiss German voiceover for authenticity.",
+          "Austria has distinct vocabulary and expressions (e.g., 'Grüß Gott' instead of 'Hallo'). Using Austrian German signals cultural awareness and local relevance.",
+          "All three markets strongly prefer German-language advertising. Despite high English proficiency, German localizations perform significantly better for emotional resonance."
+        ]
+      },
+      {
+        "heading": "Cultural considerations",
+        "points": [
+          "Engineering excellence, environmental sustainability, and quality craftsmanship resonate across all DACH markets.",
+          "Privacy and data protection are paramount concerns. Transparent communication about data use builds trust.",
+          "Regional diversity is significant: Bavarians, Austrians, and Swiss have distinct cultural identities. Avoid conflating them or using generic 'German' stereotypes.",
+          "Environmental consciousness is widespread. Highlight sustainable practices and eco-credentials where authentic."
+        ]
+      },
+      {
+        "heading": "Regulatory and practical",
+        "points": [
+          "Germany: Strict regulations under the Unfair Competition Act (UWG). Claims must be substantiable; comparative advertising has specific requirements.",
+          "Austria: Telecommunications Act (TKG 2021) strictly prohibits email marketing without explicit prior consent, even in B2B contexts. Violations can result in fines up to €37,000.",
+          "Switzerland: More business-friendly environment but still requires compliance with Swiss UWG. The country has four official languages—German-speaking regions (Deutschschweiz) represent the largest market."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "UK_IE",
+    "name": "United Kingdom and Ireland",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Language specifications",
+        "points": [
+          "British English spelling, vocabulary, and idiom differ from American English. Use British conventions: 'colour,' 'favourite,' 'mobile' (not 'cell phone').",
+          "Irish English has distinct expressions and cultural references. Ireland is a separate market from the UK with its own national identity.",
+          "Regional accents (Scottish, Welsh, Northern Irish, regional English accents) can add authenticity but require appropriate casting for target audiences."
+        ]
+      },
+      {
+        "heading": "Tone and style",
+        "points": [
+          "British humor favors irony, understatement, self-deprecation, and wit. Obvious or earnest messaging may feel unsophisticated.",
+          "Class-consciousness remains present in British culture. Tone and casting choices carry social signals that British audiences read instinctively.",
+          "Authenticity and skepticism toward overt marketing are valued. Overpromising or exaggerated claims will be met with cynicism."
+        ]
+      },
+      {
+        "heading": "Regulatory framework",
+        "points": [
+          "The Advertising Standards Authority (ASA) enforces the CAP Code (non-broadcast) and BCAP Code (broadcast). These are self-regulatory codes with significant industry compliance.",
+          "Clearcast pre-clearance is required for TV advertising. Scripts and final cuts must be approved before broadcast.",
+          "HFSS (high fat, salt, sugar) advertising faces watershed restrictions and online targeting limitations.",
+          "Comparative advertising is permitted but must be substantiable and not denigrate competitors unfairly."
+        ]
+      },
+      {
+        "heading": "Cultural considerations",
+        "points": [
+          "The UK is multicultural with significant South Asian, Black British, European, and other communities. Representation should reflect contemporary British diversity.",
+          "England, Scotland, Wales, and Northern Ireland have distinct national identities within the UK. Sensitivity to these distinctions matters.",
+          "Ireland has its own regulatory framework and distinct cultural identity post-Brexit. Do not assume UK advertising transfers directly."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "MENA",
+    "name": "Middle East and North Africa",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Language specifications",
+        "points": [
+          "Modern Standard Arabic (MSA/Fusha) is used for formal advertising across the region. It is universally understood but not spoken colloquially anywhere.",
+          "Egyptian Arabic has the widest recognition across the Arab world due to Egyptian media influence. It can work for entertainment-oriented pan-Arab campaigns.",
+          "Gulf Arabic dialects (Khaleeji) are distinct and may be appropriate for GCC-specific campaigns seeking local authenticity.",
+          "Lebanese Arabic carries cosmopolitan associations and appears in pan-Arab entertainment contexts.",
+          "For local market depth, consider dialect-specific voice work while maintaining MSA for written text."
+        ]
+      },
+      {
+        "heading": "GCC-specific considerations",
+        "points": [
+          "The UAE and Saudi Arabia are the largest advertising markets in the region but have distinct characteristics. UAE is more cosmopolitan with a majority expatriate population; Saudi Arabia is undergoing rapid social transformation.",
+          "Saudi Arabia: GCAM (General Commission for Audiovisual Media) regulates broadcast content. Content must comply with national media policy and cultural standards. Vision 2030 is opening entertainment sectors.",
+          "UAE: Federal Media Law (2023) establishes comprehensive content standards. Dual licensing requirements for influencers. AI-assisted content monitoring is being implemented.",
+          "Digital media consumption exceeds global averages. TV advertising is smaller relative to digital than in Western markets."
+        ]
+      },
+      {
+        "heading": "Cultural and religious considerations",
+        "points": [
+          "Respect Islamic values throughout content creation. Avoid alcohol, pork products, immodest dress, and content that conflicts with religious norms.",
+          "Ramadan is a major advertising period with significant media consumption after iftar. Content should reflect the spirit of the holy month.",
+          "Gender representation is evolving, particularly in Saudi Arabia. Follow local guidance on mixed-gender depictions and women's representation.",
+          "Family values and hospitality are culturally central. Multi-generational family depictions resonate across the region."
+        ]
+      },
+      {
+        "heading": "Representation and authenticity",
+        "points": [
+          "Gulf audiences report feeling underrepresented in advertising (only 14-19% feel represented). Move beyond pan-Arab clichés to authentic local representation.",
+          "The GCC is not monolithic: Saudi, Emirati, Qatari, and Kuwaiti audiences have distinct cultural identities and expectations.",
+          "Expatriate populations in the UAE and Qatar are significant. Consider whether campaigns should address Emirati/Qatari nationals specifically or the broader resident population."
+        ]
+      },
+      {
+        "heading": "Egypt and Levant",
+        "points": [
+          "Egypt: Largest Arab population, influential media industry. More lenient regulatory environment than Gulf states but still maintains cultural standards. Women increasingly featured in diverse roles.",
+          "Lebanon: Historically more liberal advertising environment, though political and economic instability affects market conditions.",
+          "Jordan: Conservative social values, strong family orientation, growing digital adoption."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "GCC",
+    "name": "Gulf Cooperation Council",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "CEE",
+    "name": "Central and Eastern Europe",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Language requirements",
+        "points": [
+          "Each market requires its own language. Polish, Czech, Hungarian, and Romanian are completely distinct—there is no 'Eastern European' linguistic shortcut.",
+          "Slavic languages (Polish, Czech, Slovak, Croatian, Serbian, Bulgarian, Ukrainian) share some roots but are not mutually intelligible. Each requires dedicated localization.",
+          "Hungarian and Romanian are non-Slavic languages with no relation to neighbors. Hungarian is Finno-Ugric; Romanian is Romance-derived.",
+          "English proficiency varies significantly by country, generation, and urban/rural divide. Local language is essential for mass-market reach."
+        ]
+      },
+      {
+        "heading": "Market characteristics",
+        "points": [
+          "Television remains the dominant advertising medium in most CEE markets, commanding approximately 38-45% of ad spend regionally.",
+          "Digital advertising has crossed 50% share in Poland, Czech Republic, Hungary, and Slovakia but remains lower in southeastern markets.",
+          "TV viewership is notably high: Hungary averages 5 hours/day, Poland 4.5 hours, Czech Republic 3.5 hours—well above Western European averages.",
+          "Poland is the largest CEE market with €2.69 billion in advertising spend. Czech Republic and Hungary are smaller but stable growth markets."
+        ]
+      },
+      {
+        "heading": "Cultural considerations",
+        "points": [
+          "CEE countries have distinct national identities shaped by different historical experiences. Do not conflate or use generic 'Eastern European' framing.",
+          "Poland: Strong Catholic tradition, family values, national pride, growing consumer market.",
+          "Czech Republic: Secular society, sophisticated consumers, quality-conscious, dry humor appreciated.",
+          "Hungary: National pride, distinct cultural identity, design appreciation, thermal bath culture.",
+          "Romania: Latin-derived culture in Slavic region, French cultural influences, growing middle class.",
+          "Post-Communist transition means older generations remember different economic systems. Younger generations are digitally native and Europe-oriented."
+        ]
+      },
+      {
+        "heading": "Regulatory considerations",
+        "points": [
+          "All EU member states follow EU advertising directives and GDPR requirements.",
+          "Individual country advertising councils (KRRiT in Poland, RRTV in Czech Republic) oversee broadcast standards.",
+          "Comparative advertising is permitted but must meet EU directive requirements for substantiation and fairness."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "BALTICS",
+    "name": "Baltic States",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "SEA",
+    "name": "Southeast Asia",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Market overview",
+        "points": [
+          "Southeast Asia is linguistically, culturally, and religiously diverse. Each country requires distinct localization—there is no 'Southeast Asian' market.",
+          "Indonesia is the largest market by population (270M+) with 8.5% annual growth in entertainment/media. Bahasa Indonesia is the language for national campaigns.",
+          "Thailand is the most developed SVOD market in SE Asia (36% household penetration). Thai language is essential; English-only content will not resonate broadly.",
+          "Vietnam has strong TV resilience and high growth potential. Vietnamese language is required for local impact.",
+          "Philippines has high English proficiency and exports creative talent regionally. Campaigns can use English or Tagalog depending on positioning.",
+          "Malaysia is multilingual: Malay, Chinese, Tamil, and English all have roles depending on demographic targeting."
+        ]
+      },
+      {
+        "heading": "Indonesia specifics",
+        "points": [
+          "World's largest Muslim-majority country. Content should respect Islamic values while recognizing Indonesia's diverse religious landscape (Hindu Bali, Christian regions).",
+          "Bahasa Indonesia is the national language, but regional languages (Javanese, Sundanese) are spoken at home. National campaigns use Indonesian.",
+          "Television remains strong (RCTI, SCTV lead ratings) but digital is growing rapidly. Super-app ecosystems (Gojek, Grab) are important advertising platforms.",
+          "Indonesian audiences appreciate warmth, humor, and family-oriented content. Gotong royong (mutual cooperation) is a cultural value."
+        ]
+      },
+      {
+        "heading": "Thailand specifics",
+        "points": [
+          "Thai language is essential. Use Thai script and native voiceover for authenticity.",
+          "Thai advertising is known for creative excellence, emotional storytelling, and humor. Production quality expectations are high.",
+          "Buddhism influences cultural values (merit-making, respect for monks). The monarchy is revered; any reference requires utmost respect or should be avoided entirely.",
+          "Chinese dramas lead streaming engagement (30% of viewing), but local Thai content drives subscriber acquisition."
+        ]
+      },
+      {
+        "heading": "Vietnam specifics",
+        "points": [
+          "Vietnamese language is required. Tonal language with distinct northern/southern dialects.",
+          "Traditional TV remains strong. Free-to-air broadcasters maintain significant reach, especially outside major cities.",
+          "Young, digitally connected population with high social media engagement. TikTok and Facebook are dominant platforms.",
+          "Family values, education, and aspiration are important themes. Economic optimism drives consumer behavior."
+        ]
+      },
+      {
+        "heading": "Cultural sensitivities across the region",
+        "points": [
+          "Religious diversity: Islam (Indonesia, Malaysia, Brunei), Buddhism (Thailand, Myanmar, Cambodia, Laos, Vietnam), Christianity (Philippines), Hinduism (Bali). Respect local religious contexts.",
+          "Face-saving and indirect communication styles are common across Southeast Asian cultures. Avoid content that could cause embarrassment.",
+          "Hierarchy and respect for elders are valued. Intergenerational relationships should be depicted respectfully.",
+          "National identity and pride are significant. Localization demonstrates respect; global campaigns without adaptation may underperform."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "ANZ",
+    "name": "Australia and New Zealand",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Language and market distinctions",
+        "points": [
+          "Both markets use English but with distinct vocabulary, spelling, and cultural references. Australian and New Zealand English are similar but not identical.",
+          "New Zealand is not a smaller Australia. Kiwi cultural identity, Māori heritage, and smaller market scale require distinct approaches.",
+          "Australian slang and colloquialisms can add local authenticity but may not transfer to New Zealand and vice versa."
+        ]
+      },
+      {
+        "heading": "Cultural considerations",
+        "points": [
+          "Both countries value egalitarianism and dislike pretentiousness. 'Tall poppy syndrome' means boastful or arrogant messaging backfires.",
+          "Outdoor lifestyle, sports, and connection to nature are shared values. Environmental concerns resonate with both markets.",
+          "Indigenous representation matters. In Australia, Aboriginal and Torres Strait Islander peoples; in New Zealand, Māori. Authentic inclusion is increasingly expected.",
+          "Multicultural populations are significant, particularly Asian communities in both countries. Representation should reflect demographic reality."
+        ]
+      },
+      {
+        "heading": "Regulatory framework",
+        "points": [
+          "Australia: Free TV clearance (ClearAds/CAD) is mandatory for free-to-air stations. Ad codes enforced by Ad Standards.",
+          "New Zealand: Commercial Approvals Bureau (CAB) clearance is mandatory for all TV stations.",
+          "Both markets have strong consumer protection frameworks and take misleading advertising claims seriously."
+        ]
+      },
+      {
+        "heading": "Practical considerations",
+        "points": [
+          "Australian media landscape: Seven Network leads audience share (29.8%), followed by Nine (27.6%). Major metro markets (Sydney, Melbourne) command premium rates.",
+          "New Zealand: TVNZ 1 most popular channel; TVNZ+ leads local on-demand. Auckland is the media hub, but regional reach requires deliberate strategy.",
+          "Do not assume Australian campaigns transfer to New Zealand without adaptation. Even media buying (e.g., New Zealand Herald is regional, not national) requires local knowledge."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "CANZUK",
+    "name": "CANZUK",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "GREATER_CHINA",
+    "name": "Greater China",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Language specifications",
+        "points": [
+          "Use Simplified Chinese characters for all written content. Mandarin (Putonghua) is the standard for all voiceover and spoken content.",
+          "Regional dialects exist (Shanghainese, Sichuanese) but Mandarin is universally understood and expected for national campaigns.",
+          "English words appear in fashion, tech, and youth contexts but core messaging must be in natural Mandarin. Avoid awkward translations that read as 'foreigner Chinese.'",
+          "Singapore uses Simplified Chinese but has distinct vocabulary influenced by Malay and English. Singaporean Mandarin (Huayu) requires local adaptation.",
+          "Use Traditional Chinese characters for all markets. However, spoken language differs significantly: Taiwan uses Mandarin (Guoyu); Hong Kong and Macau primarily use Cantonese.",
+          "Taiwan: Taiwanese Mandarin has distinct pronunciation, vocabulary, and expressions compared to Mainland Putonghua. Local slang and Taiwanese Hokkien influences appear in casual contexts.",
+          "Hong Kong: Cantonese is the primary spoken language. TV and radio ads should use Cantonese voiceover with Traditional Chinese text. Written Cantonese (colloquial) is common in digital and casual advertising.",
+          "Using Mandarin in Hong Kong can feel culturally insensitive given political context. Respect local linguistic identity."
+        ]
+      },
+      {
+        "heading": "Platform and regulatory considerations",
+        "points": [
+          "China's digital ecosystem (WeChat, Weibo, Douyin, Tmall, JD) differs entirely from Western platforms. Content strategy must be platform-native.",
+          "Advertising claims face strict regulatory scrutiny. Health, beauty, and food claims require substantiation; superlatives are restricted.",
+          "Content moderation is government-supervised. Avoid political sensitivity, territorial references (Taiwan, Hong Kong, Tibet), and topics that could be flagged.",
+          "Foreign brands must navigate requirements for local entity registration, ICP licensing for websites, and compliance with the Advertising Law of the PRC."
+        ]
+      },
+      {
+        "heading": "Cultural considerations",
+        "points": [
+          "Chinese consumers are sophisticated, digitally native, and globally aware. Avoid patronizing or 'explaining' culture; assume intelligence and agency.",
+          "Quality, authenticity, and brand heritage resonate. Chinese consumers research extensively and value expert endorsements and peer reviews.",
+          "Harmony, prosperity, and family are enduring themes. Aspirational messaging around success and achievement connects with middle-class ambitions.",
+          "Festival periods (Chinese New Year, Mid-Autumn Festival, Singles' Day/11.11) are major commercial moments requiring culturally appropriate creative."
+        ]
+      },
+      {
+        "heading": "Visual and tonal norms",
+        "points": [
+          "Production quality expectations are high, driven by domestic content standards. Poor quality signals brand indifference.",
+          "Color symbolism carries cultural meaning: red (luck, prosperity), gold (wealth), white (funerary associations in some contexts). Research context-appropriate palette choices.",
+          "Celebrity and KOL (Key Opinion Leader) endorsements are powerful but require vetting for political safety and authenticity with target demographics."
+        ]
+      },
+      {
+        "heading": "Cultural distinctions",
+        "points": [
+          "Taiwan has a distinct cultural and political identity. Do not conflate with Mainland China or use PRC-associated imagery and messaging.",
+          "Hong Kong audiences value local identity, Cantonese culture, and global cosmopolitanism. The city has distinct consumer behaviors and media consumption patterns.",
+          "Both markets have deep connections to traditional Chinese culture (calligraphy, festivals, aesthetics) while being globally integrated and tech-savvy."
+        ]
+      },
+      {
+        "heading": "Regulatory considerations",
+        "points": [
+          "Taiwan: National Communications Commission (NCC) regulates broadcast advertising. Fair Trade Commission oversees misleading advertising claims.",
+          "Hong Kong: Communications Authority and Television and Entertainment Licensing Authority regulate broadcast content. Self-regulatory codes apply to most advertising.",
+          "Both markets have mature advertising industries with developed ethical standards and consumer protection frameworks."
+        ]
+      },
+      {
+        "heading": "Practical recommendations",
+        "points": [
+          "Create separate adaptations for Taiwan and Hong Kong rather than a single 'Traditional Chinese' version. Cultural references, voiceover, and even character variants differ.",
+          "Hong Kong marketing often blends Traditional Chinese, colloquial Cantonese, and English. This multilingual approach signals local fluency.",
+          "Taiwan's market is smaller but has high advertising spend per capita. Quality localization demonstrates commitment to the market."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "SSA",
+    "name": "Sub-Saharan Africa",
+    "description": "",
+    "insights": [
+      {
+        "heading": "Market overview",
+        "points": [
+          "Africa is not one market. With 54 countries and thousands of languages, continent-wide generalizations are impossible.",
+          "Nigeria is Africa's largest economy and entertainment market with strong Nollywood (film) and Afrobeats (music) industries. Digital advertising is projected to reach 84% of total ad spend by 2029.",
+          "Kenya has the world's fastest-growing internet advertising market (16% CAGR). High mobile penetration and M-Pesa-driven digital economy.",
+          "South Africa is the most developed advertising market with mature media industry, though economic pressures affect growth."
+        ]
+      },
+      {
+        "heading": "Nigeria specifics",
+        "points": [
+          "English is the official language but Nigerian Pidgin is widely spoken and can add local authenticity. Major ethnic languages include Yoruba, Igbo, and Hausa.",
+          "Nollywood production values and storytelling conventions influence audience expectations. High engagement with video content.",
+          "Religious diversity (roughly 50% Christian, 50% Muslim) requires sensitivity in content and casting.",
+          "Afrobeats has global cultural moment. Music partnerships can be powerful but require authentic integration.",
+          "Lagos differs from Kano differs from Port Harcourt. Regional and ethnic diversity is significant."
+        ]
+      },
+      {
+        "heading": "Kenya specifics",
+        "points": [
+          "English and Swahili are both official languages. Sheng (Swahili-English slang) is popular among youth in Nairobi.",
+          "Mobile-first advertising strategies are essential. Ad-supported video and gaming models show high growth potential.",
+          "Young, tech-savvy population with high social media engagement. Influencer marketing is developing rapidly.",
+          "Strong entrepreneurial culture and aspirational middle class."
+        ]
+      },
+      {
+        "heading": "South Africa specifics",
+        "points": [
+          "Eleven official languages, with English dominant in advertising but Zulu, Xhosa, and Afrikaans important for specific demographics.",
+          "Rainbow nation diversity should be reflected in casting and representation. Post-apartheid society requires sensitivity to historical context.",
+          "Most developed media infrastructure on the continent. Production quality expectations align with global standards.",
+          "Economic inequality is stark. Messaging should be mindful of socioeconomic dynamics."
+        ]
+      },
+      {
+        "heading": "Francophone Africa",
+        "points": [
+          "French is the common language across West and Central African markets (Senegal, Côte d'Ivoire, Cameroon, Democratic Republic of Congo).",
+          "African French has distinct vocabulary and expressions. Localize rather than simply using European French.",
+          "Markets are individually smaller but collectively significant. Pan-Francophone campaigns can achieve regional reach."
+        ]
+      },
+      {
+        "heading": "Infrastructure and practical considerations",
+        "points": [
+          "Data affordability and internet infrastructure vary widely. Mobile-first, low-bandwidth optimization is essential.",
+          "Ad-supported OTT models are growing, making premium video advertising accessible to price-sensitive viewers.",
+          "Outside major urban centers, infrastructure limitations affect reach. Radio remains powerful in many markets.",
+          "Diaspora connections (UK, US, Europe) mean African cultural content has global reach and audiences."
+        ]
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "code": "IBERIA",
+    "name": "Iberian Peninsula",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "code": "SOUTH_ASIA",
+    "name": "South Asia",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  }
+]

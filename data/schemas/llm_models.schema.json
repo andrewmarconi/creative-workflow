@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LLM Models Schema",
+  "description": "Schema for LLM models used in text generation",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["model_id", "name", "is_active"],
+    "properties": {
+      "model_id": {
+        "type": "string",
+        "description": "Unique identifier for the model (e.g., 'Qwen/Qwen2.5-7B-Instruct')",
+        "minLength": 1
+      },
+      "name": {
+        "type": "string",
+        "description": "Human-readable name of the model",
+        "minLength": 1
+      },
+      "notes": {
+        "type": "string",
+        "description": "Optional notes about the model"
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether the model is currently active"
+      },
+      "load_in_4bit": {
+        "type": "boolean",
+        "description": "Whether to load the model in 4-bit quantization",
+        "default": false
+      }
+    },
+    "additionalProperties": false
+  }
+}

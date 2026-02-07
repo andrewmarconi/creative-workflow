@@ -82,8 +82,8 @@ echo "Importing presets (models, LoRAs)..."
 uv run manage.py import_presets
 echo ""
 
-echo "Importing core data (languages, LLM models)..."
-uv run manage.py import_coredata
+echo "Importing reference data (regions, countries, languages, LLM models)..."
+uv run manage.py import_reference_data
 echo ""
 
 # Check if prompts data file exists before importing
@@ -99,10 +99,6 @@ if [ -f "data/adaptations.json" ]; then
     uv run manage.py import_adaptations || echo "  (No adaptations to import or import failed)"
     echo ""
 fi
-
-echo "Importing market profiles..."
-uv run manage.py import_markets
-echo ""
 
 # Create superuser
 echo "Creating admin superuser (username: admin, password: admin)..."

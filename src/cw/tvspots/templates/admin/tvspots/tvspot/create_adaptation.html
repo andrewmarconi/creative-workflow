@@ -137,9 +137,117 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const regionSelect = document.getElementById('region');
+    const countrySelect = document.getElementById('country');
     const languageSelect = document.getElementById('language');
     const modelSelect = document.getElementById('llm_model');
     const modelLoading = document.getElementById('model-loading');
+
+    // Data mappings from backend
+    const regionCountries = {{ region_countries_json|safe }};
+    const countryLanguages = {{ country_languages_json|safe }};
+
+    // Store original options
+    const originalCountries = Array.from(countrySelect.options).slice(1); // Skip first empty option
+    const originalLanguages = Array.from(languageSelect.options).slice(1); // Skip first empty option
+
+    // When region changes, reorder countries dropdown
+    regionSelect.addEventListener('change', function() {
+        const regionId = parseInt(this.value);
+
+        if (!regionId) {
+            // Reset to original order
+            countrySelect.innerHTML = '<option value="">{% trans "No specific country" %}</option>';
+            originalCountries.forEach(opt => countrySelect.appendChild(opt.cloneNode(true)));
+            return;
+        }
+
+        const countriesInRegion = regionCountries[regionId] || [];
+
+        // Rebuild country select with grouped options
+        countrySelect.innerHTML = '<option value="">{% trans "No specific country" %}</option>';
+
+        // Add optgroup for countries in selected region
+        if (countriesInRegion.length > 0) {
+            const inRegionGroup = document.createElement('optgroup');
+            inRegionGroup.label = '{% trans "Countries in selected region" %}';
+
+            originalCountries.forEach(opt => {
+                const countryId = parseInt(opt.value);
+                if (countriesInRegion.includes(countryId)) {
+                    inRegionGroup.appendChild(opt.cloneNode(true));
+                }
+            });
+
+            if (inRegionGroup.children.length > 0) {
+                countrySelect.appendChild(inRegionGroup);
+            }
+        }
+
+        // Add optgroup for other countries
+        const otherGroup = document.createElement('optgroup');
+        otherGroup.label = '{% trans "Other countries" %}';
+
+        originalCountries.forEach(opt => {
+            const countryId = parseInt(opt.value);
+            if (!countriesInRegion.includes(countryId)) {
+                otherGroup.appendChild(opt.cloneNode(true));
+            }
+        });
+
+        if (otherGroup.children.length > 0) {
+            countrySelect.appendChild(otherGroup);
+        }
+    });
+
+    // When country changes, reorder languages dropdown
+    countrySelect.addEventListener('change', function() {
+        const countryId = parseInt(this.value);
+
+        if (!countryId) {
+            // Reset to original order
+            languageSelect.innerHTML = '<option value="">{% trans "Select a language..." %}</option>';
+            originalLanguages.forEach(opt => languageSelect.appendChild(opt.cloneNode(true)));
+            return;
+        }
+
+        const languagesInCountry = countryLanguages[countryId] || [];
+
+        // Rebuild language select with grouped options
+        languageSelect.innerHTML = '<option value="">{% trans "Select a language..." %}</option>';
+
+        // Add optgroup for languages in selected country
+        if (languagesInCountry.length > 0) {
+            const inCountryGroup = document.createElement('optgroup');
+            inCountryGroup.label = '{% trans "Languages for selected country" %}';
+
+            originalLanguages.forEach(opt => {
+                const languageId = parseInt(opt.value);
+                if (languagesInCountry.includes(languageId)) {
+                    inCountryGroup.appendChild(opt.cloneNode(true));
+                }
+            });
+
+            if (inCountryGroup.children.length > 0) {
+                languageSelect.appendChild(inCountryGroup);
+            }
+        }
+
+        // Add optgroup for other languages
+        const otherGroup = document.createElement('optgroup');
+        otherGroup.label = '{% trans "Other languages" %}';
+
+        originalLanguages.forEach(opt => {
+            const languageId = parseInt(opt.value);
+            if (!languagesInCountry.includes(languageId)) {
+                otherGroup.appendChild(opt.cloneNode(true));
+            }
+        });
+
+        if (otherGroup.children.length > 0) {
+            languageSelect.appendChild(otherGroup);
+        }
+    });
 
     // When language changes, fetch available models via AJAX
     languageSelect.addEventListener('change', function() {

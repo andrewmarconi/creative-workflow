@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Regions Schema",
+  "description": "Schema for geographic regions and market clusters",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["code", "name", "is_active"],
+    "properties": {
+      "code": {
+        "type": "string",
+        "description": "Unique region code (e.g., 'DACH', 'LATAM', 'NORDICS')",
+        "minLength": 1,
+        "pattern": "^[A-Z_]+$"
+      },
+      "name": {
+        "type": "string",
+        "description": "Human-readable name of the region",
+        "minLength": 1
+      },
+      "description": {
+        "type": "string",
+        "description": "Description of the region's scope and characteristics"
+      },
+      "insights": {
+        "type": "array",
+        "description": "Cultural, regulatory, and market insights for the region",
+        "items": {
+          "type": "object",
+          "required": ["heading", "points"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "description": "Insight category heading (e.g., 'Cultural values', 'Language segmentation')",
+              "minLength": 1
+            },
+            "points": {
+              "type": "array",
+              "description": "List of insight points",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether the region is currently active"
+      }
+    },
+    "additionalProperties": false
+  }
+}

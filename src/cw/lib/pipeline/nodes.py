@@ -31,6 +31,15 @@ def _get_generator(state, output_schema):
     """Return an Outlines generator for *output_schema*, handling model switches."""
     from cw.lib.pipeline.model_loader import get_model_loader
 
+    logger.debug(
+        f"Getting generator for schema: {output_schema.__name__}",
+        extra={
+            "job_id": state.get("job_id"),
+            "model_id": state["model_id"],
+            "load_in_4bit": state.get("load_in_4bit", False),
+        },
+    )
+
     loader = get_model_loader(
         model_id=state["model_id"],
         load_in_4bit=state.get("load_in_4bit", False),
@@ -73,29 +82,43 @@ def concept_node(state: PipelineState) -> dict:
     logger.info("Pipeline node: concept_extraction starting", extra={"job_id": state["job_id"]})
     start = time.time()
 
-    generator, loader = _get_generator(state, ConceptBrief)
+    try:
+        logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
+        generator, loader = _get_generator(state, ConceptBrief)
 
-    user_prompt = render_prompt(
-        "concept_extraction.j2",
-        original_json=state["original_script"],
-    )
-    system_message = (
-        "You are an expert advertising analyst. Produce ONLY valid JSON "
-        "matching the requested schema — no commentary."
-    )
-    prompt = _apply_chat_template(loader, system_message, user_prompt)
+        logger.debug("Rendering concept extraction prompt", extra={"job_id": state["job_id"]})
+        user_prompt = render_prompt(
+            "concept_extraction.j2",
+            original_json=state["original_script"],
+        )
+        system_message = (
+            "You are an expert advertising analyst. Produce ONLY valid JSON "
+            "matching the requested schema — no commentary."
+        )
+        prompt = _apply_chat_template(loader, system_message, user_prompt)
 
-    raw = generator(prompt, max_new_tokens=4096)
-    result = ConceptBrief.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+        logger.info("Generating concept brief with LLM", extra={"job_id": state["job_id"], "prompt_length": len(prompt)})
+        raw = generator(prompt, max_new_tokens=4096)
+        logger.debug("LLM generation complete, validating output", extra={"job_id": state["job_id"]})
 
-    brief_json = result.model_dump_json()
+        result = ConceptBrief.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+        brief_json = result.model_dump_json()
 
-    _update_job_status(state["job_id"], "concept_analysis", concept_brief=json.loads(brief_json))
+        logger.debug("Updating job status in database", extra={"job_id": state["job_id"]})
+        _update_job_status(state["job_id"], "concept_analysis", concept_brief=json.loads(brief_json))
 
-    elapsed = round(time.time() - start, 2)
-    logger.info(f"Pipeline node: concept_extraction done ({elapsed}s)", extra={"job_id": state["job_id"]})
+        elapsed = round(time.time() - start, 2)
+        logger.info(f"Pipeline node: concept_extraction done ({elapsed}s)", extra={"job_id": state["job_id"]})
 
-    return {"concept_brief": brief_json, "status": "concept_analysis"}
+        return {"concept_brief": brief_json, "status": "concept_analysis"}
+
+    except Exception as e:
+        logger.error(
+            f"Concept extraction failed: {e}",
+            extra={"job_id": state["job_id"], "error": str(e)},
+            exc_info=True,
+        )
+        raise
 
 
 # ---------------------------------------------------------------------------
@@ -109,32 +132,46 @@ def culture_node(state: PipelineState) -> dict:
     logger.info("Pipeline node: cultural_research starting", extra={"job_id": state["job_id"]})
     start = time.time()
 
-    generator, loader = _get_generator(state, CulturalBrief)
+    try:
+        logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
+        generator, loader = _get_generator(state, CulturalBrief)
 
-    user_prompt = render_prompt(
-        "cultural_research.j2",
-        concept_brief_json=state["concept_brief"],
-        target_market_name=state["target_market_name"],
-        target_market_rules=state["target_market_rules"],
-        original_json=state["original_script"],
-    )
-    system_message = (
-        "You are a cultural research specialist. Produce ONLY valid JSON "
-        "matching the requested schema — no commentary."
-    )
-    prompt = _apply_chat_template(loader, system_message, user_prompt)
+        logger.debug("Rendering cultural research prompt", extra={"job_id": state["job_id"], "target": state["target_market_name"]})
+        user_prompt = render_prompt(
+            "cultural_research.j2",
+            concept_brief_json=state["concept_brief"],
+            target_market_name=state["target_market_name"],
+            target_market_rules=state["target_market_rules"],
+            original_json=state["original_script"],
+        )
+        system_message = (
+            "You are a cultural research specialist. Produce ONLY valid JSON "
+            "matching the requested schema — no commentary."
+        )
+        prompt = _apply_chat_template(loader, system_message, user_prompt)
 
-    raw = generator(prompt, max_new_tokens=4096)
-    result = CulturalBrief.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+        logger.info("Generating cultural brief with LLM", extra={"job_id": state["job_id"], "prompt_length": len(prompt)})
+        raw = generator(prompt, max_new_tokens=4096)
+        logger.debug("LLM generation complete, validating output", extra={"job_id": state["job_id"]})
 
-    brief_json = result.model_dump_json()
+        result = CulturalBrief.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+        brief_json = result.model_dump_json()
 
-    _update_job_status(state["job_id"], "cultural_analysis", cultural_brief=json.loads(brief_json))
+        logger.debug("Updating job status in database", extra={"job_id": state["job_id"]})
+        _update_job_status(state["job_id"], "cultural_analysis", cultural_brief=json.loads(brief_json))
 
-    elapsed = round(time.time() - start, 2)
-    logger.info(f"Pipeline node: cultural_research done ({elapsed}s)", extra={"job_id": state["job_id"]})
+        elapsed = round(time.time() - start, 2)
+        logger.info(f"Pipeline node: cultural_research done ({elapsed}s)", extra={"job_id": state["job_id"]})
 
-    return {"cultural_brief": brief_json, "status": "cultural_analysis"}
+        return {"cultural_brief": brief_json, "status": "cultural_analysis"}
+
+    except Exception as e:
+        logger.error(
+            f"Cultural research failed: {e}",
+            extra={"job_id": state["job_id"], "error": str(e)},
+            exc_info=True,
+        )
+        raise
 
 
 # ---------------------------------------------------------------------------
@@ -204,11 +241,17 @@ def writer_node(state: PipelineState) -> dict:
     )
     prompt = _apply_chat_template(loader, system_message, user_prompt)
 
+    logger.info(
+        f"Generating adapted script with LLM (revision={is_revision})",
+        extra={"job_id": state["job_id"], "prompt_length": len(prompt), "total_revisions": total_revisions},
+    )
     raw = generator(prompt, max_new_tokens=4096)
-    result = AdaptationOutput.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+    logger.debug("LLM generation complete, validating output", extra={"job_id": state["job_id"]})
 
+    result = AdaptationOutput.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
     script_json = result.model_dump_json()
 
+    logger.debug("Updating job status in database", extra={"job_id": state["job_id"]})
     _update_job_status(state["job_id"], status)
 
     elapsed = round(time.time() - start, 2)
@@ -235,38 +278,53 @@ def cultural_eval_node(state: PipelineState) -> dict:
     logger.info("Pipeline node: cultural_eval starting", extra={"job_id": state["job_id"]})
     start = time.time()
 
-    generator, loader = _get_generator(state, EvaluationResult)
+    try:
+        logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
+        generator, loader = _get_generator(state, EvaluationResult)
 
-    user_prompt = render_prompt(
-        "eval_cultural.j2",
-        adapted_script_json=state["adapted_script"],
-        cultural_brief_json=state["cultural_brief"],
-        target_market_rules=state["target_market_rules"],
-    )
-    system_message = (
-        "You are a cultural compliance reviewer. Produce ONLY valid JSON "
-        "matching the requested schema — no commentary."
-    )
-    prompt = _apply_chat_template(loader, system_message, user_prompt)
+        logger.debug("Rendering cultural evaluation prompt", extra={"job_id": state["job_id"]})
+        user_prompt = render_prompt(
+            "eval_cultural.j2",
+            adapted_script_json=state["adapted_script"],
+            cultural_brief_json=state["cultural_brief"],
+            target_market_rules=state["target_market_rules"],
+        )
+        system_message = (
+            "You are a cultural compliance reviewer. Produce ONLY valid JSON "
+            "matching the requested schema — no commentary."
+        )
+        prompt = _apply_chat_template(loader, system_message, user_prompt)
 
-    raw = generator(prompt, max_new_tokens=2048)
-    result = EvaluationResult.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+        logger.info("Evaluating cultural compliance with LLM", extra={"job_id": state["job_id"], "prompt_length": len(prompt)})
+        raw = generator(prompt, max_new_tokens=2048)
+        logger.debug("LLM evaluation complete, validating output", extra={"job_id": state["job_id"]})
 
-    # Append to evaluation history
-    from cw.tvspots.models import AdaptationJob
+        result = EvaluationResult.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
 
-    job = AdaptationJob.objects.get(id=state["job_id"])
-    history = job.evaluation_history or []
-    history.append({"type": "cultural", **result.model_dump()})
-    job.evaluation_history = history
-    job.status = "cultural_evaluation"
-    job.save(update_fields=["evaluation_history", "status"])
+        # Append to evaluation history
+        from cw.tvspots.models import AdaptationJob
 
-    elapsed = round(time.time() - start, 2)
-    logger.info(
-        f"Pipeline node: cultural_eval done ({elapsed}s, passed={result.passed})",
-        extra={"job_id": state["job_id"]},
-    )
+        logger.debug("Updating evaluation history in database", extra={"job_id": state["job_id"]})
+        job = AdaptationJob.objects.get(id=state["job_id"])
+        history = job.evaluation_history or []
+        history.append({"type": "cultural", **result.model_dump()})
+        job.evaluation_history = history
+        job.status = "cultural_evaluation"
+        job.save(update_fields=["evaluation_history", "status"])
+
+        elapsed = round(time.time() - start, 2)
+        logger.info(
+            f"Pipeline node: cultural_eval done ({elapsed}s, passed={result.passed})",
+            extra={"job_id": state["job_id"], "passed": result.passed},
+        )
+
+    except Exception as e:
+        logger.error(
+            f"Cultural evaluation failed: {e}",
+            extra={"job_id": state["job_id"], "error": str(e)},
+            exc_info=True,
+        )
+        raise
 
     if result.passed:
         return {"cultural_feedback": None, "status": "cultural_evaluation"}

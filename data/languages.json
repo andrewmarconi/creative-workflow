@@ -1,0 +1,910 @@
+[
+  {
+    "code": "en-US",
+    "name": "English (United States)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [
+      {
+        "points": [
+          "American spelling: color, honor, organize (not colour, honour, organise)",
+          "Informal tone acceptable in most advertising contexts",
+          "Active voice and direct phrasing preferred",
+          "Contractions common and natural (it's, you're, we've)"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-GB",
+    "name": "English (United Kingdom)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-CA",
+    "name": "English (Canada)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Canadian spelling: colour, honour, centre (British-influenced)",
+          "Mix of British and American vocabulary: 'truck' (US) but 'tap' not 'faucet' (UK)",
+          "Distinct idioms: 'toque' (winter hat), 'parkade' (parking garage)",
+          "'Eh?' as conversation filler characteristic but avoid stereotyping"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-AU",
+    "name": "English (Australia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-NZ",
+    "name": "English (New Zealand)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-IE",
+    "name": "English (Ireland)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-ZA",
+    "name": "English (South Africa)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-IN",
+    "name": "English (India)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-ES",
+    "name": "Spanish (Spain)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [
+      {
+        "points": [
+          "Uses 'vosotros' for plural 'you' (not used in Latin America)",
+          "Ceceo/distinción: 'c' and 'z' pronounced differently than in LATAM",
+          "Castilian vocabulary: 'coche' (car), 'ordenador' (computer)",
+          "Formal 'usted' for advertising unless youth-targeted"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-MX",
+    "name": "Spanish (Mexico)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b",
+      "mistralai/Mistral-7B-Instruct-v0.3"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Car: 'carro' (MX) vs 'coche' (ES) vs 'auto' (AR)",
+          "Computer: 'computadora' (MX) vs 'ordenador' (ES)",
+          "Bus: 'camión' (MX) vs 'autobús' (ES)",
+          "Avoid Castilian 'vosotros' - use 'ustedes' for plural 'you'"
+        ],
+        "heading": "Vocabulary and expressions"
+      },
+      {
+        "points": [
+          "Informal 'tú' acceptable in advertising",
+          "Diminutives common and affectionate: '-ito/-ita' endings",
+          "Regional slang varies within Mexico - neutral Mexican Spanish for broad reach"
+        ],
+        "heading": "Cultural expressions"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-AR",
+    "name": "Spanish (Argentina)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-CO",
+    "name": "Spanish (Colombia)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-CL",
+    "name": "Spanish (Chile)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-PE",
+    "name": "Spanish (Peru)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fr-FR",
+    "name": "French (France)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b",
+      "mistralai/Mistral-7B-Instruct-v0.3"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Formal register (vous) expected in most advertising",
+          "Informal (tu) reserved for youth-oriented or digital-native contexts",
+          "Avoid excessive Anglicisms - French equivalents preferred",
+          "Subjunctive mood and formal constructions common"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fr-CA",
+    "name": "French (Canada)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Car: 'char' (QC) vs 'voiture' (FR)",
+          "Breakfast: 'déjeuner' (QC) vs 'petit-déjeuner' (FR)",
+          "Weekend: 'fin de semaine' (QC) vs 'weekend' (FR)",
+          "Parking: 'stationnement' (QC) vs 'parking' (FR)",
+          "Email: 'courriel' (QC) vs 'mail/email' (FR)"
+        ],
+        "heading": "Vocabulary differences from France"
+      },
+      {
+        "points": [
+          "Quebec French has distinct phonology - MUST use Quebec VO talent, not European",
+          "Local idioms: 'C'est le fun' (it's fun), 'Tiguidou' (great/okay)",
+          "Informal 'tu' more common than formal 'vous' in advertising",
+          "Sacres (religious swear words) exist but avoid in advertising"
+        ],
+        "heading": "Pronunciation and idioms"
+      },
+      {
+        "points": [
+          "Office québécois de la langue française enforces French language use",
+          "Bill 101 (Charter of the French Language) sets commercial French requirements",
+          "Bill 96 mandates French text at least 2x size of English",
+          "All product descriptions, warnings, and supers MUST be in French"
+        ],
+        "heading": "Legal and compliance"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fr-BE",
+    "name": "French (Belgium)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Belgian French closer to France French than Quebec French",
+          "Distinct vocabulary: 'septante' (70), 'nonante' (90) instead of soixante-dix, quatre-vingt-dix",
+          "Formal 'vous' expected in advertising",
+          "Flemish influence in Brussels - bilingual considerations"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fr-CH",
+    "name": "French (Switzerland)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [
+      {
+        "points": [
+          "Swiss French (Romandie) uses 'septante' (70), 'huitante' (80), 'nonante' (90)",
+          "Distinct expressions and vocabulary vs France French",
+          "Formal and precise language expected",
+          "Understatement and discretion valued in Swiss culture"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "de-DE",
+    "name": "German (Germany)",
+    "base_language": "de",
+    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "alternative_models": [
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Formal address (Sie) expected in most advertising",
+          "Compound words common - keep messaging concise",
+          "Precision and accuracy valued - avoid vague claims",
+          "Gender-neutral language increasingly expected"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "de-AT",
+    "name": "German (Austria)",
+    "base_language": "de",
+    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "alternative_models": [],
+    "insights": [
+      {
+        "points": [
+          "Greeting: 'Grüß Gott' (AT) vs 'Hallo/Guten Tag' (DE)",
+          "January: 'Jänner' (AT) vs 'Januar' (DE)",
+          "Potato: 'Erdapfel' (AT) vs 'Kartoffel' (DE)",
+          "Tomato: 'Paradeiser' (AT) vs 'Tomate' (DE)"
+        ],
+        "heading": "Vocabulary differences from Germany"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "de-CH",
+    "name": "German (Switzerland)",
+    "base_language": "de",
+    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "alternative_models": [],
+    "insights": [
+      {
+        "points": [
+          "Swiss Standard German (Hochdeutsch) for written advertising",
+          "Schweizerdeutsch (Swiss German) for spoken VO - significantly different from Standard German",
+          "Helvetisms: Swiss-specific vocabulary and expressions",
+          "Formal and precise language expected"
+        ],
+        "heading": "Language considerations"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "it-IT",
+    "name": "Italian (Italy)",
+    "base_language": "it",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "it-CH",
+    "name": "Italian (Switzerland)",
+    "base_language": "it",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "pt-BR",
+    "name": "Portuguese (Brazil)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "pt-PT",
+    "name": "Portuguese (Portugal)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "nl-NL",
+    "name": "Dutch (Netherlands)",
+    "base_language": "nl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "nl-BE",
+    "name": "Dutch (Belgium)",
+    "base_language": "nl",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "sv-SE",
+    "name": "Swedish (Sweden)",
+    "base_language": "sv",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "da-DK",
+    "name": "Danish (Denmark)",
+    "base_language": "da",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "no-NO",
+    "name": "Norwegian (Norway)",
+    "base_language": "no",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [],
+    "insights": [
+      {
+        "points": [
+          "Bokmål (90%) recommended for broad reach",
+          "Nynorsk (10%) for rural/western regions if targeted",
+          "High English proficiency but Norwegian-language advertising performs better"
+        ],
+        "heading": "Language considerations"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fi-FI",
+    "name": "Finnish (Finland)",
+    "base_language": "fi",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "nb-NO",
+    "name": "Norwegian Bokmål (Norway)",
+    "base_language": "nb",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "nn-NO",
+    "name": "Norwegian Nynorsk (Norway)",
+    "base_language": "nn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "pl-PL",
+    "name": "Polish (Poland)",
+    "base_language": "pl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ru-RU",
+    "name": "Russian (Russia)",
+    "base_language": "ru",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "uk-UA",
+    "name": "Ukrainian (Ukraine)",
+    "base_language": "uk",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "cs-CZ",
+    "name": "Czech (Czech Republic)",
+    "base_language": "cs",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "sk-SK",
+    "name": "Slovak (Slovakia)",
+    "base_language": "sk",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "hu-HU",
+    "name": "Hungarian (Hungary)",
+    "base_language": "hu",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ro-RO",
+    "name": "Romanian (Romania)",
+    "base_language": "ro",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "bg-BG",
+    "name": "Bulgarian (Bulgaria)",
+    "base_language": "bg",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "hr-HR",
+    "name": "Croatian (Croatia)",
+    "base_language": "hr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "sr-RS",
+    "name": "Serbian (Serbia)",
+    "base_language": "sr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "sl-SI",
+    "name": "Slovenian (Slovenia)",
+    "base_language": "sl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "et-EE",
+    "name": "Estonian (Estonia)",
+    "base_language": "et",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "lv-LV",
+    "name": "Latvian (Latvia)",
+    "base_language": "lv",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "lt-LT",
+    "name": "Lithuanian (Lithuania)",
+    "base_language": "lt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "el-GR",
+    "name": "Greek (Greece)",
+    "base_language": "el",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "tr-TR",
+    "name": "Turkish (Turkey)",
+    "base_language": "tr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-SA",
+    "name": "Arabic (Saudi Arabia)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-AE",
+    "name": "Arabic (United Arab Emirates)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-EG",
+    "name": "Arabic (Egypt)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "he-IL",
+    "name": "Hebrew (Israel)",
+    "base_language": "he",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ja-JP",
+    "name": "Japanese (Japan)",
+    "base_language": "ja",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ko-KR",
+    "name": "Korean (South Korea)",
+    "base_language": "ko",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "zh-CN",
+    "name": "Chinese (China, Simplified)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "zh-TW",
+    "name": "Chinese (Taiwan, Traditional)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "zh-HK",
+    "name": "Chinese (Hong Kong, Traditional)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "th-TH",
+    "name": "Thai (Thailand)",
+    "base_language": "th",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "vi-VN",
+    "name": "Vietnamese (Vietnam)",
+    "base_language": "vi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "id-ID",
+    "name": "Indonesian (Indonesia)",
+    "base_language": "id",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ms-MY",
+    "name": "Malay (Malaysia)",
+    "base_language": "ms",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "tl-PH",
+    "name": "Tagalog (Philippines)",
+    "base_language": "tl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "hi-IN",
+    "name": "Hindi (India)",
+    "base_language": "hi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "bn-BD",
+    "name": "Bengali (Bangladesh)",
+    "base_language": "bn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ta-IN",
+    "name": "Tamil (India)",
+    "base_language": "ta",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "te-IN",
+    "name": "Telugu (India)",
+    "base_language": "te",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "mr-IN",
+    "name": "Marathi (India)",
+    "base_language": "mr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ur-PK",
+    "name": "Urdu (Pakistan)",
+    "base_language": "ur",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fa-IR",
+    "name": "Persian (Iran)",
+    "base_language": "fa",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "sw-KE",
+    "name": "Swahili (Kenya)",
+    "base_language": "sw",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "af-ZA",
+    "name": "Afrikaans (South Africa)",
+    "base_language": "af",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "zu-ZA",
+    "name": "Zulu (South Africa)",
+    "base_language": "zu",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "am-ET",
+    "name": "Amharic (Ethiopia)",
+    "base_language": "am",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  }
+]

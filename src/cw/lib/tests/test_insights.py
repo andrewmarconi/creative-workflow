@@ -9,7 +9,7 @@ Run with:
 
 from django.test import TestCase
 
-from cw.core.models import Country, Culture, Language, LLMModel, Region
+from cw.core.models import Country, Language, LLMModel, Region
 from cw.lib.insights import compose_insights, compose_insights_as_markdown
 from cw.tvspots.models import AdaptationJob, AdaptationMarket, TvSpot, TvSpotVersion
 

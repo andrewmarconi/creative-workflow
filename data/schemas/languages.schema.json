@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Languages Schema",
+  "description": "Schema for languages with LLM model assignments and cultural insights",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["code", "name", "base_language", "primary_model", "is_active"],
+    "properties": {
+      "code": {
+        "type": "string",
+        "description": "Language code in locale format (e.g., 'en-US', 'fr-FR', 'zh-CN')",
+        "minLength": 2,
+        "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+      },
+      "name": {
+        "type": "string",
+        "description": "Human-readable language name with region (e.g., 'English (United States)')",
+        "minLength": 1
+      },
+      "base_language": {
+        "type": "string",
+        "description": "Base language code without region (e.g., 'en', 'fr', 'zh')",
+        "minLength": 2,
+        "maxLength": 3,
+        "pattern": "^[a-z]{2,3}$"
+      },
+      "primary_model": {
+        "type": "string",
+        "description": "Primary LLM model ID for this language (references llm_models.model_id)",
+        "minLength": 1
+      },
+      "alternative_models": {
+        "type": "array",
+        "description": "Alternative LLM models that can be used for this language",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "insights": {
+        "type": "array",
+        "description": "Language-specific insights (characteristics, cultural notes, etc.)",
+        "items": {
+          "type": "object",
+          "required": ["heading", "points"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "description": "Insight category heading (e.g., 'Language characteristics', 'Pronunciation')",
+              "minLength": 1
+            },
+            "points": {
+              "type": "array",
+              "description": "List of insight points",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "notes": {
+        "type": "string",
+        "description": "Additional notes about the language"
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether the language is currently active"
+      }
+    },
+    "additionalProperties": false
+  }
+}

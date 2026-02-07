@@ -60,12 +60,6 @@ class AdaptationMarket(models.Model):
         related_name="markets",
         help_text="Countries this market targets",
     )
-    cultures = models.ManyToManyField(
-        "core.Culture",
-        blank=True,
-        related_name="markets",
-        help_text="Cultural characteristics relevant to this market",
-    )
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -330,6 +324,11 @@ class AdaptationJob(models.Model):
         return f"Adaptation to {target} ({self.get_status_display()})"
 
     @property
+    def effective_language(self):
+        """Get the language for this adaptation (always the language field)."""
+        return self.language
+
+    @property
     def effective_llm_model(self):
         """Get the LLM model to use (override or language's primary)."""
         return self.llm_model or self.language.primary_model
@@ -489,7 +488,7 @@ class TVSpotAdaptation(models.Model):
     """Alternative flat adaptation model with flexible dimensional tagging.
 
     Provides a simpler, more flexible structure than TvSpotVersion for tracking
-    adaptations with optional dimensional context (region, country, language, cultures).
+    adaptations with optional dimensional context (region, country, language).
 
     Use cases:
     - Tracking adaptation chains (master → regional → country)
@@ -542,12 +541,6 @@ class TVSpotAdaptation(models.Model):
         blank=True,
         related_name="adaptations",
         help_text="Optional: Primary language for this adaptation",
-    )
-    cultures = models.ManyToManyField(
-        "core.Culture",
-        blank=True,
-        related_name="adaptations",
-        help_text="Optional: Cultural characteristics relevant to this adaptation",
     )
 
     # Content

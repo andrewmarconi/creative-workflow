@@ -43,10 +43,11 @@ def compose_insights(adaptation_job) -> List[Dict[str, str]]:
     if language and language.insights:
         insights.append({"source": f"Language: {language.name}", "markdown": language.insights_as_markdown()})
 
-    # 4. Market-level insights (campaign-specific)
-    market = adaptation_job.target_market
-    if market and market.rules:  # Note: 'rules' is legacy name, contains same structure as insights
-        insights.append({"source": f"Market: {market.name}", "markdown": market.rules_as_markdown()})
+    # 4. Market-level insights (campaign-specific, for backward compatibility)
+    if hasattr(adaptation_job, 'target_market') and adaptation_job.target_market:
+        market = adaptation_job.target_market
+        if market.rules:  # Note: 'rules' is legacy name, contains same structure as insights
+            insights.append({"source": f"Market: {market.name}", "markdown": market.rules_as_markdown()})
 
     return insights
 
@@ -65,8 +66,21 @@ def compose_insights_as_markdown(adaptation_job) -> str:
     if not sections:
         return ""
 
+    # Build target name from region/country/language
+    target_parts = []
+    if hasattr(adaptation_job, 'region') and adaptation_job.region:
+        target_parts.append(adaptation_job.region.name)
+    if hasattr(adaptation_job, 'country') and adaptation_job.country:
+        target_parts.append(adaptation_job.country.name)
+    if hasattr(adaptation_job, 'language') and adaptation_job.language:
+        target_parts.append(f"({adaptation_job.language.code})")
+    elif hasattr(adaptation_job, 'effective_language') and adaptation_job.effective_language:
+        target_parts.append(f"({adaptation_job.effective_language.code})")
+
+    target_name = " / ".join(target_parts) if target_parts else "Target Market"
+
     # Build full document
-    lines = [f"# Adaptation Guidance for {adaptation_job.target_market.name}", ""]
+    lines = [f"# Adaptation Guidance for {target_name}", ""]
 
     for section in sections:
         lines.append(f"## {section['source']}")
@@ -91,10 +105,11 @@ def _get_region(adaptation_job) -> Optional["Region"]:
     if hasattr(adaptation_job, "region") and adaptation_job.region:
         return adaptation_job.region
 
-    # Via market regions (M2M)
-    market = adaptation_job.target_market
-    if hasattr(market, "regions"):
-        return market.regions.first()  # Pick first if multiple
+    # Via market regions (M2M) - backward compatibility
+    if hasattr(adaptation_job, 'target_market') and adaptation_job.target_market:
+        market = adaptation_job.target_market
+        if hasattr(market, "regions"):
+            return market.regions.first()  # Pick first if multiple
 
     # Via country
     country = _get_country(adaptation_job)
@@ -119,10 +134,11 @@ def _get_country(adaptation_job) -> Optional["Country"]:
     if hasattr(adaptation_job, "country") and adaptation_job.country:
         return adaptation_job.country
 
-    # Via market countries (M2M)
-    market = adaptation_job.target_market
-    if hasattr(market, "countries"):
-        return market.countries.first()
+    # Via market countries (M2M) - backward compatibility
+    if hasattr(adaptation_job, 'target_market') and adaptation_job.target_market:
+        market = adaptation_job.target_market
+        if hasattr(market, "countries"):
+            return market.countries.first()
 
     # Via language
     language = adaptation_job.effective_language

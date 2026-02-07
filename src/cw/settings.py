@@ -220,11 +220,6 @@ UNFOLD = {
                         "link": "/admin/core/country/",
                     },
                     {
-                        "title": "Cultures",
-                        "icon": "diversity_3",
-                        "link": "/admin/core/culture/",
-                    },
-                    {
                         "title": "Languages",
                         "icon": "translate",
                         "link": "/admin/core/language/",

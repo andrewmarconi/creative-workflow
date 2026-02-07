@@ -118,7 +118,60 @@ class PipelineModelLoader:
 
         self._load_model()
         logger.debug(f"Creating Outlines Generator for schema {output_schema.__name__}")
-        return outlines.Generator(self._model, output_type=output_schema)
+
+        # Create generator - Outlines will use default sampling parameters
+        # which helps avoid numerical instability
+        base_generator = outlines.Generator(self._model, output_type=output_schema)
+
+        # Wrap to add retry logic for probability tensor errors
+        class GeneratorWithRetry:
+            """Wrapper that retries generation with safer parameters on numerical errors."""
+
+            def __call__(self, prompt, max_new_tokens=4096, **kwargs):
+                logger.debug(
+                    f"Generating with schema {output_schema.__name__}, max_tokens={max_new_tokens}"
+                )
+
+                try:
+                    # First attempt with default parameters
+                    result = base_generator(prompt, max_new_tokens=max_new_tokens, **kwargs)
+                    return result
+
+                except Exception as e:
+                    error_str = str(e).lower()
+
+                    # Check if it's a numerical stability error
+                    if any(keyword in error_str for keyword in ["probability tensor", "inf", "nan", "element < 0"]):
+                        logger.warning(
+                            f"Numerical stability error detected: {e}. "
+                            f"This can happen with structured generation. "
+                            f"Clearing cache and retrying..."
+                        )
+
+                        # Clear GPU cache which can help with numerical stability
+                        import torch
+                        if torch.backends.mps.is_available():
+                            torch.mps.empty_cache()
+                        elif torch.cuda.is_available():
+                            torch.cuda.empty_cache()
+
+                        # Retry with a shorter prompt if possible
+                        logger.warning("Retrying generation after cache clear...")
+                        try:
+                            result = base_generator(prompt, max_new_tokens=max_new_tokens, **kwargs)
+                            logger.info("Retry after cache clear succeeded")
+                            return result
+                        except Exception as retry_e:
+                            logger.error(f"Retry also failed: {retry_e}")
+
+                    # Re-raise the original error
+                    logger.error(
+                        f"Generation failed for {output_schema.__name__}: {e}",
+                        exc_info=True,
+                    )
+                    raise
+
+        return GeneratorWithRetry()
 
     def switch_model(self, model_id: str, load_in_4bit: bool = False):
         """Clear cache and reconfigure for a different model."""

@@ -34,6 +34,12 @@ uv run manage.py export_prompts                 # Export prompts to file
 uv run manage.py import_adaptations             # Import adaptations.json into prompts/jobs
 uv run manage.py preload_models                 # Pre-download models to HF cache
 uv run manage.py createsuperuser                # Create admin user
+
+# Reference Data (Regions, Countries, Languages, LLM Models)
+uv run manage.py export_reference_data          # Export to separate files in data/
+uv run manage.py export_reference_data --dir custom/  # Export to custom directory
+uv run manage.py import_reference_data          # Import from data/ directory
+uv run manage.py import_reference_data --dry-run      # Preview without importing
 ```
 
 ### Testing
@@ -165,8 +171,40 @@ generative-creative-lab/
 4. Images generated and saved to `media/diffusion/`
 5. Job status updated, results viewable in admin with image previews
 
+### Reference Data Architecture
+
+**Separate JSON Files Per Model** (Implemented 2026-02):
+```
+data/
+├── llm_models.json          # LLM models for text generation
+├── regions.json             # Geographic regions (DACH, EU-WEST, LATAM, etc.)
+├── countries.json           # Countries with default language references
+├── languages.json           # Languages with primary/alternative model references
+├── country_regions.json     # M2M: Country → Region mappings
+└── country_languages.json   # M2M: Country → Language mappings (with is_primary)
+```
+
+**Relationship Handling via Codes/IDs**:
+- `languages.json` references `primary_model` by `model_id` (e.g., "Qwen/Qwen2.5-7B-Instruct")
+- `countries.json` references `default_language` by language `code` (e.g., "en-US")
+- M2M files use `country_code`, `region_code`, `language_code` for references
+
+**Import/Export Commands**:
+- `export_reference_data` — Exports all reference data to 6 separate JSON files
+- `import_reference_data` — Imports in dependency order: LLM Models → Regions → Countries → Languages → M2M
+- Both commands support `--dir` for custom directory and `--dry-run` for preview
+
+**Import Dependency Order**:
+1. LLM Models (no dependencies)
+2. Regions (no dependencies)
+3. Countries (optional FK to Language, resolved after Languages import if missing)
+4. Languages (FK to LLM Model for primary_model)
+5. Country-Region mappings (FKs to Country, Region)
+6. Country-Language mappings (FKs to Country, Language)
+
 ### Configuration
 - `data/presets.json` — Master config for models and LoRAs (synced to DB via `import_presets`)
+- `data/*.json` — Reference data (regions, countries, languages, LLM models) in separate files
 - `.env` — Environment variables:
   - **Required**: `POSTGRES_*`, `VALKEY_*`, `DJANGO_SECRET_KEY`
   - **Optional**: `ANTHROPIC_API_KEY` (for LLM prompt enhancement), `CIVITAI_API_KEY` (for auto-downloading LoRAs), `MODEL_BASE_PATH` (base directory for local `.safetensors` files)

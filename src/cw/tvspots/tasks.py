@@ -37,9 +37,16 @@ def create_adaptation_task(self, adaptation_job_id):
 
     adaptation_job = AdaptationJob.objects.get(id=adaptation_job_id)
 
+    # Build target description
+    target_parts = [adaptation_job.region.name] if adaptation_job.region else []
+    if adaptation_job.country:
+        target_parts.append(adaptation_job.country.name)
+    target_parts.append(f"({adaptation_job.language.code})")
+    target_desc = " / ".join(target_parts)
+
     logger.info(
         f"Starting adaptation of '{adaptation_job.tv_spot.script_title}' "
-        f"to {adaptation_job.target_market.name} "
+        f"to {target_desc} "
         f"(pipeline={adaptation_job.use_pipeline})",
         extra={
             "adaptation_job_id": adaptation_job_id,
@@ -78,11 +85,25 @@ def create_adaptation_task(self, adaptation_job_id):
 
 def _run_single_step_adaptation(adaptation_job):
     """Run the original single-step adaptation path (unchanged logic)."""
-    from cw.tvspots.models import TvSpotScriptRow, TvSpotVersion
+    from cw.tvspots.models import AdaptationMarket, TvSpotScriptRow, TvSpotVersion
 
     origin_version = adaptation_job.origin_version
-    target_market = adaptation_job.target_market
     tv_spot = adaptation_job.tv_spot
+
+    # For backward compatibility, try to find matching AdaptationMarket
+    # This is needed for the old single-step path
+    # TODO: Refactor single-step path to use Region/Country/Language directly
+    target_market = AdaptationMarket.objects.filter(
+        default_language=adaptation_job.language
+    ).first()
+
+    if not target_market:
+        # If no matching market exists, create error
+        raise ValueError(
+            f"No AdaptationMarket found for language {adaptation_job.language.code}. "
+            f"Please use the pipeline mode (use_pipeline=True) which supports the new "
+            f"Region→Country→Language architecture."
+        )
 
     # Update job status to processing
     adaptation_job.status = "processing"
@@ -160,7 +181,9 @@ def _run_single_step_adaptation(adaptation_job):
             "status": "failed",
             "adaptation_job_id": adaptation_job.pk,
             "origin_version_id": origin_version.pk,
-            "target_market_id": adaptation_job.target_market.pk,
+            "region_id": adaptation_job.region_id if adaptation_job.region else None,
+            "country_id": adaptation_job.country_id if adaptation_job.country else None,
+            "language_id": adaptation_job.language_id,
             "error": str(e),
         }
 

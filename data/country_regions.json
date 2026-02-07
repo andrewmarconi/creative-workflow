@@ -1,0 +1,770 @@
+[
+  {
+    "country_code": "AE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "AE",
+    "region_code": "GCC"
+  },
+  {
+    "country_code": "AE",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "AR",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "AT",
+    "region_code": "DACH"
+  },
+  {
+    "country_code": "AT",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "AT",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "AU",
+    "region_code": "ANZ"
+  },
+  {
+    "country_code": "AU",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "AU",
+    "region_code": "CANZUK"
+  },
+  {
+    "country_code": "BD",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "BD",
+    "region_code": "SOUTH_ASIA"
+  },
+  {
+    "country_code": "BE",
+    "region_code": "BENELUX"
+  },
+  {
+    "country_code": "BE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "BE",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "BG",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "BG",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "BG",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "BH",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "BH",
+    "region_code": "GCC"
+  },
+  {
+    "country_code": "BH",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "BO",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "BR",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "CA",
+    "region_code": "CANZUK"
+  },
+  {
+    "country_code": "CA",
+    "region_code": "NA"
+  },
+  {
+    "country_code": "CH",
+    "region_code": "DACH"
+  },
+  {
+    "country_code": "CH",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "CL",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "CN",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "CN",
+    "region_code": "GREATER_CHINA"
+  },
+  {
+    "country_code": "CO",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "CR",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "CU",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "CY",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "CY",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "CZ",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "CZ",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "CZ",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "DE",
+    "region_code": "DACH"
+  },
+  {
+    "country_code": "DE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "DE",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "DK",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "DK",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "DK",
+    "region_code": "NORDICS"
+  },
+  {
+    "country_code": "DO",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "DZ",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "DZ",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "EC",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "EE",
+    "region_code": "BALTICS"
+  },
+  {
+    "country_code": "EE",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "EE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "EE",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "EG",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "EG",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "ES",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "ES",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "ES",
+    "region_code": "IBERIA"
+  },
+  {
+    "country_code": "ET",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "ET",
+    "region_code": "SSA"
+  },
+  {
+    "country_code": "FI",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "FI",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "FI",
+    "region_code": "NORDICS"
+  },
+  {
+    "country_code": "FR",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "FR",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "GB",
+    "region_code": "CANZUK"
+  },
+  {
+    "country_code": "GB",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "GB",
+    "region_code": "UK_IE"
+  },
+  {
+    "country_code": "GH",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "GH",
+    "region_code": "SSA"
+  },
+  {
+    "country_code": "GR",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "GR",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "GT",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "HK",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "HK",
+    "region_code": "GREATER_CHINA"
+  },
+  {
+    "country_code": "HN",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "HR",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "HR",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "HR",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "HU",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "HU",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "HU",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "ID",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "ID",
+    "region_code": "SEA"
+  },
+  {
+    "country_code": "IE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "IE",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "IE",
+    "region_code": "UK_IE"
+  },
+  {
+    "country_code": "IL",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "IL",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "IN",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "IN",
+    "region_code": "SOUTH_ASIA"
+  },
+  {
+    "country_code": "IS",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "IS",
+    "region_code": "NORDICS"
+  },
+  {
+    "country_code": "IT",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "IT",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "JO",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "JO",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "JP",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "KE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "KE",
+    "region_code": "SSA"
+  },
+  {
+    "country_code": "KR",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "KW",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "KW",
+    "region_code": "GCC"
+  },
+  {
+    "country_code": "KW",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "LB",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "LB",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "LT",
+    "region_code": "BALTICS"
+  },
+  {
+    "country_code": "LT",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "LT",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "LT",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "LU",
+    "region_code": "BENELUX"
+  },
+  {
+    "country_code": "LU",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "LU",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "LV",
+    "region_code": "BALTICS"
+  },
+  {
+    "country_code": "LV",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "LV",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "LV",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "MA",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "MA",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "MT",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "MT",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "MX",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "MX",
+    "region_code": "NA"
+  },
+  {
+    "country_code": "MY",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "MY",
+    "region_code": "SEA"
+  },
+  {
+    "country_code": "NG",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "NG",
+    "region_code": "SSA"
+  },
+  {
+    "country_code": "NI",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "NL",
+    "region_code": "BENELUX"
+  },
+  {
+    "country_code": "NL",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "NL",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "NO",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "NO",
+    "region_code": "NORDICS"
+  },
+  {
+    "country_code": "NZ",
+    "region_code": "ANZ"
+  },
+  {
+    "country_code": "NZ",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "NZ",
+    "region_code": "CANZUK"
+  },
+  {
+    "country_code": "OM",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "OM",
+    "region_code": "GCC"
+  },
+  {
+    "country_code": "OM",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "PA",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "PE",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "PH",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "PH",
+    "region_code": "SEA"
+  },
+  {
+    "country_code": "PK",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "PK",
+    "region_code": "SOUTH_ASIA"
+  },
+  {
+    "country_code": "PL",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "PL",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "PL",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "PR",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "PT",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "PT",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "PT",
+    "region_code": "IBERIA"
+  },
+  {
+    "country_code": "PY",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "QA",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "QA",
+    "region_code": "GCC"
+  },
+  {
+    "country_code": "QA",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "RO",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "RO",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "RO",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "RS",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "RS",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "RU",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "SA",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "SA",
+    "region_code": "GCC"
+  },
+  {
+    "country_code": "SA",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "SE",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "SE",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "SE",
+    "region_code": "NORDICS"
+  },
+  {
+    "country_code": "SG",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "SG",
+    "region_code": "SEA"
+  },
+  {
+    "country_code": "SI",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "SI",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "SI",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "SK",
+    "region_code": "CEE"
+  },
+  {
+    "country_code": "SK",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "SK",
+    "region_code": "EU"
+  },
+  {
+    "country_code": "SV",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "TH",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "TH",
+    "region_code": "SEA"
+  },
+  {
+    "country_code": "TN",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "TN",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "TR",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "TR",
+    "region_code": "MENA"
+  },
+  {
+    "country_code": "TW",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "TW",
+    "region_code": "GREATER_CHINA"
+  },
+  {
+    "country_code": "UA",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "US",
+    "region_code": "NA"
+  },
+  {
+    "country_code": "UY",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "VE",
+    "region_code": "LATAM"
+  },
+  {
+    "country_code": "VN",
+    "region_code": "APAC"
+  },
+  {
+    "country_code": "VN",
+    "region_code": "SEA"
+  },
+  {
+    "country_code": "ZA",
+    "region_code": "EMEA"
+  },
+  {
+    "country_code": "ZA",
+    "region_code": "SSA"
+  }
+]
