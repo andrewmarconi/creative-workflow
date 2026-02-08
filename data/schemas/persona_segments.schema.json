@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Persona-Segment Mappings Schema",
+  "description": "Schema for many-to-many relationships between personas and non-geographic segments",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["persona_name", "segment_category", "segment_vector", "segment_value", "order_index"],
+    "properties": {
+      "persona_name": {
+        "type": "string",
+        "description": "Name of the persona - must match an existing Persona.name",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "segment_category": {
+        "type": "string",
+        "description": "Segment category - must match an existing Segment.category",
+        "enum": ["DEMOGRAPHIC", "BEHAVIORAL", "PSYCHOGRAPHIC"]
+      },
+      "segment_vector": {
+        "type": "string",
+        "description": "Segment dimension - must match an existing Segment.vector",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "segment_value": {
+        "type": "string",
+        "description": "Segment value - must match an existing Segment.value",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "order_index": {
+        "type": "integer",
+        "description": "Display order within the persona (lower = earlier)",
+        "minimum": 0
+      }
+    },
+    "additionalProperties": false
+  }
+}

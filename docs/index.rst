@@ -65,6 +65,7 @@ If you use this software in your research, please cite it using the following Bi
 
    user/quickstart
    user/guides/index
+   user/segmentation
    user/troubleshooting
 
 .. toctree::

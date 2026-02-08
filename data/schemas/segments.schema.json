@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Segments Schema",
+  "description": "Schema for non-geographic audience segments (demographic, behavioral, psychographic)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["category", "vector", "value", "is_active"],
+    "properties": {
+      "category": {
+        "type": "string",
+        "description": "Segment category",
+        "enum": ["DEMOGRAPHIC", "BEHAVIORAL", "PSYCHOGRAPHIC"]
+      },
+      "vector": {
+        "type": "string",
+        "description": "Dimension being segmented (e.g., 'Household Income', 'Emotional Driver', 'Usage Pattern')",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "value": {
+        "type": "string",
+        "description": "Position on the dimension (e.g., 'Middle-Income', 'Escapism', 'First-Time Users')",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "description": {
+        "type": "string",
+        "description": "Optional longer description of this segment"
+      },
+      "insights": {
+        "type": "array",
+        "description": "Structured insights about the segment",
+        "items": {
+          "type": "object",
+          "required": ["heading", "points"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "description": "Insight category heading (e.g., 'Core Motivations', 'Communication Style')",
+              "minLength": 1
+            },
+            "points": {
+              "type": "array",
+              "description": "List of insight points",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether the segment is currently active"
+      }
+    },
+    "additionalProperties": false
+  }
+}
