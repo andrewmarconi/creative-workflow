@@ -312,3 +312,187 @@ class LanguageAlternativeModel(models.Model):
 
     def __str__(self):
         return f"{self.language.code} → {self.llmmodel.name}"
+
+
+# Non-Geographic Segmentation Models
+
+
+class Segment(models.Model):
+    """Non-geographic audience segment (demographic, behavioral, psychographic).
+
+    Examples:
+    - Demographic: Household Income → Middle-Income
+    - Behavioral: Usage Pattern → First-Time Users
+    - Psychographic: Emotional Driver → Nostalgia
+
+    Geographic segmentation uses existing Region/Country/Language models.
+    """
+
+    CATEGORY_CHOICES = [
+        ("DEMOGRAPHIC", "Demographic"),
+        ("BEHAVIORAL", "Behavioral"),
+        ("PSYCHOGRAPHIC", "Psychographic"),
+    ]
+
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        help_text="Segment category",
+    )
+    vector = models.CharField(
+        max_length=100,
+        help_text="Dimension being segmented (e.g., 'Household Income', 'Emotional Driver')",
+    )
+    value = models.CharField(
+        max_length=100,
+        help_text="Position on the dimension (e.g., 'Middle-Income', 'Escapism')",
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Optional longer description",
+    )
+    insights = models.JSONField(
+        default=list,
+        help_text="Structured insights: [{heading, points[]}]",
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "audiences_segment"
+        ordering = ["category", "vector", "value"]
+        verbose_name = "Segment"
+        verbose_name_plural = "Segments"
+        unique_together = [["category", "vector", "value"]]
+
+    def __str__(self):
+        return f"{self.get_category_display()}: {self.vector} → {self.value}"
+
+    def insights_as_markdown(self) -> str:
+        """Render structured insights as markdown."""
+        if not self.insights:
+            return ""
+
+        sections = []
+        for section in self.insights:
+            heading = section.get("heading", "")
+            points = section.get("points", [])
+
+            if heading:
+                lines = [f"### {heading}"]
+                for point in points:
+                    lines.append(f"- {point}")
+                sections.append("\n".join(lines))
+
+        return "\n\n".join(sections)
+
+
+class Persona(models.Model):
+    """Named collection of segments representing a target audience profile.
+
+    A Persona combines geographic segments (Region/Country/Language) with
+    non-geographic segments (Demographic/Behavioral/Psychographic) to create
+    a complete audience profile.
+
+    Example: "Budget-Conscious First-Timer"
+    - Geographic: North America / United States / English (en-US)
+    - Demographic: Household Income → Middle-Income
+    - Behavioral: Usage Pattern → First-Time Users
+    - Psychographic: Emotional Driver → Nostalgia
+    """
+
+    name = models.CharField(
+        max_length=200,
+        help_text="Persona name (e.g., 'Budget-Conscious First-Timer')",
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Optional description of this persona",
+    )
+
+    # Geographic segments (reuse existing models)
+    region = models.ForeignKey(
+        Region,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="personas",
+        help_text="Target region",
+    )
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="personas",
+        help_text="Target country",
+    )
+    language = models.ForeignKey(
+        Language,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="personas",
+        help_text="Target language",
+    )
+
+    # Non-geographic segments
+    segments = models.ManyToManyField(
+        Segment,
+        through="PersonaSegment",
+        related_name="personas",
+        blank=True,
+        help_text="Demographic, behavioral, and psychographic segments",
+    )
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "audiences_persona"
+        ordering = ["name"]
+        verbose_name = "Persona"
+        verbose_name_plural = "Personas"
+
+    def __str__(self):
+        parts = [self.name]
+        if self.region or self.country or self.language:
+            geo = []
+            if self.region:
+                geo.append(self.region.code)
+            if self.country:
+                geo.append(self.country.code)
+            if self.language:
+                geo.append(self.language.code)
+            parts.append(f"({'/'.join(geo)})")
+        return " ".join(parts)
+
+    def segment_count(self) -> int:
+        """Count of attached non-geographic segments."""
+        return self.segments.count()
+
+
+class PersonaSegment(models.Model):
+    """Many-to-many through table for Persona ↔ Segment relationship.
+
+    Explicit through table for future extensibility (ordering, weighting, etc.).
+    """
+
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
+    segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
+    order_index = models.IntegerField(
+        default=0,
+        help_text="Display order (lower = earlier)",
+    )
+
+    class Meta:
+        db_table = "audiences_persona_segment"
+        unique_together = [["persona", "segment"]]
+        ordering = ["order_index", "segment__category", "segment__vector"]
+        verbose_name = "Persona Segment"
+        verbose_name_plural = "Persona Segments"
+
+    def __str__(self):
+        return f"{self.persona.name} → {self.segment}"
