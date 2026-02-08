@@ -7,7 +7,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("core", "0003_remove_old_alternative_models"),
-        ("tvspots", "0014_drop_culture_model"),
     ]
 
     operations = [
