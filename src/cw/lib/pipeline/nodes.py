@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+MAX_FORMAT_RETRIES = 3
 MAX_CULTURAL_RETRIES = 3
 MAX_CONCEPT_RETRIES = 3
 
@@ -182,10 +183,15 @@ def writer_node(state: PipelineState) -> dict:
     """Generate (or revise) the adapted script."""
     from cw.lib.adaptation import AdaptationOutput
 
+    format_count = state.get("format_revision_count", 0)
     cultural_count = state.get("cultural_revision_count", 0)
     concept_count = state.get("concept_revision_count", 0)
-    total_revisions = cultural_count + concept_count
-    is_revision = state.get("cultural_feedback") is not None or state.get("concept_feedback") is not None
+    total_revisions = format_count + cultural_count + concept_count
+    is_revision = (
+        state.get("format_feedback") is not None
+        or state.get("cultural_feedback") is not None
+        or state.get("concept_feedback") is not None
+    )
 
     status = "revising" if is_revision else "writing"
     logger.info(
@@ -214,7 +220,7 @@ def writer_node(state: PipelineState) -> dict:
     generator, loader = _get_generator(state | state_update_model, AdaptationOutput)
 
     # Build revision feedback from whichever evaluator failed
-    revision_feedback = state.get("cultural_feedback") or state.get("concept_feedback") or None
+    revision_feedback = state.get("format_feedback") or state.get("cultural_feedback") or state.get("concept_feedback") or None
 
     user_prompt = render_prompt(
         "adaptation.j2",
@@ -261,10 +267,79 @@ def writer_node(state: PipelineState) -> dict:
         "adapted_script": script_json,
         "status": status,
         # Clear feedback so evaluators start fresh on the new draft
+        "format_feedback": None,
         "cultural_feedback": None,
         "concept_feedback": None,
         **state_update_model,
     }
+
+
+# ---------------------------------------------------------------------------
+# Format / language compliance evaluation node
+# ---------------------------------------------------------------------------
+
+def format_eval_node(state: PipelineState) -> dict:
+    """Evaluate format and language compliance of the adapted script."""
+    from cw.lib.pipeline.schemas import EvaluationResult
+
+    logger.info("Pipeline node: format_eval starting", extra={"job_id": state["job_id"]})
+    start = time.time()
+
+    try:
+        logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
+        generator, loader = _get_generator(state, EvaluationResult)
+
+        logger.debug("Rendering format evaluation prompt", extra={"job_id": state["job_id"]})
+        user_prompt = render_prompt(
+            "eval_format.j2",
+            adapted_script_json=state["adapted_script"],
+            target_market_language=state["target_market_language"],
+        )
+        system_message = (
+            "You are a localization QA specialist. Produce ONLY valid JSON "
+            "matching the requested schema — no commentary."
+        )
+        prompt = _apply_chat_template(loader, system_message, user_prompt)
+
+        logger.info("Evaluating format compliance with LLM", extra={"job_id": state["job_id"], "prompt_length": len(prompt)})
+        raw = generator(prompt, max_new_tokens=2048)
+        logger.debug("LLM evaluation complete, validating output", extra={"job_id": state["job_id"]})
+
+        result = EvaluationResult.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+
+        # Append to evaluation history
+        from cw.tvspots.models import VideoAdUnit
+
+        logger.debug("Updating evaluation history in database", extra={"job_id": state["job_id"]})
+        job = VideoAdUnit.objects.get(id=state["job_id"])
+        history = job.evaluation_history or []
+        history.append({"type": "format", **result.model_dump()})
+        job.evaluation_history = history
+        job.status = "format_evaluation"
+        job.save(update_fields=["evaluation_history", "status"])
+
+        elapsed = round(time.time() - start, 2)
+        logger.info(
+            f"Pipeline node: format_eval done ({elapsed}s, passed={result.passed})",
+            extra={"job_id": state["job_id"], "passed": result.passed},
+        )
+
+    except Exception as e:
+        logger.error(
+            f"Format evaluation failed: {e}",
+            extra={"job_id": state["job_id"], "error": str(e)},
+            exc_info=True,
+        )
+        raise
+
+    if result.passed:
+        return {"format_feedback": None, "status": "format_evaluation"}
+    else:
+        return {
+            "format_feedback": result.model_dump_json(),
+            "format_revision_count": state.get("format_revision_count", 0) + 1,
+            "status": "format_evaluation",
+        }
 
 
 # ---------------------------------------------------------------------------

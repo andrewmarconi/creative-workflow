@@ -99,8 +99,10 @@ class PipelineState(TypedDict, total=False):
     adapted_script: Optional[str]  # JSON string of AdaptationOutput
 
     # --- Evaluation fields ---
+    format_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
     cultural_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
     concept_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
+    format_revision_count: int
     cultural_revision_count: int
     concept_revision_count: int
 

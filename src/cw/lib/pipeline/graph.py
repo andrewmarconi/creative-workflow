@@ -11,10 +11,12 @@ from langgraph.graph import END, StateGraph
 from cw.lib.pipeline.nodes import (
     MAX_CONCEPT_RETRIES,
     MAX_CULTURAL_RETRIES,
+    MAX_FORMAT_RETRIES,
     concept_eval_node,
     concept_node,
     cultural_eval_node,
     culture_node,
+    format_eval_node,
     writer_node,
 )
 from cw.lib.pipeline.schemas import PipelineState
@@ -23,6 +25,22 @@ from cw.lib.pipeline.schemas import PipelineState
 # ---------------------------------------------------------------------------
 # Conditional routing functions
 # ---------------------------------------------------------------------------
+
+def route_after_format_eval(state: PipelineState) -> str:
+    """Route after format/language compliance evaluation.
+
+    - Passed  -> cultural_eval
+    - Failed but retries remain -> writer (revision loop)
+    - Exhausted retries -> fail (END)
+    """
+    if state.get("format_feedback") is None:
+        return "cultural_eval"
+
+    if state.get("format_revision_count", 0) < MAX_FORMAT_RETRIES:
+        return "writer"
+
+    return "fail"
+
 
 def route_after_cultural_eval(state: PipelineState) -> str:
     """Route after cultural evaluation.
@@ -65,15 +83,15 @@ def build_adaptation_graph():
 
     Flow::
 
-        concept -> culture -> writer -> cultural_eval
+        concept -> culture -> writer -> format_eval
                                 ^            |
-                                |            v
-                                +-- writer <-- (fail? retry)
-                                             |
-                                             v (pass)
-                                        concept_eval
-                                             |
-                                +-- writer <-- (fail? retry)
+                                |            v (pass)
+                                |       cultural_eval
+                                |            |
+                                |            v (pass)
+                                |       concept_eval
+                                |            |
+                                +--(fail? retry at any eval)
                                              |
                                              v (pass)
                                             END
@@ -84,14 +102,26 @@ def build_adaptation_graph():
     graph.add_node("concept", concept_node)
     graph.add_node("culture", culture_node)
     graph.add_node("writer", writer_node)
+    graph.add_node("format_eval", format_eval_node)
     graph.add_node("cultural_eval", cultural_eval_node)
     graph.add_node("concept_eval", concept_eval_node)
 
-    # Linear flow: start -> concept -> culture -> writer -> cultural_eval
+    # Linear flow: start -> concept -> culture -> writer -> format_eval
     graph.set_entry_point("concept")
     graph.add_edge("concept", "culture")
     graph.add_edge("culture", "writer")
-    graph.add_edge("writer", "cultural_eval")
+    graph.add_edge("writer", "format_eval")
+
+    # Format eval -> conditional
+    graph.add_conditional_edges(
+        "format_eval",
+        route_after_format_eval,
+        {
+            "cultural_eval": "cultural_eval",
+            "writer": "writer",
+            "fail": END,
+        },
+    )
 
     # Cultural eval -> conditional
     graph.add_conditional_edges(

@@ -1,0 +1,72 @@
+{#
+    Format and language compliance evaluation prompt for the pipeline's
+    format review node.
+
+    Verifies that the adapted script follows the required language rules:
+    descriptions and stage directions in English, only VO/dialogue and
+    on-screen text in the target language (with English translations).
+
+    Variables:
+        adapted_script_json (str): JSON of the adapted script (AdaptationOutput)
+        target_market_language (str): Target language code (e.g., "es-MX", "ja")
+#}
+You are a localization QA specialist who enforces strict formatting and language rules for adapted advertising scripts.
+
+Your task is to verify that an adapted TV spot script follows the required language conventions. This is a structural check — you are NOT evaluating cultural quality or creative merit, only whether the correct language is used in the correct fields.
+
+## Adapted Script:
+```json
+{{ adapted_script_json }}
+```
+
+## Target Language: {{ target_market_language }}
+
+## Language Rules (STRICT):
+
+1. **`visual_style_prompt`**: MUST be entirely in English. No target-language words whatsoever.
+
+2. **`visual_text`** (scene descriptions, stage directions):
+   - MUST be written in English.
+   - Exception: on-screen text markers (`SUPER:`, `TITLE:`, `TEXT:`, `CARD:`) should contain the target-language text followed by an English translation in parentheses.
+   - Example correct: `"Wide shot of a bustling market. SUPER: '¡Pruébalo hoy!' (Try it today!)"`
+   - Example WRONG: `"Toma amplia de un mercado bullicioso."` (description in target language)
+
+3. **`audio_text`** (audio descriptions, sound effects, music cues):
+   - MUST be written in English for all non-spoken content (SFX, music cues, descriptions).
+   - Exception: spoken dialogue and voiceover (`VO:`, `DIALOGUE:`) should be in the target language followed by an English translation in parentheses.
+   - Example correct: `"VO: '¿Buscas algo especial?' (Looking for something special?) SFX: Upbeat music plays."`
+   - Example WRONG: `"VO: '¿Buscas algo especial?' Música alegre suena."` (SFX description in target language)
+   - Example WRONG: `"VO: '¿Buscas algo especial?'"` (missing English translation)
+
+4. **`name`** field: May be in English or contain market identifiers — not evaluated.
+
+5. **`code`** and **`language`** fields: Structural identifiers — not evaluated for language content.
+
+## What Constitutes a Violation:
+
+- **Critical**: An entire `visual_text` or `audio_text` field written in the target language instead of English
+- **Critical**: `visual_style_prompt` contains target-language content
+- **Major**: Spoken dialogue (VO) or on-screen text (SUPER) missing English translation in parentheses
+- **Major**: Scene descriptions or SFX cues written in the target language
+- **Minor**: Inconsistent formatting of translation parentheses (e.g., brackets instead of parentheses)
+
+## Scoring Rubric:
+- **Critical issues** (whole fields in wrong language): automatic fail
+- **Major issues** (missing translations, partial wrong-language content): fail if more than 1
+- **Minor issues** (formatting inconsistencies): pass with notes
+
+For each issue found, specify:
+- `severity`: "critical", "major", or "minor"
+- `description`: What the issue is
+- `location`: Where in the script it occurs (e.g., "script_row 3, visual_text" or "visual_style_prompt")
+- `suggestion`: Specific, actionable fix showing the corrected text
+
+Produce a JSON object with:
+- `passed`: boolean (true if the script follows language rules)
+- `score`: float from 0.0 to 1.0 (format compliance)
+- `issues`: array of issue objects (empty if no issues found)
+- `summary`: brief summary of the evaluation
+
+Check EVERY script row individually. Do not skip any rows.
+
+Generate the evaluation:
