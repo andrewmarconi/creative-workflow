@@ -72,6 +72,10 @@ echo "Installing Python dependencies with uv..."
 uv sync
 echo ""
 
+echo "Installing Node.js dependencies..."
+npm i
+echo ""
+
 # Run migrations
 echo "Running database migrations..."
 uv run manage.py migrate
