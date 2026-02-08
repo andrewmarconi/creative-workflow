@@ -212,9 +212,10 @@ Campaign (job container)
    - Concept extraction: Analyzes origin script for core themes, emotions, narrative structure
    - Cultural research: Investigates target culture's values, communication styles, taboos
    - Script writing: Adapts script with culturally-appropriate visuals and dialogue
+   - Format evaluation: Verifies descriptions are in English, only VO/supers in target language with translations
    - Cultural evaluation: Validates cultural sensitivity and appropriateness
    - Concept evaluation: Ensures adapted script preserves original campaign intent
-   - Revision loop: Rewrites script if evaluations fail (max 3 iterations)
+   - Revision loop: Rewrites script if any evaluation fails (max 3 retries per gate)
 5. Pipeline saves `concept_brief`, `cultural_brief`, `evaluation_history` to VideoAdUnit
 6. Adapted script rows saved as `AdUnitScriptRow` records
 7. User creates `Storyboard` for the adapted VideoAdUnit
