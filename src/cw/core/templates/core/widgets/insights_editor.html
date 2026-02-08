@@ -1,0 +1,69 @@
+{% load i18n %}
+
+<div x-data="insightsEditor({{ sections_json }})"
+     x-effect="syncToField()"
+     class="flex flex-col gap-4 max-w-4xl">
+
+    {# Hidden textarea for Django form submission #}
+    <textarea name="{{ widget.name }}"
+              {% for key, val in widget.attrs.items %}
+              {{ key }}="{{ val }}"
+              {% endfor %}
+              x-ref="jsonField"
+    >{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
+
+    {# Sections #}
+    <template x-for="(section, sectionIndex) in sections" :key="sectionIndex">
+        <div class="border border-base-200 rounded-default p-4 dark:border-base-700 bg-white dark:bg-base-900">
+
+            {# Section header: heading input + delete button #}
+            <div class="flex items-center gap-2 mb-3">
+                <input type="text"
+                       x-model="section.heading"
+                       placeholder="{% trans 'Section heading...' %}"
+                       class="{{ input_classes }}">
+                <a x-on:click="removeSection(sectionIndex)"
+                   class="bg-white border border-base-200 cursor-pointer flex items-center h-[38px] justify-center rounded-default shadow-xs shrink-0 text-red-600 text-sm w-[38px] dark:bg-base-900 dark:border-base-700 dark:text-red-500"
+                   title="{% trans 'Remove section' %}">
+                    <span class="material-symbols-outlined">delete</span>
+                </a>
+            </div>
+
+            {# Points list #}
+            <div class="flex flex-col gap-2 ml-4">
+                <template x-for="(point, pointIndex) in section.points" :key="pointIndex">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base-400 dark:text-base-500 text-sm select-none shrink-0">&bull;</span>
+                        <input type="text"
+                               x-model="section.points[pointIndex]"
+                               placeholder="{% trans 'Enter insight point...' %}"
+                               class="{{ input_classes }}">
+                        <a x-on:click="removePoint(sectionIndex, pointIndex)"
+                           class="bg-white border border-base-200 cursor-pointer flex items-center h-[38px] justify-center rounded-default shadow-xs shrink-0 text-red-600 text-sm w-[38px] dark:bg-base-900 dark:border-base-700 dark:text-red-500"
+                           title="{% trans 'Remove point' %}">
+                            <span class="material-symbols-outlined">close</span>
+                        </a>
+                    </div>
+                </template>
+
+                {# Add point button #}
+                <div class="flex flex-row mt-1">
+                    <div x-on:click="addPoint(sectionIndex)"
+                         class="border border-base-200 cursor-pointer font-medium inline-flex items-center gap-1 px-3 py-1.5 rounded-default text-center text-sm text-base-600 dark:border-base-700 dark:text-base-400 hover:bg-base-50 dark:hover:bg-base-800">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        {% trans "Add point" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    {# Add section button #}
+    <div class="flex flex-row">
+        <div x-on:click="addSection()"
+             class="bg-primary-600 border border-transparent cursor-pointer font-medium inline-flex items-center gap-1 px-3 py-2 rounded-default text-center text-sm text-white w-full lg:w-auto">
+            <span class="material-symbols-outlined text-sm">add</span>
+            {% trans "Add section" %}
+        </div>
+    </div>
+</div>

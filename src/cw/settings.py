@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.templatetags.static import static
+
 # Build paths inside the project like this: PROJECT_ROOT / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent  # Points to src/
 PROJECT_ROOT = BASE_DIR.parent  # Points to project root (where manage.py lives)
@@ -149,6 +151,9 @@ UNFOLD = {
     "SITE_HEADER": "Generative Creative Lab",
     "SITE_SUBHEADER": "Multi-Model Diffusion Pipeline",
     "SITE_DROPDOWN": [],
+    "STYLES": [
+        lambda request: static("core/css/styles.css"),
+    ],
     "SIDEBAR": {
         "navigation": [
             {

@@ -1,0 +1,29 @@
+{
+  "name": "generative-creative-lab",
+  "version": "1.0.0",
+  "description": "![Generative Creative Lab](docs/_static/logo-wide.png)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "tailwind:build": "npx @tailwindcss/cli -i styles.css -o src/cw/core/static/core/css/styles.css --minify",
+    "tailwind:watch": "npx @tailwindcss/cli -i styles.css -o src/cw/core/static/core/css/styles.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewmarconi/generative-creative-lab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/andrewmarconi/generative-creative-lab/issues"
+  },
+  "homepage": "https://github.com/andrewmarconi/generative-creative-lab#readme",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}

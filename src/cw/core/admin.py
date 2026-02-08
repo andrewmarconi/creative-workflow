@@ -18,6 +18,16 @@ from .models import (
     LLMModel,
     Region,
 )
+from .widgets import InsightsEditorWidget
+
+
+class InsightsWidgetMixin:
+    """Mixin that replaces the insights JSONField with the structured editor."""
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "insights":
+            kwargs["widget"] = InsightsEditorWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(LLMModel)
@@ -106,7 +116,7 @@ class CountryLanguageInline(admin.TabularInline):
 
 
 @admin.register(Language)
-class LanguageAdmin(ModelAdmin):
+class LanguageAdmin(InsightsWidgetMixin, ModelAdmin):
     list_display = [
         "name",
         "code",
@@ -171,7 +181,7 @@ class LanguageAdmin(ModelAdmin):
 
 
 @admin.register(Region)
-class RegionAdmin(ModelAdmin):
+class RegionAdmin(InsightsWidgetMixin, ModelAdmin):
     list_display = ["name", "code", "show_countries_count", "show_active", "updated_at"]
     list_filter = ["is_active"]
     search_fields = ["name", "code", "description"]
@@ -214,7 +224,7 @@ class RegionAdmin(ModelAdmin):
 
 
 @admin.register(Country)
-class CountryAdmin(ModelAdmin):
+class CountryAdmin(InsightsWidgetMixin, ModelAdmin):
     list_display = [
         "name",
         "code",

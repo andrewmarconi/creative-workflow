@@ -80,5 +80,8 @@ docs/_build/
 # Local work files (not committed)
 local_workfiles/
 
+# Node.js (Tailwind CSS build)
+node_modules/
+
 # Claude Code (personal settings only - shared settings.json and skills/ are committed)
 .claude/settings.local.json
