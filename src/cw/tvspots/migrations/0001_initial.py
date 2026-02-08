@@ -9,7 +9,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("core", "0004_drop_culture_model"),
+        ("audiences", "0001_initial"),
+        ("core", "0002_add_llmmodel_load_in_4bit"),
         ("diffusion", "0001_initial"),
     ]
 
@@ -141,7 +142,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="ad_units",
-                        to="core.country",
+                        to="audiences.country",
                     ),
                 ),
                 (
@@ -152,7 +153,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="ad_units",
-                        to="core.language",
+                        to="audiences.language",
                     ),
                 ),
                 (
@@ -174,7 +175,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="ad_units",
-                        to="core.region",
+                        to="audiences.region",
                     ),
                 ),
                 (

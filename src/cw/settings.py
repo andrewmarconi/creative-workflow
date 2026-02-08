@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",  # Required for ArrayField
     "cw.core",
+    "cw.audiences",
     "cw.diffusion",
     "cw.tvspots",
     "django_extensions",
@@ -204,24 +205,40 @@ UNFOLD = {
                 ],
             },
             {
-                "title": "Core",
+                "title": "Audience Segmentation",
                 "collapsible": True,
                 "items": [
                     {
+                        "title": "Personas",
+                        "icon": "person",
+                        "link": "/app/audiences/persona/",
+                    },
+                    {
+                        "title": "Segments",
+                        "icon": "category",
+                        "link": "/app/audiences/segment/",
+                    },
+                    {
                         "title": "Regions",
                         "icon": "public",
-                        "link": "/app/core/region/",
+                        "link": "/app/audiences/region/",
                     },
                     {
                         "title": "Countries",
                         "icon": "flag",
-                        "link": "/app/core/country/",
+                        "link": "/app/audiences/country/",
                     },
                     {
                         "title": "Languages",
                         "icon": "translate",
-                        "link": "/app/core/language/",
+                        "link": "/app/audiences/language/",
                     },
+                ],
+            },
+            {
+                "title": "Core",
+                "collapsible": True,
+                "items": [
                     {
                         "title": "LLM Models",
                         "icon": "smart_toy",

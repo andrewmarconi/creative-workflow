@@ -54,16 +54,19 @@ def build_initial_state(video_ad_unit) -> PipelineState:
     model_id = effective_model.model_id if effective_model else "Qwen/Qwen2.5-3B-Instruct"
     load_in_4bit = getattr(effective_model, "load_in_4bit", False) if effective_model else False
 
-    # Compose insights from all levels (region → country → language)
+    # Compose insights from all levels (region → country → language → persona segments)
     insights_markdown = compose_insights_as_markdown(video_ad_unit)
 
-    # Build target market name from region/country/language
-    target_parts = []
-    if video_ad_unit.region:
-        target_parts.append(video_ad_unit.region.name)
-    if video_ad_unit.country:
-        target_parts.append(video_ad_unit.country.name)
-    target_market_name = " / ".join(target_parts) if target_parts else effective_language.name
+    # Build target market name from persona or region/country/language
+    if video_ad_unit.persona:
+        target_market_name = video_ad_unit.persona.name
+    else:
+        target_parts = []
+        if video_ad_unit.region:
+            target_parts.append(video_ad_unit.region.name)
+        if video_ad_unit.country:
+            target_parts.append(video_ad_unit.country.name)
+        target_market_name = " / ".join(target_parts) if target_parts else effective_language.name
 
     # Build target market code from region/country codes
     code_parts = []
@@ -81,7 +84,7 @@ def build_initial_state(video_ad_unit) -> PipelineState:
         "original_script": json.dumps(original_spot, indent=2, ensure_ascii=False),
         "target_market_name": target_market_name,
         "target_market_code": target_market_code,
-        "target_market_rules": insights_markdown,  # Hierarchical insights from region → country → language
+        "target_market_rules": insights_markdown,  # Hierarchical insights from region → country → language → persona segments
         "target_market_language": language_code,
         "language_code": language_code,
         "num_script_rows": len(original_spot["script_rows"]),
@@ -114,7 +117,7 @@ def save_pipeline_result(video_ad_unit, final_state: PipelineState):
     adapted_json = final_state.get("adapted_script")
 
     if adapted_json:
-        from cw.core.models import Language
+        from cw.audiences.models import Language
 
         result = AdaptationOutput.model_validate_json(adapted_json)
 
@@ -173,7 +176,7 @@ def get_alternative_model(language_code: str) -> Optional[object]:
 
     Returns ``None`` if no alternatives are available.
     """
-    from cw.core.models import Language
+    from cw.audiences.models import Language
 
     try:
         lang = Language.objects.get(code=language_code, is_active=True)

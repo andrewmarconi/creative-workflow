@@ -21,7 +21,8 @@ from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
-from cw.core.models import Language, LLMModel
+from cw.audiences.models import Language
+from cw.core.models import LLMModel
 from cw.lib.pipeline.graph import (
     build_adaptation_graph,
     route_after_concept_eval,

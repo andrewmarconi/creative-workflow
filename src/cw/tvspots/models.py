@@ -97,9 +97,19 @@ class AdUnit(models.Model):
         help_text="Descriptive title for this ad unit",
     )
 
-    # Metadata (null/blank for ORIGIN units)
+    # Audience targeting
+    persona = models.ForeignKey(
+        "audiences.Persona",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="ad_units",
+        help_text="Target audience persona",
+    )
+
+    # Geographic metadata (synced from persona if set, or set independently)
     region = models.ForeignKey(
-        "core.Region",
+        "audiences.Region",
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -107,7 +117,7 @@ class AdUnit(models.Model):
         help_text="Target region (for adaptations)",
     )
     country = models.ForeignKey(
-        "core.Country",
+        "audiences.Country",
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -115,7 +125,7 @@ class AdUnit(models.Model):
         help_text="Target country (for adaptations)",
     )
     language = models.ForeignKey(
-        "core.Language",
+        "audiences.Language",
         on_delete=models.PROTECT,
         null=True,
         blank=True,

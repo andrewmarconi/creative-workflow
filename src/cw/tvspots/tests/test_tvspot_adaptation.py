@@ -9,7 +9,8 @@ Run with:
 
 from django.test import TestCase
 
-from cw.core.models import Country, Language, LLMModel, Region
+from cw.audiences.models import Country, Language, Region
+from cw.core.models import LLMModel
 from cw.tvspots.models import TVSpotAdaptation
 
 

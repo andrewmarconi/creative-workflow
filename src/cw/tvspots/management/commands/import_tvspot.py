@@ -12,7 +12,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from cw.core.models import Language
+from cw.audiences.models import Language
 from cw.tvspots.models import TvSpot, TvSpotScriptRow, TvSpotVersion
 
 
