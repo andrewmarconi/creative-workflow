@@ -153,71 +153,74 @@ UNFOLD = {
         "navigation": [
             {
                 "title": "Generative AI",
+                "collapsible": True,
                 "items": [
                     {
                         "title": "Prompts",
                         "icon": "edit_note",
-                        "link": "/admin/diffusion/prompt/",
+                        "link": "/app/diffusion/prompt/",
                     },
                     {
                         "title": "Jobs",
                         "icon": "precision_manufacturing",
-                        "link": "/admin/diffusion/diffusionjob/",
+                        "link": "/app/diffusion/diffusionjob/",
                     },
                     {
                         "title": "Diffusion Models",
                         "icon": "neurology",
-                        "link": "/admin/diffusion/diffusionmodel/",
+                        "link": "/app/diffusion/diffusionmodel/",
                     },
                     {
                         "title": "LoRAs",
                         "icon": "tune",
-                        "link": "/admin/diffusion/loramodel/",
+                        "link": "/app/diffusion/loramodel/",
                     },
                 ],
             },
             {
-                "title": "TV Spot Campaigns",
+                "title": "Campaign Management",
+                "collapsible": True,
                 "items": [
                     {
                         "title": "Campaigns",
                         "icon": "live_tv",
-                        "link": "/admin/tvspots/campaign/",
+                        "link": "/app/tvspots/campaign/",
                     },
                     {
                         "title": "Video Ad Units",
                         "icon": "description",
-                        "link": "/admin/tvspots/videoadunit/",
+                        "link": "/app/tvspots/videoadunit/",
                     },
                     {
                         "title": "Storyboards",
                         "icon": "dashboard",
-                        "link": "/admin/tvspots/storyboard/",
+                        "link": "/app/tvspots/storyboard/",
                     },
                 ],
             },
             {
                 "title": "Core",
+                "collapsible": True,
                 "items": [
                     {
                         "title": "Regions",
                         "icon": "public",
-                        "link": "/admin/core/region/",
+                        "link": "/app/core/region/",
                     },
                     {
                         "title": "Countries",
                         "icon": "flag",
-                        "link": "/admin/core/country/",
+                        "link": "/app/core/country/",
                     },
                     {
                         "title": "Languages",
                         "icon": "translate",
-                        "link": "/admin/core/language/",
+                        "link": "/app/core/language/",
                     },
                     {
                         "title": "LLM Models",
                         "icon": "smart_toy",
-                        "link": "/admin/core/llmmodel/",
+                        "link": "/app/core/llmmodel/",
                     },
                 ],
             },
@@ -228,12 +231,12 @@ UNFOLD = {
                     {
                         "title": "Task Results",
                         "icon": "task_alt",
-                        "link": "/admin/django_celery_results/taskresult/",
+                        "link": "/app/django_celery_results/taskresult/",
                     },
                     {
                         "title": "Group Results",
                         "icon": "workspaces",
-                        "link": "/admin/django_celery_results/groupresult/",
+                        "link": "/app/django_celery_results/groupresult/",
                     },
                 ],
             },
@@ -244,12 +247,12 @@ UNFOLD = {
                     {
                         "title": "Users",
                         "icon": "person",
-                        "link": "/admin/auth/user/",
+                        "link": "/app/auth/user/",
                     },
                     {
                         "title": "Groups",
                         "icon": "group",
-                        "link": "/admin/auth/group/",
+                        "link": "/app/auth/group/",
                     },
                 ],
             },

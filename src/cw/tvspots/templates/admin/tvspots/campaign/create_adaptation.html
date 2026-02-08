@@ -1,0 +1,287 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="p-6">
+    <div class="max-w-2xl">
+        <h1 class="text-2xl font-bold mb-2">{% trans "Create Adaptation" %}</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {{ campaign.script_title }} ({{ campaign.job_id }})
+        </p>
+
+        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <h3 class="font-medium mb-2">{% trans "Source Video Ad Unit" %}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ source_video_ad_unit.code }} ({{ source_video_ad_unit.language }}) - {{ source_video_ad_unit.script_rows.count }} script rows
+            </p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="region" class="block text-sm font-medium mb-2">
+                    {% trans "Region" %} <span class="text-red-500">*</span>
+                </label>
+                <select
+                    name="region"
+                    id="region"
+                    required
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "Select a region..." %}</option>
+                    {% for region in regions %}
+                    <option value="{{ region.id }}">{{ region.name }} ({{ region.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="country" class="block text-sm font-medium mb-2">
+                    {% trans "Country" %}
+                    <span class="text-gray-500 font-normal">(optional)</span>
+                </label>
+                <select
+                    name="country"
+                    id="country"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "No specific country" %}</option>
+                    {% for country in countries %}
+                    <option value="{{ country.id }}">{{ country.name }} ({{ country.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="language" class="block text-sm font-medium mb-2">
+                    {% trans "Language" %} <span class="text-red-500">*</span>
+                </label>
+                <select
+                    name="language"
+                    id="language"
+                    required
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "Select a language..." %}</option>
+                    {% for lang in languages %}
+                    <option value="{{ lang.id }}" data-primary-model="{{ lang.primary_model_id }}">
+                        {{ lang.name }} ({{ lang.code }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="llm_model" class="block text-sm font-medium mb-2">
+                    {% trans "LLM Model" %}
+                    <span class="text-gray-500 font-normal">(defaults to language's primary model)</span>
+                </label>
+                <select
+                    name="llm_model"
+                    id="llm_model"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "Use language default" %}</option>
+                </select>
+                <p id="model-loading" class="text-sm text-gray-500 mt-1 hidden">Loading models...</p>
+            </div>
+
+            {% if pending_adaptations %}
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <h3 class="text-yellow-800 dark:text-yellow-300 font-medium mb-2">{% trans "Pending Adaptations" %}</h3>
+                <p class="text-yellow-700 dark:text-yellow-400 text-sm mb-2">
+                    {% trans "The following adaptation video ad units are already in progress:" %}
+                </p>
+                <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 text-sm">
+                    {% for adaptation in pending_adaptations %}
+                    <li>
+                        {{ adaptation.region.name }}{% if adaptation.country %} / {{ adaptation.country.name }}{% endif %} ({{ adaptation.language.code }})
+                        - {{ adaptation.get_status_display }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Create Adaptation" %}
+                </button>
+                <a href="{% url 'admin:tvspots_campaign_change' campaign.pk %}"
+                   class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+
+        <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h3 class="text-blue-800 dark:text-blue-300 font-medium mb-2">{% trans "Multi-Agent Pipeline Process" %}</h3>
+            <p class="text-blue-700 dark:text-blue-400 text-sm mb-3">
+                {% trans "This adaptation uses a multi-agent pipeline for high-quality results:" %}
+            </p>
+            <ul class="list-disc list-inside text-blue-700 dark:text-blue-400 text-sm space-y-1">
+                <li>{% trans "Concept Analysis: Extract core creative concepts from the source script" %}</li>
+                <li>{% trans "Cultural Research: Analyze target market insights and cultural requirements" %}</li>
+                <li>{% trans "Adaptive Writing: Create culturally-appropriate script adaptations" %}</li>
+                <li>{% trans "Dual Evaluation: Verify cultural and conceptual alignment" %}</li>
+                <li>{% trans "Iterative Refinement: Automatically revise until quality thresholds are met" %}</li>
+            </ul>
+            <p class="text-blue-700 dark:text-blue-400 text-sm mt-3">
+                {% trans "Processing time: 2-5 minutes depending on complexity" %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const regionSelect = document.getElementById('region');
+    const countrySelect = document.getElementById('country');
+    const languageSelect = document.getElementById('language');
+    const modelSelect = document.getElementById('llm_model');
+    const modelLoading = document.getElementById('model-loading');
+
+    // Data mappings from backend
+    const regionCountries = {{ region_countries_json|safe }};
+    const countryLanguages = {{ country_languages_json|safe }};
+
+    // Store original options
+    const originalCountries = Array.from(countrySelect.options).slice(1); // Skip first empty option
+    const originalLanguages = Array.from(languageSelect.options).slice(1); // Skip first empty option
+
+    // When region changes, reorder countries dropdown
+    regionSelect.addEventListener('change', function() {
+        const regionId = parseInt(this.value);
+
+        if (!regionId) {
+            // Reset to original order
+            countrySelect.innerHTML = '<option value="">{% trans "No specific country" %}</option>';
+            originalCountries.forEach(opt => countrySelect.appendChild(opt.cloneNode(true)));
+            return;
+        }
+
+        const countriesInRegion = regionCountries[regionId] || [];
+
+        // Rebuild country select with grouped options
+        countrySelect.innerHTML = '<option value="">{% trans "No specific country" %}</option>';
+
+        // Add optgroup for countries in selected region
+        if (countriesInRegion.length > 0) {
+            const inRegionGroup = document.createElement('optgroup');
+            inRegionGroup.label = '{% trans "Countries in selected region" %}';
+
+            originalCountries.forEach(opt => {
+                const countryId = parseInt(opt.value);
+                if (countriesInRegion.includes(countryId)) {
+                    inRegionGroup.appendChild(opt.cloneNode(true));
+                }
+            });
+
+            if (inRegionGroup.children.length > 0) {
+                countrySelect.appendChild(inRegionGroup);
+            }
+        }
+
+        // Add optgroup for other countries
+        const otherGroup = document.createElement('optgroup');
+        otherGroup.label = '{% trans "Other countries" %}';
+
+        originalCountries.forEach(opt => {
+            const countryId = parseInt(opt.value);
+            if (!countriesInRegion.includes(countryId)) {
+                otherGroup.appendChild(opt.cloneNode(true));
+            }
+        });
+
+        if (otherGroup.children.length > 0) {
+            countrySelect.appendChild(otherGroup);
+        }
+    });
+
+    // When country changes, reorder languages dropdown
+    countrySelect.addEventListener('change', function() {
+        const countryId = parseInt(this.value);
+
+        if (!countryId) {
+            // Reset to original order
+            languageSelect.innerHTML = '<option value="">{% trans "Select a language..." %}</option>';
+            originalLanguages.forEach(opt => languageSelect.appendChild(opt.cloneNode(true)));
+            return;
+        }
+
+        const languagesInCountry = countryLanguages[countryId] || [];
+
+        // Rebuild language select with grouped options
+        languageSelect.innerHTML = '<option value="">{% trans "Select a language..." %}</option>';
+
+        // Add optgroup for languages in selected country
+        if (languagesInCountry.length > 0) {
+            const inCountryGroup = document.createElement('optgroup');
+            inCountryGroup.label = '{% trans "Languages for selected country" %}';
+
+            originalLanguages.forEach(opt => {
+                const languageId = parseInt(opt.value);
+                if (languagesInCountry.includes(languageId)) {
+                    inCountryGroup.appendChild(opt.cloneNode(true));
+                }
+            });
+
+            if (inCountryGroup.children.length > 0) {
+                languageSelect.appendChild(inCountryGroup);
+            }
+        }
+
+        // Add optgroup for other languages
+        const otherGroup = document.createElement('optgroup');
+        otherGroup.label = '{% trans "Other languages" %}';
+
+        originalLanguages.forEach(opt => {
+            const languageId = parseInt(opt.value);
+            if (!languagesInCountry.includes(languageId)) {
+                otherGroup.appendChild(opt.cloneNode(true));
+            }
+        });
+
+        if (otherGroup.children.length > 0) {
+            languageSelect.appendChild(otherGroup);
+        }
+    });
+
+    // When language changes, fetch available models via AJAX
+    languageSelect.addEventListener('change', function() {
+        const languageId = this.value;
+
+        if (!languageId) {
+            modelSelect.innerHTML = '<option value="">Select a language first</option>';
+            return;
+        }
+
+        modelLoading.classList.remove('hidden');
+        modelSelect.disabled = true;
+
+        fetch(`{% url 'admin:tvspots_campaign_language_models_api' language_id=0 %}`.replace('/0/', '/' + languageId + '/'))
+            .then(response => response.json())
+            .then(data => {
+                modelSelect.innerHTML = '<option value="">Use language default (recommended)</option>';
+
+                data.models.forEach(function(model) {
+                    const option = document.createElement('option');
+                    option.value = model.id;
+                    option.textContent = model.name + (model.is_primary ? ' (Primary)' : '');
+                    modelSelect.appendChild(option);
+                });
+
+                modelLoading.classList.add('hidden');
+                modelSelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error fetching models:', error);
+                modelLoading.classList.add('hidden');
+                modelSelect.disabled = false;
+            });
+    });
+});
+</script>
+{% endblock %}

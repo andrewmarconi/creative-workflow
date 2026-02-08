@@ -1,0 +1,135 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="p-6">
+    <div class="max-w-2xl">
+        <h1 class="text-2xl font-bold mb-2">{% trans "Generate Storyboard" %}</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {{ video_ad_unit.campaign.script_title }} / {{ video_ad_unit.code }}
+        </p>
+
+        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <h3 class="font-medium mb-2">{% trans "Video Ad Unit Details" %}</h3>
+            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <li><strong>{% trans "Code" %}:</strong> {{ video_ad_unit.code }}</li>
+                <li><strong>{% trans "Language" %}:</strong> {{ video_ad_unit.language }}</li>
+                <li><strong>{% trans "Script Rows" %}:</strong> {{ video_ad_unit.script_rows.count }}</li>
+                {% if video_ad_unit.visual_style_prompt %}
+                <li><strong>{% trans "Visual Style" %}:</strong> {{ video_ad_unit.visual_style_prompt|truncatechars:100 }}</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="id_diffusion_model" class="block text-sm font-medium mb-2">
+                    {% trans "Diffusion Model" %}
+                </label>
+                <select
+                    name="diffusion_model"
+                    id="id_diffusion_model"
+                    required
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    {% for model in models %}
+                    <option value="{{ model.id }}" data-architecture="{{ model.base_architecture }}">{{ model.label }} ({{ model.base_architecture }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="id_lora_model" class="block text-sm font-medium mb-2">
+                    {% trans "LoRA Model (Optional)" %}
+                </label>
+                <select
+                    name="lora_model"
+                    id="id_lora_model"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="">{% trans "None" %}</option>
+                    {% for lora in loras %}
+                    <option value="{{ lora.id }}">{{ lora.label }} ({{ lora.base_architecture }})</option>
+                    {% endfor %}
+                </select>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {% trans "Select a LoRA compatible with the chosen diffusion model" %}
+                </p>
+            </div>
+
+            <div>
+                <label for="images_per_row" class="block text-sm font-medium mb-2">
+                    {% trans "Images Per Row" %}
+                </label>
+                <select
+                    name="images_per_row"
+                    id="images_per_row"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {% trans "Number of image variations to generate per script row" %}
+                </p>
+            </div>
+
+            <div class="flex items-center">
+                <input
+                    type="checkbox"
+                    name="enhance_prompts"
+                    id="enhance_prompts"
+                    checked
+                    class="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500"
+                >
+                <label for="enhance_prompts" class="ml-2 text-sm">
+                    {% trans "Enhance prompts with LLM" %}
+                </label>
+            </div>
+
+            {% if existing_storyboards %}
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <h3 class="text-yellow-800 dark:text-yellow-300 font-medium mb-2">{% trans "Existing Storyboards" %}</h3>
+                <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 text-sm">
+                    {% for storyboard in existing_storyboards %}
+                    <li>
+                        {{ storyboard.diffusion_model.label }} - {{ storyboard.status }}
+                        ({{ storyboard.images.count }} images)
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Generate Storyboard" %}
+                </button>
+                <a href="{% url 'admin:tvspots_videoadunit_change' video_ad_unit.pk %}"
+                   class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+
+        <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h3 class="text-blue-800 dark:text-blue-300 font-medium mb-2">{% trans "How it works" %}</h3>
+            <ul class="list-disc list-inside text-blue-700 dark:text-blue-400 text-sm space-y-1">
+                <li>{% trans "Image prompts are generated from each script row's visual description" %}</li>
+                <li>{% trans "Prompts can be enhanced with LLM for better image generation" %}</li>
+                <li>{% trans "DiffusionJobs are created and queued for each frame" %}</li>
+                <li>{% trans "Total images: " %}{{ video_ad_unit.script_rows.count }} {% trans "rows" %} &times; {% trans "images per row" %}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    window.__lora_compat_url__ = "{{ lora_compat_url }}";
+</script>
+<script src="{% static 'diffusion/js/filter_loras.js' %}"></script>
+{% endblock %}
