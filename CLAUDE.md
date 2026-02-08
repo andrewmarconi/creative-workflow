@@ -21,6 +21,7 @@ uv run honcho start docker django       # Start subset of processes (without wor
 docker compose up                               # PostgreSQL 17 + Valkey
 uv run manage.py runserver                      # Django dev server on :8000
 uv run celery -A cw worker -Q default   # Single worker (handles all tasks sequentially)
+uv run celery -A cw flower --port=5555          # Flower task monitor on :5555
 ```
 
 ### Database & Django
@@ -79,10 +80,11 @@ cat logs/tasks.log | jq 'select(.levelname == "ERROR")'
 ## Architecture
 
 ### Process Model
-Three processes run concurrently (defined in `Procfile`, launched via `uv run honcho start`):
+Four processes run concurrently (defined in `Procfile`, launched via `uv run honcho start`):
 1. **docker** — PostgreSQL 17 (port 5435) + Valkey (port 6379) + Grafana/Loki (log aggregation)
 2. **django** — Django dev server (port 8000)
 3. **worker** — Single Celery worker on `default` queue (all tasks: prompt enhancement, image generation)
+4. **flower** — Celery task monitor (port 5555) — real-time view of active, queued, and completed tasks
 
 Celery uses `solo` pool (single-threaded) to prevent concurrent model loading. This ensures efficient GPU memory usage:
 - Storyboard generation: All prompts enhanced sequentially → then all images generated sequentially

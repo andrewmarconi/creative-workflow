@@ -8,4 +8,4 @@ echo "Starting Docker containers (postgres, valkey, grafana stack)..."
 docker compose up -d --wait
 
 echo "All containers healthy. Starting Django and Celery workers..."
-exec uv run honcho start django worker
+exec uv run honcho start django worker flower

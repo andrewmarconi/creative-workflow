@@ -33,6 +33,7 @@ where = ["src"]
 
 [dependency-groups]
 dev = [
+    "flower>=2.0.0",
     "honcho>=2.0.0",
     "sphinx>=8.0",
     "sphinx-rtd-theme>=3.0",

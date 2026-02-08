@@ -78,14 +78,28 @@ def enhance_prompt_task(self, prompt_id):
     }
 
 
+def _evict_pipeline_model():
+    """Free VRAM occupied by the adaptation pipeline's LLM (PipelineModelLoader singleton)."""
+    try:
+        from cw.lib.pipeline import model_loader as ml
+
+        if ml._model_loader is not None:
+            logger.debug("Evicting pipeline model loader to free VRAM")
+            ml._model_loader.clear_cache()
+    except ImportError:
+        pass
+
+
 def _evict_enhancer():
-    """Free VRAM occupied by the prompt enhancer LLM."""
+    """Free VRAM occupied by all cached LLMs (prompt enhancer + pipeline model)."""
+    import gc
     import torch
 
     for key in list(_enhancer_cache.keys()):
         logger.debug(f"Evicting enhancer '{key}' to free VRAM")
         del _enhancer_cache[key]
-    import gc
+
+    _evict_pipeline_model()
 
     gc.collect()
     if torch.cuda.is_available():

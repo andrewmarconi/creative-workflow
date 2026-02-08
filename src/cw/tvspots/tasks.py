@@ -116,6 +116,10 @@ def generate_storyboard_task(self, storyboard_id, enhance_prompts=True):
         storyboard.status = "processing"
         storyboard.save()
 
+        # Evict pipeline LLM from VRAM before loading prompt enhancer
+        from cw.diffusion.tasks import _evict_pipeline_model
+        _evict_pipeline_model()
+
         # Generate prompts from script rows
         generator = StoryboardGenerator(use_llm=enhance_prompts)
         prompts = generator.generate_prompts_for_version(
