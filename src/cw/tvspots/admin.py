@@ -512,7 +512,7 @@ class AdUnitScriptRowInline(TabularInline):
 class VideoAdUnitAdmin(ModelAdmin):
     class Media:
         css = {
-            'all': ('admin/css/pipeline_progress.css',)
+            'all': ('css/pipeline_progress.css',)
         }
 
     list_display = [
