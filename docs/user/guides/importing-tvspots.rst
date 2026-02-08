@@ -1,7 +1,7 @@
 Importing TV Spots
 ==================
 
-TV spots can be imported from JSON files using the ``import_tvspot`` management command. This guide covers the JSON format and import process.
+TV spots can be imported from JSON files using the ``import_adaptations`` management command. This guide covers the JSON format and import process.
 
 JSON Format
 -----------
@@ -131,7 +131,7 @@ Always validate your JSON before importing:
 
 .. code-block:: bash
 
-   uv run manage.py import_tvspot path/to/spot.json --dry-run
+   uv run manage.py import_adaptations path/to/spot.json --dry-run
 
 This checks:
 
@@ -147,22 +147,21 @@ Once validation passes:
 
 .. code-block:: bash
 
-   uv run manage.py import_tvspot path/to/spot.json
+   uv run manage.py import_adaptations path/to/spot.json
 
 What Gets Created
 ^^^^^^^^^^^^^^^^^
 
 On successful import:
 
-1. **TvSpot** record with metadata fields
-2. **TvSpotVersion** (origin) with:
+1. **Campaign** record with metadata fields (client_name, brand_name, script_title, job_id)
+2. **VideoAdUnit** (origin) with:
 
-   - ``version_type``: "origin"
-   - ``code``: "ORIGIN"
-   - ``name``: "Origin"
+   - ``origin_or_adaptation``: "ORIGIN"
+   - ``code``: auto-generated from language code
    - ``language``: From JSON or default "en-US"
 
-3. **TvSpotScriptRow** for each item in ``script_rows``:
+3. **AdUnitScriptRow** for each item in ``script_rows``:
 
    - ``order_index``: 0-indexed position in array
    - ``shot_number``: From JSON or auto-generated ("01", "02", ...)
@@ -195,8 +194,8 @@ Next Steps
 
 After importing a TV spot:
 
-1. View it in Django admin under **TV Spots**
-2. Create market adaptations for localization
+1. View it in Django admin under **TV Spots > Campaigns**
+2. Create adaptation VideoAdUnits targeting specific regions, countries, and languages
 3. Generate storyboards using diffusion models
 
 See the :doc:`/developer/api/tvspots` documentation for programmatic access.

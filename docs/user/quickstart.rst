@@ -42,6 +42,7 @@ Installation
     uv run manage.py migrate
     uv run manage.py createsuperuser
     uv run manage.py import_presets
+    uv run manage.py import_reference_data
 
 7. **Access the admin UI** at http://localhost:8000/admin/
 
@@ -61,9 +62,9 @@ The ``start.sh`` script (or ``honcho start``) launches four processes:
    * - **django**
      - Creative studio interface at http://localhost:8000/admin/
    * - **worker**
-     - Image generation execution (``default`` queue)
-   * - **enhancement**
-     - Prompt transformation via local LLM (``enhancement`` queue)
+     - All task execution: image generation and prompt enhancement (``default`` queue)
+   * - **flower**
+     - Celery task monitor at http://localhost:5555/
 
 For minimal setup (configuration only, no generation)::
 
@@ -114,10 +115,16 @@ Common Commands
     uv run manage.py preload_models     # Pre-download models to cache
     uv run manage.py createsuperuser    # Create admin user
 
+**Reference Data**::
+
+    uv run manage.py import_reference_data  # Import regions, countries, languages, LLM models
+    uv run manage.py export_reference_data  # Export reference data to JSON files
+
 **Content Management**::
 
     uv run manage.py import_prompts     # Bulk import prompts
     uv run manage.py export_prompts     # Export prompts to file
+    uv run manage.py import_adaptations # Import TV spot adaptations from JSON
 
 Next Steps
 ----------

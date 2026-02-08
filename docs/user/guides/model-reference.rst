@@ -30,6 +30,11 @@ Model Palette
      - Lightweight exploration
      - Medium
      - High
+   * - Qwen-Image-2512
+     - Qwen
+     - Prompt-faithful generation
+     - Slow
+     - High
    * - SDXL Turbo
      - SDXL
      - Fast prototyping
@@ -90,6 +95,9 @@ LoRAs and model extensions are architecture-specific:
     - Flux.1-dev
     - Flux.2 Klein
 
+**Qwen Architecture**
+    - Qwen-Image-2512
+
 **Lumina/S3-DiT Architecture**
     - Z-Image Turbo
 
@@ -127,6 +135,12 @@ Model-Specific Notes
      - 3.5
      - No
      - Smaller, faster Flux variant
+   * - Qwen-Image-2512
+     - QwenImagePipeline
+     - 50
+     - 4.5
+     - Yes
+     - High prompt adherence, 8-bit quantization
    * - SDXL Turbo
      - AutoPipeline
      - 4
@@ -165,6 +179,11 @@ Prompt Tips by Architecture
 **Flux Models**
     Flux models have longer context windows (256-512 tokens) and understand
     natural language well. Write descriptive prompts without special syntax.
+
+**Qwen Models**
+    Qwen-Image-2512 has a large context window and excels at following complex,
+    detailed prompts faithfully. Supports negative prompts. Uses 8-bit quantization
+    to fit within GPU memory.
 
 **Turbo Models**
     Turbo models (Z-Image, SDXL Turbo, DreamShaper Lightning) work best with

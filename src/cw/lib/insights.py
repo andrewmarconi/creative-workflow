@@ -8,20 +8,15 @@ from typing import Dict, List
 
 
 def compose_insights(video_ad_unit) -> List[Dict[str, str]]:
-    """Aggregate insights from region → country → language.
+    """Aggregate insights from region, country, and language.
 
     Args:
-        video_ad_unit: VideoAdUnit instance with dimensional references (region, country, language)
+        video_ad_unit: VideoAdUnit instance with dimensional references
+            (region, country, language)
 
     Returns:
-        List of insight sections with source attribution:
-        [
-            {
-                'source': 'Region: North America',
-                'markdown': '### Cultural values\\n- ...'
-            },
-            ...
-        ]
+        List of dicts, each with ``'source'`` (e.g. ``'Region: North America'``)
+        and ``'markdown'`` (rendered insight content) keys.
     """
     insights = []
 

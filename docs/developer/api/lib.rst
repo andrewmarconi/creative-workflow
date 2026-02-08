@@ -84,6 +84,17 @@ Market adaptation and localization for TV spot content.
    :undoc-members:
    :show-inheritance:
 
+Pipeline
+--------
+
+LangGraph-based multi-agent adaptation pipeline with concept extraction,
+cultural research, script writing, and evaluation nodes.
+
+.. automodule:: cw.lib.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Storyboard
 ----------
 
@@ -93,3 +104,19 @@ Storyboard generation from scripts.
    :members:
    :undoc-members:
    :show-inheritance:
+
+Insights
+--------
+
+Cultural insight generation for reference data entities.
+
+.. automodule:: cw.lib.insights
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Model Preloader
+---------------
+
+Pre-download models to the HuggingFace cache (``cw.lib.preloader``).
+Used by the ``preload_models`` management command.

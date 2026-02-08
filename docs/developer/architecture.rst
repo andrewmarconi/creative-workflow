@@ -79,16 +79,15 @@ and launched via ``uv run honcho start``:
        end
 
        subgraph worker["worker"]
-           gen["Image Generation<br/>(default queue)"]
+           gen["All Tasks<br/>(default queue)"]
        end
 
-       subgraph enhancement["enhancement"]
-           llm["Prompt Enhancement<br/>(enhancement queue)"]
+       subgraph flower["flower"]
+           mon["Task Monitor<br/>:5555"]
        end
 
        server --> valkey
        valkey --> gen
-       valkey --> llm
        server --> pg
        alloy --> loki
        grafana --> loki
@@ -98,31 +97,30 @@ Procfile Configuration
 
 .. code-block:: text
 
-    docker:      docker compose up
-    django:      uv run manage.py runserver
-    worker:      PYTHONPATH=src uv run celery -A cw worker -Q default --pool=solo
-    enhancement: PYTHONPATH=src uv run celery -A cw worker -Q enhancement --pool=solo
+    docker:    docker compose up
+    django:    uv run manage.py runserver
+    worker:    PYTHONPATH=src uv run celery -A cw worker -Q default -E --loglevel=info --pool=solo
+    flower:    PYTHONPATH=src uv run celery -A cw flower --port=5555
 
 Queue Structure
 ~~~~~~~~~~~~~~~
 
-Two separate Celery queues isolate different workloads:
+A single Celery queue handles all workloads sequentially:
 
 **default queue**
-    Handles GPU-intensive image generation tasks. Tasks include:
+    All tasks run on a single queue to ensure sequential execution and prevent
+    concurrent GPU model loading. Tasks include:
 
-    - ``generate_images_task`` - Main image generation
-    - Model loading and LoRA application
-
-**enhancement queue**
-    Handles prompt enhancement via local LLM. Tasks include:
-
-    - ``enhance_prompt_task`` - Prompt expansion using Qwen model
+    - ``generate_images_task`` - Image generation
+    - ``enhance_prompt_task`` - Prompt enhancement via local LLM
+    - ``download_lora_task`` - LoRA downloading from CivitAI
+    - ``create_adaptation_task`` - Multi-agent adaptation pipeline
+    - ``generate_storyboard_task`` - Storyboard prompt generation and job creation
 
 Why Solo Pool?
 ~~~~~~~~~~~~~~
 
-Both workers use Celery's ``solo`` pool (single-threaded execution) because:
+The worker uses Celery's ``solo`` pool (single-threaded execution) because:
 
 1. **GPU Context Safety**: MPS (Apple Silicon) and CUDA contexts are not
    fork-safe. Using ``prefork`` pool would cause GPU memory corruption.
@@ -180,16 +178,20 @@ Models are cached in memory to avoid repeated loading:
     # Module-level cache in tasks.py
     _model_cache: Dict[str, BaseModel] = {}
 
-    def get_or_load_model(model_slug: str) -> BaseModel:
-        if model_slug not in _model_cache:
-            # Clear previous model to free memory
-            _model_cache.clear()
-            torch.mps.empty_cache()  # or torch.cuda.empty_cache()
+    def _load_model_instance(diffusion_model) -> BaseModel:
+        slug = diffusion_model.slug
+        if slug in _model_cache:
+            return _model_cache[slug]
 
-            # Load new model
-            _model_cache[model_slug] = ModelFactory.create_model(...)
+        # Clear previous model to free memory
+        _model_cache.clear()
+        torch.cuda.empty_cache()  # or torch.mps.empty_cache()
 
-        return _model_cache[model_slug]
+        # Load new model
+        model_instance = ModelFactory.create_model(config, path)
+        model_instance.load_pipeline(...)
+        _model_cache[slug] = model_instance
+        return model_instance
 
 **Key behaviors:**
 
@@ -241,6 +243,10 @@ Class Hierarchy
            +_build_prompts()
        }
 
+       class DebugLoggingMixin {
+           +_debug_print()
+       }
+
        class ZImageTurboModel {
            #_create_pipeline()
        }
@@ -249,14 +255,35 @@ Class Hierarchy
            #_create_pipeline()
        }
 
+       class Flux2KleinModel {
+           #_create_pipeline()
+       }
+
+       class QwenImageModel {
+           #_create_pipeline()
+       }
+
        class SDXLModel {
+           #_create_pipeline()
+       }
+
+       class SDXLTurboModel {
+           #_create_pipeline()
+       }
+
+       class SD15Model {
            #_create_pipeline()
        }
 
        BaseModel <|-- ZImageTurboModel
        BaseModel <|-- FluxModel
-       BaseModel <|-- SDXLModel
+       BaseModel <|-- Flux2KleinModel
+       BaseModel <|-- QwenImageModel
+       BaseModel <|-- SDXLTurboModel
        CompelPromptMixin <|-- SDXLModel
+       CompelPromptMixin <|-- SD15Model
+       BaseModel <|-- SDXLModel
+       BaseModel <|-- SD15Model
 
 Mixins
 ~~~~~~
@@ -309,6 +336,8 @@ Model behavior can be customized via flags in ``presets.json``:
      - Enable debug print statements
    * - ``use_sequential_cpu_offload``
      - Use sequential vs model CPU offload (CUDA)
+   * - ``enable_vae_slicing``
+     - Enable VAE slicing for reduced memory usage
    * - ``max_sequence_length``
      - Context length for Flux models
    * - ``load_in_8bit``
@@ -625,78 +654,69 @@ Core models for image generation: model configuration, LoRA adapters, prompts, a
 TV Spots App (cw.tvspots)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Models for TV commercial workflow: spots, versions, scripts, adaptations, and storyboard generation.
+Models for TV commercial campaign management: campaigns, polymorphic ad units,
+scripts, multi-agent adaptation pipeline, and storyboard generation.
 
 .. mermaid::
 
    erDiagram
-       AdaptationMarket {
+       Campaign {
            bigint id PK
-           varchar name UK
-           varchar code UK
-           bigint default_language_id FK
-           json rules
-           bool is_active
-           timestamp created_at
-           timestamp updated_at
-       }
-
-       TvSpot {
-           bigint id PK
+           varchar job_id UK
+           varchar script_title
            varchar client_name
            varchar brand_name
-           varchar script_title
-           int total_runtime_seconds
-           varchar job_id UK
-           text notes
+           varchar product_name
+           json original_script_data
            timestamp created_at
            timestamp updated_at
        }
 
-       TvSpotVersion {
+       AdUnit {
            bigint id PK
-           bigint tv_spot_id FK
-           varchar version_type
-           bigint market_id FK
+           bigint campaign_id FK
+           varchar ad_unit_type
+           varchar origin_or_adaptation
            varchar code
-           varchar name
-           varchar language
-           text visual_style_prompt
-           bool is_active
-           timestamp created_at
-           timestamp updated_at
-       }
-
-       TvSpotScriptRow {
-           bigint id PK
-           bigint tv_spot_version_id FK
-           int order_index
-           varchar shot_number
-           varchar timecode_start
-           decimal duration_seconds
-           text visual_text
-           text audio_text
-       }
-
-       AdaptationJob {
-           bigint id PK
-           bigint tv_spot_id FK
-           bigint origin_version_id FK
-           bigint target_market_id FK
+           varchar title
+           bigint region_id FK
+           bigint country_id FK
            bigint language_id FK
            bigint llm_model_id FK
-           bigint result_version_id FK
+           bigint source_ad_unit_id FK
+           bool use_pipeline
+           json concept_brief
+           json cultural_brief
+           json evaluation_history
+           json pipeline_metadata
            varchar status
            varchar celery_task_id
            text error_message
            timestamp created_at
            timestamp started_at
            timestamp completed_at
+           timestamp updated_at
        }
 
-       StoryboardJob {
+       VideoAdUnit {
+           bigint adunit_ptr_id PK_FK
+           decimal duration
+           text visual_style_prompt
+       }
+
+       AdUnitScriptRow {
            bigint id PK
-           bigint tv_spot_version_id FK
+           bigint ad_unit_id FK
+           int order_index
+           varchar shot_number
+           varchar timecode
+           text visual_text
+           text audio_text
+       }
+
+       Storyboard {
+           bigint id PK
+           bigint video_ad_unit_id FK
            bigint diffusion_model_id FK
            bigint lora_model_id FK
            int images_per_row
@@ -708,25 +728,23 @@ Models for TV commercial workflow: spots, versions, scripts, adaptations, and st
 
        StoryboardImage {
            bigint id PK
-           bigint storyboard_job_id FK
+           bigint storyboard_id FK
            bigint script_row_id FK
            bigint diffusion_job_id FK
            int image_index
        }
 
-       TvSpot ||--o{ TvSpotVersion : "has versions"
-       TvSpot ||--o{ AdaptationJob : "requests"
-       AdaptationMarket ||--o{ TvSpotVersion : "target for"
-       AdaptationMarket ||--o{ AdaptationJob : "target for"
-       TvSpotVersion ||--o{ TvSpotScriptRow : "contains"
-       TvSpotVersion ||--o{ StoryboardJob : "generates"
-       TvSpotVersion ||--o{ AdaptationJob : "origin for"
-       AdaptationJob ||--o| TvSpotVersion : "creates"
-       StoryboardJob ||--o{ StoryboardImage : "produces"
-       TvSpotScriptRow ||--o{ StoryboardImage : "source for"
+       Campaign ||--o{ AdUnit : "contains"
+       AdUnit ||--o| VideoAdUnit : "extends"
+       AdUnit ||--o{ AdUnitScriptRow : "has rows"
+       AdUnit ||--o| AdUnit : "source_ad_unit"
+       VideoAdUnit ||--o{ Storyboard : "generates"
+       Storyboard ||--o{ StoryboardImage : "produces"
+       AdUnitScriptRow ||--o{ StoryboardImage : "source for"
 
-**AdaptationMarket**
-   Target markets for TV spot localization with structured cultural and regulatory rules.
+**Campaign**
+   Top-level campaign container. Represents a campaign/project before any
+   adaptations or storyboard generation. Created via JSON import.
 
    .. list-table::
       :header-rows: 1
@@ -735,54 +753,29 @@ Models for TV commercial workflow: spots, versions, scripts, adaptations, and st
       * - Field
         - Type
         - Description
-      * - ``name``
-        - varchar(100)
-        - Market name (e.g., 'US Hispanic', 'Japanese')
-      * - ``code``
-        - varchar(20)
-        - Short code (e.g., 'us-hispanic', 'jp')
-      * - ``default_language``
-        - FK
-        - Default language for adaptations in this market
-      * - ``rules``
-        - json
-        - Structured rules: list of {heading, points[]} for adaptation guidance
-      * - ``is_active``
-        - bool
-        - Enable/disable market in admin
-
-**TvSpot**
-   Project-level metadata for a TV commercial. Created via JSON import.
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 25 15 60
-
-      * - Field
-        - Type
-        - Description
-      * - ``client_name``
-        - varchar(255)
-        - Client name
-      * - ``brand_name``
-        - varchar(255)
-        - Brand name
-      * - ``script_title``
-        - varchar(255)
-        - Title of the script
-      * - ``total_runtime_seconds``
-        - int
-        - Total runtime in seconds (typically 15, 30, 60, 90)
       * - ``job_id``
         - varchar(100)
-        - Internal project ID (e.g., 'ACME-2024-001')
-      * - ``notes``
-        - text
-        - Additional notes
+        - Internal tracking ID (e.g., 'ACME-2024-001'), unique
+      * - ``script_title``
+        - varchar(200)
+        - Campaign/script title
+      * - ``client_name``
+        - varchar(200)
+        - Client name
+      * - ``brand_name``
+        - varchar(200)
+        - Brand name
+      * - ``product_name``
+        - varchar(200)
+        - Product name
+      * - ``original_script_data``
+        - json
+        - Original script content as JSON
 
-**TvSpotVersion**
-   A version of a spot - either the origin or a market adaptation. Each version has its
-   own script rows.
+**AdUnit**
+   Polymorphic base class for all ad unit types using Django multi-table inheritance.
+   Child models (VideoAdUnit, future AudioAdUnit/PrintAdUnit) extend this base with
+   media-specific fields.
 
    .. list-table::
       :header-rows: 1
@@ -791,112 +784,70 @@ Models for TV commercial workflow: spots, versions, scripts, adaptations, and st
       * - Field
         - Type
         - Description
-      * - ``tv_spot``
+      * - ``campaign``
         - FK
-        - Parent TV spot (CASCADE on delete)
-      * - ``version_type``
+        - Parent campaign (CASCADE on delete)
+      * - ``ad_unit_type``
         - varchar(20)
-        - Type: 'origin' or 'adaptation'
-      * - ``market``
-        - FK
-        - Target market for adaptation (null for origin, PROTECT on delete)
+        - Type: VIDEO, AUDIO, PRINT (set automatically by child class)
+      * - ``origin_or_adaptation``
+        - varchar(20)
+        - ORIGIN or ADAPTATION
       * - ``code``
         - varchar(50)
-        - Internal code (e.g., 'ORIGIN', 'US-HISP', 'JP')
-      * - ``name``
-        - varchar(255)
-        - Human label (e.g., 'US Hispanic Adaptation')
-      * - ``language``
-        - varchar(50)
-        - Primary language code (e.g., 'en-US', 'es-MX', 'ja')
-      * - ``visual_style_prompt``
-        - text
-        - Common prompt prefix for storyboard generation consistency
-      * - ``is_active``
-        - bool
-        - Enable/disable version
-
-**TvSpotScriptRow**
-   A single row in the two-column A/V script format. Left column (visual) and right
-   column (audio) keep content aligned with timing metadata.
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 25 15 60
-
-      * - Field
-        - Type
-        - Description
-      * - ``tv_spot_version``
+        - Version code (e.g., 'US-EN-001', 'DE-DE-002')
+      * - ``title``
+        - varchar(200)
+        - Descriptive title
+      * - ``region``
         - FK
-        - Parent version (CASCADE on delete)
-      * - ``order_index``
-        - int
-        - Row order in script (0-indexed)
-      * - ``shot_number``
-        - varchar(20)
-        - Shot identifier (e.g., '01', '1A', 'MONT-01')
-      * - ``timecode_start``
-        - varchar(12)
-        - Start timecode (e.g., '00:00:05:00' or '5.0')
-      * - ``duration_seconds``
-        - decimal
-        - Row duration in seconds
-      * - ``visual_text``
-        - text
-        - Left column: visuals, shots, graphics, supers, VFX, locations
-      * - ``audio_text``
-        - text
-        - Right column: VO, dialogue, SFX, music cues, taglines
-
-**AdaptationJob**
-   Tracks adaptation requests from origin version to target market. Created when user
-   requests an adaptation, updated by Celery task.
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 25 15 60
-
-      * - Field
-        - Type
-        - Description
-      * - ``tv_spot``
+        - Target region for adaptations (PROTECT on delete)
+      * - ``country``
         - FK
-        - Parent TV spot (CASCADE on delete)
-      * - ``origin_version``
-        - FK
-        - Origin version to adapt from (CASCADE on delete)
-      * - ``target_market``
-        - FK
-        - Target market for adaptation (PROTECT on delete)
+        - Target country for adaptations (PROTECT on delete)
       * - ``language``
         - FK
-        - Override market's default language (PROTECT on delete)
+        - Target language for adaptations (PROTECT on delete)
       * - ``llm_model``
         - FK
-        - Override language's primary model (PROTECT on delete)
-      * - ``result_version``
-        - FK
-        - Created adaptation version (SET_NULL on delete)
+        - Override language's primary LLM model (PROTECT on delete)
+      * - ``source_ad_unit``
+        - FK (self)
+        - Source ad unit this was adapted from (SET_NULL on delete)
+      * - ``use_pipeline``
+        - bool
+        - Use multi-agent pipeline for adaptation
+      * - ``concept_brief``
+        - json
+        - Concept extraction output from pipeline
+      * - ``cultural_brief``
+        - json
+        - Cultural research output from pipeline
+      * - ``evaluation_history``
+        - json
+        - Chronological evaluation results from pipeline
+      * - ``pipeline_metadata``
+        - json
+        - Pipeline timing, model info, and revision counts
       * - ``status``
-        - varchar(20)
-        - Job status: pending, processing, completed, failed
+        - varchar(30)
+        - Status: pending, processing, completed, failed, concept_analysis, cultural_analysis, writing, format_evaluation, cultural_evaluation, concept_evaluation, revising
       * - ``celery_task_id``
         - varchar(255)
-        - Celery task ID for tracking
+        - Celery task ID for async processing
       * - ``error_message``
         - text
         - Error message if job failed
       * - ``started_at``
         - timestamp
-        - When job processing started
+        - When processing started
       * - ``completed_at``
         - timestamp
-        - When job finished
+        - When processing finished
 
-**StoryboardJob**
-   Coordinates storyboard generation for a TvSpotVersion. Creates one DiffusionJob per
-   script row (multiplied by ``images_per_row``).
+**VideoAdUnit**
+   Video-specific ad unit extending AdUnit via multi-table inheritance. Can be either
+   an origin unit or an adaptation targeting specific markets.
 
    .. list-table::
       :header-rows: 1
@@ -905,9 +856,58 @@ Models for TV commercial workflow: spots, versions, scripts, adaptations, and st
       * - Field
         - Type
         - Description
-      * - ``tv_spot_version``
+      * - ``duration``
+        - decimal(6,2)
+        - Duration in seconds
+      * - ``visual_style_prompt``
+        - text
+        - Common visual style applied to all script rows
+
+**AdUnitScriptRow**
+   A single row in the two-column A/V script format. Points to the base AdUnit class,
+   allowing script rows to work with any ad unit type via multi-table inheritance.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``ad_unit``
         - FK
-        - Version to generate storyboard for (CASCADE on delete)
+        - Parent ad unit (CASCADE on delete)
+      * - ``order_index``
+        - int
+        - Row order in script (0-indexed), unique per ad unit
+      * - ``shot_number``
+        - varchar(10)
+        - Shot/scene number
+      * - ``timecode``
+        - varchar(20)
+        - Timecode (HH:MM:SS:FF or HH:MM:SS.mmm)
+      * - ``visual_text``
+        - text
+        - Visual/video column content
+      * - ``audio_text``
+        - text
+        - Audio/dialogue column content
+
+**Storyboard**
+   Coordinates storyboard generation for a VideoAdUnit. Creates one DiffusionJob per
+   script row (multiplied by ``images_per_row``). Multiple storyboards can exist per
+   VideoAdUnit with different configurations.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``video_ad_unit``
+        - FK
+        - Video ad unit to generate storyboard for (CASCADE on delete)
       * - ``diffusion_model``
         - FK
         - Model to use for generation (PROTECT on delete)
@@ -928,8 +928,8 @@ Models for TV commercial workflow: spots, versions, scripts, adaptations, and st
         - When job finished
 
 **StoryboardImage**
-   Junction table linking StoryboardJob, TvSpotScriptRow, and DiffusionJob. Allows
-   multiple images per row and multiple storyboard runs per version.
+   Junction table linking Storyboard, AdUnitScriptRow, and DiffusionJob. Allows
+   multiple images per row and multiple storyboard runs per video ad unit.
 
    .. list-table::
       :header-rows: 1
@@ -938,31 +938,237 @@ Models for TV commercial workflow: spots, versions, scripts, adaptations, and st
       * - Field
         - Type
         - Description
-      * - ``storyboard_job``
+      * - ``storyboard``
         - FK
-        - Parent storyboard job (CASCADE on delete)
+        - Parent storyboard (CASCADE on delete)
       * - ``script_row``
         - FK
         - Source script row (CASCADE on delete)
       * - ``diffusion_job``
-        - FK
+        - OneToOne FK
         - Image generation job (CASCADE on delete)
       * - ``image_index``
         - int
         - Image sequence within the row (for multiple images per row)
 
+Core App (cw.core)
+~~~~~~~~~~~~~~~~~~~
+
+Reference data models for regions, countries, languages, and LLM models used
+by the multi-agent adaptation pipeline.
+
+.. mermaid::
+
+   erDiagram
+       LLMModel {
+           bigint id PK
+           varchar model_id UK
+           varchar name
+           text notes
+           bool is_active
+           bool load_in_4bit
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       Region {
+           bigint id PK
+           varchar code UK
+           varchar name
+           text description
+           json insights
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       Country {
+           bigint id PK
+           varchar code UK
+           varchar name
+           bigint default_language_id FK
+           json insights
+           text notes
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       Language {
+           bigint id PK
+           varchar code UK
+           varchar name
+           varchar base_language
+           bigint primary_model_id FK
+           json insights
+           text notes
+           bool is_active
+           timestamp created_at
+           timestamp updated_at
+       }
+
+       CountryRegion {
+           bigint id PK
+           bigint country_id FK
+           bigint region_id FK
+       }
+
+       CountryLanguage {
+           bigint id PK
+           bigint country_id FK
+           bigint language_id FK
+           bool is_primary
+       }
+
+       LanguageAlternativeModel {
+           bigint id PK
+           bigint language_id FK
+           bigint llmmodel_id FK
+       }
+
+       LLMModel ||--o{ Language : "primary for"
+       LLMModel ||--o{ LanguageAlternativeModel : "alternative for"
+       Language ||--o{ LanguageAlternativeModel : "has alternatives"
+       Language ||--o{ Country : "default for"
+       Country ||--o{ CountryRegion : "belongs to"
+       Region ||--o{ CountryRegion : "contains"
+       Country ||--o{ CountryLanguage : "speaks"
+       Language ||--o{ CountryLanguage : "spoken in"
+
+**LLMModel**
+   HuggingFace language model configuration for text generation in adaptation tasks.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``model_id``
+        - varchar(200)
+        - HuggingFace model ID (e.g., 'Qwen/Qwen2.5-7B-Instruct'), unique
+      * - ``name``
+        - varchar(100)
+        - Friendly display name
+      * - ``notes``
+        - text
+        - Notes about model capabilities, strengths, or limitations
+      * - ``is_active``
+        - bool
+        - Whether this model is available for use
+      * - ``load_in_4bit``
+        - bool
+        - Load model with 4-bit quantization (requires bitsandbytes)
+
+**Region**
+   Cultural/market grouping with regional insights (e.g., North America, DACH, LATAM).
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``code``
+        - varchar(20)
+        - Short code (e.g., 'NA', 'NORDICS', 'DACH'), unique
+      * - ``name``
+        - varchar(100)
+        - Display name (e.g., 'North America')
+      * - ``description``
+        - text
+        - Region description and scope
+      * - ``insights``
+        - json
+        - Regional cultural patterns: [{heading, points[]}]
+      * - ``is_active``
+        - bool
+        - Enable/disable region
+
+**Country**
+   Political/regulatory entity with country-specific insights and regulatory requirements.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``code``
+        - varchar(2)
+        - ISO 3166-1 alpha-2 code (e.g., 'US', 'CA', 'SE'), unique
+      * - ``name``
+        - varchar(100)
+        - Official country name
+      * - ``default_language``
+        - FK
+        - Primary/default language for this country (PROTECT on delete)
+      * - ``insights``
+        - json
+        - Country-specific regulatory and cultural rules: [{heading, points[]}]
+      * - ``notes``
+        - text
+        - Additional notes
+      * - ``is_active``
+        - bool
+        - Enable/disable country
+
+**Language**
+   Language variant with locale code and LLM model recommendations for adaptation.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 25 15 60
+
+      * - Field
+        - Type
+        - Description
+      * - ``code``
+        - varchar(10)
+        - ISO 639 + country locale (e.g., 'en-US', 'fr-CA'), unique
+      * - ``name``
+        - varchar(100)
+        - Display name (e.g., 'English (United States)')
+      * - ``base_language``
+        - varchar(10)
+        - ISO 639-1 base language code (e.g., 'en', 'fr', 'de')
+      * - ``primary_model``
+        - FK
+        - Recommended LLM model for this language (PROTECT on delete)
+      * - ``insights``
+        - json
+        - Language-specific localization guidance: [{heading, points[]}]
+      * - ``notes``
+        - text
+        - Notes about language-specific considerations
+      * - ``is_active``
+        - bool
+        - Whether this language is available for adaptations
+
 Cross-App References
 ~~~~~~~~~~~~~~~~~~~~
 
-The ``tvspots`` app references models from the ``diffusion`` app to integrate storyboard
-generation with the core image generation system:
+The ``tvspots`` app references models from the ``diffusion`` and ``core`` apps:
 
-- ``StoryboardJob.diffusion_model`` → ``DiffusionModel``
-- ``StoryboardJob.lora_model`` → ``LoraModel``
-- ``StoryboardImage.diffusion_job`` → ``DiffusionJob``
+**tvspots → diffusion:**
 
-This creates a clean separation where ``diffusion`` handles image generation and
-``tvspots`` handles TV commercial workflow orchestration.
+- ``Storyboard.diffusion_model`` → ``DiffusionModel`` (PROTECT)
+- ``Storyboard.lora_model`` → ``LoraModel`` (SET_NULL)
+- ``StoryboardImage.diffusion_job`` → ``DiffusionJob`` (CASCADE)
+
+**tvspots → core:**
+
+- ``AdUnit.region`` → ``Region`` (PROTECT)
+- ``AdUnit.country`` → ``Country`` (PROTECT)
+- ``AdUnit.language`` → ``Language`` (PROTECT)
+- ``AdUnit.llm_model`` → ``LLMModel`` (PROTECT)
+
+This creates a clean separation where ``diffusion`` handles image generation,
+``core`` provides reference data, and ``tvspots`` handles TV commercial workflow
+orchestration.
 
 Observability
 -------------
@@ -977,9 +1183,8 @@ All components use structured JSON logging:
     logs/
     ├── django.log           # Django server logs
     ├── celery.log           # Celery general logs
-    ├── tasks.log            # Task execution logs
-    ├── worker_default.log   # Image generation worker
-    └── worker_enhancement.log  # Prompt enhancement worker
+    ├── tasks.log            # Task execution logs (all workers)
+    └── worker_default.log   # Default queue worker
 
 Grafana + Loki
 ~~~~~~~~~~~~~~

@@ -81,21 +81,21 @@ Prompt Enhancement Issues
 
 **LLM enhancement not working?**
 
-1. **Check the enhancement worker** is running::
+1. **Check the worker** is running::
 
-    uv run honcho start  # Starts all workers including enhancement
+    uv run honcho start  # Starts all services including the Celery worker
 
 2. **Verify model downloads** - the Qwen2.5-3B model downloads on first use
    (~6GB)
 
-3. **Check enhancement queue** - prompts are processed asynchronously on the
-   ``enhancement`` queue
+3. **Check task logs** - prompts are enhanced on the ``default`` queue. Review
+   ``logs/tasks.log`` for errors.
 
 **API enhancement fails?**
 
 - Verify ``ANTHROPIC_API_KEY`` is set in ``.env``
 - Check API rate limits and account status
-- Review logs at ``logs/worker_enhancement.log``
+- Review logs at ``logs/tasks.log``
 
 Database and Migration Issues
 -----------------------------

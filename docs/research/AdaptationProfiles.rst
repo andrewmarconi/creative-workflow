@@ -222,17 +222,19 @@ Research Finding
 
 ----
 
-Complete JSON File
-------------------
+Reference Data
+--------------
 
-The :download:`market_profiles.json <../../data/market_profiles.json>` contains the full 20-market framework with:
+The market profiles research informed the reference data system now stored across
+separate JSON files in ``data/`` (regions, countries, languages). These files contain:
 
-- Detailed language segmentation guidance
+- Detailed language segmentation guidance (via ``insights`` fields)
 - Tone and register recommendations
 - Cultural values and considerations
 - Regulatory and practical requirements
 - Representation guidance
-- Methodology notes on anthropological principles and stereotype avoidance
+
+See :doc:`/developer/data-schemas` for the current reference data schema documentation.
 
 ----
 

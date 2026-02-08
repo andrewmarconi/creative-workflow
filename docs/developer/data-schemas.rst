@@ -14,7 +14,6 @@ Presets Schema
 Defines the configuration for diffusion models and LoRA adapters.
 
 :Data File: :download:`presets.json <../../data/presets.json>`
-:Schema: :download:`presets.schema.json <../../data/presets.schema.json>`
 
 Structure
 ~~~~~~~~~
@@ -139,7 +138,6 @@ TV Spot Schema
 Defines the format for television commercial scripts used in adaptation workflows.
 
 :Data File: :download:`example_tvspot.json <../../data/example_tvspot.json>`
-:Schema: :download:`tvspot.schema.json <../../data/tvspot.schema.json>`
 
 Structure
 ~~~~~~~~~
@@ -232,90 +230,55 @@ Example
 
 ----
 
-Market Profiles Schema
+Reference Data Schemas
 ----------------------
 
-Defines linguistic-cultural market zones for television commercial adaptation.
+Reference data for regions, countries, languages, and LLM models is stored in separate
+JSON files under ``data/``. These files are imported via the ``import_reference_data``
+management command and exported via ``export_reference_data``.
 
-:Data File: :download:`market_profiles.json <../../data/market_profiles.json>`
-:Schema: :download:`market_profiles.schema.json <../../data/market_profiles.schema.json>`
-
-See :doc:`/research/AdaptationProfiles` for detailed documentation of the market profiles framework.
-
-Structure
-~~~~~~~~~
-
-The market profiles file contains an array of markets and methodology notes.
-
-Market Properties
-~~~~~~~~~~~~~~~~~
+Data Files
+~~~~~~~~~~
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 15 65
+   :widths: 30 70
 
-   * - Property
-     - Type
+   * - File
      - Description
-   * - ``name``
-     - string
-     - Full name of the market zone
-   * - ``code``
-     - string
-     - Short identifier (e.g., ``fr``, ``de``, ``zh-cn``, ``us-hispanic``)
-   * - ``primary_regions``
-     - array
-     - Countries or regions covered by this profile
-   * - ``secondary_reach``
-     - array
-     - Secondary regions where profile may apply
-   * - ``rules``
-     - array
-     - Adaptation guidelines organized by category
+   * - :download:`regions.json <../../data/regions.json>`
+     - Geographic/cultural regions (e.g., DACH, NORDICS, LATAM)
+   * - :download:`countries.json <../../data/countries.json>`
+     - Countries with default language references
+   * - :download:`languages.json <../../data/languages.json>`
+     - Languages with primary LLM model references
+   * - :download:`llm_models.json <../../data/llm_models.json>`
+     - LLM models for text generation in adaptation tasks
+   * - :download:`country_regions.json <../../data/country_regions.json>`
+     - Many-to-many: Country to Region mappings
+   * - :download:`country_languages.json <../../data/country_languages.json>`
+     - Many-to-many: Country to Language mappings (with ``is_primary`` flag)
 
-Rule Category Properties
-~~~~~~~~~~~~~~~~~~~~~~~~
+Relationship Handling
+~~~~~~~~~~~~~~~~~~~~~
 
-.. list-table::
-   :header-rows: 1
-   :widths: 20 15 65
+References between files use codes or model IDs rather than database PKs:
 
-   * - Property
-     - Type
-     - Description
-   * - ``heading``
-     - string
-     - Category name (e.g., "Language segmentation", "Cultural considerations")
-   * - ``points``
-     - array
-     - Individual guidance points within this category
+- ``languages.json`` references ``primary_model`` by ``model_id`` (e.g., ``"Qwen/Qwen2.5-7B-Instruct"``)
+- ``countries.json`` references ``default_language`` by language ``code`` (e.g., ``"en-US"``)
+- M2M files use ``country_code``, ``region_code``, ``language_code`` for references
 
-Example
-~~~~~~~
+Import Dependency Order
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: json
+The ``import_reference_data`` command imports files in dependency order:
 
-   {
-     "markets": [
-       {
-         "name": "French Language Zone",
-         "code": "fr",
-         "primary_regions": ["France", "Belgium (Wallonia/Brussels)", "Luxembourg"],
-         "secondary_reach": ["Quebec (Canada)", "Francophone Africa"],
-         "rules": [
-           {
-             "heading": "Language segmentation",
-             "points": [
-               "Belgium requires two distinct versions: Dutch for Flanders and French for Wallonia.",
-               "Quebec Canadian French has distinct vocabulary and cultural references."
-             ]
-           }
-         ]
-       }
-     ],
-     "methodology_notes": {
-       "approach": "This framework prioritizes linguistic-cultural zones...",
-       "anthropological_principles": ["..."],
-       "avoiding_stereotypes": ["..."]
-     }
-   }
+1. LLM Models (no dependencies)
+2. Regions (no dependencies)
+3. Countries (optional FK to Language, resolved after Languages import)
+4. Languages (FK to LLM Model for ``primary_model``)
+5. Country-Region mappings (FKs to Country, Region)
+6. Country-Language mappings (FKs to Country, Language)
+
+See :doc:`/research/AdaptationProfiles` for the cultural adaptation research framework that
+informed the design of this reference data system.

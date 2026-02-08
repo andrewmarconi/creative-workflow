@@ -2,12 +2,12 @@ TV Spots App (cw.tvspots)
 =========================
 
 The ``cw.tvspots`` Django app manages TV spot production workflows including
-versions, storyboards, and market adaptations.
+campaigns, ad units, storyboards, and cultural adaptations.
 
 Models
 ------
 
-Django ORM models for TVSpot, TVSpotVersion, StoryboardJob, and AdaptationMarket.
+Django ORM models for Campaign, AdUnit, VideoAdUnit, AdUnitScriptRow, Storyboard, and StoryboardImage.
 
 .. automodule:: cw.tvspots.models
    :members:
