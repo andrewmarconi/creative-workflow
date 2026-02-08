@@ -59,11 +59,11 @@ def _apply_chat_template(loader, system_message: str, user_prompt: str) -> str:
 
 
 def _update_job_status(job_id: int, status: str, **extra_fields):
-    """Persist status and optional extra fields on the AdaptationJob."""
-    from cw.tvspots.models import AdaptationJob
+    """Persist status and optional extra fields on the VideoAdUnit."""
+    from cw.tvspots.models import VideoAdUnit
 
     update_fields = ["status"]
-    job = AdaptationJob.objects.get(id=job_id)
+    job = VideoAdUnit.objects.get(id=job_id)
     job.status = status
     for field, value in extra_fields.items():
         setattr(job, field, value)
@@ -302,10 +302,10 @@ def cultural_eval_node(state: PipelineState) -> dict:
         result = EvaluationResult.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
 
         # Append to evaluation history
-        from cw.tvspots.models import AdaptationJob
+        from cw.tvspots.models import VideoAdUnit
 
         logger.debug("Updating evaluation history in database", extra={"job_id": state["job_id"]})
-        job = AdaptationJob.objects.get(id=state["job_id"])
+        job = VideoAdUnit.objects.get(id=state["job_id"])
         history = job.evaluation_history or []
         history.append({"type": "cultural", **result.model_dump()})
         job.evaluation_history = history
@@ -364,9 +364,9 @@ def concept_eval_node(state: PipelineState) -> dict:
     result = EvaluationResult.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
 
     # Append to evaluation history
-    from cw.tvspots.models import AdaptationJob
+    from cw.tvspots.models import VideoAdUnit
 
-    job = AdaptationJob.objects.get(id=state["job_id"])
+    job = VideoAdUnit.objects.get(id=state["job_id"])
     history = job.evaluation_history or []
     history.append({"type": "concept", **result.model_dump()})
     job.evaluation_history = history
