@@ -1,4 +1,4 @@
-"""State helpers bridging AdaptationJob (ORM) and PipelineState (in-memory).
+"""State helpers bridging VideoAdUnit (ORM) and PipelineState (in-memory).
 
 Functions here handle the translation between Django models and the
 LangGraph ``PipelineState`` TypedDict used by pipeline nodes.
@@ -20,34 +20,33 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def build_initial_state(job) -> PipelineState:
-    """Build the initial ``PipelineState`` dict from an ``AdaptationJob``.
+def build_initial_state(video_ad_unit) -> PipelineState:
+    """Build the initial ``PipelineState`` dict from a ``VideoAdUnit``.
 
-    Mirrors the data-fetching logic in ``AdaptationGenerator.adapt()`` so
-    the pipeline nodes receive the same origin data the single-step path uses.
+    Mirrors the data-fetching logic used by the adaptation generator, providing
+    pipeline nodes with the necessary origin data and target context.
     """
-    origin_version = job.origin_version
-    tv_spot = origin_version.tv_spot
+    source_ad_unit = video_ad_unit.source_ad_unit
+    campaign = source_ad_unit.campaign
 
-    effective_language = job.effective_language
-    effective_model = job.effective_llm_model
+    effective_language = video_ad_unit.language
+    effective_model = video_ad_unit.effective_llm_model
 
-    # Serialize origin version + script rows (same as AdaptationGenerator.adapt())
+    # Serialize origin ad unit + script rows
     original_spot = {
-        "client_name": tv_spot.client_name,
-        "brand_name": tv_spot.brand_name,
-        "script_title": tv_spot.script_title,
-        "total_runtime_seconds": tv_spot.total_runtime_seconds,
-        "language": origin_version.language.code,
+        "client_name": campaign.client_name,
+        "brand_name": campaign.brand_name,
+        "script_title": campaign.script_title,
+        "language": source_ad_unit.language.code if source_ad_unit.language else "en",
         "script_rows": [
             {
                 "shot_number": row.shot_number,
-                "timecode_start": row.timecode_start,
-                "duration_seconds": float(row.duration_seconds) if row.duration_seconds else None,
+                "timecode_start": row.timecode,
+                "duration_seconds": None,  # Not tracked in AdUnitScriptRow
                 "visual_text": row.visual_text,
                 "audio_text": row.audio_text,
             }
-            for row in origin_version.script_rows.all().order_by("order_index")
+            for row in source_ad_unit.script_rows.all().order_by("order_index")
         ],
     }
 
@@ -56,27 +55,27 @@ def build_initial_state(job) -> PipelineState:
     load_in_4bit = getattr(effective_model, "load_in_4bit", False) if effective_model else False
 
     # Compose insights from all levels (region → country → language)
-    insights_markdown = compose_insights_as_markdown(job)
+    insights_markdown = compose_insights_as_markdown(video_ad_unit)
 
     # Build target market name from region/country/language
     target_parts = []
-    if job.region:
-        target_parts.append(job.region.name)
-    if job.country:
-        target_parts.append(job.country.name)
+    if video_ad_unit.region:
+        target_parts.append(video_ad_unit.region.name)
+    if video_ad_unit.country:
+        target_parts.append(video_ad_unit.country.name)
     target_market_name = " / ".join(target_parts) if target_parts else effective_language.name
 
     # Build target market code from region/country codes
     code_parts = []
-    if job.region:
-        code_parts.append(job.region.code)
-    if job.country:
-        code_parts.append(job.country.code)
+    if video_ad_unit.region:
+        code_parts.append(video_ad_unit.region.code)
+    if video_ad_unit.country:
+        code_parts.append(video_ad_unit.country.code)
     target_market_code = "-".join(code_parts).upper() if code_parts else language_code.upper()
 
     return {
         # Input
-        "job_id": job.pk,
+        "job_id": video_ad_unit.pk,
         "model_id": model_id,
         "load_in_4bit": load_in_4bit,
         "original_script": json.dumps(original_spot, indent=2, ensure_ascii=False),
@@ -101,14 +100,14 @@ def build_initial_state(job) -> PipelineState:
     }
 
 
-def save_pipeline_result(job, final_state: PipelineState):
-    """Persist the pipeline's final state back to the ``AdaptationJob``.
+def save_pipeline_result(video_ad_unit, final_state: PipelineState):
+    """Persist the pipeline's final state back to the ``VideoAdUnit``.
 
-    On success, creates ``TvSpotVersion`` and ``TvSpotScriptRow`` records
-    exactly as the single-step task does.  On failure, records the error.
+    On success, creates ``AdUnitScriptRow`` records for the adapted script.
+    On failure, records the error.
     """
     from cw.lib.adaptation import AdaptationOutput
-    from cw.tvspots.models import TvSpotScriptRow, TvSpotVersion
+    from cw.tvspots.models import AdUnitScriptRow
 
     adapted_json = final_state.get("adapted_script")
 
@@ -120,61 +119,49 @@ def save_pipeline_result(job, final_state: PipelineState):
         # Lookup Language by code
         language_obj = Language.objects.get(code=result.language)
 
-        # Try to find matching AdaptationMarket for backward compatibility
-        # New adaptations don't require a market
-        market = None
-        if hasattr(job, 'target_market'):
-            market = job.target_market
-        else:
-            # Try to find market by language (for backward compatibility)
-            from cw.tvspots.models import AdaptationMarket
-            market = AdaptationMarket.objects.filter(default_language=language_obj).first()
+        # Update the VideoAdUnit with adapted content
+        video_ad_unit.language = language_obj
+        video_ad_unit.visual_style_prompt = result.visual_style_prompt
+        video_ad_unit.status = "completed"
+        video_ad_unit.completed_at = timezone.now()
+        video_ad_unit.save(update_fields=["language", "visual_style_prompt", "status", "completed_at"])
 
-        new_version = TvSpotVersion.objects.create(
-            tv_spot=job.tv_spot,
-            version_type="adaptation",
-            market=market,  # May be None for new Region/Country/Language adaptations
-            code=result.code,
-            name=result.name,
-            language=language_obj,
-            visual_style_prompt=result.visual_style_prompt,
-            is_active=True,
-        )
-
+        # Create script rows for the adapted content
         for idx, row_data in enumerate(result.script_rows):
-            TvSpotScriptRow.objects.create(
-                tv_spot_version=new_version,
+            AdUnitScriptRow.objects.create(
+                ad_unit=video_ad_unit,
                 order_index=idx,
                 shot_number=row_data.shot_number,
-                timecode_start=row_data.timecode_start,
-                duration_seconds=row_data.duration_seconds,
+                timecode=row_data.timecode_start,
                 visual_text=row_data.visual_text,
                 audio_text=row_data.audio_text,
             )
 
-        job.result_version = new_version
-        job.status = "completed"
-        job.completed_at = timezone.now()
+        logger.info(
+            f"Adapted script saved: {len(result.script_rows)} rows",
+            extra={
+                "video_ad_unit_id": video_ad_unit.pk,
+                "num_rows": len(result.script_rows),
+            },
+        )
     else:
-        job.status = "failed"
-        job.error_message = final_state.get("error_message") or "Pipeline produced no adapted script"
-        job.completed_at = timezone.now()
+        video_ad_unit.status = "failed"
+        video_ad_unit.error_message = final_state.get("error_message") or "Pipeline produced no adapted script"
+        video_ad_unit.completed_at = timezone.now()
+        video_ad_unit.save(update_fields=["status", "error_message", "completed_at"])
 
     # Always persist pipeline metadata
-    job.pipeline_metadata = {
+    video_ad_unit.pipeline_metadata = {
         "cultural_revision_count": final_state.get("cultural_revision_count", 0),
         "concept_revision_count": final_state.get("concept_revision_count", 0),
         "final_model_id": final_state.get("model_id"),
         "final_status": final_state.get("status"),
     }
-
-    job.save(update_fields=[
-        "status", "result_version", "completed_at", "error_message", "pipeline_metadata",
-    ])
+    video_ad_unit.save(update_fields=["pipeline_metadata"])
 
     logger.info(
-        f"Pipeline result saved: status={job.status}",
-        extra={"job_id": job.pk, "status": job.status},
+        f"Pipeline result saved: status={video_ad_unit.status}",
+        extra={"video_ad_unit_id": video_ad_unit.pk, "status": video_ad_unit.status},
     )
 
 

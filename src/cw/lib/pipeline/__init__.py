@@ -1,7 +1,7 @@
 """Multi-agent adaptation pipeline using LangGraph.
 
 Public API:
-    ``run_adaptation_pipeline(job)`` — Run the full pipeline for an AdaptationJob.
+    ``run_adaptation_pipeline(video_ad_unit)`` — Run the full pipeline for a VideoAdUnit.
 """
 
 from __future__ import annotations
@@ -13,8 +13,8 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-def run_adaptation_pipeline(job):
-    """Run the full multi-agent adaptation pipeline for an AdaptationJob.
+def run_adaptation_pipeline(video_ad_unit):
+    """Run the full multi-agent adaptation pipeline for a VideoAdUnit.
 
     Handles state building, graph execution, status updates, and result
     persistence.  The caller only needs to handle top-level exceptions.
@@ -24,28 +24,28 @@ def run_adaptation_pipeline(job):
 
     # Build target description for logging
     target_parts = []
-    if job.region:
-        target_parts.append(job.region.code)
-    if job.country:
-        target_parts.append(job.country.code)
-    target_code = "-".join(target_parts) if target_parts else job.language.code
+    if video_ad_unit.region:
+        target_parts.append(video_ad_unit.region.code)
+    if video_ad_unit.country:
+        target_parts.append(video_ad_unit.country.code)
+    target_code = "-".join(target_parts) if target_parts else video_ad_unit.language.code
 
     logger.info(
-        f"Pipeline starting for job {job.pk}",
-        extra={"job_id": job.pk, "target": target_code},
+        f"Pipeline starting for video ad unit {video_ad_unit.pk}",
+        extra={"video_ad_unit_id": video_ad_unit.pk, "target": target_code},
     )
 
-    job.status = "processing"
-    job.started_at = timezone.now()
-    job.save(update_fields=["status", "started_at"])
+    video_ad_unit.status = "processing"
+    video_ad_unit.started_at = timezone.now()
+    video_ad_unit.save(update_fields=["status", "started_at"])
 
-    initial_state = build_initial_state(job)
+    initial_state = build_initial_state(video_ad_unit)
     graph = build_adaptation_graph()
     final_state = graph.invoke(initial_state)
 
-    save_pipeline_result(job, final_state)
+    save_pipeline_result(video_ad_unit, final_state)
 
     logger.info(
-        f"Pipeline completed for job {job.pk}: status={job.status}",
-        extra={"job_id": job.pk, "status": job.status},
+        f"Pipeline completed for video ad unit {video_ad_unit.pk}: status={video_ad_unit.status}",
+        extra={"video_ad_unit_id": video_ad_unit.pk, "status": video_ad_unit.status},
     )
