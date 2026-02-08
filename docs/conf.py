@@ -19,7 +19,7 @@ django.setup()
 project = "Generative Creative Lab"
 copyright = "2026, Andrew Marconi"
 author = "Andrew Marconi"
-release = "0.1.0"
+release = "0.2.0"
 
 github_url = "https://github.com/andrewmarconi/generative-creative-lab"
 html_logo = "_static/logo.png"
@@ -40,6 +40,14 @@ extensions = [
 
 # Mermaid settings
 mermaid_version = "11"  # Use latest Mermaid.js
+
+# MyST parser settings (for Markdown support)
+myst_enable_extensions = [
+    "colon_fence",  # ::: fence support
+    "deflist",  # Definition lists
+    "tasklist",  # GitHub-style task lists
+]
+myst_heading_anchors = 3  # Auto-generate anchors for headings
 
 # Napoleon settings (Google-style docstrings)
 napoleon_google_docstring = True

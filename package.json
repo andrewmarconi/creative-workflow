@@ -1,6 +1,6 @@
 {
   "name": "generative-creative-lab",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "![Generative Creative Lab](docs/_static/logo-wide.png)",
   "main": "index.js",
   "directories": {

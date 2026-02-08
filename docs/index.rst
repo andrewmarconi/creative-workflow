@@ -74,4 +74,12 @@ If you use this software in your research, please cite it using the following Bi
 
    developer/architecture
    developer/data-schemas
+   developer/contributing
    developer/api/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Project
+   :hidden:
+
+   project-changelog
