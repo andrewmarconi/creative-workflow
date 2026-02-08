@@ -537,6 +537,7 @@ class VideoAdUnitAdmin(ModelAdmin):
         "code",
         "title",
         "origin_or_adaptation",
+        "persona",
         "region",
         "country",
         "language",
@@ -577,6 +578,7 @@ class VideoAdUnitAdmin(ModelAdmin):
                 "classes": ["tab"],
                 "fields": (
                     "source_ad_unit",
+                    "persona",
                     ("region", "country"),
                     ("language", "llm_model"),
                     "use_pipeline",
