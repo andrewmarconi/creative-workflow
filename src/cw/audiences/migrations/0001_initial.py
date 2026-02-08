@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("core", "0004_drop_culture_model"),
+        ("core", "0002_add_llmmodel_load_in_4bit"),
     ]
 
     operations = [
