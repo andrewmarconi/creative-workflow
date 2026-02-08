@@ -13,10 +13,7 @@ Generative Creative Lab
 A modular framework for creative development, exploration, and experimentation using generative AI.
 ---------------------------------------------------------------------------------------------------
 
-Generative Creative Lab is a flexible platform designed for creative experimentation with
-generative AI models. Built on Django and Celery, it provides a modular architecture
-for multi-model diffusion image generation, dynamic prompt enhancement, and systematic
-creative exploration through model composition and workflow orchestration.
+Generative Creative Lab is a flexible platform designed for creative experimentation with generative AI models. Built on `Django <https://www.djangoproject.com/>`_, `Celery <https://docs.celeryq.dev/>`_, and `LangGraph <https://langchain-ai.github.io/langgraph/>`_, it provides a modular architecture for multi-model diffusion image generation using `HuggingFace <https://huggingface.co/>`_ pipelines, multi-agent cultural adaptation of TV scripts, dynamic prompt enhancement, and systematic creative exploration through model composition and workflow orchestration.
 
 Key Capabilities
 ----------------
@@ -78,11 +75,3 @@ If you use this software in your research, please cite it using the following Bi
    developer/architecture
    developer/data-schemas
    developer/api/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Experiments
-   :hidden:
-
-   experiments/044-expanded-context-metadata/index
-   experiments/026-multi-model-pipeline/index
