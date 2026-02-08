@@ -1,47 +1,18 @@
-from django.db import models
+# Implementation Plan: Model Refactoring
 
+## Overview
 
-class Campaign(models.Model):
-    """Top-level campaign container (formerly TvSpot).
+This document provides step-by-step implementation details for Issue #46.
 
-    Represents a campaign/project before any adaptations or storyboard generation.
-    Created via JSON import (management command or admin action).
-    """
+## Phase 1: Model Refactoring
 
-    job_id = models.CharField(
-        max_length=100,
-        unique=True,
-        help_text="Internal tracking ID (e.g., 'ACME-2024-001')",
-    )
-    script_title = models.CharField(
-        max_length=200,
-        help_text="Campaign/script title",
-    )
-    client_name = models.CharField(max_length=200)
-    brand_name = models.CharField(max_length=200, blank=True)
-    product_name = models.CharField(max_length=200, blank=True)
-    original_script_data = models.JSONField(
-        help_text="Original script content as JSON",
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+### Step 1.1: Create Base AdUnit Model
 
-    class Meta:
-        db_table = "tvspots_campaign"
-        ordering = ["-created_at"]
-        verbose_name = "Campaign"
-        verbose_name_plural = "Campaigns"
+**File:** `src/cw/tvspots/models.py`
 
-    def __str__(self):
-        return f"{self.client_name} - {self.script_title}"
-
-
+```python
 class AdUnit(models.Model):
-    """Polymorphic base model for all ad unit types (video, audio, print, etc.).
-
-    Uses Django multi-table inheritance. Child models (VideoAdUnit, AudioAdUnit, etc.)
-    extend this base with media-specific fields.
-    """
+    """Polymorphic base model for all ad unit types (video, audio, print, etc.)."""
 
     AD_UNIT_TYPE_CHOICES = [
         ("VIDEO", "Video"),
@@ -200,14 +171,15 @@ class AdUnit(models.Model):
     def effective_llm_model(self):
         """Get LLM model (override or language default)."""
         return self.llm_model or (self.language.primary_model if self.language else None)
+```
 
+### Step 1.2: Create VideoAdUnit Model
 
+**File:** `src/cw/tvspots/models.py`
+
+```python
 class VideoAdUnit(AdUnit):
-    """Video-specific ad unit (merges TvSpotVersion + AdaptationJob + TVSpotAdaptation).
-
-    Represents a video ad with script rows and optional storyboards. Can be either
-    an origin unit or an adaptation targeting specific markets.
-    """
+    """Video-specific ad unit (merges TvSpotVersion + AdaptationJob + TVSpotAdaptation)."""
 
     duration = models.DecimalField(
         max_digits=6,
@@ -230,14 +202,51 @@ class VideoAdUnit(AdUnit):
         # Automatically set ad_unit_type
         self.ad_unit_type = "VIDEO"
         super().save(*args, **kwargs)
+```
 
+### Step 1.3: Rename TvSpot to Campaign
 
+**File:** `src/cw/tvspots/models.py`
+
+```python
+class Campaign(models.Model):
+    """Top-level campaign container (formerly TvSpot)."""
+
+    job_id = models.CharField(
+        max_length=100,
+        unique=True,
+        help_text="Internal tracking ID",
+    )
+    script_title = models.CharField(
+        max_length=200,
+        help_text="Campaign/script title",
+    )
+    client_name = models.CharField(max_length=200)
+    brand_name = models.CharField(max_length=200)
+    product_name = models.CharField(max_length=200, blank=True)
+    original_script_data = models.JSONField(
+        help_text="Original script content as JSON",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "tvspots_campaign"
+        ordering = ["-created_at"]
+        verbose_name = "Campaign"
+        verbose_name_plural = "Campaigns"
+
+    def __str__(self):
+        return f"{self.client_name} - {self.script_title}"
+```
+
+### Step 1.4: Create AdUnitScriptRow
+
+**File:** `src/cw/tvspots/models.py`
+
+```python
 class AdUnitScriptRow(models.Model):
-    """Script row linked polymorphically to any AdUnit (formerly TvSpotScriptRow).
-
-    Points to base AdUnit class, which allows script rows to work with VideoAdUnit,
-    AudioAdUnit, PrintAdUnit, etc. via multi-table inheritance.
-    """
+    """Script row linked polymorphically to any AdUnit (formerly TvSpotScriptRow)."""
 
     ad_unit = models.ForeignKey(
         AdUnit,  # Points to base class - works with VideoAdUnit, AudioAdUnit, etc.
@@ -274,14 +283,15 @@ class AdUnitScriptRow(models.Model):
 
     def __str__(self):
         return f"{self.ad_unit.code} - Row {self.order_index + 1}"
+```
 
+### Step 1.5: Rename StoryboardJob to Storyboard
 
+**File:** `src/cw/tvspots/models.py`
+
+```python
 class Storyboard(models.Model):
-    """Storyboard generation job (formerly StoryboardJob).
-
-    One Storyboard creates one DiffusionJob per script row (times images_per_row).
-    Multiple Storyboards can exist per VideoAdUnit (different configs).
-    """
+    """Storyboard generation job (formerly StoryboardJob)."""
 
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -340,21 +350,15 @@ class Storyboard(models.Model):
         return self.images.filter(
             diffusion_job__status="completed"
         ).count()
+```
 
-    @property
-    def progress_percent(self):
-        """Completion percentage."""
-        total = self.total_jobs
-        if total == 0:
-            return 0
-        return int((self.completed_jobs / total) * 100)
+### Step 1.6: Update StoryboardImage
 
+**File:** `src/cw/tvspots/models.py`
 
+```python
 class StoryboardImage(models.Model):
-    """Links storyboard to individual diffusion jobs.
-
-    Allows multiple images per row and multiple storyboard runs per video ad unit.
-    """
+    """Links storyboard to individual diffusion jobs."""
 
     storyboard = models.ForeignKey(
         Storyboard,
@@ -376,7 +380,7 @@ class StoryboardImage(models.Model):
     )
 
     class Meta:
-        db_table = "tvspots_storyboardimage"
+        db_table = "diffusion_storyboardimage"
         ordering = ["storyboard", "script_row__order_index", "image_index"]
         unique_together = [["storyboard", "script_row", "image_index"]]
         verbose_name = "Storyboard Image"
@@ -384,3 +388,134 @@ class StoryboardImage(models.Model):
 
     def __str__(self):
         return f"{self.storyboard} - Row {self.script_row.order_index} - Image {self.image_index}"
+```
+
+## Phase 2: Admin Updates
+
+### Step 2.1: Campaign Admin
+
+**File:** `src/cw/tvspots/admin.py`
+
+Update `TvSpotAdmin` → `CampaignAdmin`:
+- Update model reference
+- Remove `created_at`, `updated_at` from `list_display`
+- Update verbose names
+
+### Step 2.2: VideoAdUnit Admin
+
+**File:** `src/cw/tvspots/admin.py`
+
+Merge `TvSpotVersionAdmin`, `AdaptationJobAdmin`, `TVSpotAdaptationAdmin` → `VideoAdUnitAdmin`:
+- Combine all list displays (remove timestamps)
+- Merge fieldsets
+- Combine admin actions
+- Update filters for new field names
+
+### Step 2.3: AdUnitScriptRow Admin
+
+**File:** `src/cw/tvspots/admin.py`
+
+Rename `TvSpotScriptRowAdmin` → `AdUnitScriptRowAdmin`:
+- Update FK references
+- Keep inline for VideoAdUnit admin
+
+### Step 2.4: Storyboard Admin
+
+**File:** `src/cw/tvspots/admin.py`
+
+Rename `StoryboardJobAdmin` → `StoryboardAdmin`:
+- Update model references
+- Remove timestamps from list_display
+- Update FK references to VideoAdUnit
+
+## Phase 3: Task Updates
+
+### Step 3.1: Update create_adaptation_task
+
+**File:** `src/cw/tvspots/tasks.py`
+
+- Change from creating `TvSpotVersion` to updating `VideoAdUnit` fields
+- Update all references to use new model names
+
+### Step 3.2: Update generate_storyboard_task
+
+**File:** `src/cw/tvspots/tasks.py`
+
+- Change `StoryboardJob` → `Storyboard`
+- Update `TvSpotVersion` → `VideoAdUnit`
+- Update script row references
+
+### Step 3.3: Update Pipeline Nodes
+
+**File:** `src/cw/lib/pipeline/nodes.py`
+
+- Update model imports
+- Change references from `AdaptationJob` to `VideoAdUnit`
+
+## Phase 4: Database Migration
+
+### Step 4.1: Delete Old Migrations
+
+```bash
+rm -rf src/cw/tvspots/migrations/
+mkdir src/cw/tvspots/migrations/
+touch src/cw/tvspots/migrations/__init__.py
+```
+
+### Step 4.2: Create Fresh Migration
+
+```bash
+uv run manage.py makemigrations tvspots
+```
+
+### Step 4.3: Apply Migration
+
+```bash
+uv run manage.py migrate
+```
+
+## Phase 5: Cleanup
+
+### Step 5.1: Update CLAUDE.md
+
+Update documentation with new model structure.
+
+### Step 5.2: Update Docstrings
+
+Ensure all docstrings reference new model names.
+
+### Step 5.3: Remove Deprecated Imports
+
+Search for and remove:
+- `TvSpot` imports (replace with `Campaign`)
+- `TvSpotVersion` imports (replace with `VideoAdUnit`)
+- `AdaptationJob` imports (replace with `VideoAdUnit`)
+- `Market`, `AdaptationMarket` imports (delete)
+
+## Testing Checklist
+
+- [ ] Can create Campaign
+- [ ] Can create origin VideoAdUnit
+- [ ] Can create adaptation VideoAdUnit via admin action
+- [ ] Can create Storyboard for VideoAdUnit
+- [ ] Storyboard generates images correctly
+- [ ] Pipeline workflow works with VideoAdUnit
+- [ ] Admin list views load without errors
+- [ ] Admin filters work correctly
+- [ ] All Celery tasks complete successfully
+
+## Rollback Plan
+
+If issues arise, rollback steps:
+1. `git revert` the refactoring commit
+2. Restore previous migrations
+3. `manage.py migrate tvspots <previous_migration>`
+4. Restart Django/Celery workers
+
+## Success Metrics
+
+- Zero migration errors
+- All admin pages load successfully
+- Tasks create correct model instances
+- No broken foreign key references
+- Clean git diff (all old model references removed)

@@ -1,5 +1,5 @@
 """
-Django admin configuration for TV spots.
+Django admin configuration for campaigns and video ad units.
 
 Uses Django Unfold for tabs, display decorators, and styled actions.
 """
@@ -14,60 +14,85 @@ from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
 
 from .models import (
-    AdaptationJob,
-    AdaptationMarket,
+    AdUnitScriptRow,
+    Campaign,
+    Storyboard,
     StoryboardImage,
-    StoryboardJob,
-    TVSpotAdaptation,
-    TvSpot,
-    TvSpotScriptRow,
-    TvSpotVersion,
+    VideoAdUnit,
 )
 
 # ---------------------------------------------------------------------------
-# AdaptationMarket
+# Campaign
 # ---------------------------------------------------------------------------
 
 
-@admin.register(AdaptationMarket)
-class AdaptationMarketAdmin(ModelAdmin):
+class VideoAdUnitInline(TabularInline):
+    """Inline display of ad units for Campaign."""
+
+    model = VideoAdUnit
+    tab = True
+    extra = 0
+    fields = ["code", "title", "origin_or_adaptation", "language", "show_status"]
+    readonly_fields = ["code", "title", "origin_or_adaptation", "language", "show_status"]
+    can_delete = False
+    show_change_link = True
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    @display(
+        description=_("Status"),
+        label={
+            "Pending": "info",
+            "Processing": "warning",
+            "Completed": "success",
+            "Failed": "danger",
+            "Concept Analysis": "warning",
+            "Cultural Analysis": "warning",
+            "Writing": "warning",
+            "Cultural Evaluation": "warning",
+            "Concept Evaluation": "warning",
+            "Revising": "warning",
+        },
+    )
+    def show_status(self, obj):
+        return obj.get_status_display()
+
+
+@admin.register(Campaign)
+class CampaignAdmin(ModelAdmin):
     list_display = [
-        "name",
-        "code",
-        "default_language",
-        "show_regions_count",
-        "show_countries_count",
-        "show_active",
-        "show_versions_count",
-        "updated_at",
+        "script_title",
+        "client_name",
+        "brand_name",
+        "product_name",
+        "job_id",
+        "show_ad_units_count",
     ]
-    list_filter = ["is_active", "default_language", "regions", "countries"]
-    search_fields = ["name", "code", "rules"]
+    list_filter = ["client_name"]
+    search_fields = ["script_title", "client_name", "brand_name", "job_id"]
     readonly_fields = ["created_at", "updated_at"]
-    autocomplete_fields = ["default_language"]
-    filter_horizontal = ["regions", "countries"]
+    inlines = [VideoAdUnitInline]
+    actions_list = ["import_campaign_action"]
+    actions_detail = ["create_adaptation_action"]
 
     fieldsets = (
         (
-            _("Market"),
+            _("Project"),
             {
                 "classes": ["tab"],
-                "fields": ("name", "code", "default_language", "is_active"),
+                "fields": (
+                    ("client_name", "brand_name"),
+                    ("product_name", "job_id"),
+                    "script_title",
+                ),
             },
         ),
         (
-            _("Dimensional Context"),
+            _("Original Script Data"),
             {
                 "classes": ["tab"],
-                "fields": ("regions", "countries"),
-                "description": "Optional: Tag this market with regions and countries",
-            },
-        ),
-        (
-            _("Rules"),
-            {
-                "classes": ["tab"],
-                "fields": ("rules",),
+                "fields": ("original_script_data",),
             },
         ),
         (
@@ -79,41 +104,377 @@ class AdaptationMarketAdmin(ModelAdmin):
         ),
     )
 
-    @display(description=_("Active"), boolean=True)
-    def show_active(self, obj):
-        return obj.is_active
-
-    @display(description=_("Regions"))
-    def show_regions_count(self, obj):
-        count = obj.regions.count()
-        return str(count) if count > 0 else "-"
-
-    @display(description=_("Countries"))
-    def show_countries_count(self, obj):
-        count = obj.countries.count()
-        return str(count) if count > 0 else "-"
-
-    @display(description=_("Versions"))
-    def show_versions_count(self, obj):
-        count = obj.versions.count()
+    @display(description=_("Ad Units"))
+    def show_ad_units_count(self, obj):
+        count = obj.ad_units.count()
         if count > 0:
-            url = reverse("admin:tvspots_tvspotversion_changelist")
+            url = reverse("admin:tvspots_videoadunit_changelist")
             return format_html(
-                '<a href="{}?market__id__exact={}">{}</a>',
+                '<a href="{}?campaign__id__exact={}">{}</a>',
                 url,
                 obj.id,
                 count,
             )
         return "0"
 
+    def get_urls(self):
+        """Add custom URLs for import and adaptation actions."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "import/",
+                self.admin_site.admin_view(self.import_campaign_view),
+                name="tvspots_campaign_import",
+            ),
+            path(
+                "<int:object_id>/create-adaptation/",
+                self.admin_site.admin_view(self.create_adaptation_view),
+                name="tvspots_campaign_create_adaptation",
+            ),
+        ]
+        return custom_urls + urls
+
+    def import_campaign_view(self, request):
+        """Handle importing a campaign from JSON."""
+        import json
+
+        from django.db import transaction
+        from django.template.response import TemplateResponse
+
+        if request.method == "POST":
+            # Check for uploaded file first, then fallback to pasted JSON
+            json_file = request.FILES.get("json_file")
+            json_data = None
+
+            if json_file:
+                try:
+                    json_data = json_file.read().decode("utf-8")
+                except Exception as e:
+                    messages.error(request, f"Error reading file: {e}")
+                    return redirect("admin:tvspots_campaign_import")
+            else:
+                json_data = request.POST.get("json_data", "").strip()
+
+            if not json_data:
+                messages.error(request, "JSON data or file is required.")
+                return redirect("admin:tvspots_campaign_import")
+
+            try:
+                data = json.loads(json_data)
+            except json.JSONDecodeError as e:
+                messages.error(request, f"Invalid JSON: {e}")
+                return redirect("admin:tvspots_campaign_import")
+
+            # Validate required fields
+            errors = self._validate_campaign_json(data)
+            if errors:
+                for error in errors:
+                    messages.error(request, error)
+                return redirect("admin:tvspots_campaign_import")
+
+            # Check for duplicate job_id
+            job_id = data["job_id"]
+            if Campaign.objects.filter(job_id=job_id).exists():
+                messages.error(request, f"Campaign with job_id '{job_id}' already exists.")
+                return redirect("admin:tvspots_campaign_import")
+
+            # Create records
+            try:
+                with transaction.atomic():
+                    from cw.core.models import Language
+
+                    # Lookup Language by code
+                    language_code = data.get("language", "en-US")
+                    try:
+                        language = Language.objects.get(code=language_code)
+                    except Language.DoesNotExist:
+                        messages.error(
+                            request,
+                            f"Language '{language_code}' not found. Please create it first or use an existing language code.",
+                        )
+                        return redirect("admin:tvspots_campaign_import")
+
+                    campaign = Campaign.objects.create(
+                        client_name=data["client_name"],
+                        brand_name=data.get("brand_name", ""),
+                        product_name=data.get("product_name", ""),
+                        script_title=data["script_title"],
+                        job_id=job_id,
+                        original_script_data=data,
+                    )
+
+                    video_ad_unit = VideoAdUnit.objects.create(
+                        campaign=campaign,
+                        origin_or_adaptation="ORIGIN",
+                        code="ORIGIN",
+                        title="Origin",
+                        language=language,
+                        status="completed",
+                    )
+
+                    for idx, row_data in enumerate(data["script_rows"]):
+                        AdUnitScriptRow.objects.create(
+                            ad_unit=video_ad_unit,
+                            order_index=idx,
+                            shot_number=row_data.get("shot_number", f"{idx + 1:02d}"),
+                            timecode=row_data.get("timecode_start", ""),
+                            visual_text=row_data["visual_text"],
+                            audio_text=row_data["audio_text"],
+                        )
+
+                messages.success(
+                    request,
+                    f"Created Campaign '{campaign.script_title}' with {len(data['script_rows'])} script rows.",
+                )
+                return redirect("admin:tvspots_campaign_change", campaign.pk)
+
+            except Exception as e:
+                messages.error(request, f"Failed to create Campaign: {e}")
+                return redirect("admin:tvspots_campaign_import")
+
+        # Render import form
+        return TemplateResponse(
+            request,
+            "admin/tvspots/campaign/import_campaign.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": _("Import Campaign from JSON"),
+                "opts": self.model._meta,
+            },
+        )
+
+    def _validate_campaign_json(self, data: dict) -> list:
+        """Validate JSON against expected schema. Returns list of errors."""
+        errors = []
+
+        required = ["client_name", "script_title", "job_id", "script_rows"]
+        for field in required:
+            if field not in data:
+                errors.append(f"Missing required field: {field}")
+
+        if errors:
+            return errors
+
+        if not isinstance(data["script_rows"], list):
+            errors.append("script_rows must be an array")
+            return errors
+
+        if len(data["script_rows"]) == 0:
+            errors.append("script_rows must have at least one row")
+
+        for idx, row in enumerate(data["script_rows"]):
+            if not isinstance(row, dict):
+                errors.append(f"script_rows[{idx}] must be an object")
+                continue
+            if "visual_text" not in row or not row["visual_text"]:
+                errors.append(f"script_rows[{idx}] missing or empty visual_text")
+            if "audio_text" not in row or not row["audio_text"]:
+                errors.append(f"script_rows[{idx}] missing or empty audio_text")
+
+        return errors
+
+    @action(
+        description=_("Import Campaign"),
+        url_path="import-campaign-action",
+    )
+    def import_campaign_action(self, request):
+        """Redirect to the import campaign view."""
+        return redirect("admin:tvspots_campaign_import")
+
+    @action(
+        description=_("Create Adaptation"),
+        url_path="create-adaptation-action",
+        permissions=["create_adaptation_action"],
+    )
+    def create_adaptation_action(self, request, object_id):
+        """Redirect to the create adaptation view."""
+        return redirect("admin:tvspots_campaign_create_adaptation", object_id)
+
+    def has_create_adaptation_action_permission(self, request, object_id=None):
+        """Only show button if there's an origin video ad unit."""
+        if object_id:
+            try:
+                campaign = Campaign.objects.get(pk=object_id)
+                return campaign.ad_units.filter(origin_or_adaptation="ORIGIN").exists()
+            except Campaign.DoesNotExist:
+                return False
+        return False
+
+    def create_adaptation_view(self, request, object_id):
+        """Handle creating an adaptation of a campaign."""
+        import json
+
+        from django.template.response import TemplateResponse
+
+        from cw.core.models import Language, LLMModel
+
+        from .tasks import create_adaptation_task
+
+        campaign = Campaign.objects.get(pk=object_id)
+        origin_ad_unit = campaign.ad_units.filter(origin_or_adaptation="ORIGIN").first()
+
+        if not origin_ad_unit:
+            messages.error(request, "No origin ad unit found for this campaign.")
+            return redirect("admin:tvspots_campaign_change", object_id)
+
+        if request.method == "POST":
+            from cw.core.models import Country, Region
+
+            region_id = request.POST.get("region")
+            country_id = request.POST.get("country")
+            language_id = request.POST.get("language")
+            llm_model_id = request.POST.get("llm_model")
+
+            # Validate required fields
+            if not region_id or not language_id:
+                messages.error(request, "Please select a region and language.")
+                return redirect("admin:tvspots_campaign_create_adaptation", object_id)
+
+            # Get the dimension objects
+            region = Region.objects.get(pk=region_id)
+            country = Country.objects.filter(pk=country_id).first() if country_id else None
+            language = Language.objects.get(pk=language_id)
+            llm_model = LLMModel.objects.filter(pk=llm_model_id).first() if llm_model_id else None
+
+            # Check for pending/processing adaptation with same dimensions
+            pending_adaptation = campaign.ad_units.filter(
+                region=region,
+                country=country,
+                language=language,
+                status__in=["pending", "processing"]
+            ).first()
+            if pending_adaptation:
+                target_desc = f"{region.name}"
+                if country:
+                    target_desc += f" / {country.name}"
+                target_desc += f" ({language.code})"
+                messages.warning(
+                    request,
+                    f"An adaptation to {target_desc} is already in progress "
+                    f"(status: {pending_adaptation.get_status_display()}).",
+                )
+                return redirect("admin:tvspots_videoadunit_change", pending_adaptation.pk)
+
+            # Generate code for adaptation
+            code_parts = []
+            if country:
+                code_parts.append(country.code.upper())
+            elif region:
+                code_parts.append(region.code.upper())
+            code_parts.append(language.code.upper())
+            code = "-".join(code_parts)
+
+            # Generate title
+            title_parts = []
+            if country:
+                title_parts.append(country.name)
+            else:
+                title_parts.append(region.name)
+            title_parts.append(f"({language.code})")
+            title = " ".join(title_parts)
+
+            # Create VideoAdUnit for adaptation (always use pipeline)
+            adaptation = VideoAdUnit.objects.create(
+                campaign=campaign,
+                origin_or_adaptation="ADAPTATION",
+                code=code,
+                title=title,
+                region=region,
+                country=country,
+                language=language,
+                llm_model=llm_model,
+                source_ad_unit=origin_ad_unit,
+                use_pipeline=True,  # Always use multi-agent pipeline
+                status="pending",
+            )
+
+            # Queue the adaptation task
+            result = create_adaptation_task.apply_async(
+                args=[adaptation.pk], queue="default"
+            )
+
+            # Store the Celery task ID
+            adaptation.celery_task_id = result.id
+            adaptation.save(update_fields=["celery_task_id"])
+
+            target_desc = f"{region.name}"
+            if country:
+                target_desc += f" / {country.name}"
+            target_desc += f" ({language.code})"
+
+            messages.success(
+                request,
+                f"Adaptation to {target_desc} queued for processing.",
+            )
+            return redirect("admin:tvspots_campaign_change", object_id)
+
+        # Get available dimensions
+        from cw.core.models import Country, CountryLanguage, CountryRegion, Region
+
+        regions = Region.objects.filter(is_active=True).order_by("name")
+        countries = Country.objects.filter(is_active=True).order_by("name")
+        languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
+
+        # Build region → countries mapping
+        region_countries = {}
+        for cr in CountryRegion.objects.select_related("region", "country"):
+            if cr.region_id not in region_countries:
+                region_countries[cr.region_id] = []
+            region_countries[cr.region_id].append(cr.country_id)
+
+        # Build country → languages mapping (with primary languages first)
+        country_languages = {}
+        for cl in CountryLanguage.objects.select_related("country", "language").order_by("-is_primary"):
+            if cl.country_id not in country_languages:
+                country_languages[cl.country_id] = []
+            country_languages[cl.country_id].append(cl.language_id)
+
+        # Get pending adaptations to show
+        pending_adaptations = campaign.ad_units.filter(
+            status__in=["pending", "processing"]
+        ).select_related("region", "country", "language")
+
+        return TemplateResponse(
+            request,
+            "admin/tvspots/campaign/create_adaptation.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": _("Create Adaptation"),
+                "opts": self.model._meta,
+                "campaign": campaign,
+                "origin_ad_unit": origin_ad_unit,
+                "regions": regions,
+                "countries": countries,
+                "languages": languages,
+                "pending_adaptations": pending_adaptations,
+                "region_countries_json": json.dumps(region_countries),
+                "country_languages_json": json.dumps(country_languages),
+            },
+        )
+
 
 # ---------------------------------------------------------------------------
-# AdaptationJob
+# VideoAdUnit
 # ---------------------------------------------------------------------------
 
 
-@admin.register(AdaptationJob)
-class AdaptationJobAdmin(ModelAdmin):
+class AdUnitScriptRowInline(TabularInline):
+    """Inline display of script rows for VideoAdUnit."""
+
+    model = AdUnitScriptRow
+    tab = True
+    extra = 0
+    fields = [
+        "shot_number",
+        "timecode",
+        "visual_text",
+        "audio_text",
+    ]
+    ordering = ["order_index"]
+
+
+@admin.register(VideoAdUnit)
+class VideoAdUnitAdmin(ModelAdmin):
     class Media:
         css = {
             'all': ('admin/css/pipeline_progress.css',)
@@ -121,49 +482,76 @@ class AdaptationJobAdmin(ModelAdmin):
 
     list_display = [
         "show_id",
-        "show_tvspot",
-        "show_region",
-        "show_country",
-        "show_language",
+        "show_campaign",
+        "code",
+        "title",
+        "origin_or_adaptation",
+        "show_target",
         "show_pipeline",
         "show_pipeline_progress",
         "show_status",
-        "created_at",
-        "completed_at",
     ]
-    list_filter = ["status", "use_pipeline", "region", "country", "language", "created_at"]
-    search_fields = ["tv_spot__script_title", "region__name", "country__name", "language__name", "error_message"]
+    list_filter = ["origin_or_adaptation", "status", "use_pipeline", "region", "country", "language"]
+    search_fields = ["campaign__script_title", "code", "title", "error_message"]
     readonly_fields = [
-        "tv_spot",
-        "origin_version",
+        "campaign",
+        "ad_unit_type",
+        "code",
+        "title",
+        "origin_or_adaptation",
         "region",
         "country",
         "language",
         "llm_model",
-        "result_version",
+        "source_ad_unit",
         "status",
         "celery_task_id",
         "error_message",
         "created_at",
         "started_at",
         "completed_at",
+        "updated_at",
         "concept_brief",
         "cultural_brief",
         "evaluation_history",
         "pipeline_metadata",
     ]
+    inlines = [AdUnitScriptRowInline]
+    actions_detail = ["view_storyboard_action", "generate_storyboard_action"]
+    actions = ["retry_failed_adaptations"]
 
     fieldsets = (
         (
-            _("Request"),
+            _("Core"),
             {
                 "classes": ["tab"],
                 "fields": (
-                    "tv_spot",
-                    "origin_version",
+                    "campaign",
+                    "ad_unit_type",
+                    "origin_or_adaptation",
+                    ("code", "title"),
+                ),
+            },
+        ),
+        (
+            _("Adaptation Target"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "source_ad_unit",
                     ("region", "country"),
                     ("language", "llm_model"),
                     "use_pipeline",
+                ),
+            },
+        ),
+        (
+            _("Video Settings"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "duration",
+                    "visual_style_prompt",
                 ),
             },
         ),
@@ -175,7 +563,6 @@ class AdaptationJobAdmin(ModelAdmin):
                     "status",
                     "celery_task_id",
                     "error_message",
-                    "result_version",
                 ),
             },
         ),
@@ -183,7 +570,7 @@ class AdaptationJobAdmin(ModelAdmin):
             _("Timing"),
             {
                 "classes": ["tab"],
-                "fields": ("created_at", "started_at", "completed_at"),
+                "fields": ("created_at", "started_at", "completed_at", "updated_at"),
             },
         ),
         (
@@ -224,21 +611,22 @@ class AdaptationJobAdmin(ModelAdmin):
     def show_id(self, obj):
         return f"#{obj.pk}"
 
-    @display(description=_("TV Spot"))
-    def show_tvspot(self, obj):
-        return obj.tv_spot.script_title
+    @display(description=_("Campaign"))
+    def show_campaign(self, obj):
+        return obj.campaign.script_title
 
-    @display(description=_("Region"))
-    def show_region(self, obj):
-        return obj.region.name if obj.region else "—"
-
-    @display(description=_("Country"))
-    def show_country(self, obj):
-        return obj.country.name if obj.country else "—"
-
-    @display(description=_("Language"))
-    def show_language(self, obj):
-        return f"{obj.language.name} ({obj.language.code})" if obj.language else "—"
+    @display(description=_("Target"))
+    def show_target(self, obj):
+        if obj.origin_or_adaptation == "ORIGIN":
+            return "—"
+        parts = []
+        if obj.region:
+            parts.append(obj.region.name)
+        if obj.country:
+            parts.append(obj.country.name)
+        if obj.language:
+            parts.append(f"({obj.language.code})")
+        return " / ".join(parts) if parts else "—"
 
     @display(description=_("Pipeline"), boolean=True)
     def show_pipeline(self, obj):
@@ -247,8 +635,8 @@ class AdaptationJobAdmin(ModelAdmin):
     @display(description=_("Progress"))
     def show_pipeline_progress(self, obj):
         """Display visual progress bar for pipeline stages."""
-        # Only show for pipeline jobs
-        if not obj.use_pipeline:
+        # Only show for pipeline adaptations
+        if not obj.use_pipeline or obj.origin_or_adaptation == "ORIGIN":
             return "—"
 
         # Define pipeline stages and their order
@@ -264,15 +652,15 @@ class AdaptationJobAdmin(ModelAdmin):
         # Map status to stage index
         status_map = {
             "pending": 0,
-            "processing": 0,  # Generic processing maps to pending
+            "processing": 0,
             "concept_analysis": 1,
             "cultural_analysis": 2,
             "writing": 3,
-            "revising": 3,  # Revising is part of writing stage
+            "revising": 3,
             "cultural_evaluation": 4,
             "concept_evaluation": 4,
             "completed": 5,
-            "failed": -1,  # Special case
+            "failed": -1,
         }
 
         current_stage = status_map.get(obj.status, 0)
@@ -332,625 +720,51 @@ class AdaptationJobAdmin(ModelAdmin):
     def show_status(self, obj):
         return obj.get_status_display()
 
-    @action(description=_("Retry selected failed jobs"))
-    def retry_failed_jobs(self, request, queryset):
-        """Retry failed adaptation jobs by creating new jobs with same parameters."""
+    @action(description=_("Retry selected failed adaptations"))
+    def retry_failed_adaptations(self, request, queryset):
+        """Retry failed adaptation video ad units by creating new ones with same parameters."""
         from .tasks import create_adaptation_task
 
-        failed_jobs = queryset.filter(status="failed")
-        if not failed_jobs.exists():
+        failed_adaptations = queryset.filter(status="failed", origin_or_adaptation="ADAPTATION")
+        if not failed_adaptations.exists():
             self.message_user(
                 request,
-                _("No failed jobs selected. Please select jobs with 'Failed' status."),
+                _("No failed adaptations selected. Please select adaptations with 'Failed' status."),
                 level=messages.WARNING,
             )
             return
 
         retried_count = 0
-        for job in failed_jobs:
-            # Create new job with same parameters
-            new_job = AdaptationJob.objects.create(
-                tv_spot=job.tv_spot,
-                origin_version=job.origin_version,
-                region=job.region,
-                country=job.country,
-                language=job.language,
-                llm_model=job.llm_model,
-                use_pipeline=job.use_pipeline,
+        for adaptation in failed_adaptations:
+            # Create new adaptation with same parameters
+            new_adaptation = VideoAdUnit.objects.create(
+                campaign=adaptation.campaign,
+                origin_or_adaptation="ADAPTATION",
+                code=adaptation.code,
+                title=adaptation.title,
+                region=adaptation.region,
+                country=adaptation.country,
+                language=adaptation.language,
+                llm_model=adaptation.llm_model,
+                source_ad_unit=adaptation.source_ad_unit,
+                use_pipeline=adaptation.use_pipeline,
                 status="pending",
             )
 
             # Queue the task
             task = create_adaptation_task.apply_async(
-                args=[new_job.pk],
+                args=[new_adaptation.pk],
                 queue="default",
             )
-            new_job.celery_task_id = task.id
-            new_job.save(update_fields=["celery_task_id"])
+            new_adaptation.celery_task_id = task.id
+            new_adaptation.save(update_fields=["celery_task_id"])
             retried_count += 1
 
         self.message_user(
             request,
-            _(f"Created {retried_count} new adaptation job(s) from failed jobs."),
+            _(f"Created {retried_count} new adaptation(s) from failed adaptations."),
             level=messages.SUCCESS,
         )
-
-    actions = ["retry_failed_jobs"]
-
-
-# ---------------------------------------------------------------------------
-# TV Spot Inlines
-# ---------------------------------------------------------------------------
-
-
-class TvSpotScriptRowInline(TabularInline):
-    """Inline display of script rows for TvSpotVersion."""
-
-    model = TvSpotScriptRow
-    tab = True
-    extra = 0
-    fields = [
-        "shot_number",
-        "timecode_start",
-        "duration_seconds",
-        "visual_text",
-        "audio_text",
-    ]
-    ordering = ["order_index"]
-
-
-class TvSpotVersionInline(TabularInline):
-    """Inline display of versions for TvSpot."""
-
-    model = TvSpotVersion
-    tab = True
-    extra = 0
-    fields = ["code", "name", "version_type", "market", "language", "is_active"]
-    readonly_fields = ["code", "name", "version_type", "market", "language"]
-    can_delete = False
-    show_change_link = True
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-
-class AdaptationJobInline(TabularInline):
-    """Inline display of adaptation jobs for TvSpot."""
-
-    model = AdaptationJob
-    tab = True
-    extra = 0
-    fields = ["show_target", "show_pipeline", "show_status", "result_version", "created_at"]
-    readonly_fields = ["show_target", "show_pipeline", "show_status", "result_version", "created_at"]
-    can_delete = False
-    show_change_link = True
-    verbose_name = "Adaptation Request"
-    verbose_name_plural = "Adaptation Requests"
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    @display(description=_("Target"))
-    def show_target(self, obj):
-        parts = [obj.region.name] if obj.region else []
-        if obj.country:
-            parts.append(obj.country.name)
-        parts.append(f"({obj.language.code})")
-        return " / ".join(parts)
-
-    @display(description=_("Pipeline"), boolean=True)
-    def show_pipeline(self, obj):
-        return obj.use_pipeline
-
-    @display(
-        description=_("Status"),
-        label={
-            "Pending": "info",
-            "Processing": "warning",
-            "Completed": "success",
-            "Failed": "danger",
-            "Concept Analysis": "warning",
-            "Cultural Analysis": "warning",
-            "Writing": "warning",
-            "Cultural Evaluation": "warning",
-            "Concept Evaluation": "warning",
-            "Revising": "warning",
-        },
-    )
-    def show_status(self, obj):
-        return obj.get_status_display()
-
-
-# ---------------------------------------------------------------------------
-# TvSpot
-# ---------------------------------------------------------------------------
-
-
-@admin.register(TvSpot)
-class TvSpotAdmin(ModelAdmin):
-    list_display = [
-        "script_title",
-        "client_name",
-        "brand_name",
-        "job_id",
-        "show_trt",
-        "show_versions_count",
-        "created_at",
-    ]
-    list_filter = ["client_name", "created_at"]
-    search_fields = ["script_title", "client_name", "brand_name", "job_id"]
-    readonly_fields = ["created_at", "updated_at"]
-    inlines = [TvSpotVersionInline, AdaptationJobInline]
-    actions_list = ["import_tvspot_action"]
-    actions_detail = ["create_adaptation_action"]
-
-    fieldsets = (
-        (
-            _("Project"),
-            {
-                "classes": ["tab"],
-                "fields": (
-                    ("client_name", "brand_name"),
-                    ("script_title", "job_id"),
-                    "total_runtime_seconds",
-                ),
-            },
-        ),
-        (
-            _("Notes"),
-            {
-                "classes": ["tab"],
-                "fields": ("notes",),
-            },
-        ),
-        (
-            _("Metadata"),
-            {
-                "classes": ["tab"],
-                "fields": ("created_at", "updated_at"),
-            },
-        ),
-    )
-
-    @display(description=_("TRT"))
-    def show_trt(self, obj):
-        return f"{obj.total_runtime_seconds}s"
-
-    @display(description=_("Versions"))
-    def show_versions_count(self, obj):
-        count = obj.versions.count()
-        if count > 0:
-            url = reverse("admin:tvspots_tvspotversion_changelist")
-            return format_html(
-                '<a href="{}?tv_spot__id__exact={}">{}</a>',
-                url,
-                obj.id,
-                count,
-            )
-        return "0"
-
-    def get_urls(self):
-        """Add custom URLs for import and adaptation actions."""
-        urls = super().get_urls()
-        custom_urls = [
-            path(
-                "import/",
-                self.admin_site.admin_view(self.import_tvspot_view),
-                name="tvspots_tvspot_import",
-            ),
-            path(
-                "<int:object_id>/create-adaptation/",
-                self.admin_site.admin_view(self.create_adaptation_view),
-                name="tvspots_tvspot_create_adaptation",
-            ),
-            path(
-                "api/language/<int:language_id>/models/",
-                self.admin_site.admin_view(self.get_language_models_api),
-                name="tvspots_tvspot_language_models_api",
-            ),
-        ]
-        return custom_urls + urls
-
-    def get_language_models_api(self, request, language_id):
-        """AJAX endpoint to get models for a language."""
-        from django.http import JsonResponse
-
-        from cw.core.models import Language
-
-        try:
-            language = Language.objects.select_related("primary_model").prefetch_related(
-                "alternative_models"
-            ).get(pk=language_id)
-        except Language.DoesNotExist:
-            return JsonResponse({"error": "Language not found"}, status=404)
-
-        models = [
-            {
-                "id": language.primary_model.id,
-                "model_id": language.primary_model.model_id,
-                "name": language.primary_model.name,
-                "is_primary": True,
-            }
-        ]
-        for alt in language.alternative_models.filter(is_active=True):
-            models.append({
-                "id": alt.id,
-                "model_id": alt.model_id,
-                "name": alt.name,
-                "is_primary": False,
-            })
-
-        return JsonResponse({
-            "language": {"id": language.id, "code": language.code, "name": language.name},
-            "models": models,
-        })
-
-    def import_tvspot_view(self, request):
-        """Handle importing a TV spot from JSON."""
-        import json
-
-        from django.db import transaction
-        from django.template.response import TemplateResponse
-
-        if request.method == "POST":
-            # Check for uploaded file first, then fallback to pasted JSON
-            json_file = request.FILES.get("json_file")
-            json_data = None
-
-            if json_file:
-                try:
-                    json_data = json_file.read().decode("utf-8")
-                except Exception as e:
-                    messages.error(request, f"Error reading file: {e}")
-                    return redirect("admin:tvspots_tvspot_import")
-            else:
-                json_data = request.POST.get("json_data", "").strip()
-
-            if not json_data:
-                messages.error(request, "JSON data or file is required.")
-                return redirect("admin:tvspots_tvspot_import")
-
-            try:
-                data = json.loads(json_data)
-            except json.JSONDecodeError as e:
-                messages.error(request, f"Invalid JSON: {e}")
-                return redirect("admin:tvspots_tvspot_import")
-
-            # Validate required fields
-            errors = self._validate_tvspot_json(data)
-            if errors:
-                for error in errors:
-                    messages.error(request, error)
-                return redirect("admin:tvspots_tvspot_import")
-
-            # Check for duplicate job_id
-            job_id = data["job_id"]
-            if TvSpot.objects.filter(job_id=job_id).exists():
-                messages.error(request, f"TV Spot with job_id '{job_id}' already exists.")
-                return redirect("admin:tvspots_tvspot_import")
-
-            # Create records
-            try:
-                with transaction.atomic():
-                    from cw.core.models import Language
-
-                    # Lookup Language by code
-                    language_code = data.get("language", "en-US")
-                    try:
-                        language = Language.objects.get(code=language_code)
-                    except Language.DoesNotExist:
-                        messages.error(
-                            request,
-                            f"Language '{language_code}' not found. Please create it first or use an existing language code.",
-                        )
-                        return redirect("admin:tvspots_tvspot_import")
-
-                    tv_spot = TvSpot.objects.create(
-                        client_name=data["client_name"],
-                        brand_name=data.get("brand_name", ""),
-                        script_title=data["script_title"],
-                        total_runtime_seconds=data["total_runtime_seconds"],
-                        job_id=job_id,
-                        notes=data.get("notes", ""),
-                    )
-
-                    version = TvSpotVersion.objects.create(
-                        tv_spot=tv_spot,
-                        version_type="origin",
-                        code="ORIGIN",
-                        name="Origin",
-                        language=language,
-                    )
-
-                    for idx, row_data in enumerate(data["script_rows"]):
-                        TvSpotScriptRow.objects.create(
-                            tv_spot_version=version,
-                            order_index=idx,
-                            shot_number=row_data.get("shot_number", f"{idx + 1:02d}"),
-                            timecode_start=row_data.get("timecode_start", ""),
-                            duration_seconds=row_data.get("duration_seconds"),
-                            visual_text=row_data["visual_text"],
-                            audio_text=row_data["audio_text"],
-                        )
-
-                messages.success(
-                    request,
-                    f"Created TV Spot '{tv_spot.script_title}' with {len(data['script_rows'])} script rows.",
-                )
-                return redirect("admin:tvspots_tvspot_change", tv_spot.pk)
-
-            except Exception as e:
-                messages.error(request, f"Failed to create TV Spot: {e}")
-                return redirect("admin:tvspots_tvspot_import")
-
-        # Render import form
-        return TemplateResponse(
-            request,
-            "admin/tvspots/tvspot/import_tvspot.html",
-            {
-                **self.admin_site.each_context(request),
-                "title": _("Import TV Spot from JSON"),
-                "opts": self.model._meta,
-            },
-        )
-
-    def _validate_tvspot_json(self, data: dict) -> list:
-        """Validate JSON against expected schema. Returns list of errors."""
-        errors = []
-
-        required = ["client_name", "script_title", "total_runtime_seconds", "job_id", "script_rows"]
-        for field in required:
-            if field not in data:
-                errors.append(f"Missing required field: {field}")
-
-        if errors:
-            return errors
-
-        if not isinstance(data["script_rows"], list):
-            errors.append("script_rows must be an array")
-            return errors
-
-        if len(data["script_rows"]) == 0:
-            errors.append("script_rows must have at least one row")
-
-        if not isinstance(data["total_runtime_seconds"], int) or data["total_runtime_seconds"] <= 0:
-            errors.append("total_runtime_seconds must be a positive integer")
-
-        for idx, row in enumerate(data["script_rows"]):
-            if not isinstance(row, dict):
-                errors.append(f"script_rows[{idx}] must be an object")
-                continue
-            if "visual_text" not in row or not row["visual_text"]:
-                errors.append(f"script_rows[{idx}] missing or empty visual_text")
-            if "audio_text" not in row or not row["audio_text"]:
-                errors.append(f"script_rows[{idx}] missing or empty audio_text")
-
-        return errors
-
-    @action(
-        description=_("Import TV Spot"),
-        url_path="import-tvspot-action",
-    )
-    def import_tvspot_action(self, request):
-        """Redirect to the import TV spot view."""
-        return redirect("admin:tvspots_tvspot_import")
-
-    @action(
-        description=_("Create Adaptation"),
-        url_path="create-adaptation-action",
-        permissions=["create_adaptation_action"],
-    )
-    def create_adaptation_action(self, request, object_id):
-        """Redirect to the create adaptation view."""
-        return redirect("admin:tvspots_tvspot_create_adaptation", object_id)
-
-    def has_create_adaptation_action_permission(self, request, object_id=None):
-        """Only show button if there's an origin version."""
-        if object_id:
-            try:
-                tv_spot = TvSpot.objects.get(pk=object_id)
-                return tv_spot.versions.filter(version_type="origin").exists()
-            except TvSpot.DoesNotExist:
-                return False
-        return False
-
-    def create_adaptation_view(self, request, object_id):
-        """Handle creating an adaptation of a TV spot."""
-        import json
-
-        from django.template.response import TemplateResponse
-
-        from cw.core.models import Language, LLMModel
-
-        from .tasks import create_adaptation_task
-
-        tv_spot = TvSpot.objects.get(pk=object_id)
-        origin_version = tv_spot.versions.filter(version_type="origin").first()
-
-        if not origin_version:
-            messages.error(request, "No origin version found for this TV spot.")
-            return redirect("admin:tvspots_tvspot_change", object_id)
-
-        if request.method == "POST":
-            from cw.core.models import Country, Region
-
-            region_id = request.POST.get("region")
-            country_id = request.POST.get("country")
-            language_id = request.POST.get("language")
-            llm_model_id = request.POST.get("llm_model")
-
-            # Validate required fields
-            if not region_id or not language_id:
-                messages.error(request, "Please select a region and language.")
-                return redirect("admin:tvspots_tvspot_create_adaptation", object_id)
-
-            # Get the dimension objects
-            region = Region.objects.get(pk=region_id)
-            country = Country.objects.filter(pk=country_id).first() if country_id else None
-            language = Language.objects.get(pk=language_id)
-            llm_model = LLMModel.objects.filter(pk=llm_model_id).first() if llm_model_id else None
-
-            # Check for pending/processing adaptation job with same dimensions
-            pending_job = tv_spot.adaptation_jobs.filter(
-                region=region,
-                country=country,
-                language=language,
-                status__in=["pending", "processing"]
-            ).first()
-            if pending_job:
-                target_desc = f"{region.name}"
-                if country:
-                    target_desc += f" / {country.name}"
-                target_desc += f" ({language.code})"
-                messages.warning(
-                    request,
-                    f"An adaptation to {target_desc} is already in progress "
-                    f"(status: {pending_job.get_status_display()}).",
-                )
-                return redirect("admin:tvspots_adaptationjob_change", pending_job.pk)
-
-            # Create AdaptationJob to track the request (always use pipeline)
-            adaptation_job = AdaptationJob.objects.create(
-                tv_spot=tv_spot,
-                origin_version=origin_version,
-                region=region,
-                country=country,
-                language=language,
-                llm_model=llm_model,
-                use_pipeline=True,  # Always use multi-agent pipeline
-                status="pending",
-            )
-
-            # Queue the adaptation task with job ID
-            result = create_adaptation_task.apply_async(
-                args=[adaptation_job.pk], queue="default"
-            )
-
-            # Store the Celery task ID
-            adaptation_job.celery_task_id = result.id
-            adaptation_job.save(update_fields=["celery_task_id"])
-
-            target_desc = f"{region.name}"
-            if country:
-                target_desc += f" / {country.name}"
-            target_desc += f" ({language.code})"
-
-            messages.success(
-                request,
-                f"Adaptation to {target_desc} queued for processing. "
-                f"Track progress in the Adaptation Requests section below.",
-            )
-            return redirect("admin:tvspots_tvspot_change", object_id)
-
-        # Get available dimensions
-        from cw.core.models import Country, CountryLanguage, CountryRegion, Region
-
-        regions = Region.objects.filter(is_active=True).order_by("name")
-        countries = Country.objects.filter(is_active=True).order_by("name")
-        languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
-
-        # Build region → countries mapping
-        region_countries = {}
-        for cr in CountryRegion.objects.select_related("region", "country"):
-            if cr.region_id not in region_countries:
-                region_countries[cr.region_id] = []
-            region_countries[cr.region_id].append(cr.country_id)
-
-        # Build country → languages mapping (with primary languages first)
-        country_languages = {}
-        for cl in CountryLanguage.objects.select_related("country", "language").order_by("-is_primary"):
-            if cl.country_id not in country_languages:
-                country_languages[cl.country_id] = []
-            country_languages[cl.country_id].append(cl.language_id)
-
-        # Get pending jobs to show
-        pending_jobs = tv_spot.adaptation_jobs.filter(
-            status__in=["pending", "processing"]
-        ).select_related("region", "country", "language")
-
-        return TemplateResponse(
-            request,
-            "admin/tvspots/tvspot/create_adaptation.html",
-            {
-                **self.admin_site.each_context(request),
-                "title": _("Create Adaptation"),
-                "opts": self.model._meta,
-                "tv_spot": tv_spot,
-                "origin_version": origin_version,
-                "regions": regions,
-                "countries": countries,
-                "languages": languages,
-                "pending_jobs": pending_jobs,
-                "region_countries_json": json.dumps(region_countries),
-                "country_languages_json": json.dumps(country_languages),
-            },
-        )
-
-
-# ---------------------------------------------------------------------------
-# TvSpotVersion
-# ---------------------------------------------------------------------------
-
-
-@admin.register(TvSpotVersion)
-class TvSpotVersionAdmin(ModelAdmin):
-    list_display = [
-        "show_title",
-        "code",
-        "name",
-        "version_type",
-        "market",
-        "language",
-        "show_rows_count",
-        "show_active",
-    ]
-    list_filter = ["version_type", "market", "is_active", "tv_spot"]
-    search_fields = ["code", "name", "tv_spot__script_title", "tv_spot__job_id"]
-    readonly_fields = ["created_at", "updated_at"]
-    inlines = [TvSpotScriptRowInline]
-    actions_detail = ["view_storyboard_action", "generate_storyboard_action"]
-
-    fieldsets = (
-        (
-            _("Version"),
-            {
-                "classes": ["tab"],
-                "fields": (
-                    "tv_spot",
-                    ("version_type", "market"),
-                    ("code", "name"),
-                    "language",
-                    "is_active",
-                ),
-            },
-        ),
-        (
-            _("Visual Style"),
-            {
-                "classes": ["tab"],
-                "fields": ("visual_style_prompt",),
-            },
-        ),
-        (
-            _("Metadata"),
-            {
-                "classes": ["tab"],
-                "fields": ("created_at", "updated_at"),
-            },
-        ),
-    )
-
-    @display(description=_("TV Spot"))
-    def show_title(self, obj):
-        return obj.tv_spot.script_title
-
-    @display(description=_("Rows"))
-    def show_rows_count(self, obj):
-        return obj.script_rows.count()
-
-    @display(description=_("Active"), boolean=True)
-    def show_active(self, obj):
-        return obj.is_active
 
     def get_urls(self):
         """Add custom URLs for storyboard generation and viewing."""
@@ -959,12 +773,12 @@ class TvSpotVersionAdmin(ModelAdmin):
             path(
                 "<int:object_id>/generate-storyboard/",
                 self.admin_site.admin_view(self.generate_storyboard_view),
-                name="tvspots_tvspotversion_generate_storyboard",
+                name="tvspots_videoadunit_generate_storyboard",
             ),
             path(
                 "<int:object_id>/storyboard/",
                 self.admin_site.admin_view(self.storyboard_view),
-                name="tvspots_tvspotversion_storyboard",
+                name="tvspots_videoadunit_storyboard",
             ),
         ]
         return custom_urls + urls
@@ -976,18 +790,18 @@ class TvSpotVersionAdmin(ModelAdmin):
     )
     def view_storyboard_action(self, request, object_id):
         """Redirect to the storyboard viewer."""
-        return redirect("admin:tvspots_tvspotversion_storyboard", object_id)
+        return redirect("admin:tvspots_videoadunit_storyboard", object_id)
 
     def has_view_storyboard_action_permission(self, request, object_id=None):
         """Only show button if there are storyboard images."""
         if object_id:
             try:
-                version = TvSpotVersion.objects.get(pk=object_id)
-                # Check if there are any storyboard jobs with completed images
-                return version.storyboard_jobs.filter(
+                video_ad_unit = VideoAdUnit.objects.get(pk=object_id)
+                # Check if there are any storyboards with completed images
+                return video_ad_unit.storyboards.filter(
                     images__diffusion_job__status="completed"
                 ).exists()
-            except TvSpotVersion.DoesNotExist:
+            except VideoAdUnit.DoesNotExist:
                 return False
         return False
 
@@ -998,31 +812,31 @@ class TvSpotVersionAdmin(ModelAdmin):
     )
     def generate_storyboard_action(self, request, object_id):
         """Redirect to the generate storyboard view."""
-        return redirect("admin:tvspots_tvspotversion_generate_storyboard", object_id)
+        return redirect("admin:tvspots_videoadunit_generate_storyboard", object_id)
 
     def has_generate_storyboard_action_permission(self, request, object_id=None):
         """Only show button if there are script rows."""
         if object_id:
             try:
-                version = TvSpotVersion.objects.get(pk=object_id)
-                return version.script_rows.exists()
-            except TvSpotVersion.DoesNotExist:
+                video_ad_unit = VideoAdUnit.objects.get(pk=object_id)
+                return video_ad_unit.script_rows.exists()
+            except VideoAdUnit.DoesNotExist:
                 return False
         return False
 
     def generate_storyboard_view(self, request, object_id):
-        """Handle generating a storyboard for a TV spot version."""
+        """Handle generating a storyboard for a video ad unit."""
         from django.template.response import TemplateResponse
 
         from cw.diffusion.models import DiffusionModel, LoraModel
 
         from .tasks import generate_storyboard_task
 
-        version = TvSpotVersion.objects.get(pk=object_id)
+        video_ad_unit = VideoAdUnit.objects.get(pk=object_id)
 
-        if not version.script_rows.exists():
-            messages.error(request, "No script rows found for this version.")
-            return redirect("admin:tvspots_tvspotversion_change", object_id)
+        if not video_ad_unit.script_rows.exists():
+            messages.error(request, "No script rows found for this video ad unit.")
+            return redirect("admin:tvspots_videoadunit_change", object_id)
 
         if request.method == "POST":
             model_id = request.POST.get("diffusion_model")
@@ -1032,11 +846,11 @@ class TvSpotVersionAdmin(ModelAdmin):
 
             if not model_id:
                 messages.error(request, "Please select a diffusion model.")
-                return redirect("admin:tvspots_tvspotversion_generate_storyboard", object_id)
+                return redirect("admin:tvspots_videoadunit_generate_storyboard", object_id)
 
-            # Create StoryboardJob
-            storyboard_job = StoryboardJob.objects.create(
-                tv_spot_version=version,
+            # Create Storyboard
+            storyboard = Storyboard.objects.create(
+                video_ad_unit=video_ad_unit,
                 diffusion_model_id=model_id,
                 lora_model_id=lora_id,
                 images_per_row=images_per_row,
@@ -1045,49 +859,49 @@ class TvSpotVersionAdmin(ModelAdmin):
 
             # Queue the storyboard generation task
             generate_storyboard_task.apply_async(
-                args=[storyboard_job.pk, enhance_prompts], queue="default"
+                args=[storyboard.pk, enhance_prompts], queue="default"
             )
 
-            total_images = version.script_rows.count() * images_per_row
+            total_images = video_ad_unit.script_rows.count() * images_per_row
             messages.success(
                 request,
                 f"Storyboard generation queued ({total_images} images). "
-                f"Check the Storyboard Jobs page for progress.",
+                f"Check the Storyboard page for progress.",
             )
-            return redirect("admin:tvspots_storyboardjob_change", storyboard_job.pk)
+            return redirect("admin:tvspots_storyboard_change", storyboard.pk)
 
         # Get available models and LoRAs
         models = DiffusionModel.objects.filter(is_active=True)
         loras = LoraModel.objects.filter(is_active=True)
 
-        existing_jobs = version.storyboard_jobs.all().select_related("diffusion_model")
+        existing_storyboards = video_ad_unit.storyboards.all().select_related("diffusion_model")
 
         return TemplateResponse(
             request,
-            "admin/tvspots/tvspotversion/generate_storyboard.html",
+            "admin/tvspots/videoadunit/generate_storyboard.html",
             {
                 **self.admin_site.each_context(request),
                 "title": _("Generate Storyboard"),
                 "opts": self.model._meta,
-                "version": version,
+                "video_ad_unit": video_ad_unit,
                 "models": models,
                 "loras": loras,
-                "existing_jobs": existing_jobs,
+                "existing_storyboards": existing_storyboards,
                 "lora_compat_url": reverse("admin:diffusion_diffusionjob_compatible_loras"),
             },
         )
 
     def storyboard_view(self, request, object_id):
-        """Display the storyboard viewer for a TV spot version."""
+        """Display the storyboard viewer for a video ad unit."""
         import os
 
         from django.conf import settings as django_settings
         from django.template.response import TemplateResponse
 
-        version = TvSpotVersion.objects.get(pk=object_id)
+        video_ad_unit = VideoAdUnit.objects.get(pk=object_id)
 
-        # Get the most recent storyboard job
-        storyboard_job = version.storyboard_jobs.order_by("-created_at").first()
+        # Get the most recent storyboard
+        storyboard = video_ad_unit.storyboards.order_by("-created_at").first()
 
         # Build frame data from storyboard images
         frames = []
@@ -1095,9 +909,9 @@ class TvSpotVersionAdmin(ModelAdmin):
         processing_count = 0
         pending_count = 0
 
-        if storyboard_job:
+        if storyboard:
             for image in (
-                storyboard_job.images.all()
+                storyboard.images.all()
                 .select_related("script_row", "diffusion_job")
                 .order_by("script_row__order_index", "image_index")
             ):
@@ -1133,13 +947,13 @@ class TvSpotVersionAdmin(ModelAdmin):
 
         return TemplateResponse(
             request,
-            "admin/tvspots/tvspotversion/storyboard_view.html",
+            "admin/tvspots/videoadunit/storyboard_view.html",
             {
                 **self.admin_site.each_context(request),
                 "title": _("Storyboard"),
                 "opts": self.model._meta,
-                "version": version,
-                "storyboard_job": storyboard_job,
+                "video_ad_unit": video_ad_unit,
+                "storyboard": storyboard,
                 "frames": frames,
                 "completed_count": completed_count,
                 "processing_count": processing_count,
@@ -1149,12 +963,12 @@ class TvSpotVersionAdmin(ModelAdmin):
 
 
 # ---------------------------------------------------------------------------
-# StoryboardJob
+# Storyboard
 # ---------------------------------------------------------------------------
 
 
 class StoryboardImageInline(TabularInline):
-    """Inline display of images for StoryboardJob."""
+    """Inline display of images for Storyboard."""
 
     model = StoryboardImage
     tab = True
@@ -1172,19 +986,18 @@ class StoryboardImageInline(TabularInline):
         return obj.diffusion_job.get_status_display() if obj.diffusion_job else "—"
 
 
-@admin.register(StoryboardJob)
-class StoryboardJobAdmin(ModelAdmin):
+@admin.register(Storyboard)
+class StoryboardAdmin(ModelAdmin):
     list_display = [
         "show_id",
-        "show_version",
+        "show_video_ad_unit",
         "diffusion_model",
         "lora_model",
         "images_per_row",
         "show_status",
-        "created_at",
     ]
-    list_filter = ["status", "diffusion_model", "tv_spot_version__tv_spot"]
-    search_fields = ["tv_spot_version__tv_spot__script_title", "tv_spot_version__code"]
+    list_filter = ["status", "diffusion_model", "video_ad_unit__campaign"]
+    search_fields = ["video_ad_unit__campaign__script_title", "video_ad_unit__code"]
     readonly_fields = ["created_at", "completed_at"]
     inlines = [StoryboardImageInline]
 
@@ -1194,7 +1007,7 @@ class StoryboardJobAdmin(ModelAdmin):
             {
                 "classes": ["tab"],
                 "fields": (
-                    "tv_spot_version",
+                    "video_ad_unit",
                     ("diffusion_model", "lora_model"),
                     "images_per_row",
                 ),
@@ -1220,9 +1033,9 @@ class StoryboardJobAdmin(ModelAdmin):
     def show_id(self, obj):
         return f"#{obj.pk}"
 
-    @display(description=_("Version"))
-    def show_version(self, obj):
-        return f"{obj.tv_spot_version.tv_spot.script_title} / {obj.tv_spot_version.code}"
+    @display(description=_("Video Ad Unit"))
+    def show_video_ad_unit(self, obj):
+        return f"{obj.video_ad_unit.campaign.script_title} / {obj.video_ad_unit.code}"
 
     @display(
         description=_("Status"),
@@ -1237,7 +1050,7 @@ class StoryboardJobAdmin(ModelAdmin):
         return obj.get_status_display()
 
     def save_model(self, request, obj, form, change):
-        """Auto-queue new storyboard jobs on save."""
+        """Auto-queue new storyboards on save."""
         is_new = obj.pk is None
         super().save_model(request, obj, form, change)
         if is_new and obj.status == "pending":
@@ -1246,117 +1059,3 @@ class StoryboardJobAdmin(ModelAdmin):
             generate_storyboard_task.apply_async(
                 args=[obj.pk, True], queue="default"  # enhance_prompts=True by default
             )
-
-
-# ---------------------------------------------------------------------------
-# TVSpotAdaptation
-# ---------------------------------------------------------------------------
-
-
-@admin.register(TVSpotAdaptation)
-class TVSpotAdaptationAdmin(ModelAdmin):
-    """Admin for the flat TVSpotAdaptation model with dimensional tagging."""
-
-    list_display = [
-        "title",
-        "job_id",
-        "show_region",
-        "show_country",
-        "show_language",
-        "show_depth",
-        "created_at",
-    ]
-    list_filter = ["region", "country", "language"]
-    search_fields = ["job_id", "title", "adaptation_notes"]
-    readonly_fields = ["created_at", "updated_at"]
-    autocomplete_fields = ["source_adaptation", "region", "country", "language"]
-
-    fieldsets = (
-        (
-            _("Identification"),
-            {
-                "classes": ["tab"],
-                "fields": ("job_id", "title", "source_adaptation"),
-            },
-        ),
-        (
-            _("Dimensional Context"),
-            {
-                "classes": ["tab"],
-                "fields": ("region", "country", "language"),
-                "description": "Tag this adaptation with relevant dimensions (all optional)",
-            },
-        ),
-        (
-            _("Content"),
-            {
-                "classes": ["tab"],
-                "fields": ("script_data", "adaptation_notes"),
-            },
-        ),
-        (
-            _("Metadata"),
-            {
-                "classes": ["tab"],
-                "fields": ("created_at", "updated_at"),
-            },
-        ),
-    )
-
-    @display(description=_("Region"))
-    def show_region(self, obj):
-        return obj.region.name if obj.region else "-"
-
-    @display(description=_("Country"))
-    def show_country(self, obj):
-        return obj.country.name if obj.country else "-"
-
-    @display(description=_("Language"))
-    def show_language(self, obj):
-        return obj.language.code if obj.language else "-"
-
-    @display(description=_("Depth"))
-    def show_depth(self, obj):
-        depth = obj.get_depth()
-        return f"Level {depth}" if depth > 0 else "Root"
-
-    def create_child_adaptation(self, request, queryset):
-        """Admin action to create a child adaptation from selected parent."""
-        if queryset.count() != 1:
-            self.message_user(
-                request,
-                "Please select exactly one adaptation to use as parent",
-                level=messages.WARNING,
-            )
-            return
-
-        parent = queryset.first()
-        # Redirect to add page with parent pre-filled (requires custom add view)
-        url = reverse("admin:tvspots_tvspotadaptation_add")
-        return redirect(f"{url}?source_adaptation={parent.pk}")
-
-    create_child_adaptation.short_description = _("Create child adaptation")
-
-    def view_adaptation_chain(self, request, queryset):
-        """Display the full adaptation chain for selected adaptations."""
-        if queryset.count() != 1:
-            self.message_user(
-                request,
-                "Please select exactly one adaptation to view its chain",
-                level=messages.WARNING,
-            )
-            return
-
-        adaptation = queryset.first()
-        chain = adaptation.get_adaptation_chain()
-
-        chain_display = " → ".join([a.title for a in chain])
-        self.message_user(
-            request,
-            f"Adaptation chain ({len(chain)} levels): {chain_display}",
-            level=messages.INFO,
-        )
-
-    view_adaptation_chain.short_description = _("View adaptation chain")
-
-    actions = [create_child_adaptation, view_adaptation_chain]

@@ -183,25 +183,25 @@ class StoryboardGenerator:
 
     def generate_prompts_for_version(
         self,
-        tv_spot_version,
+        video_ad_unit,
         enhance: bool = True,
     ) -> list[dict]:
         """
-        Generate prompts for all script rows in a TV spot version.
+        Generate prompts for all script rows in a video ad unit.
 
         Args:
-            tv_spot_version: TvSpotVersion instance
+            video_ad_unit: VideoAdUnit instance
             enhance: Whether to use LLM enhancement
 
         Returns:
             List of prompt dicts, one per script row
         """
-        logger.debug(f"Generating prompts for version: {tv_spot_version.code}")
+        logger.debug(f"Generating prompts for video ad unit: {video_ad_unit.code}")
         prompts = []
-        visual_style = tv_spot_version.visual_style_prompt or ""
+        visual_style = video_ad_unit.visual_style_prompt or ""
         logger.debug(f"Visual style prompt: {visual_style[:50] if visual_style else '(none)'}...")
 
-        script_rows = list(tv_spot_version.script_rows.all().order_by("order_index"))
+        script_rows = list(video_ad_unit.script_rows.all().order_by("order_index"))
         logger.debug(f"Processing {len(script_rows)} script rows")
 
         for idx, row in enumerate(script_rows):
@@ -218,38 +218,35 @@ class StoryboardGenerator:
             prompt_data["shot_number"] = row.shot_number
             prompts.append(prompt_data)
 
-        logger.info(f"Generated {len(prompts)} prompts for version {tv_spot_version.code}")
+        logger.info(f"Generated {len(prompts)} prompts for video ad unit {video_ad_unit.code}")
         return prompts
 
 
 def create_storyboard_jobs(
-    storyboard_job,
+    storyboard,
     prompts: list[dict],
 ) -> list:
     """
-    Create DiffusionJobs and StoryboardImages for a storyboard job.
+    Create DiffusionJobs and StoryboardImages for a storyboard.
 
     Args:
-        storyboard_job: StoryboardJob instance
+        storyboard: Storyboard instance
         prompts: List of prompt dicts from generate_prompts_for_version
 
     Returns:
         List of created DiffusionJob instances
     """
-    from cw.diffusion.models import (
-        DiffusionJob,
-        Prompt,
-        StoryboardImage,
-    )
+    from cw.diffusion.models import DiffusionJob, Prompt
+    from cw.tvspots.models import StoryboardImage
 
-    tv_spot_version = storyboard_job.tv_spot_version
-    tv_spot = tv_spot_version.tv_spot
-    diffusion_model = storyboard_job.diffusion_model
-    lora_model = storyboard_job.lora_model
-    images_per_row = storyboard_job.images_per_row
+    video_ad_unit = storyboard.video_ad_unit
+    campaign = video_ad_unit.campaign
+    diffusion_model = storyboard.diffusion_model
+    lora_model = storyboard.lora_model
+    images_per_row = storyboard.images_per_row
 
     created_jobs = []
-    script_rows = {row.order_index: row for row in tv_spot_version.script_rows.all()}
+    script_rows = {row.order_index: row for row in video_ad_unit.script_rows.all()}
 
     for prompt_data in prompts:
         row_index = prompt_data["row_index"]
@@ -261,9 +258,9 @@ def create_storyboard_jobs(
             continue
 
         for img_idx in range(images_per_row):
-            # Create identifier: {job_id}_{version_code}_row-{NN}_img-{NN}
+            # Create identifier: {job_id}_{ad_unit_code}_row-{NN}_img-{NN}
             identifier = (
-                f"{tv_spot.job_id}_{tv_spot_version.code}_row-{shot_number}_img-{img_idx + 1:02d}"
+                f"{campaign.job_id}_{video_ad_unit.code}_row-{shot_number}_img-{img_idx + 1:02d}"
             )
 
             # Create Prompt record
@@ -287,7 +284,7 @@ def create_storyboard_jobs(
 
             # Create StoryboardImage link
             StoryboardImage.objects.create(
-                storyboard_job=storyboard_job,
+                storyboard=storyboard,
                 script_row=script_row,
                 diffusion_job=diffusion_job,
                 image_index=img_idx,
@@ -298,7 +295,7 @@ def create_storyboard_jobs(
             logger.info(
                 f"Created DiffusionJob for storyboard: {identifier}",
                 extra={
-                    "storyboard_job_id": storyboard_job.pk,
+                    "storyboard_id": storyboard.pk,
                     "diffusion_job_id": diffusion_job.pk,
                     "row_index": row_index,
                     "image_index": img_idx,
