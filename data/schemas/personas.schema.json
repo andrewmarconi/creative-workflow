@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Personas Schema",
+  "description": "Schema for audience personas - named collections of segments representing target audience profiles",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["name", "is_active"],
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Persona name (e.g., 'Budget-Conscious First-Timer', 'Luxury Enthusiast')",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "description": {
+        "type": "string",
+        "description": "Optional description of this persona"
+      },
+      "region_code": {
+        "type": ["string", "null"],
+        "description": "Target region code (e.g., 'DACH', 'NORDICS', 'LATAM') - must match existing Region.code",
+        "pattern": "^[A-Z_]+$"
+      },
+      "country_code": {
+        "type": ["string", "null"],
+        "description": "Target country ISO 3166-1 alpha-2 code (e.g., 'US', 'CA', 'DE') - must match existing Country.code",
+        "pattern": "^[A-Z]{2}$"
+      },
+      "language_code": {
+        "type": ["string", "null"],
+        "description": "Target language locale code (e.g., 'en-US', 'fr-CA', 'de-CH') - must match existing Language.code",
+        "pattern": "^[a-z]{2}-[A-Z]{2}$"
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether the persona is currently active"
+      }
+    },
+    "additionalProperties": false
+  }
+}

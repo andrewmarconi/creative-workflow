@@ -282,3 +282,243 @@ The ``import_reference_data`` command imports files in dependency order:
 
 See :doc:`/research/AdaptationProfiles` for the cultural adaptation research framework that
 informed the design of this reference data system.
+
+----
+
+Segmentation Schemas
+--------------------
+
+Non-geographic audience segmentation data (demographic, behavioral, psychographic) is stored in
+separate JSON files under ``data/``. These files are imported via the ``import_segments`` and
+``import_personas`` management commands.
+
+Data Files
+~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - File
+     - Description
+   * - :download:`segments.json <../../data/segments.json>`
+     - Demographic, behavioral, and psychographic audience segments
+   * - ``personas.json``
+     - Named collections of segments representing target audience profiles
+   * - ``persona_segments.json``
+     - Many-to-many: Persona to Segment mappings (with display order)
+
+Segments Schema
+~~~~~~~~~~~~~~~
+
+**Schema File**: ``data/schemas/segments.schema.json``
+
+Each segment represents a position along a specific dimension of audience analysis. Segments are
+organized into three categories: DEMOGRAPHIC, BEHAVIORAL, and PSYCHOGRAPHIC.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 15 65
+
+   * - Property
+     - Type
+     - Description
+   * - ``category``
+     - string (enum)
+     - Segment category: ``DEMOGRAPHIC``, ``BEHAVIORAL``, or ``PSYCHOGRAPHIC``
+   * - ``vector``
+     - string (1-100 chars)
+     - Dimension being segmented (e.g., "Household Income", "Usage Rate")
+   * - ``value``
+     - string (1-100 chars)
+     - Position on the dimension (e.g., "$75K-$100K", "Heavy User")
+   * - ``description``
+     - string (optional)
+     - Longer segment description
+   * - ``insights``
+     - array (optional)
+     - Structured insights with headings and points
+   * - ``is_active``
+     - boolean
+     - Whether the segment is currently active
+
+**Example**:
+
+.. code-block:: json
+
+   [
+     {
+       "category": "DEMOGRAPHIC",
+       "vector": "Age",
+       "value": "25-34 (Millennials - Younger)",
+       "description": "",
+       "insights": [],
+       "is_active": true
+     },
+     {
+       "category": "BEHAVIORAL",
+       "vector": "Innovation Adoption",
+       "value": "Early Adopters (13.5%)",
+       "description": "Respect, opinion leaders, educated, socially forward",
+       "insights": [
+         {
+           "heading": "Characteristics",
+           "points": [
+             "Willing to try new products before most others",
+             "Often serve as opinion leaders in their communities",
+             "Generally higher education and income levels"
+           ]
+         }
+       ],
+       "is_active": true
+     }
+   ]
+
+Personas Schema
+~~~~~~~~~~~~~~~
+
+**Schema File**: ``data/schemas/personas.schema.json``
+
+Personas combine geographic segments (Region/Country/Language) with non-geographic segments
+to create complete target audience profiles.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 15 65
+
+   * - Property
+     - Type
+     - Description
+   * - ``name``
+     - string (1-200 chars)
+     - Persona name (e.g., "Budget-Conscious First-Timer")
+   * - ``description``
+     - string (optional)
+     - Detailed persona description
+   * - ``region_code``
+     - string | null
+     - Region code (e.g., "NA", "DACH") - must match existing Region.code
+   * - ``country_code``
+     - string | null
+     - ISO 3166-1 alpha-2 code (e.g., "US", "DE") - must match existing Country.code
+   * - ``language_code``
+     - string | null
+     - Locale code (e.g., "en-US", "de-CH") - must match existing Language.code
+   * - ``is_active``
+     - boolean
+     - Whether the persona is currently active
+
+**Code Validation Patterns**:
+
+- ``region_code``: ``^[A-Z_]+$`` (uppercase letters and underscores)
+- ``country_code``: ``^[A-Z]{2}$`` (ISO 3166-1 alpha-2 format)
+- ``language_code``: ``^[a-z]{2}-[A-Z]{2}$`` (language-country format)
+
+**Example**:
+
+.. code-block:: json
+
+   [
+     {
+       "name": "Urban Tech-Savvy Millennial",
+       "description": "Young professional in urban area, early adopter of technology",
+       "region_code": "NA",
+       "country_code": "US",
+       "language_code": "en-US",
+       "is_active": true
+     },
+     {
+       "name": "Budget-Conscious Student",
+       "description": "Cost-sensitive younger demographic focused on value",
+       "region_code": null,
+       "country_code": null,
+       "language_code": null,
+       "is_active": true
+     }
+   ]
+
+Persona-Segment Mappings Schema
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Schema File**: ``data/schemas/persona_segments.schema.json``
+
+Defines the many-to-many relationships between personas and non-geographic segments.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 15 65
+
+   * - Property
+     - Type
+     - Description
+   * - ``persona_name``
+     - string (1-200 chars)
+     - Name of persona - must match existing Persona.name
+   * - ``segment_category``
+     - string (enum)
+     - ``DEMOGRAPHIC``, ``BEHAVIORAL``, or ``PSYCHOGRAPHIC``
+   * - ``segment_vector``
+     - string (1-100 chars)
+     - Must match existing Segment.vector
+   * - ``segment_value``
+     - string (1-100 chars)
+     - Must match existing Segment.value
+   * - ``order_index``
+     - integer (≥ 0)
+     - Display order within the persona (lower = earlier)
+
+**Referential Integrity**: The combination of ``(segment_category, segment_vector, segment_value)``
+must reference a valid segment that exists in ``segments.json``.
+
+**Example**:
+
+.. code-block:: json
+
+   [
+     {
+       "persona_name": "Urban Tech-Savvy Millennial",
+       "segment_category": "DEMOGRAPHIC",
+       "segment_vector": "Age",
+       "segment_value": "25-34 (Millennials - Younger)",
+       "order_index": 0
+     },
+     {
+       "persona_name": "Urban Tech-Savvy Millennial",
+       "segment_category": "BEHAVIORAL",
+       "segment_vector": "Innovation Adoption",
+       "segment_value": "Early Adopters (13.5%)",
+       "order_index": 1
+     },
+     {
+       "persona_name": "Urban Tech-Savvy Millennial",
+       "segment_category": "PSYCHOGRAPHIC",
+       "segment_vector": "Core Values",
+       "segment_value": "Innovation & Progress",
+       "order_index": 2
+     }
+   ]
+
+Import Commands
+~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # Import segments
+   uv run manage.py import_segments
+   uv run manage.py import_segments --dry-run  # Preview without importing
+
+   # Export segments
+   uv run manage.py export_segments
+   uv run manage.py export_segments --dir custom/
+
+   # Import personas (requires segments to exist)
+   uv run manage.py import_personas
+   uv run manage.py import_personas --dry-run
+
+   # Export personas
+   uv run manage.py export_personas
+   uv run manage.py export_personas --dir custom/
+
+See :doc:`/user/segmentation` for comprehensive documentation on the segmentation framework,
+including theoretical foundations (VALS, Rogers' Innovation Adoption Curve, AIO variables) and
+best practices for building audience personas.
