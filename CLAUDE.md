@@ -159,6 +159,36 @@ generative-creative-lab/
 - `admin.py` — Django Unfold admin (primary UI for creating prompts, queuing jobs, viewing results)
 - `tasks.py` — Celery tasks: `generate_images_task(job_id)`, `enhance_prompt_task(prompt_id)`
 
+**Django app** — `src/cw/tvspots/`:
+- `models.py` — TV spot campaign and ad unit models:
+  - `Campaign` — Top-level campaign container with job_id, client/brand info, and original script data
+  - `AdUnit` — Polymorphic base class for all ad unit types (VIDEO, AUDIO, PRINT) with multi-agent pipeline support
+  - `VideoAdUnit` — Video-specific ad unit (merges origin creation + adaptation pipeline + script content)
+  - `AdUnitScriptRow` — Script rows (shot/visual/audio) linked to any AdUnit
+  - `Storyboard` — Storyboard generation job linking VideoAdUnit to DiffusionModel
+  - `StoryboardImage` — Individual storyboard frames linking script rows to DiffusionJobs
+- `admin.py` — Django Unfold admin for campaign management, ad unit creation, and storyboard generation
+- `tasks.py` — Celery tasks: `create_adaptation_task(video_ad_unit_id)`, `generate_storyboard_task(storyboard_id)`
+
+**Domain Model Architecture** (Refactored 2026-02):
+```
+Campaign (job container)
+  ├── VideoAdUnit (origin, no source_ad_unit)
+  │     ├── AdUnitScriptRow (visual/audio script content)
+  │     └── Storyboard → StoryboardImage → DiffusionJob
+  └── VideoAdUnit (adaptation, references source_ad_unit)
+        ├── Region/Country/Language (target localization)
+        ├── AdUnitScriptRow (culturally-adapted script)
+        ├── concept_brief, cultural_brief (pipeline output)
+        └── evaluation_history (pipeline validation results)
+```
+
+**Key Model Features**:
+- **Polymorphic AdUnit**: Multi-table inheritance allows extensibility (AudioAdUnit, PrintAdUnit in future)
+- **Adaptation Chain**: `source_ad_unit` FK creates origin → adaptation graph within same Campaign
+- **Pipeline Integration**: VideoAdUnit includes pipeline status tracking, JSON brief storage, and metadata
+- **Multi-Agent Pipeline**: Powered by LangGraph with concept extraction, cultural research, writing, and evaluation agents
+
 **Supporting libraries** — `src/cw/lib/`:
 - `config.py` — `PresetsConfig` loads `data/presets.json`
 - `prompt_enhancer.py` — Three enhancers: rule-based (`PromptEnhancer`), local LLM (`HFPromptEnhancer` using Qwen2.5-3B), Anthropic API (`LLMPromptEnhancer`)
@@ -166,11 +196,30 @@ generative-creative-lab/
 - `loras/manager.py` — LoRA filtering by base architecture and optional theme (e.g., 'anime', 'photorealistic', 'fantasy')
 
 ### Data Flow
+
+**Diffusion Workflow**:
 1. User creates a `Prompt` and `DiffusionJob` via Django admin
 2. Admin `save_model()` hook auto-queues the job to Celery
 3. Worker loads model (with warm cache), optionally loads LoRA (auto-downloads from CivitAI if AIR set)
 4. Images generated and saved to `media/diffusion/`
 5. Job status updated, results viewable in admin with image previews
+
+**TV Spot Adaptation Workflow**:
+1. User creates a `Campaign` with original script JSON and origin `VideoAdUnit`
+2. User creates adaptation `VideoAdUnit` selecting target Region/Country/Language and source ad unit
+3. Admin `save_model()` hook auto-queues `create_adaptation_task` to Celery (if `use_pipeline=True`)
+4. Multi-agent pipeline executes via LangGraph:
+   - Concept extraction: Analyzes origin script for core themes, emotions, narrative structure
+   - Cultural research: Investigates target culture's values, communication styles, taboos
+   - Script writing: Adapts script with culturally-appropriate visuals and dialogue
+   - Cultural evaluation: Validates cultural sensitivity and appropriateness
+   - Concept evaluation: Ensures adapted script preserves original campaign intent
+   - Revision loop: Rewrites script if evaluations fail (max 3 iterations)
+5. Pipeline saves `concept_brief`, `cultural_brief`, `evaluation_history` to VideoAdUnit
+6. Adapted script rows saved as `AdUnitScriptRow` records
+7. User creates `Storyboard` for the adapted VideoAdUnit
+8. `generate_storyboard_task` generates image prompts and creates `DiffusionJob` records
+9. Storyboard images viewable in admin with inline frame previews
 
 ### Reference Data Architecture
 
