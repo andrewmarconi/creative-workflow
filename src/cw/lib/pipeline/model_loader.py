@@ -124,6 +124,10 @@ class PipelineModelLoader:
         base_generator = outlines.Generator(self._model, output_type=output_schema)
 
         # Wrap to add retry logic for probability tensor errors
+        # Capture model_id and device from outer scope
+        model_id = self.model_id
+        device = self.device
+
         class GeneratorWithRetry:
             """Wrapper that retries generation with safer parameters on numerical errors."""
 
@@ -140,13 +144,26 @@ class PipelineModelLoader:
                 except Exception as e:
                     error_str = str(e).lower()
 
-                    # Check if it's a numerical stability error
-                    if any(keyword in error_str for keyword in ["probability tensor", "inf", "nan", "element < 0"]):
-                        logger.warning(
-                            f"Numerical stability error detected: {e}. "
-                            f"This can happen with structured generation. "
-                            f"Clearing cache and retrying..."
-                        )
+                    # Check if it's a numerical stability error or FSM state error
+                    is_numerical_error = any(
+                        keyword in error_str
+                        for keyword in ["probability tensor", "inf", "nan", "element < 0"]
+                    )
+                    is_fsm_error = "no next state found" in error_str
+
+                    if is_numerical_error or is_fsm_error:
+                        if is_fsm_error:
+                            logger.warning(
+                                f"FSM state error for schema {output_schema.__name__}: {e}. "
+                                f"This usually means the model's output doesn't match schema constraints. "
+                                f"Clearing cache and retrying with reduced token limit..."
+                            )
+                        else:
+                            logger.warning(
+                                f"Numerical stability error detected: {e}. "
+                                f"This can happen with structured generation. "
+                                f"Clearing cache and retrying..."
+                            )
 
                         # Clear GPU cache which can help with numerical stability
                         import torch
@@ -155,14 +172,24 @@ class PipelineModelLoader:
                         elif torch.cuda.is_available():
                             torch.cuda.empty_cache()
 
-                        # Retry with a shorter prompt if possible
-                        logger.warning("Retrying generation after cache clear...")
+                        # Retry with reduced token limit for FSM errors
+                        retry_tokens = max_new_tokens // 2 if is_fsm_error else max_new_tokens
+                        logger.warning(
+                            f"Retrying generation after cache clear (max_tokens: {retry_tokens})..."
+                        )
                         try:
-                            result = base_generator(prompt, max_new_tokens=max_new_tokens, **kwargs)
+                            result = base_generator(prompt, max_new_tokens=retry_tokens, **kwargs)
                             logger.info("Retry after cache clear succeeded")
                             return result
                         except Exception as retry_e:
                             logger.error(f"Retry also failed: {retry_e}")
+                            # For FSM errors, provide more guidance
+                            if is_fsm_error:
+                                logger.error(
+                                    f"Schema {output_schema.__name__} may be too restrictive "
+                                    f"for model {model_id}. Consider simplifying the schema "
+                                    f"or using a more capable model."
+                                )
 
                     # Re-raise the original error
                     logger.error(

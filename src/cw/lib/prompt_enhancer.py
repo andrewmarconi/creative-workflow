@@ -565,13 +565,19 @@ class HFPromptEnhancer(PromptEnhancer):
             )
             logger.debug(f"Response length: {len(response)} chars")
 
-            # Try to extract JSON
-            import re
+            # Try to extract JSON - use JSONDecoder for robust parsing with nested objects
+            from json import JSONDecoder
 
-            json_match = re.search(r"\{.*\}", response, re.DOTALL)
-            if json_match:
-                result = json.loads(json_match.group())
-                logger.debug("JSON parsed successfully")
+            decoder = JSONDecoder()
+
+            # Find the first '{' and try to decode from there
+            json_start = response.find("{")
+            if json_start >= 0:
+                try:
+                    result, end_index = decoder.raw_decode(response, json_start)
+                    logger.debug(f"JSON parsed successfully (extracted {end_index - json_start} chars)")
+                except json.JSONDecodeError:
+                    raise ValueError("No valid JSON found in response")
 
                 # Clear MPS cache if using Apple Silicon
                 if self.device == "mps":
@@ -665,18 +671,24 @@ class LLMPromptEnhancer(PromptEnhancer):
 
             response_text = message.content[0].text
 
-            # Try to extract JSON
-            import re
+            # Try to extract JSON - use JSONDecoder for robust parsing with nested objects
+            from json import JSONDecoder
 
-            json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
-            if json_match:
-                result = json.loads(json_match.group())
-                return {
-                    "original": simple_prompt,
-                    "enhanced_prompt": result.get("enhanced_prompt", ""),
-                    "negative_prompt": result.get("negative_prompt", ""),
-                    "method": "llm",
-                }
+            decoder = JSONDecoder()
+
+            # Find the first '{' and try to decode from there
+            json_start = response_text.find("{")
+            if json_start >= 0:
+                try:
+                    result, end_index = decoder.raw_decode(response_text, json_start)
+                    return {
+                        "original": simple_prompt,
+                        "enhanced_prompt": result.get("enhanced_prompt", ""),
+                        "negative_prompt": result.get("negative_prompt", ""),
+                        "method": "llm",
+                    }
+                except json.JSONDecodeError:
+                    raise ValueError("No valid JSON found in response")
             else:
                 raise ValueError("No JSON found in response")
 

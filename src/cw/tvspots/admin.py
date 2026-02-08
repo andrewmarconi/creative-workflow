@@ -8,6 +8,7 @@ from django.contrib import admin, messages
 from django.shortcuts import redirect
 from django.urls import path, reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
@@ -113,6 +114,11 @@ class AdaptationMarketAdmin(ModelAdmin):
 
 @admin.register(AdaptationJob)
 class AdaptationJobAdmin(ModelAdmin):
+    class Media:
+        css = {
+            'all': ('admin/css/pipeline_progress.css',)
+        }
+
     list_display = [
         "show_id",
         "show_tvspot",
@@ -120,6 +126,7 @@ class AdaptationJobAdmin(ModelAdmin):
         "show_country",
         "show_language",
         "show_pipeline",
+        "show_pipeline_progress",
         "show_status",
         "created_at",
         "completed_at",
@@ -237,6 +244,76 @@ class AdaptationJobAdmin(ModelAdmin):
     def show_pipeline(self, obj):
         return obj.use_pipeline
 
+    @display(description=_("Progress"))
+    def show_pipeline_progress(self, obj):
+        """Display visual progress bar for pipeline stages."""
+        # Only show for pipeline jobs
+        if not obj.use_pipeline:
+            return "—"
+
+        # Define pipeline stages and their order
+        stages = [
+            ("pending", "Queue"),
+            ("concept_analysis", "Concept"),
+            ("cultural_analysis", "Culture"),
+            ("writing", "Writer"),
+            ("cultural_evaluation", "Review"),
+            ("completed", "Done"),
+        ]
+
+        # Map status to stage index
+        status_map = {
+            "pending": 0,
+            "processing": 0,  # Generic processing maps to pending
+            "concept_analysis": 1,
+            "cultural_analysis": 2,
+            "writing": 3,
+            "revising": 3,  # Revising is part of writing stage
+            "cultural_evaluation": 4,
+            "concept_evaluation": 4,
+            "completed": 5,
+            "failed": -1,  # Special case
+        }
+
+        current_stage = status_map.get(obj.status, 0)
+
+        # Handle failed status
+        if obj.status == "failed":
+            return mark_safe(
+                '<div class="pipeline-progress">'
+                '<span class="stage failed">✗ Failed</span>'
+                '</div>'
+            )
+
+        # Build progress bar HTML
+        html_parts = ['<div class="pipeline-progress">']
+
+        for idx, (stage_key, stage_label) in enumerate(stages):
+            if idx < current_stage:
+                css_class = "stage completed"
+                icon = "✓"
+            elif idx == current_stage:
+                css_class = "stage active"
+                icon = "●"
+            else:
+                css_class = "stage pending"
+                icon = "○"
+
+            html_parts.append(
+                f'<span class="{css_class}" title="{stage_label}">{icon}</span>'
+            )
+
+            # Add connector between stages (except after last)
+            if idx < len(stages) - 1:
+                connector_class = "connector completed" if idx < current_stage else "connector"
+                html_parts.append(f'<span class="{connector_class}">─</span>')
+
+        html_parts.append('</div>')
+
+        return mark_safe(''.join(html_parts))
+
+    show_pipeline_progress.allow_tags = True
+
     @display(
         description=_("Status"),
         label={
@@ -254,6 +331,51 @@ class AdaptationJobAdmin(ModelAdmin):
     )
     def show_status(self, obj):
         return obj.get_status_display()
+
+    @action(description=_("Retry selected failed jobs"))
+    def retry_failed_jobs(self, request, queryset):
+        """Retry failed adaptation jobs by creating new jobs with same parameters."""
+        from .tasks import create_adaptation_task
+
+        failed_jobs = queryset.filter(status="failed")
+        if not failed_jobs.exists():
+            self.message_user(
+                request,
+                _("No failed jobs selected. Please select jobs with 'Failed' status."),
+                level=messages.WARNING,
+            )
+            return
+
+        retried_count = 0
+        for job in failed_jobs:
+            # Create new job with same parameters
+            new_job = AdaptationJob.objects.create(
+                tv_spot=job.tv_spot,
+                origin_version=job.origin_version,
+                region=job.region,
+                country=job.country,
+                language=job.language,
+                llm_model=job.llm_model,
+                use_pipeline=job.use_pipeline,
+                status="pending",
+            )
+
+            # Queue the task
+            task = create_adaptation_task.apply_async(
+                args=[new_job.pk],
+                queue="default",
+            )
+            new_job.celery_task_id = task.id
+            new_job.save(update_fields=["celery_task_id"])
+            retried_count += 1
+
+        self.message_user(
+            request,
+            _(f"Created {retried_count} new adaptation job(s) from failed jobs."),
+            level=messages.SUCCESS,
+        )
+
+    actions = ["retry_failed_jobs"]
 
 
 # ---------------------------------------------------------------------------
@@ -701,7 +823,7 @@ class TvSpotAdmin(ModelAdmin):
 
             # Queue the adaptation task with job ID
             result = create_adaptation_task.apply_async(
-                args=[adaptation_job.pk], queue="enhancement"
+                args=[adaptation_job.pk], queue="default"
             )
 
             # Store the Celery task ID
@@ -923,7 +1045,7 @@ class TvSpotVersionAdmin(ModelAdmin):
 
             # Queue the storyboard generation task
             generate_storyboard_task.apply_async(
-                args=[storyboard_job.pk, enhance_prompts], queue="enhancement"
+                args=[storyboard_job.pk, enhance_prompts], queue="default"
             )
 
             total_images = version.script_rows.count() * images_per_row
@@ -1122,7 +1244,7 @@ class StoryboardJobAdmin(ModelAdmin):
             from .tasks import generate_storyboard_task
 
             generate_storyboard_task.apply_async(
-                args=[obj.pk, True], queue="enhancement"  # enhance_prompts=True by default
+                args=[obj.pk, True], queue="default"  # enhance_prompts=True by default
             )
 
 

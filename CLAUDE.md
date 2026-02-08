@@ -20,8 +20,7 @@ uv run honcho start docker django       # Start subset of processes (without wor
 ```bash
 docker compose up                               # PostgreSQL 17 + Valkey
 uv run manage.py runserver                      # Django dev server on :8000
-uv run celery -A cw worker -Q default   # Image generation worker
-uv run celery -A cw worker -Q enhancement  # Prompt enhancement worker
+uv run celery -A cw worker -Q default   # Single worker (handles all tasks sequentially)
 ```
 
 ### Database & Django
@@ -80,13 +79,15 @@ cat logs/tasks.log | jq 'select(.levelname == "ERROR")'
 ## Architecture
 
 ### Process Model
-Four processes run concurrently (defined in `Procfile`, launched via `uv run honcho start`):
+Three processes run concurrently (defined in `Procfile`, launched via `uv run honcho start`):
 1. **docker** — PostgreSQL 17 (port 5435) + Valkey (port 6379) + Grafana/Loki (log aggregation)
 2. **django** — Django dev server (port 8000)
-3. **worker** — Celery worker on `default` queue (image generation, GPU-intensive)
-4. **enhancement** — Celery worker on `enhancement` queue (prompt enhancement via local LLM)
+3. **worker** — Single Celery worker on `default` queue (all tasks: prompt enhancement, image generation)
 
-Celery uses `solo` pool (single-threaded) because MPS/CUDA contexts are not fork-safe.
+Celery uses `solo` pool (single-threaded) to prevent concurrent model loading. This ensures efficient GPU memory usage:
+- Storyboard generation: All prompts enhanced sequentially → then all images generated sequentially
+- Prevents loading multiple models simultaneously (Qwen + diffusion model)
+- Natural task batching with single queue
 
 **Grafana + Loki** (via `docker-compose.yml`, always enabled):
 - **Loki** (port 3100) — Log aggregation backend, stores all logs

@@ -865,7 +865,7 @@ class PromptAdmin(ModelAdmin):
         if prompt.enhanced_prompt:
             messages.warning(request, "Prompt is already enhanced.")
         else:
-            tasks.enhance_prompt_task.apply_async(args=[object_id], queue="enhancement")
+            tasks.enhance_prompt_task.apply_async(args=[object_id], queue="default")
             messages.success(request, "Prompt queued for enhancement.")
         return redirect("admin:diffusion_prompt_changelist")
 
@@ -882,7 +882,7 @@ class PromptAdmin(ModelAdmin):
         count = 0
         for prompt in queryset:
             if not prompt.enhanced_prompt:
-                tasks.enhance_prompt_task.apply_async(args=[prompt.id], queue="enhancement")
+                tasks.enhance_prompt_task.apply_async(args=[prompt.id], queue="default")
                 count += 1
         self.message_user(request, f"{count} prompts queued for enhancement.")
 

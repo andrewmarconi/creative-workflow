@@ -243,6 +243,15 @@ def generate_storyboard_task(self, storyboard_job_id, enhance_prompts=True):
             },
         )
 
+        # Clear GPU cache after prompt enhancement to free memory before image generation
+        import torch
+        if torch.backends.mps.is_available():
+            torch.mps.empty_cache()
+            logger.debug("Cleared MPS cache after prompt enhancement")
+        elif torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            logger.debug("Cleared CUDA cache after prompt enhancement")
+
         # Create DiffusionJobs and StoryboardImages
         created_jobs = create_storyboard_jobs(storyboard_job, prompts)
 
