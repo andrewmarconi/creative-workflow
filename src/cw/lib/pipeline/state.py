@@ -90,8 +90,10 @@ def build_initial_state(video_ad_unit) -> PipelineState:
         "cultural_brief": None,
         "adapted_script": None,
         # Evaluation
+        "format_feedback": None,
         "cultural_feedback": None,
         "concept_feedback": None,
+        "format_revision_count": 0,
         "cultural_revision_count": 0,
         "concept_revision_count": 0,
         # Terminal
@@ -152,6 +154,7 @@ def save_pipeline_result(video_ad_unit, final_state: PipelineState):
 
     # Always persist pipeline metadata
     video_ad_unit.pipeline_metadata = {
+        "format_revision_count": final_state.get("format_revision_count", 0),
         "cultural_revision_count": final_state.get("cultural_revision_count", 0),
         "concept_revision_count": final_state.get("concept_revision_count", 0),
         "final_model_id": final_state.get("model_id"),

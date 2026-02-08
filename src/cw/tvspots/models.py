@@ -64,6 +64,7 @@ class AdUnit(models.Model):
         ("concept_analysis", "Concept Analysis"),
         ("cultural_analysis", "Cultural Analysis"),
         ("writing", "Writing"),
+        ("format_evaluation", "Format Evaluation"),
         ("cultural_evaluation", "Cultural Evaluation"),
         ("concept_evaluation", "Concept Evaluation"),
         ("revising", "Revising"),

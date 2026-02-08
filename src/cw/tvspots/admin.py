@@ -50,6 +50,7 @@ class VideoAdUnitInline(TabularInline):
             "Concept Analysis": "warning",
             "Cultural Analysis": "warning",
             "Writing": "warning",
+            "Format Evaluation": "warning",
             "Cultural Evaluation": "warning",
             "Concept Evaluation": "warning",
             "Revising": "warning",
@@ -680,6 +681,7 @@ class VideoAdUnitAdmin(ModelAdmin):
             ("concept_analysis", "Concept"),
             ("cultural_analysis", "Culture"),
             ("writing", "Writer"),
+            ("format_evaluation", "Format"),
             ("cultural_evaluation", "Review"),
             ("completed", "Done"),
         ]
@@ -692,9 +694,10 @@ class VideoAdUnitAdmin(ModelAdmin):
             "cultural_analysis": 2,
             "writing": 3,
             "revising": 3,
-            "cultural_evaluation": 4,
-            "concept_evaluation": 4,
-            "completed": 5,
+            "format_evaluation": 4,
+            "cultural_evaluation": 5,
+            "concept_evaluation": 5,
+            "completed": 6,
             "failed": -1,
         }
 
@@ -747,6 +750,7 @@ class VideoAdUnitAdmin(ModelAdmin):
             "Concept Analysis": "warning",
             "Cultural Analysis": "warning",
             "Writing": "warning",
+            "Format Evaluation": "warning",
             "Cultural Evaluation": "warning",
             "Concept Evaluation": "warning",
             "Revising": "warning",
