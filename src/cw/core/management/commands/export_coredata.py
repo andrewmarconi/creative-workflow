@@ -29,7 +29,8 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from cw.core.models import Language, LLMModel
+from cw.audiences.models import Language
+from cw.core.models import LLMModel
 
 
 class Command(BaseCommand):

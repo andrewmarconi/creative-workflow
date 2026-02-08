@@ -99,7 +99,7 @@ class AdUnit(models.Model):
 
     # Metadata (null/blank for ORIGIN units)
     region = models.ForeignKey(
-        "core.Region",
+        "audiences.Region",
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -107,7 +107,7 @@ class AdUnit(models.Model):
         help_text="Target region (for adaptations)",
     )
     country = models.ForeignKey(
-        "core.Country",
+        "audiences.Country",
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -115,7 +115,7 @@ class AdUnit(models.Model):
         help_text="Target country (for adaptations)",
     )
     language = models.ForeignKey(
-        "core.Language",
+        "audiences.Language",
         on_delete=models.PROTECT,
         null=True,
         blank=True,

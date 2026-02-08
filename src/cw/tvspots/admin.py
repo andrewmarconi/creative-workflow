@@ -187,7 +187,7 @@ class CampaignAdmin(ModelAdmin):
             # Create records
             try:
                 with transaction.atomic():
-                    from cw.core.models import Language
+                    from cw.audiences.models import Language
 
                     # Lookup Language by code
                     language_code = data.get("language", "en-US")
@@ -312,7 +312,8 @@ class CampaignAdmin(ModelAdmin):
 
         from django.template.response import TemplateResponse
 
-        from cw.core.models import Language, LLMModel
+        from cw.audiences.models import Language
+        from cw.core.models import LLMModel
 
         from .tasks import create_adaptation_task
 
@@ -324,7 +325,7 @@ class CampaignAdmin(ModelAdmin):
             return redirect("admin:tvspots_campaign_change", object_id)
 
         if request.method == "POST":
-            from cw.core.models import Country, Region
+            from cw.audiences.models import Country, Region
 
             region_id = request.POST.get("region")
             country_id = request.POST.get("country")
@@ -415,7 +416,7 @@ class CampaignAdmin(ModelAdmin):
             return redirect("admin:tvspots_campaign_change", object_id)
 
         # Get available dimensions
-        from cw.core.models import Country, CountryLanguage, CountryRegion, Region
+        from cw.audiences.models import Country, CountryLanguage, CountryRegion, Region
 
         regions = Region.objects.filter(is_active=True).order_by("name")
         countries = Country.objects.filter(is_active=True).order_by("name")
@@ -462,7 +463,8 @@ class CampaignAdmin(ModelAdmin):
         """API endpoint to fetch available LLM models for a language."""
         from django.http import JsonResponse
 
-        from cw.core.models import Language, LLMModel
+        from cw.audiences.models import Language
+        from cw.core.models import LLMModel
 
         try:
             language = Language.objects.get(pk=language_id)

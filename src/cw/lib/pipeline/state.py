@@ -114,7 +114,7 @@ def save_pipeline_result(video_ad_unit, final_state: PipelineState):
     adapted_json = final_state.get("adapted_script")
 
     if adapted_json:
-        from cw.core.models import Language
+        from cw.audiences.models import Language
 
         result = AdaptationOutput.model_validate_json(adapted_json)
 
@@ -173,7 +173,7 @@ def get_alternative_model(language_code: str) -> Optional[object]:
 
     Returns ``None`` if no alternatives are available.
     """
-    from cw.core.models import Language
+    from cw.audiences.models import Language
 
     try:
         lang = Language.objects.get(code=language_code, is_active=True)
