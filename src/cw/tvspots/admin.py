@@ -131,6 +131,11 @@ class CampaignAdmin(ModelAdmin):
                 self.admin_site.admin_view(self.create_adaptation_view),
                 name="tvspots_campaign_create_adaptation",
             ),
+            path(
+                "language-models/<int:language_id>/",
+                self.admin_site.admin_view(self.language_models_api),
+                name="tvspots_campaign_language_models_api",
+            ),
         ]
         return custom_urls + urls
 
@@ -451,6 +456,36 @@ class CampaignAdmin(ModelAdmin):
                 "country_languages_json": json.dumps(country_languages),
             },
         )
+
+    def language_models_api(self, request, language_id):
+        """API endpoint to fetch available LLM models for a language."""
+        from django.http import JsonResponse
+
+        from cw.core.models import Language, LLMModel
+
+        try:
+            language = Language.objects.get(pk=language_id)
+        except Language.DoesNotExist:
+            return JsonResponse({"error": "Language not found"}, status=404)
+
+        # Get primary model and alternative models
+        models = []
+        if language.primary_model:
+            models.append({
+                "id": language.primary_model.id,
+                "name": language.primary_model.name,
+                "is_primary": True,
+            })
+
+        # Add alternative models
+        for alt_model in language.alternative_models.all():
+            models.append({
+                "id": alt_model.id,
+                "name": alt_model.name,
+                "is_primary": False,
+            })
+
+        return JsonResponse({"models": models})
 
 
 # ---------------------------------------------------------------------------
