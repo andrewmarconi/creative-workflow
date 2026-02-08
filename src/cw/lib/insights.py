@@ -1,20 +1,17 @@
 """Insights composition for multi-level adaptation guidance.
 
-Aggregates insights from region → country → language → market into a single
+Aggregates insights from region → country → language into a single
 hierarchical guidance document for LLM-based adaptations.
 """
 
-from typing import TYPE_CHECKING, Dict, List, Optional
-
-if TYPE_CHECKING:
-    from cw.core.models import Country, Region
+from typing import Dict, List
 
 
-def compose_insights(adaptation_job) -> List[Dict[str, str]]:
-    """Aggregate insights from region → country → language → market.
+def compose_insights(video_ad_unit) -> List[Dict[str, str]]:
+    """Aggregate insights from region → country → language.
 
     Args:
-        adaptation_job: AdaptationJob instance with dimensional references
+        video_ad_unit: VideoAdUnit instance with dimensional references (region, country, language)
 
     Returns:
         List of insight sections with source attribution:
@@ -29,53 +26,51 @@ def compose_insights(adaptation_job) -> List[Dict[str, str]]:
     insights = []
 
     # 1. Region-level insights (if applicable)
-    region = _get_region(adaptation_job)
-    if region and region.insights:
-        insights.append({"source": f"Region: {region.name}", "markdown": region.insights_as_markdown()})
+    if video_ad_unit.region and video_ad_unit.region.insights:
+        insights.append({
+            "source": f"Region: {video_ad_unit.region.name}",
+            "markdown": video_ad_unit.region.insights_as_markdown()
+        })
 
     # 2. Country-level insights (if applicable)
-    country = _get_country(adaptation_job)
-    if country and country.insights:
-        insights.append({"source": f"Country: {country.name}", "markdown": country.insights_as_markdown()})
+    if video_ad_unit.country and video_ad_unit.country.insights:
+        insights.append({
+            "source": f"Country: {video_ad_unit.country.name}",
+            "markdown": video_ad_unit.country.insights_as_markdown()
+        })
 
     # 3. Language-level insights (always present)
-    language = adaptation_job.effective_language
-    if language and language.insights:
-        insights.append({"source": f"Language: {language.name}", "markdown": language.insights_as_markdown()})
-
-    # 4. Market-level insights (campaign-specific, for backward compatibility)
-    if hasattr(adaptation_job, 'target_market') and adaptation_job.target_market:
-        market = adaptation_job.target_market
-        if market.rules:  # Note: 'rules' is legacy name, contains same structure as insights
-            insights.append({"source": f"Market: {market.name}", "markdown": market.rules_as_markdown()})
+    if video_ad_unit.language and video_ad_unit.language.insights:
+        insights.append({
+            "source": f"Language: {video_ad_unit.language.name}",
+            "markdown": video_ad_unit.language.insights_as_markdown()
+        })
 
     return insights
 
 
-def compose_insights_as_markdown(adaptation_job) -> str:
+def compose_insights_as_markdown(video_ad_unit) -> str:
     """Compose all insights into a single Markdown document.
 
     Args:
-        adaptation_job: AdaptationJob instance
+        video_ad_unit: VideoAdUnit instance
 
     Returns:
         Markdown string with all insights hierarchically organized
     """
-    sections = compose_insights(adaptation_job)
+    sections = compose_insights(video_ad_unit)
 
     if not sections:
         return ""
 
     # Build target name from region/country/language
     target_parts = []
-    if hasattr(adaptation_job, 'region') and adaptation_job.region:
-        target_parts.append(adaptation_job.region.name)
-    if hasattr(adaptation_job, 'country') and adaptation_job.country:
-        target_parts.append(adaptation_job.country.name)
-    if hasattr(adaptation_job, 'language') and adaptation_job.language:
-        target_parts.append(f"({adaptation_job.language.code})")
-    elif hasattr(adaptation_job, 'effective_language') and adaptation_job.effective_language:
-        target_parts.append(f"({adaptation_job.effective_language.code})")
+    if video_ad_unit.region:
+        target_parts.append(video_ad_unit.region.name)
+    if video_ad_unit.country:
+        target_parts.append(video_ad_unit.country.name)
+    if video_ad_unit.language:
+        target_parts.append(f"({video_ad_unit.language.code})")
 
     target_name = " / ".join(target_parts) if target_parts else "Target Market"
 
@@ -88,62 +83,3 @@ def compose_insights_as_markdown(adaptation_job) -> str:
         lines.append("")  # Blank line between sections
 
     return "\n".join(lines)
-
-
-def _get_region(adaptation_job) -> Optional["Region"]:
-    """Extract region from adaptation job (via market or direct reference).
-
-    Priority:
-    1. Direct region reference (if TVSpotAdaptation model exists)
-    2. Market's regions (if AdaptationMarket has M2M to regions)
-    3. Country's regions (via market's countries)
-
-    Returns:
-        Region instance or None
-    """
-    # Direct reference (TVSpotAdaptation model - Phase 5)
-    if hasattr(adaptation_job, "region") and adaptation_job.region:
-        return adaptation_job.region
-
-    # Via market regions (M2M) - backward compatibility
-    if hasattr(adaptation_job, 'target_market') and adaptation_job.target_market:
-        market = adaptation_job.target_market
-        if hasattr(market, "regions"):
-            return market.regions.first()  # Pick first if multiple
-
-    # Via country
-    country = _get_country(adaptation_job)
-    if country and hasattr(country, "regions"):
-        return country.regions.first()
-
-    return None
-
-
-def _get_country(adaptation_job) -> Optional["Country"]:
-    """Extract country from adaptation job.
-
-    Priority:
-    1. Direct country reference (if TVSpotAdaptation model exists)
-    2. Market's countries (if AdaptationMarket has M2M)
-    3. Language's countries (via effective_language)
-
-    Returns:
-        Country instance or None
-    """
-    # Direct reference (TVSpotAdaptation model - Phase 5)
-    if hasattr(adaptation_job, "country") and adaptation_job.country:
-        return adaptation_job.country
-
-    # Via market countries (M2M) - backward compatibility
-    if hasattr(adaptation_job, 'target_market') and adaptation_job.target_market:
-        market = adaptation_job.target_market
-        if hasattr(market, "countries"):
-            return market.countries.first()
-
-    # Via language
-    language = adaptation_job.effective_language
-    if language and hasattr(language, "countries"):
-        # Prefer primary language countries
-        return language.countries.filter(countrylanguage__is_primary=True).first()
-
-    return None
