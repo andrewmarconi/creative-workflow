@@ -177,32 +177,22 @@ UNFOLD = {
                 ],
             },
             {
-                "title": "TV Adaptations",
+                "title": "TV Spot Campaigns",
                 "items": [
                     {
-                        "title": "TVC Projects",
+                        "title": "Campaigns",
                         "icon": "live_tv",
-                        "link": "/admin/tvspots/tvspot/",
+                        "link": "/admin/tvspots/campaign/",
                     },
                     {
-                        "title": "TVC Versions",
+                        "title": "Video Ad Units",
                         "icon": "description",
-                        "link": "/admin/tvspots/tvspotversion/",
+                        "link": "/admin/tvspots/videoadunit/",
                     },
                     {
-                        "title": "Adaptation Jobs",
-                        "icon": "g_translate",
-                        "link": "/admin/tvspots/adaptationjob/",
-                    },
-                    {
-                        "title": "Version Storyboards",
+                        "title": "Storyboards",
                         "icon": "dashboard",
-                        "link": "/admin/tvspots/storyboardjob/",
-                    },
-                    {
-                        "title": "Markets",
-                        "icon": "public",
-                        "link": "/admin/tvspots/adaptationmarket/",
+                        "link": "/admin/tvspots/storyboard/",
                     },
                 ],
             },
