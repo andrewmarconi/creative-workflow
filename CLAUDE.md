@@ -40,6 +40,16 @@ uv run manage.py export_reference_data          # Export to separate files in da
 uv run manage.py export_reference_data --dir custom/  # Export to custom directory
 uv run manage.py import_reference_data          # Import from data/ directory
 uv run manage.py import_reference_data --dry-run      # Preview without importing
+
+# Audience Data (Segments, Personas)
+uv run manage.py export_segments                # Export segments to data/segments.json
+uv run manage.py export_segments --dir custom/  # Export to custom directory
+uv run manage.py import_segments                # Import segments from data/segments.json
+uv run manage.py import_segments --dry-run      # Preview without importing
+uv run manage.py export_personas                # Export personas to data/personas.json + persona_segments.json
+uv run manage.py export_personas --dir custom/  # Export to custom directory
+uv run manage.py import_personas                # Import personas from data/personas.json
+uv run manage.py import_personas --dry-run      # Preview without importing
 ```
 
 ### Testing
