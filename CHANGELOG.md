@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Audience Segmentation System**: Comprehensive audience segmentation framework (#49)
+  - Segment model with three categories: DEMOGRAPHIC, BEHAVIORAL, PSYCHOGRAPHIC
+  - 3,457 predefined segments based on industry frameworks (VALS, Rogers' Innovation Adoption Curve, AIO variables)
+  - Persona model for combining geographic and non-geographic segments
+  - JSON schemas for segments, personas, and persona-segment mappings
+  - Import/export management commands (`import_segments`, `export_segments`, `import_personas`, `export_personas`)
+  - Complete user documentation (`docs/user/segmentation.rst`) with theoretical frameworks and best practices
+  - Developer schema reference (`docs/developer/data-schemas.rst`) with validation rules and examples
 - CONTRIBUTING.md with contribution guidelines and code style (#13)
 - CHANGELOG.md for version tracking (#14)
 
