@@ -81,6 +81,7 @@ def concept_node(state: PipelineState) -> dict:
     from cw.lib.pipeline.schemas import ConceptBrief
 
     logger.info("Pipeline node: concept_extraction starting", extra={"job_id": state["job_id"]})
+    _update_job_status(state["job_id"], "concept_analysis")
     start = time.time()
 
     try:
@@ -105,13 +106,13 @@ def concept_node(state: PipelineState) -> dict:
         result = ConceptBrief.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
         brief_json = result.model_dump_json()
 
-        logger.debug("Updating job status in database", extra={"job_id": state["job_id"]})
+        logger.debug("Saving concept brief to database", extra={"job_id": state["job_id"]})
         _update_job_status(state["job_id"], "concept_analysis", concept_brief=json.loads(brief_json))
 
         elapsed = round(time.time() - start, 2)
         logger.info(f"Pipeline node: concept_extraction done ({elapsed}s)", extra={"job_id": state["job_id"]})
 
-        return {"concept_brief": brief_json, "status": "concept_analysis"}
+        return {"concept_brief": brief_json}
 
     except Exception as e:
         logger.error(
@@ -131,6 +132,7 @@ def culture_node(state: PipelineState) -> dict:
     from cw.lib.pipeline.schemas import CulturalBrief
 
     logger.info("Pipeline node: cultural_research starting", extra={"job_id": state["job_id"]})
+    _update_job_status(state["job_id"], "cultural_analysis")
     start = time.time()
 
     try:
@@ -158,13 +160,13 @@ def culture_node(state: PipelineState) -> dict:
         result = CulturalBrief.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
         brief_json = result.model_dump_json()
 
-        logger.debug("Updating job status in database", extra={"job_id": state["job_id"]})
+        logger.debug("Saving cultural brief to database", extra={"job_id": state["job_id"]})
         _update_job_status(state["job_id"], "cultural_analysis", cultural_brief=json.loads(brief_json))
 
         elapsed = round(time.time() - start, 2)
         logger.info(f"Pipeline node: cultural_research done ({elapsed}s)", extra={"job_id": state["job_id"]})
 
-        return {"cultural_brief": brief_json, "status": "cultural_analysis"}
+        return {"cultural_brief": brief_json}
 
     except Exception as e:
         logger.error(
@@ -198,6 +200,7 @@ def writer_node(state: PipelineState) -> dict:
         f"Pipeline node: writer starting (revision={is_revision}, total_revisions={total_revisions})",
         extra={"job_id": state["job_id"]},
     )
+    _update_job_status(state["job_id"], status)
     start = time.time()
 
     # Switch model after 2 failed revision attempts
@@ -257,15 +260,11 @@ def writer_node(state: PipelineState) -> dict:
     result = AdaptationOutput.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
     script_json = result.model_dump_json()
 
-    logger.debug("Updating job status in database", extra={"job_id": state["job_id"]})
-    _update_job_status(state["job_id"], status)
-
     elapsed = round(time.time() - start, 2)
     logger.info(f"Pipeline node: writer done ({elapsed}s)", extra={"job_id": state["job_id"]})
 
     return {
         "adapted_script": script_json,
-        "status": status,
         # Clear feedback so evaluators start fresh on the new draft
         "format_feedback": None,
         "cultural_feedback": None,
@@ -283,6 +282,7 @@ def format_eval_node(state: PipelineState) -> dict:
     from cw.lib.pipeline.schemas import EvaluationResult
 
     logger.info("Pipeline node: format_eval starting", extra={"job_id": state["job_id"]})
+    _update_job_status(state["job_id"], "format_evaluation")
     start = time.time()
 
     try:
@@ -315,8 +315,7 @@ def format_eval_node(state: PipelineState) -> dict:
         history = job.evaluation_history or []
         history.append({"type": "format", **result.model_dump()})
         job.evaluation_history = history
-        job.status = "format_evaluation"
-        job.save(update_fields=["evaluation_history", "status"])
+        job.save(update_fields=["evaluation_history"])
 
         elapsed = round(time.time() - start, 2)
         logger.info(
@@ -333,12 +332,11 @@ def format_eval_node(state: PipelineState) -> dict:
         raise
 
     if result.passed:
-        return {"format_feedback": None, "status": "format_evaluation"}
+        return {"format_feedback": None}
     else:
         return {
             "format_feedback": result.model_dump_json(),
             "format_revision_count": state.get("format_revision_count", 0) + 1,
-            "status": "format_evaluation",
         }
 
 
@@ -351,6 +349,7 @@ def cultural_eval_node(state: PipelineState) -> dict:
     from cw.lib.pipeline.schemas import EvaluationResult
 
     logger.info("Pipeline node: cultural_eval starting", extra={"job_id": state["job_id"]})
+    _update_job_status(state["job_id"], "cultural_evaluation")
     start = time.time()
 
     try:
@@ -384,8 +383,7 @@ def cultural_eval_node(state: PipelineState) -> dict:
         history = job.evaluation_history or []
         history.append({"type": "cultural", **result.model_dump()})
         job.evaluation_history = history
-        job.status = "cultural_evaluation"
-        job.save(update_fields=["evaluation_history", "status"])
+        job.save(update_fields=["evaluation_history"])
 
         elapsed = round(time.time() - start, 2)
         logger.info(
@@ -402,12 +400,11 @@ def cultural_eval_node(state: PipelineState) -> dict:
         raise
 
     if result.passed:
-        return {"cultural_feedback": None, "status": "cultural_evaluation"}
+        return {"cultural_feedback": None}
     else:
         return {
             "cultural_feedback": result.model_dump_json(),
             "cultural_revision_count": state.get("cultural_revision_count", 0) + 1,
-            "status": "cultural_evaluation",
         }
 
 
@@ -420,6 +417,7 @@ def concept_eval_node(state: PipelineState) -> dict:
     from cw.lib.pipeline.schemas import EvaluationResult
 
     logger.info("Pipeline node: concept_eval starting", extra={"job_id": state["job_id"]})
+    _update_job_status(state["job_id"], "concept_evaluation")
     start = time.time()
 
     generator, loader = _get_generator(state, EvaluationResult)
@@ -445,8 +443,7 @@ def concept_eval_node(state: PipelineState) -> dict:
     history = job.evaluation_history or []
     history.append({"type": "concept", **result.model_dump()})
     job.evaluation_history = history
-    job.status = "concept_evaluation"
-    job.save(update_fields=["evaluation_history", "status"])
+    job.save(update_fields=["evaluation_history"])
 
     elapsed = round(time.time() - start, 2)
     logger.info(
@@ -455,10 +452,9 @@ def concept_eval_node(state: PipelineState) -> dict:
     )
 
     if result.passed:
-        return {"concept_feedback": None, "status": "concept_evaluation"}
+        return {"concept_feedback": None}
     else:
         return {
             "concept_feedback": result.model_dump_json(),
             "concept_revision_count": state.get("concept_revision_count", 0) + 1,
-            "status": "concept_evaluation",
         }

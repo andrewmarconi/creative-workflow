@@ -8,7 +8,9 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin
 from unfold.decorators import display
 
-from .models import LLMModel
+from django.utils import timezone
+
+from .models import LLMModel, PromptTemplate
 
 
 @admin.register(LLMModel)
@@ -64,3 +66,151 @@ class LLMModelAdmin(ModelAdmin):
                 alt_count,
             )
         return "0"
+
+
+@admin.register(PromptTemplate)
+class PromptTemplateAdmin(ModelAdmin):
+    """Admin interface for PromptTemplate with Unfold styling and tabs."""
+
+    list_display = [
+        "name",
+        "slug",
+        "category",
+        "version",
+        "is_active",
+        "usage_count",
+        "last_used_at",
+        "updated_at",
+    ]
+    list_filter = ["category", "is_active", "created_at", "updated_at"]
+    search_fields = ["name", "slug", "description", "template"]
+    readonly_fields = [
+        "version",
+        "created_at",
+        "updated_at",
+        "usage_count",
+        "last_used_at",
+    ]
+
+    # Unfold tabs configuration - all fieldsets are tabs
+    fieldsets = (
+        (
+            "Overview",
+            {
+                "fields": ("slug", "name", "category", "is_active"),
+                "classes": ("tab",),
+                "description": "Basic template information and status",
+            },
+        ),
+        (
+            "Documentation",
+            {
+                "fields": ("description",),
+                "classes": ("tab",),
+                "description": "Purpose, usage notes, and examples for this template",
+            },
+        ),
+        (
+            "Template Content",
+            {
+                "fields": ("template",),
+                "classes": ("tab",),
+                "description": "Jinja2 template content - use {{ variable }} syntax for placeholders",
+            },
+        ),
+        (
+            "Variables",
+            {
+                "fields": ("expected_variables",),
+                "classes": ("tab",),
+                "description": "Expected template variables (JSON format): {name: {type, required, description}}",
+            },
+        ),
+        (
+            "Version Information",
+            {
+                "fields": ("version", "created_by", "created_at", "updated_at"),
+                "classes": ("tab",),
+                "description": "Version history and authorship information",
+            },
+        ),
+        (
+            "Usage Analytics",
+            {
+                "fields": ("usage_count", "last_used_at"),
+                "classes": ("tab",),
+                "description": "Template usage statistics and metrics",
+            },
+        ),
+    )
+
+    actions = ["duplicate_template", "activate_version", "test_render"]
+
+    def duplicate_template(self, request, queryset):
+        """Create draft copy for A/B testing."""
+        for template in queryset:
+            template.pk = None  # Force new record
+            template.slug = f"{template.slug}-draft-{timezone.now().strftime('%Y%m%d')}"
+            template.is_active = False
+            template.version = 1
+            template.created_by = request.user
+            template.save()
+        self.message_user(
+            request,
+            f"Created {queryset.count()} draft template(s)",
+        )
+
+    duplicate_template.short_description = "Duplicate selected templates as drafts"
+
+    def activate_version(self, request, queryset):
+        """Set selected version as active (deactivates other versions of same slug)."""
+        for template in queryset:
+            # Deactivate all other versions of this slug
+            PromptTemplate.objects.filter(slug=template.slug).update(is_active=False)
+            # Activate this version
+            template.is_active = True
+            template.save(update_fields=["is_active"])
+
+        self.message_user(
+            request,
+            f"Activated {queryset.count()} template version(s)",
+        )
+
+    activate_version.short_description = "Activate selected template versions"
+
+    def test_render(self, request, queryset):
+        """Test rendering templates with sample data (basic validation)."""
+        success_count = 0
+        error_count = 0
+
+        for template in queryset:
+            try:
+                # Test render with empty context
+                template.render()
+                success_count += 1
+            except Exception as e:
+                error_count += 1
+                self.message_user(
+                    request,
+                    f"Template '{template.name}' failed to render: {e}",
+                    level="error",
+                )
+
+        if success_count:
+            self.message_user(
+                request,
+                f"{success_count} template(s) rendered successfully",
+            )
+
+    test_render.short_description = "Test render selected templates (empty context)"
+
+    def get_queryset(self, request):
+        """Optimize queryset with select_related for created_by."""
+        qs = super().get_queryset(request)
+        return qs.select_related("created_by")
+
+    def save_model(self, request, obj, form, change):
+        """Set created_by to current user on creation."""
+        if not change and not obj.created_by:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
