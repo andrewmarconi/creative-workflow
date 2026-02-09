@@ -9,5 +9,6 @@ modules in the Generative Creative Lab codebase.
 
    lib
    core
+   audiences
    diffusion
    tvspots

@@ -1,6 +1,49 @@
 from django.db import models
 
 
+class Brand(models.Model):
+    """Brand reference data with voice, values, and visual guidelines.
+
+    Applied to a Campaign as the primary brand. Can be overridden per
+    VideoAdUnit for market-specific trade names (e.g., Lay's → Walkers).
+    """
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text="Short code (e.g., 'LAYS', 'WALKERS', 'PEPSI')",
+    )
+    name = models.CharField(
+        max_length=200,
+        help_text="Display name (e.g., 'Lay's', 'Walkers')",
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Brand overview and positioning",
+    )
+    guidelines = models.TextField(
+        blank=True,
+        help_text="Brand voice, values, visual identity, and messaging guidelines",
+    )
+    insights = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Brand-specific patterns: [{heading, points[]}]",
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "tvspots_brand"
+        ordering = ["name"]
+        verbose_name = "Brand"
+        verbose_name_plural = "Brands"
+
+    def __str__(self):
+        return f"{self.name} ({self.code})"
+
+
 class Campaign(models.Model):
     """Top-level campaign container (formerly TvSpot).
 
@@ -18,8 +61,15 @@ class Campaign(models.Model):
         help_text="Campaign/script title",
     )
     client_name = models.CharField(max_length=200)
-    brand_name = models.CharField(max_length=200, blank=True)
     product_name = models.CharField(max_length=200, blank=True)
+    brand = models.ForeignKey(
+        "Brand",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="campaigns",
+        help_text="Primary brand for this campaign",
+    )
     original_script_data = models.JSONField(
         help_text="Original script content as JSON",
     )
@@ -67,6 +117,7 @@ class AdUnit(models.Model):
         ("format_evaluation", "Evaluating Format"),
         ("cultural_evaluation", "Evaluating Culture"),
         ("concept_evaluation", "Evaluating Concept"),
+        ("brand_evaluation", "Evaluating Brand"),
         ("revising", "Revising Script"),
     ]
 
@@ -140,6 +191,14 @@ class AdUnit(models.Model):
         related_name="ad_units",
         help_text="Override language's primary LLM model",
     )
+    brand = models.ForeignKey(
+        "tvspots.Brand",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="ad_units",
+        help_text="Brand override for market-specific trade names",
+    )
 
     # Pipeline data (for adapted units)
     use_pipeline = models.BooleanField(
@@ -165,6 +224,11 @@ class AdUnit(models.Model):
         default=dict,
         blank=True,
         help_text="Pipeline timing and model info",
+    )
+    pipeline_model_config = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Per-node LLM model overrides: {node_key: llm_model_pk}",
     )
 
     # Job tracking
@@ -211,6 +275,11 @@ class AdUnit(models.Model):
     def effective_llm_model(self):
         """Get LLM model (override or language default)."""
         return self.llm_model or (self.language.primary_model if self.language else None)
+
+    @property
+    def effective_brand(self):
+        """Get brand (ad unit override or campaign default)."""
+        return self.brand or self.campaign.brand
 
 
 class VideoAdUnit(AdUnit):
@@ -330,7 +399,6 @@ class Storyboard(models.Model):
     error_message = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
-
     class Meta:
         db_table = "tvspots_storyboard"
         ordering = ["-created_at"]

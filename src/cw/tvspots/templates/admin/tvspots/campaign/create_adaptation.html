@@ -3,92 +3,249 @@
 
 {% block content %}
 <div class="p-6">
-    <div class="max-w-2xl">
+    <div class="max-w-4xl">
         <h1 class="text-2xl font-bold mb-2">{% trans "Create Adaptation" %}</h1>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
             {{ campaign.script_title }} ({{ campaign.job_id }})
         </p>
-
-        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <h3 class="font-medium mb-2">{% trans "Source Video Ad Unit" %}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                {{ origin_ad_unit.code }} ({{ origin_ad_unit.language }}) - {{ origin_ad_unit.script_rows.count }} script rows
-            </p>
+        <div class="flex gap-4 pb-4 items-stretch">
+            <div class="w-1/2">
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg h-full">
+                    <h3 class="font-black mb-2">Campaign</h3>
+                    <ul>
+                        <li>Title: &quot;{{campaign.script_title }}&quot;</li>
+                        <li>Campaign ID: {{ campaign.job_id }} </li>
+                        <li>Brand: {{ campaign.brand.name }}</li>
+                        <li>Client: {{ campaign.client_name }}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-1/2">
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg h-full">
+                    <h3 class="font-black mb-2">Origin Script</h3>
+                    <ul>
+                        <li>Code: {{ origin_ad_unit.code }}</li>
+                        <li>Language: {{ origin_ad_unit.language.name }}</li>
+                        <li>{{ origin_ad_unit.script_rows.count }} Script Rows</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <form method="post" class="space-y-6">
+        
+        <form method="post">
             {% csrf_token %}
 
-            <div>
-                <label for="region" class="block text-sm font-medium mb-2">
-                    {% trans "Region" %} <span class="text-red-500">*</span>
-                </label>
-                <select
-                    name="region"
-                    id="region"
-                    required
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                >
-                    <option value="">{% trans "Select a region..." %}</option>
-                    {% for region in regions %}
-                    <option value="{{ region.id }}">{{ region.name }} ({{ region.code }})</option>
-                    {% endfor %}
-                </select>
+            {# ── Tab Navigation ── #}
+            <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+                <nav class="flex gap-1 -mb-px" role="tablist">
+                    <button type="button" role="tab" aria-selected="true" data-tab="adaptation"
+                            class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-primary-500 text-primary-600 dark:text-primary-400">
+                        {% trans "Adaptation" %}
+                    </button>
+                    <button type="button" role="tab" aria-selected="false" data-tab="models"
+                            class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600">
+                        {% trans "Model Configuration" %}
+                    </button>
+                    <button type="button" role="tab" aria-selected="false" data-tab="info"
+                            class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600">
+                        {% trans "More Info" %}
+                    </button>
+                </nav>
             </div>
 
-            <div>
-                <label for="country" class="block text-sm font-medium mb-2">
-                    {% trans "Country" %}
-                    <span class="text-gray-500 font-normal">(optional)</span>
-                </label>
-                <select
-                    name="country"
-                    id="country"
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                >
-                    <option value="">{% trans "No specific country" %}</option>
-                    {% for country in countries %}
-                    <option value="{{ country.id }}">{{ country.name }} ({{ country.code }})</option>
-                    {% endfor %}
-                </select>
+            <div id="tab-info" class="tab-panel hidden" role="tabpanel">
+                <div class="p-4">
+                    <h3 class="font-bold">{% trans "Multi-Agent Pipeline Process" %}</h3>
+                    <p class="text-xs mb-3">
+                        {% trans "This adaptation uses a multi-agent pipeline for high-quality results:" %}
+                    </p>
+                    
+                    <div class="flex flex-gap-2 flex-wrap items-center text-xs space-y-2">
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Concept Analysis" %}</div>
+                            {% trans "Extract core creative concepts from the source script" %}
+                        </div>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Cultural Research" %}</div>
+                            {% trans "Extract core creative concepts from the source script" %}
+                        </div>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Concept Analysis" %}</div>
+                            {% trans "Extract core creative concepts from the source script" %}
+                        </div>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Concept Analysis" %}</div>
+                            {% trans "Analyze target market insights and cultural requirements" %}
+                        </div>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Adaptive Writing" %}</div>
+                            {% trans "Create culturally-appropriate script adaptations" %}
+                        </div>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Multi-Dimensional Evaluation" %}</div>
+                            {% trans "Independent agent verifies cultural, conceptual and brand alignmenet" %}
+                        </div>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                        <div class="border border-slate-500 p-2 text-xs rounded-lg max-w-36">
+                            <div class="font-bold">{% trans "Concept Analysis" %}</div>
+                            {% trans "Extract core creative concepts from the source script" %}
+                        </div>
+                    </div>
+                    <p class="text-xs">{% trans "Iterative Refinement: Automatically revise until quality thresholds are met" %}</p>
+                    
+                        <p class="text-xs mt-3">
+                        {% trans "Processing time: 2-5 minutes depending on complexity" %}
+                    </p>
+                </div>
             </div>
 
-            <div>
-                <label for="language" class="block text-sm font-medium mb-2">
-                    {% trans "Language" %} <span class="text-red-500">*</span>
-                </label>
-                <select
-                    name="language"
-                    id="language"
-                    required
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                >
-                    <option value="">{% trans "Select a language..." %}</option>
-                    {% for lang in languages %}
-                    <option value="{{ lang.id }}" data-primary-model="{{ lang.primary_model_id }}">
-                        {{ lang.name }} ({{ lang.code }})
-                    </option>
-                    {% endfor %}
-                </select>
+            {# ── Tab: Adaptation (Localization + Brand & Persona) ── #}
+            <div id="tab-adaptation" class="tab-panel" role="tabpanel">
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label for="region" class="block text-sm font-medium mb-2">
+                            {% trans "Region" %} <span class="text-red-500">*</span>
+                        </label>
+                        <select
+                            name="region"
+                            id="region"
+                            required
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "Select a region..." %}</option>
+                            {% for region in regions %}
+                            <option value="{{ region.id }}">{{ region.name }} ({{ region.code }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="country" class="block text-sm font-medium mb-2">
+                            {% trans "Country" %}
+                            <span class="text-gray-500 font-normal">({% trans "optional" %})</span>
+                        </label>
+                        <select
+                            name="country"
+                            id="country"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "No specific country" %}</option>
+                            {% for country in countries %}
+                            <option value="{{ country.id }}">{{ country.name }} ({{ country.code }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="language" class="block text-sm font-medium mb-2">
+                            {% trans "Language" %} <span class="text-red-500">*</span>
+                        </label>
+                        <select
+                            name="language"
+                            id="language"
+                            required
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "Select a language..." %}</option>
+                            {% for lang in languages %}
+                            <option value="{{ lang.id }}" data-primary-model="{{ lang.primary_model_id }}">
+                                {{ lang.name }} ({{ lang.code }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="brand" class="block text-sm font-medium mb-2">
+                            {% trans "Brand" %}
+                            <span class="text-gray-500 font-normal">({% trans "defaults from campaign" %})</span>
+                        </label>
+                        <select
+                            name="brand"
+                            id="brand"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "No brand" %}</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if brand.id == campaign_brand_id %}selected{% endif %}>
+                                {{ brand.name }} ({{ brand.code }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="persona" class="block text-sm font-medium mb-2">
+                            {% trans "Persona" %}
+                            <span class="text-gray-500 font-normal">({% trans "optional" %})</span>
+                        </label>
+                        <select
+                            name="persona"
+                            id="persona"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "No persona" %}</option>
+                            {% for persona in personas %}
+                            <option value="{{ persona.id }}">{{ persona.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label for="llm_model" class="block text-sm font-medium mb-2">
-                    {% trans "LLM Model" %}
-                    <span class="text-gray-500 font-normal">(defaults to language's primary model)</span>
-                </label>
-                <select
-                    name="llm_model"
-                    id="llm_model"
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                >
-                    <option value="">{% trans "Use language default" %}</option>
-                </select>
-                <p id="model-loading" class="text-sm text-gray-500 mt-1 hidden">Loading models...</p>
+            {# ── Tab 3: Model Configuration ── #}
+            <div id="tab-models" class="tab-panel hidden" role="tabpanel">
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    {% trans "Override the default LLM model for each pipeline node. Leave as 'Use default' to use the configured defaults." %}
+                </p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    {# Writer Model (AJAX-populated from language) #}
+                    <div>
+                        <label for="llm_model" class="block text-sm font-medium mb-2">
+                            {% trans "Writer Model" %}
+                            <span class="text-gray-500 font-normal">({% trans "defaults to language's primary model" %})</span>
+                        </label>
+                        <select
+                            name="llm_model"
+                            id="llm_model"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "Use language default" %}</option>
+                        </select>
+                        <p id="model-loading" class="text-sm text-gray-500 mt-1 hidden">{% trans "Loading models..." %}</p>
+                    </div>
+
+                    {# Static model dropdowns for non-writer nodes #}
+                    {% for node_key, node_label in node_model_fields %}
+                    <div>
+                        <label for="model_{{ node_key }}" class="block text-sm font-medium mb-2">
+                            {{ node_label }}
+                        </label>
+                        <select
+                            name="model_{{ node_key }}"
+                            id="model_{{ node_key }}"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "Use default" %}</option>
+                            {% for model in llm_models %}
+                            <option value="{{ model.id }}">{{ model.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
             {% if pending_adaptations %}
-            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+            <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
                 <h3 class="text-yellow-800 dark:text-yellow-300 font-medium mb-2">{% trans "Pending Adaptations" %}</h3>
                 <p class="text-yellow-700 dark:text-yellow-400 text-sm mb-2">
                     {% trans "The following adaptation video ad units are already in progress:" %}
@@ -104,7 +261,7 @@
             </div>
             {% endif %}
 
-            <div class="flex gap-4">
+            <div class="flex gap-4 mt-6">
                 <button type="submit"
                         class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
                     {% trans "Create Adaptation" %}
@@ -116,22 +273,7 @@
             </div>
         </form>
 
-        <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <h3 class="text-blue-800 dark:text-blue-300 font-medium mb-2">{% trans "Multi-Agent Pipeline Process" %}</h3>
-            <p class="text-blue-700 dark:text-blue-400 text-sm mb-3">
-                {% trans "This adaptation uses a multi-agent pipeline for high-quality results:" %}
-            </p>
-            <ul class="list-disc list-inside text-blue-700 dark:text-blue-400 text-sm space-y-1">
-                <li>{% trans "Concept Analysis: Extract core creative concepts from the source script" %}</li>
-                <li>{% trans "Cultural Research: Analyze target market insights and cultural requirements" %}</li>
-                <li>{% trans "Adaptive Writing: Create culturally-appropriate script adaptations" %}</li>
-                <li>{% trans "Dual Evaluation: Verify cultural and conceptual alignment" %}</li>
-                <li>{% trans "Iterative Refinement: Automatically revise until quality thresholds are met" %}</li>
-            </ul>
-            <p class="text-blue-700 dark:text-blue-400 text-sm mt-3">
-                {% trans "Processing time: 2-5 minutes depending on complexity" %}
-            </p>
-        </div>
+        
     </div>
 </div>
 
@@ -143,20 +285,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const modelSelect = document.getElementById('llm_model');
     const modelLoading = document.getElementById('model-loading');
 
-    // Data mappings from backend
+    // ── Tab switching ──
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+
+            // Update button styles
+            tabBtns.forEach(function(b) {
+                b.classList.remove('border-primary-500', 'text-primary-600', 'dark:text-primary-400');
+                b.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                b.setAttribute('aria-selected', 'false');
+            });
+            this.classList.add('border-primary-500', 'text-primary-600', 'dark:text-primary-400');
+            this.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+            this.setAttribute('aria-selected', 'true');
+
+            // Show/hide panels
+            tabPanels.forEach(function(panel) {
+                panel.classList.add('hidden');
+            });
+            document.getElementById('tab-' + targetTab).classList.remove('hidden');
+        });
+    });
+
+    // ── Data mappings from backend ──
     const regionCountries = {{ region_countries_json|safe }};
     const countryLanguages = {{ country_languages_json|safe }};
 
     // Store original options
-    const originalCountries = Array.from(countrySelect.options).slice(1); // Skip first empty option
-    const originalLanguages = Array.from(languageSelect.options).slice(1); // Skip first empty option
+    const originalCountries = Array.from(countrySelect.options).slice(1);
+    const originalLanguages = Array.from(languageSelect.options).slice(1);
 
     // When region changes, reorder countries dropdown
     regionSelect.addEventListener('change', function() {
         const regionId = parseInt(this.value);
 
         if (!regionId) {
-            // Reset to original order
             countrySelect.innerHTML = '<option value="">{% trans "No specific country" %}</option>';
             originalCountries.forEach(opt => countrySelect.appendChild(opt.cloneNode(true)));
             return;
@@ -164,10 +331,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const countriesInRegion = regionCountries[regionId] || [];
 
-        // Rebuild country select with grouped options
         countrySelect.innerHTML = '<option value="">{% trans "No specific country" %}</option>';
 
-        // Add optgroup for countries in selected region
         if (countriesInRegion.length > 0) {
             const inRegionGroup = document.createElement('optgroup');
             inRegionGroup.label = '{% trans "Countries in selected region" %}';
@@ -184,7 +349,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Add optgroup for other countries
         const otherGroup = document.createElement('optgroup');
         otherGroup.label = '{% trans "Other countries" %}';
 
@@ -205,7 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const countryId = parseInt(this.value);
 
         if (!countryId) {
-            // Reset to original order
             languageSelect.innerHTML = '<option value="">{% trans "Select a language..." %}</option>';
             originalLanguages.forEach(opt => languageSelect.appendChild(opt.cloneNode(true)));
             return;
@@ -213,10 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const languagesInCountry = countryLanguages[countryId] || [];
 
-        // Rebuild language select with grouped options
         languageSelect.innerHTML = '<option value="">{% trans "Select a language..." %}</option>';
 
-        // Add optgroup for languages in selected country
         if (languagesInCountry.length > 0) {
             const inCountryGroup = document.createElement('optgroup');
             inCountryGroup.label = '{% trans "Languages for selected country" %}';
@@ -233,7 +394,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Add optgroup for other languages
         const otherGroup = document.createElement('optgroup');
         otherGroup.label = '{% trans "Other languages" %}';
 
@@ -249,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // When language changes, fetch available models via AJAX
+    // When language changes, fetch available models via AJAX (for Writer Model)
     languageSelect.addEventListener('change', function() {
         const languageId = this.value;
 

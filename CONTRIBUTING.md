@@ -291,10 +291,10 @@ This is an open-source project maintained by volunteers. We'll do our best to re
 
 ## Additional Resources
 
-- [README.md](README.md) - Project overview and quick start
-- [CLAUDE.md](CLAUDE.md) - Detailed development guide
-- [CHANGELOG.md](CHANGELOG.md) - Version history and changes
-- [Documentation](docs/) - Sphinx documentation
+- [README.md](https://github.com/andrewmarconi/generative-creative-lab/blob/main/README.md) - Project overview and quick start
+- [CLAUDE.md](https://github.com/andrewmarconi/generative-creative-lab/blob/main/CLAUDE.md) - Detailed development guide
+- [CHANGELOG.md](https://github.com/andrewmarconi/generative-creative-lab/blob/main/CHANGELOG.md) - Version history and changes
+- [Documentation](https://andrewmarconi.github.io/generative-creative-lab/) - Full documentation
 
 ## License
 

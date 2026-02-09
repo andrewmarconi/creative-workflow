@@ -13,13 +13,80 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
 
+from cw.core.widgets import InsightsEditorWidget
+
 from .models import (
     AdUnitScriptRow,
+    Brand,
     Campaign,
     Storyboard,
     StoryboardImage,
     VideoAdUnit,
 )
+
+# ---------------------------------------------------------------------------
+# Brand
+# ---------------------------------------------------------------------------
+
+
+@admin.register(Brand)
+class BrandAdmin(ModelAdmin):
+    list_display = ["name", "code", "show_active", "show_campaign_count", "updated_at"]
+    list_filter = ["is_active"]
+    search_fields = ["name", "code", "description", "guidelines"]
+    readonly_fields = ["created_at", "updated_at"]
+
+    fieldsets = (
+        (
+            _("Brand"),
+            {
+                "classes": ["tab"],
+                "fields": ("code", "name", "is_active"),
+            },
+        ),
+        (
+            _("Description"),
+            {
+                "classes": ["tab"],
+                "fields": ("description",),
+            },
+        ),
+        (
+            _("Guidelines"),
+            {
+                "classes": ["tab"],
+                "fields": ("guidelines",),
+            },
+        ),
+        (
+            _("Insights"),
+            {
+                "classes": ["tab"],
+                "fields": ("insights",),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "insights":
+            kwargs["widget"] = InsightsEditorWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    @display(description=_("Active"), boolean=True)
+    def show_active(self, obj):
+        return obj.is_active
+
+    @display(description=_("Campaigns"))
+    def show_campaign_count(self, obj):
+        return obj.campaigns.count()
+
 
 # ---------------------------------------------------------------------------
 # Campaign
@@ -53,6 +120,7 @@ class VideoAdUnitInline(TabularInline):
             "Format Evaluation": "warning",
             "Cultural Evaluation": "warning",
             "Concept Evaluation": "warning",
+            "Evaluating Brand": "warning",
             "Revising": "warning",
         },
     )
@@ -65,13 +133,12 @@ class CampaignAdmin(ModelAdmin):
     list_display = [
         "script_title",
         "client_name",
-        "brand_name",
         "product_name",
         "job_id",
         "show_ad_units_count",
     ]
-    list_filter = ["client_name"]
-    search_fields = ["script_title", "client_name", "brand_name", "job_id"]
+    list_filter = ["client_name", "brand"]
+    search_fields = ["script_title", "client_name", "job_id"]
     readonly_fields = ["created_at", "updated_at"]
     inlines = [VideoAdUnitInline]
     actions_list = ["import_campaign_action"]
@@ -83,7 +150,7 @@ class CampaignAdmin(ModelAdmin):
             {
                 "classes": ["tab"],
                 "fields": (
-                    ("client_name", "brand_name"),
+                    ("client_name", "brand"),
                     ("product_name", "job_id"),
                     "script_title",
                 ),
@@ -202,7 +269,6 @@ class CampaignAdmin(ModelAdmin):
 
                     campaign = Campaign.objects.create(
                         client_name=data["client_name"],
-                        brand_name=data.get("brand_name", ""),
                         product_name=data.get("product_name", ""),
                         script_title=data["script_title"],
                         job_id=job_id,
@@ -325,12 +391,14 @@ class CampaignAdmin(ModelAdmin):
             return redirect("admin:tvspots_campaign_change", object_id)
 
         if request.method == "POST":
-            from cw.audiences.models import Country, Region
+            from cw.audiences.models import Country, Persona, Region
 
             region_id = request.POST.get("region")
             country_id = request.POST.get("country")
             language_id = request.POST.get("language")
             llm_model_id = request.POST.get("llm_model")
+            brand_id = request.POST.get("brand")
+            persona_id = request.POST.get("persona")
 
             # Validate required fields
             if not region_id or not language_id:
@@ -342,6 +410,16 @@ class CampaignAdmin(ModelAdmin):
             country = Country.objects.filter(pk=country_id).first() if country_id else None
             language = Language.objects.get(pk=language_id)
             llm_model = LLMModel.objects.filter(pk=llm_model_id).first() if llm_model_id else None
+            brand = Brand.objects.filter(pk=brand_id).first() if brand_id else None
+            persona = Persona.objects.filter(pk=persona_id).first() if persona_id else None
+
+            # Build per-node model config from form
+            pipeline_model_config = {}
+            node_keys = ["concept", "culture", "format_gate", "culture_gate", "concept_gate", "brand_gate"]
+            for key in node_keys:
+                model_pk = request.POST.get(f"model_{key}")
+                if model_pk:
+                    pipeline_model_config[key] = int(model_pk)
 
             # Check for pending/processing adaptation with same dimensions
             pending_adaptation = campaign.ad_units.filter(
@@ -390,6 +468,9 @@ class CampaignAdmin(ModelAdmin):
                 country=country,
                 language=language,
                 llm_model=llm_model,
+                brand=brand,
+                persona=persona,
+                pipeline_model_config=pipeline_model_config,
                 source_ad_unit=origin_ad_unit,
                 use_pipeline=True,  # Always use multi-agent pipeline
                 status="pending",
@@ -416,11 +497,14 @@ class CampaignAdmin(ModelAdmin):
             return redirect("admin:tvspots_campaign_change", object_id)
 
         # Get available dimensions
-        from cw.audiences.models import Country, CountryLanguage, CountryRegion, Region
+        from cw.audiences.models import Country, CountryLanguage, CountryRegion, Persona, Region
 
         regions = Region.objects.filter(is_active=True).order_by("name")
         countries = Country.objects.filter(is_active=True).order_by("name")
         languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
+        brands = Brand.objects.filter(is_active=True).order_by("name")
+        personas = Persona.objects.filter(is_active=True).order_by("name")
+        llm_models = LLMModel.objects.filter(is_active=True).order_by("name")
 
         # Build region → countries mapping
         region_countries = {}
@@ -441,6 +525,16 @@ class CampaignAdmin(ModelAdmin):
             status__in=["pending", "processing"]
         ).select_related("region", "country", "language")
 
+        # Node model fields for template iteration
+        node_model_fields = [
+            ("concept", _("Concept Analyst Model")),
+            ("culture", _("Cultural Researcher Model")),
+            ("format_gate", _("Format Gate Model")),
+            ("culture_gate", _("Culture Gate Model")),
+            ("concept_gate", _("Concept Gate Model")),
+            ("brand_gate", _("Brand Gate Model")),
+        ]
+
         return TemplateResponse(
             request,
             "admin/tvspots/campaign/create_adaptation.html",
@@ -453,6 +547,11 @@ class CampaignAdmin(ModelAdmin):
                 "regions": regions,
                 "countries": countries,
                 "languages": languages,
+                "brands": brands,
+                "personas": personas,
+                "llm_models": llm_models,
+                "campaign_brand_id": campaign.brand_id,
+                "node_model_fields": node_model_fields,
                 "pending_adaptations": pending_adaptations,
                 "region_countries_json": json.dumps(region_countries),
                 "country_languages_json": json.dumps(country_languages),
@@ -537,6 +636,7 @@ class VideoAdUnitAdmin(ModelAdmin):
         "country",
         "language",
         "llm_model",
+        "brand",
         "source_ad_unit",
         "status",
         "celery_task_id",
@@ -549,6 +649,7 @@ class VideoAdUnitAdmin(ModelAdmin):
         "cultural_brief",
         "evaluation_history",
         "pipeline_metadata",
+        "pipeline_model_config",
     ]
     inlines = [AdUnitScriptRowInline]
     actions_detail = ["view_storyboard_action", "generate_storyboard_action"]
@@ -576,6 +677,7 @@ class VideoAdUnitAdmin(ModelAdmin):
                     "persona",
                     ("region", "country"),
                     ("language", "llm_model"),
+                    "brand",
                     "use_pipeline",
                 ),
             },
@@ -636,7 +738,7 @@ class VideoAdUnitAdmin(ModelAdmin):
             _("Pipeline Metadata"),
             {
                 "classes": ["tab"],
-                "fields": ("pipeline_metadata",),
+                "fields": ("pipeline_metadata", "pipeline_model_config"),
                 "description": "Models used, revision counts, and timing per pipeline phase.",
             },
         ),
@@ -682,6 +784,7 @@ class VideoAdUnitAdmin(ModelAdmin):
             ("writing", "Writer"),
             ("format_evaluation", "Format"),
             ("cultural_evaluation", "Review"),
+            ("brand_evaluation", "Brand"),
             ("completed", "Done"),
         ]
 
@@ -696,7 +799,8 @@ class VideoAdUnitAdmin(ModelAdmin):
             "format_evaluation": 4,
             "cultural_evaluation": 5,
             "concept_evaluation": 5,
-            "completed": 6,
+            "brand_evaluation": 6,
+            "completed": 7,
             "failed": -1,
         }
 
@@ -752,6 +856,7 @@ class VideoAdUnitAdmin(ModelAdmin):
             "Format Evaluation": "warning",
             "Cultural Evaluation": "warning",
             "Concept Evaluation": "warning",
+            "Evaluating Brand": "warning",
             "Revising": "warning",
         },
     )
@@ -1000,6 +1105,7 @@ class VideoAdUnitAdmin(ModelAdmin):
         )
 
 
+
 # ---------------------------------------------------------------------------
 # Storyboard
 # ---------------------------------------------------------------------------
@@ -1011,8 +1117,18 @@ class StoryboardImageInline(TabularInline):
     model = StoryboardImage
     tab = True
     extra = 0
-    fields = ["script_row", "image_index", "diffusion_job", "show_status"]
-    readonly_fields = ["script_row", "image_index", "diffusion_job", "show_status"]
+    fields = [
+        "script_row",
+        "image_index",
+        "diffusion_job",
+        "show_status",
+    ]
+    readonly_fields = [
+        "script_row",
+        "image_index",
+        "diffusion_job",
+        "show_status",
+    ]
     can_delete = False
     show_change_link = True
 

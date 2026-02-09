@@ -10,12 +10,19 @@ from unfold.decorators import display
 
 from django.utils import timezone
 
-from .models import LLMModel, PromptTemplate
+from .models import LLMModel, PipelineSettings, PromptTemplate
 
 
 @admin.register(LLMModel)
 class LLMModelAdmin(ModelAdmin):
-    list_display = ["name", "model_id", "show_4bit", "show_active", "show_language_count", "updated_at"]
+    list_display = [
+        "name",
+        "model_id",
+        "show_4bit",
+        "show_active",
+        "show_language_count",
+        "updated_at",
+    ]
     list_filter = ["is_active", "load_in_4bit"]
     search_fields = ["name", "model_id", "notes"]
     readonly_fields = ["created_at", "updated_at"]
@@ -214,3 +221,52 @@ class PromptTemplateAdmin(ModelAdmin):
         if not change and not obj.created_by:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
+
+
+@admin.register(PipelineSettings)
+class PipelineSettingsAdmin(ModelAdmin):
+    """Singleton admin for per-node LLM model defaults."""
+
+    fieldsets = (
+        (
+            _("Global Default"),
+            {
+                "classes": ["tab"],
+                "fields": ("global_default_model",),
+                "description": "Fallback model used when no node-specific default is configured.",
+            },
+        ),
+        (
+            _("Research Nodes"),
+            {
+                "classes": ["tab"],
+                "fields": ("concept_default_model", "culture_default_model"),
+            },
+        ),
+        (
+            _("Evaluation Gates"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "format_gate_default_model",
+                    "culture_gate_default_model",
+                    "concept_gate_default_model",
+                    "brand_gate_default_model",
+                ),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+    readonly_fields = ["created_at", "updated_at"]
+
+    def has_add_permission(self, request):
+        return not PipelineSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

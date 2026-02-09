@@ -94,6 +94,7 @@ class PipelineState(TypedDict, total=False):
     job_id: int
     model_id: str
     load_in_4bit: bool
+    model_config: dict  # {node_key: {"model_id": str, "load_in_4bit": bool}}
     original_script: str  # JSON string of the origin version data
     target_market_name: str
     target_market_code: str
@@ -101,6 +102,7 @@ class PipelineState(TypedDict, total=False):
     target_market_language: str  # Language code (e.g., "es-MX")
     language_code: str  # ISO language code for alternative model lookups
     num_script_rows: int
+    brand_guidelines: str  # Brand voice/values/guidelines from Campaign
 
     # --- Intermediate fields (populated by nodes) ---
     concept_brief: Optional[str]  # JSON string of ConceptBrief
@@ -111,9 +113,11 @@ class PipelineState(TypedDict, total=False):
     format_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
     cultural_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
     concept_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
+    brand_feedback: Optional[str]  # JSON string of EvaluationResult, or None if passed
     format_revision_count: int
     cultural_revision_count: int
     concept_revision_count: int
+    brand_revision_count: int
 
     # --- Terminal fields ---
     status: str  # Current pipeline status

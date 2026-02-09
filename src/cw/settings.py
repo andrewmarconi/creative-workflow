@@ -250,6 +250,16 @@ UNFOLD = {
                         "icon": "code",
                         "link": "/app/core/prompttemplate/",
                     },
+                    {
+                        "title": "Brands",
+                        "icon": "branding_watermark",
+                        "link": "/app/tvspots/brand/",
+                    },
+                    {
+                        "title": "Pipeline Settings",
+                        "icon": "tune",
+                        "link": "/app/core/pipelinesettings/",
+                    },
                 ],
             },
             {

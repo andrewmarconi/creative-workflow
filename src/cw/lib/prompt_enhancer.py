@@ -508,14 +508,14 @@ class HFPromptEnhancer(PromptEnhancer):
 
         # Render prompts from Jinja2 templates
         system_message = render_prompt(
-            "prompt_enhancer_system.j2",
+            "prompt-enhancer-system",
             style=effective_style,
             creativity=self.creativity,
             trigger_words=self.trigger_words,
         )
 
         user_message = render_prompt(
-            "prompt_enhancer_user.j2",
+            "prompt-enhancer-user",
             simple_prompt=simple_prompt,
         )
 
@@ -649,14 +649,14 @@ class LLMPromptEnhancer(PromptEnhancer):
 
         # Render prompts from Jinja2 templates
         system_prompt = render_prompt(
-            "prompt_enhancer_system.j2",
+            "prompt-enhancer-system",
             style=effective_style,
             creativity=self.creativity,
             trigger_words=self.trigger_words,
         )
 
         user_message = render_prompt(
-            "prompt_enhancer_user.j2",
+            "prompt-enhancer-user",
             simple_prompt=simple_prompt,
         )
 

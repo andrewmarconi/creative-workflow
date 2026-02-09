@@ -182,7 +182,7 @@ class AdaptationGenerator:
         logger.debug("Building original spot data structure")
         original_spot = {
             "client_name": tv_spot.client_name,
-            "brand_name": tv_spot.brand_name,
+            "brand_name": tv_spot.brand.name if tv_spot.brand else "",
             "script_title": tv_spot.script_title,
             "total_runtime_seconds": tv_spot.total_runtime_seconds,
             "language": origin_version.language.code,
@@ -273,7 +273,7 @@ class AdaptationGenerator:
         logger.debug(f"Composed insights from {len(insights_markdown.split('## '))-1} levels")
 
         user_prompt = render_prompt(
-            "adaptation.j2",
+            "adaptation",
             target_market_name=target_market.name,
             target_market_language=language_code,
             target_market_rules=insights_markdown,  # Now uses composed hierarchical insights

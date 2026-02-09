@@ -229,3 +229,86 @@ class PromptTemplate(models.Model):
         )
 
         return template.render(**context)
+
+
+class PipelineSettings(models.Model):
+    """Singleton app-level defaults for per-node LLM model selection.
+
+    Each pipeline node (concept analyst, cultural researcher, evaluation gates)
+    can have its own default LLM model. If not set, falls back to
+    global_default_model. Writer node is excluded — it defaults to the
+    Language's primary LLM.
+    """
+
+    global_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Fallback model when no node-specific default is set",
+    )
+    concept_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Default model for Concept Analyst node",
+    )
+    culture_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Default model for Cultural Researcher node",
+    )
+    format_gate_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Default model for Format Gate node",
+    )
+    culture_gate_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Default model for Culture Gate node",
+    )
+    concept_gate_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Default model for Concept Gate node",
+    )
+    brand_gate_default_model = models.ForeignKey(
+        "LLMModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        help_text="Default model for Brand Gate node",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "core_pipelinesettings"
+        verbose_name = "Pipeline Settings"
+        verbose_name_plural = "Pipeline Settings"
+
+    def __str__(self):
+        return "Pipeline Settings"
+
+    @classmethod
+    def get_instance(cls):
+        """Get or create the singleton PipelineSettings instance."""
+        instance, _ = cls.objects.get_or_create(pk=1)
+        return instance

@@ -20,6 +20,81 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+_GATE_NODE_KEYS = ("concept", "culture", "format_gate", "culture_gate", "concept_gate", "brand_gate")
+
+
+def _model_to_config(model) -> dict:
+    """Convert an LLMModel instance to a config dict."""
+    return {"model_id": model.model_id, "load_in_4bit": model.load_in_4bit}
+
+
+def resolve_pipeline_models(video_ad_unit) -> dict:
+    """Resolve LLM model config for each pipeline node.
+
+    Fallback chain per non-writer node:
+        1. AdUnit.pipeline_model_config[node_key]  (per-adaptation override)
+        2. PipelineSettings.<node_key>_default_model  (app setting)
+        3. PipelineSettings.global_default_model  (app fallback)
+        4. Language primary model  (ultimate fallback)
+
+    Writer fallback chain:
+        1. AdUnit.pipeline_model_config["writer"]  (per-adaptation override)
+        2. AdUnit.llm_model (existing FK)  (legacy override)
+        3. Language primary model  (language default)
+        4. PipelineSettings.global_default_model  (app fallback)
+
+    Returns dict of {node_key: {"model_id": str, "load_in_4bit": bool}}.
+    """
+    from cw.core.models import LLMModel, PipelineSettings
+
+    settings = PipelineSettings.get_instance()
+    overrides = video_ad_unit.pipeline_model_config or {}
+    language_model = video_ad_unit.language.primary_model if video_ad_unit.language else None
+    global_default = settings.global_default_model
+
+    config = {}
+
+    # Resolve non-writer nodes
+    for key in _GATE_NODE_KEYS:
+        # 1. Per-adaptation override
+        override_pk = overrides.get(key)
+        if override_pk:
+            model = LLMModel.objects.filter(pk=override_pk, is_active=True).first()
+            if model:
+                config[key] = _model_to_config(model)
+                continue
+
+        # 2. PipelineSettings per-node default
+        settings_model = getattr(settings, f"{key}_default_model", None)
+        if settings_model:
+            config[key] = _model_to_config(settings_model)
+            continue
+
+        # 3. Global default
+        if global_default:
+            config[key] = _model_to_config(global_default)
+            continue
+
+        # 4. Language primary model (ultimate fallback)
+        if language_model:
+            config[key] = _model_to_config(language_model)
+
+    # Resolve writer node (different fallback chain)
+    writer_override_pk = overrides.get("writer")
+    if writer_override_pk:
+        model = LLMModel.objects.filter(pk=writer_override_pk, is_active=True).first()
+        if model:
+            config["writer"] = _model_to_config(model)
+    if "writer" not in config:
+        writer_model = video_ad_unit.effective_llm_model
+        if writer_model:
+            config["writer"] = _model_to_config(writer_model)
+        elif global_default:
+            config["writer"] = _model_to_config(global_default)
+
+    return config
+
+
 def build_initial_state(video_ad_unit) -> PipelineState:
     """Build the initial ``PipelineState`` dict from a ``VideoAdUnit``.
 
@@ -35,7 +110,7 @@ def build_initial_state(video_ad_unit) -> PipelineState:
     # Serialize origin ad unit + script rows
     original_spot = {
         "client_name": campaign.client_name,
-        "brand_name": campaign.brand_name,
+        "brand_name": campaign.brand.name if campaign.brand else "",
         "script_title": campaign.script_title,
         "language": source_ad_unit.language.code if source_ad_unit.language else "en",
         "script_rows": [
@@ -51,8 +126,18 @@ def build_initial_state(video_ad_unit) -> PipelineState:
     }
 
     language_code = effective_language.code if effective_language else "en"
-    model_id = effective_model.model_id if effective_model else "Qwen/Qwen2.5-3B-Instruct"
-    load_in_4bit = getattr(effective_model, "load_in_4bit", False) if effective_model else False
+
+    # Resolve per-node model configuration
+    model_config = resolve_pipeline_models(video_ad_unit)
+
+    # Writer model for backward compat (state["model_id"] used as default fallback)
+    writer_config = model_config.get("writer", {})
+    model_id = writer_config.get("model_id") or (
+        effective_model.model_id if effective_model else "Qwen/Qwen2.5-3B-Instruct"
+    )
+    load_in_4bit = writer_config.get("load_in_4bit", False) if writer_config else (
+        getattr(effective_model, "load_in_4bit", False) if effective_model else False
+    )
 
     # Compose insights from all levels (region → country → language → persona segments)
     insights_markdown = compose_insights_as_markdown(video_ad_unit)
@@ -81,6 +166,7 @@ def build_initial_state(video_ad_unit) -> PipelineState:
         "job_id": video_ad_unit.pk,
         "model_id": model_id,
         "load_in_4bit": load_in_4bit,
+        "model_config": model_config,
         "original_script": json.dumps(original_spot, indent=2, ensure_ascii=False),
         "target_market_name": target_market_name,
         "target_market_code": target_market_code,
@@ -88,6 +174,7 @@ def build_initial_state(video_ad_unit) -> PipelineState:
         "target_market_language": language_code,
         "language_code": language_code,
         "num_script_rows": len(original_spot["script_rows"]),
+        "brand_guidelines": video_ad_unit.effective_brand.guidelines if video_ad_unit.effective_brand else "",
         # Intermediate (populated by nodes)
         "concept_brief": None,
         "cultural_brief": None,
@@ -99,6 +186,8 @@ def build_initial_state(video_ad_unit) -> PipelineState:
         "format_revision_count": 0,
         "cultural_revision_count": 0,
         "concept_revision_count": 0,
+        "brand_feedback": None,
+        "brand_revision_count": 0,
         # Terminal
         "status": "processing",
         "error_message": None,
@@ -160,6 +249,7 @@ def save_pipeline_result(video_ad_unit, final_state: PipelineState):
         "format_revision_count": final_state.get("format_revision_count", 0),
         "cultural_revision_count": final_state.get("cultural_revision_count", 0),
         "concept_revision_count": final_state.get("concept_revision_count", 0),
+        "brand_revision_count": final_state.get("brand_revision_count", 0),
         "final_model_id": final_state.get("model_id"),
         "final_status": final_state.get("status"),
     }

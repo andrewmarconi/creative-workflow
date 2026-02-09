@@ -1,10 +1,13 @@
 """
-Management command to import Jinja2 prompt templates from files into database.
+Management command to import prompt templates from JSON into database.
+
+Reads from data/prompt_templates.json (exported via export_prompt_templates).
 
 Usage:
-    python manage.py import_prompt_templates [--dry-run]
+    python manage.py import_prompt_templates [--dry-run] [--dir custom/]
 """
 
+import json
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
@@ -14,9 +17,9 @@ from cw.core.models import PromptTemplate
 
 
 class Command(BaseCommand):
-    """Import .j2 template files into PromptTemplate model."""
+    """Import prompt templates from JSON into PromptTemplate model."""
 
-    help = "Import Jinja2 prompt templates from src/cw/lib/prompts/ into database"
+    help = "Import prompt templates from data/prompt_templates.json into database"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -24,98 +27,49 @@ class Command(BaseCommand):
             action="store_true",
             help="Show what would be imported without actually importing",
         )
+        parser.add_argument(
+            "--dir",
+            type=str,
+            default="",
+            help="Custom directory to read from (default: data/)",
+        )
 
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
+        custom_dir = options["dir"]
 
-        # Template definitions: (slug, name, category, filename)
-        templates = [
-            (
-                "prompt-enhancer-system",
-                "Prompt Enhancer System",
-                "enhancement",
-                "prompt_enhancer_system.j2",
-                "System prompt for HuggingFace and Anthropic prompt enhancers",
-            ),
-            (
-                "prompt-enhancer-user",
-                "Prompt Enhancer User",
-                "enhancement",
-                "prompt_enhancer_user.j2",
-                "User prompt template for enhancement requests",
-            ),
-            (
-                "adaptation",
-                "Cultural Adaptation",
-                "adaptation",
-                "adaptation.j2",
-                "Main cultural adaptation prompt for TV spot localization (104 lines)",
-            ),
-            (
-                "concept-extraction",
-                "Concept Extraction",
-                "concept",
-                "concept_extraction.j2",
-                "Analyzes original TV spot script to extract core creative concept",
-            ),
-            (
-                "cultural-research",
-                "Cultural Research",
-                "concept",
-                "cultural_research.j2",
-                "Produces cultural brief for target market adaptation",
-            ),
-            (
-                "eval-concept",
-                "Concept Evaluation",
-                "evaluation",
-                "eval_concept.j2",
-                "Evaluates whether adaptation preserves original creative concept",
-            ),
-            (
-                "eval-cultural",
-                "Cultural Evaluation",
-                "evaluation",
-                "eval_cultural.j2",
-                "Evaluates cultural appropriateness and authenticity of adaptation",
-            ),
-            (
-                "eval-format",
-                "Format Evaluation",
-                "evaluation",
-                "eval_format.j2",
-                "Evaluates language compliance and formatting rules",
-            ),
-        ]
+        # Locate the JSON file
+        if custom_dir:
+            json_path = Path(custom_dir) / "prompt_templates.json"
+        else:
+            json_path = Path(__file__).resolve().parent.parent.parent.parent.parent.parent / "data" / "prompt_templates.json"
 
-        # Find the prompts directory
-        prompts_dir = Path(__file__).parent.parent.parent.parent / "lib" / "prompts"
-
-        if not prompts_dir.exists():
+        if not json_path.exists():
             self.stderr.write(
-                self.style.ERROR(f"Prompts directory not found: {prompts_dir}")
+                self.style.ERROR(f"File not found: {json_path}")
             )
             return
 
-        self.stdout.write(f"Reading templates from: {prompts_dir}\n")
+        self.stdout.write(f"Reading templates from: {json_path}\n")
+
+        with open(json_path) as f:
+            templates = json.load(f)
+
+        if not isinstance(templates, list):
+            self.stderr.write(self.style.ERROR("Expected a JSON array"))
+            return
 
         created_count = 0
         updated_count = 0
         skipped_count = 0
 
         with transaction.atomic():
-            for slug, name, category, filename, description in templates:
-                template_path = prompts_dir / filename
-
-                if not template_path.exists():
-                    self.stderr.write(
-                        self.style.WARNING(f"File not found: {template_path}, skipping")
-                    )
-                    skipped_count += 1
-                    continue
-
-                # Read template content
-                template_content = template_path.read_text()
+            for entry in templates:
+                slug = entry["slug"]
+                name = entry["name"]
+                category = entry["category"]
+                template_content = entry["template"]
+                description = entry.get("description", "")
 
                 if dry_run:
                     self.stdout.write(

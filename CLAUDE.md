@@ -36,7 +36,7 @@ uv run manage.py preload_models                 # Pre-download models to HF cach
 uv run manage.py createsuperuser                # Create admin user
 
 # Prompt Templates (LLM prompts)
-uv run manage.py import_prompt_templates        # Import .j2 templates to PromptTemplate model
+uv run manage.py import_prompt_templates        # Import from data/prompt_templates.json to database
 uv run manage.py import_prompt_templates --dry-run  # Preview import without changes
 uv run manage.py export_prompt_templates        # Export active templates to data/prompt_templates.json
 uv run manage.py export_prompt_templates --dir custom/  # Export to custom directory
@@ -56,6 +56,12 @@ uv run manage.py export_personas                # Export personas to data/person
 uv run manage.py export_personas --dir custom/  # Export to custom directory
 uv run manage.py import_personas                # Import personas from data/personas.json
 uv run manage.py import_personas --dry-run      # Preview without importing
+
+# Brand Data
+uv run manage.py export_brands                  # Export brands to data/brands.json
+uv run manage.py export_brands --dir custom/    # Export to custom directory
+uv run manage.py import_brands                  # Import brands from data/brands.json
+uv run manage.py import_brands --dry-run        # Preview without importing
 ```
 
 ### Testing
@@ -179,8 +185,9 @@ generative-creative-lab/
 
 **Django app** — `src/cw/tvspots/`:
 - `models.py` — TV spot campaign and ad unit models:
-  - `Campaign` — Top-level campaign container with job_id, client/brand info, and original script data
-  - `AdUnit` — Polymorphic base class for all ad unit types (VIDEO, AUDIO, PRINT) with multi-agent pipeline support
+  - `Brand` — Brand reference data with voice, values, visual identity guidelines, and insights
+  - `Campaign` — Top-level campaign container with job_id, client/brand info, FK to Brand, and original script data
+  - `AdUnit` — Polymorphic base class for all ad unit types (VIDEO, AUDIO, PRINT) with multi-agent pipeline support, optional Brand override, and per-node model config (pipeline_model_config JSONField)
   - `VideoAdUnit` — Video-specific ad unit (merges origin creation + adaptation pipeline + script content)
   - `AdUnitScriptRow` — Script rows (shot/visual/audio) linked to any AdUnit
   - `Storyboard` — Storyboard generation job linking VideoAdUnit to DiffusionModel
@@ -190,28 +197,34 @@ generative-creative-lab/
 
 **Domain Model Architecture** (Refactored 2026-02):
 ```
-Campaign (job container)
+Brand (reference data: voice, values, guidelines)
+Campaign (job container, FK to Brand)
   ├── VideoAdUnit (origin, no source_ad_unit)
   │     ├── AdUnitScriptRow (visual/audio script content)
   │     └── Storyboard → StoryboardImage → DiffusionJob
-  └── VideoAdUnit (adaptation, references source_ad_unit)
+  └── VideoAdUnit (adaptation, references source_ad_unit, optional Brand override)
         ├── Region/Country/Language (target localization)
         ├── AdUnitScriptRow (culturally-adapted script)
         ├── concept_brief, cultural_brief (pipeline output)
-        └── evaluation_history (pipeline validation results)
+        ├── evaluation_history (pipeline validation results)
+        └── pipeline_model_config (per-node LLM overrides)
+PipelineSettings (singleton: per-node default models + global default)
 ```
 
 **Key Model Features**:
 - **Polymorphic AdUnit**: Multi-table inheritance allows extensibility (AudioAdUnit, PrintAdUnit in future)
 - **Adaptation Chain**: `source_ad_unit` FK creates origin → adaptation graph within same Campaign
-- **Pipeline Integration**: VideoAdUnit includes pipeline status tracking, JSON brief storage, and metadata
-- **Multi-Agent Pipeline**: Powered by LangGraph with concept extraction, cultural research, writing, and evaluation agents
+- **Pipeline Integration**: VideoAdUnit includes pipeline status tracking, JSON brief storage, metadata, and per-node model config
+- **Multi-Agent Pipeline**: Powered by LangGraph with concept extraction, cultural research, writing, and evaluation agents (format, cultural, concept, brand)
+- **Per-Node Model Selection**: Each pipeline node can use a different LLM model. Resolution chain: AdUnit override → PipelineSettings node default → PipelineSettings global default → Language primary model. Writer defaults to Language LLM instead.
 
 **Supporting libraries** — `src/cw/lib/`:
 - `config.py` — `PresetsConfig` loads `data/presets.json`
 - `prompt_enhancer.py` — Three enhancers: rule-based (`PromptEnhancer`), local LLM (`HFPromptEnhancer` using Qwen2.5-3B), Anthropic API (`LLMPromptEnhancer`)
 - `civitai.py` — Auto-download LoRAs from CivitAI by AIR URN
 - `loras/manager.py` — LoRA filtering by base architecture and optional theme (e.g., 'anime', 'photorealistic', 'fantasy')
+- `pipeline/state.py` — `resolve_pipeline_models()` resolves per-node LLM models with fallback chain; `build_initial_state()` builds PipelineState from VideoAdUnit
+- `pipeline/nodes.py` — `_get_generator(state, schema, node_key)` loads node-specific LLM via PipelineModelLoader singleton
 
 ### Data Flow
 
@@ -224,7 +237,7 @@ Campaign (job container)
 
 **TV Spot Adaptation Workflow**:
 1. User creates a `Campaign` with original script JSON and origin `VideoAdUnit`
-2. User creates adaptation `VideoAdUnit` selecting target Region/Country/Language and source ad unit
+2. User creates adaptation `VideoAdUnit` selecting target Region/Country/Language, Brand/Persona, and optional per-node LLM model overrides
 3. Admin `save_model()` hook auto-queues `create_adaptation_task` to Celery (if `use_pipeline=True`)
 4. Multi-agent pipeline executes via LangGraph:
    - Concept extraction: Analyzes origin script for core themes, emotions, narrative structure
@@ -233,6 +246,7 @@ Campaign (job container)
    - Format evaluation: Verifies descriptions are in English, only VO/supers in target language with translations
    - Cultural evaluation: Validates cultural sensitivity and appropriateness
    - Concept evaluation: Ensures adapted script preserves original campaign intent
+   - Brand evaluation: Verifies brand voice, values, visual identity, and messaging consistency
    - Revision loop: Rewrites script if any evaluation fails (max 3 retries per gate)
 5. Pipeline saves `concept_brief`, `cultural_brief`, `evaluation_history` to VideoAdUnit
 6. Adapted script rows saved as `AdUnitScriptRow` records
@@ -250,7 +264,8 @@ data/
 ├── countries.json           # Countries with default language references
 ├── languages.json           # Languages with primary/alternative model references
 ├── country_regions.json     # M2M: Country → Region mappings
-└── country_languages.json   # M2M: Country → Language mappings (with is_primary)
+├── country_languages.json   # M2M: Country → Language mappings (with is_primary)
+└── brands.json              # Brand reference data (voice, guidelines, insights)
 ```
 
 **Relationship Handling via Codes/IDs**:
@@ -282,17 +297,14 @@ data/
 
 ### Prompt Templates
 
-**Database-Backed LLM Prompts** (since Issue #50):
-LLM prompts are stored in the `PromptTemplate` model for live editing via Django admin without code deployment. The system uses a **database-first lookup strategy** with file fallback:
+**Database-Only LLM Prompts** (since Issue #50):
+LLM prompts are stored exclusively in the `PromptTemplate` model (database-only, no filesystem fallback). This enables live editing via Django admin without code deployment.
 
-1. **Database Lookup** (primary):   - Templates loaded from `PromptTemplate` model by slug
-   - Results cached in Redis/memory (5-minute TTL)
-   - Usage analytics tracked (`usage_count`, `last_used_at`)
-   - Editable via Django admin at `/admin/prompts/prompttemplate/`
-
-2. **File Fallback** (legacy):
-   - If DB record not found, loads from `src/cw/lib/prompts/*.j2` files
-   - Provides backward compatibility during migration
+- Templates loaded from `PromptTemplate` model by slug (e.g., `"adaptation"`, `"eval-brand"`)
+- Results cached in Redis/memory (5-minute TTL)
+- Usage analytics tracked (`usage_count`, `last_used_at`)
+- Editable via Django admin at `/admin/prompts/prompttemplate/`
+- Template source of truth for bootstrapping: `data/prompt_templates.json`
 
 **Template Versioning**:
 - Each template edit creates a new version (auto-incrementing `version` number)
@@ -301,22 +313,21 @@ LLM prompts are stored in the `PromptTemplate` model for live editing via Django
 
 **Management Commands**:
 ```bash
-uv run manage.py import_prompt_templates   # Import .j2 files to database
+uv run manage.py import_prompt_templates   # Import from data/prompt_templates.json to database
 uv run manage.py import_prompt_templates --dry-run  # Preview import
+uv run manage.py export_prompt_templates   # Export active templates to data/prompt_templates.json
 ```
 
-**Usage** (backward compatible):
+**Usage**:
 ```python
 from cw.lib.prompts import render_prompt
 
-# Works with slug (database lookup)
+# Always use the DB slug (hyphenated)
 prompt = render_prompt("adaptation", target_market_name="Japan", ...)
-
-# Works with .j2 filename (backward compatible)
-prompt = render_prompt("adaptation.j2", target_market_name="Japan", ...)
+prompt = render_prompt("eval-brand", adapted_script_json=data, ...)
 ```
 
-**Current Templates** (8 total):
+**Current Templates** (9 total):
 | Slug | Name | Category | Usage |
 |------|------|----------|-------|
 | `prompt-enhancer-system` | Prompt Enhancer System | enhancement | System prompt for HF/Anthropic enhancers |
@@ -327,6 +338,7 @@ prompt = render_prompt("adaptation.j2", target_market_name="Japan", ...)
 | `eval-concept` | Concept Evaluation | evaluation | Evaluates concept fidelity |
 | `eval-cultural` | Cultural Evaluation | evaluation | Evaluates cultural appropriateness |
 | `eval-format` | Format Evaluation | evaluation | Evaluates language compliance |
+| `eval-brand` | Brand Evaluation | evaluation | Evaluates brand consistency and guidelines |
 
 **Editing Prompts**:
 1. Navigate to Django admin → Prompt Templates

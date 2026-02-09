@@ -22,28 +22,39 @@ logger = logging.getLogger(__name__)
 MAX_FORMAT_RETRIES = 3
 MAX_CULTURAL_RETRIES = 3
 MAX_CONCEPT_RETRIES = 3
+MAX_BRAND_RETRIES = 3
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _get_generator(state, output_schema):
-    """Return an Outlines generator for *output_schema*, handling model switches."""
+def _get_generator(state, output_schema, node_key=None):
+    """Return an Outlines generator for *output_schema*, using per-node model if configured."""
     from cw.lib.pipeline.model_loader import get_model_loader
+
+    # Resolve model: per-node config → fallback to state["model_id"]
+    if node_key and state.get("model_config", {}).get(node_key):
+        config = state["model_config"][node_key]
+        model_id = config["model_id"]
+        load_in_4bit = config.get("load_in_4bit", False)
+    else:
+        model_id = state["model_id"]
+        load_in_4bit = state.get("load_in_4bit", False)
 
     logger.debug(
         f"Getting generator for schema: {output_schema.__name__}",
         extra={
             "job_id": state.get("job_id"),
-            "model_id": state["model_id"],
-            "load_in_4bit": state.get("load_in_4bit", False),
+            "model_id": model_id,
+            "node_key": node_key,
+            "load_in_4bit": load_in_4bit,
         },
     )
 
     loader = get_model_loader(
-        model_id=state["model_id"],
-        load_in_4bit=state.get("load_in_4bit", False),
+        model_id=model_id,
+        load_in_4bit=load_in_4bit,
     )
     return loader.get_generator(output_schema), loader
 
@@ -86,11 +97,11 @@ def concept_node(state: PipelineState) -> dict:
 
     try:
         logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
-        generator, loader = _get_generator(state, ConceptBrief)
+        generator, loader = _get_generator(state, ConceptBrief, node_key="concept")
 
         logger.debug("Rendering concept extraction prompt", extra={"job_id": state["job_id"]})
         user_prompt = render_prompt(
-            "concept_extraction.j2",
+            "concept-extraction",
             original_json=state["original_script"],
         )
         system_message = (
@@ -137,11 +148,11 @@ def culture_node(state: PipelineState) -> dict:
 
     try:
         logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
-        generator, loader = _get_generator(state, CulturalBrief)
+        generator, loader = _get_generator(state, CulturalBrief, node_key="culture")
 
         logger.debug("Rendering cultural research prompt", extra={"job_id": state["job_id"], "target": state["target_market_name"]})
         user_prompt = render_prompt(
-            "cultural_research.j2",
+            "cultural-research",
             concept_brief_json=state["concept_brief"],
             target_market_name=state["target_market_name"],
             target_market_rules=state["target_market_rules"],
@@ -188,11 +199,13 @@ def writer_node(state: PipelineState) -> dict:
     format_count = state.get("format_revision_count", 0)
     cultural_count = state.get("cultural_revision_count", 0)
     concept_count = state.get("concept_revision_count", 0)
-    total_revisions = format_count + cultural_count + concept_count
+    brand_count = state.get("brand_revision_count", 0)
+    total_revisions = format_count + cultural_count + concept_count + brand_count
     is_revision = (
         state.get("format_feedback") is not None
         or state.get("cultural_feedback") is not None
         or state.get("concept_feedback") is not None
+        or state.get("brand_feedback") is not None
     )
 
     status = "revising" if is_revision else "writing"
@@ -220,13 +233,13 @@ def writer_node(state: PipelineState) -> dict:
     else:
         state_update_model = {}
 
-    generator, loader = _get_generator(state | state_update_model, AdaptationOutput)
+    generator, loader = _get_generator(state | state_update_model, AdaptationOutput, node_key="writer")
 
     # Build revision feedback from whichever evaluator failed
-    revision_feedback = state.get("format_feedback") or state.get("cultural_feedback") or state.get("concept_feedback") or None
+    revision_feedback = state.get("format_feedback") or state.get("cultural_feedback") or state.get("concept_feedback") or state.get("brand_feedback") or None
 
     user_prompt = render_prompt(
-        "adaptation.j2",
+        "adaptation",
         target_market_name=state["target_market_name"],
         target_market_language=state["target_market_language"],
         target_market_rules=state["target_market_rules"],
@@ -269,6 +282,7 @@ def writer_node(state: PipelineState) -> dict:
         "format_feedback": None,
         "cultural_feedback": None,
         "concept_feedback": None,
+        "brand_feedback": None,
         **state_update_model,
     }
 
@@ -287,11 +301,11 @@ def format_eval_node(state: PipelineState) -> dict:
 
     try:
         logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
-        generator, loader = _get_generator(state, EvaluationResult)
+        generator, loader = _get_generator(state, EvaluationResult, node_key="format_gate")
 
         logger.debug("Rendering format evaluation prompt", extra={"job_id": state["job_id"]})
         user_prompt = render_prompt(
-            "eval_format.j2",
+            "eval-format",
             adapted_script_json=state["adapted_script"],
             target_market_language=state["target_market_language"],
         )
@@ -354,11 +368,11 @@ def cultural_eval_node(state: PipelineState) -> dict:
 
     try:
         logger.debug("Loading model and creating generator", extra={"job_id": state["job_id"]})
-        generator, loader = _get_generator(state, EvaluationResult)
+        generator, loader = _get_generator(state, EvaluationResult, node_key="culture_gate")
 
         logger.debug("Rendering cultural evaluation prompt", extra={"job_id": state["job_id"]})
         user_prompt = render_prompt(
-            "eval_cultural.j2",
+            "eval-cultural",
             adapted_script_json=state["adapted_script"],
             cultural_brief_json=state["cultural_brief"],
             target_market_rules=state["target_market_rules"],
@@ -420,10 +434,10 @@ def concept_eval_node(state: PipelineState) -> dict:
     _update_job_status(state["job_id"], "concept_evaluation")
     start = time.time()
 
-    generator, loader = _get_generator(state, EvaluationResult)
+    generator, loader = _get_generator(state, EvaluationResult, node_key="concept_gate")
 
     user_prompt = render_prompt(
-        "eval_concept.j2",
+        "eval-concept",
         adapted_script_json=state["adapted_script"],
         concept_brief_json=state["concept_brief"],
     )
@@ -457,4 +471,58 @@ def concept_eval_node(state: PipelineState) -> dict:
         return {
             "concept_feedback": result.model_dump_json(),
             "concept_revision_count": state.get("concept_revision_count", 0) + 1,
+        }
+
+
+# ---------------------------------------------------------------------------
+# Brand consistency evaluation node
+# ---------------------------------------------------------------------------
+
+def brand_eval_node(state: PipelineState) -> dict:
+    """Evaluate brand consistency of the adapted script."""
+    from cw.lib.pipeline.schemas import EvaluationResult
+
+    logger.info("Pipeline node: brand_eval starting", extra={"job_id": state["job_id"]})
+    _update_job_status(state["job_id"], "brand_evaluation")
+    start = time.time()
+
+    generator, loader = _get_generator(state, EvaluationResult, node_key="brand_gate")
+
+    user_prompt = render_prompt(
+        "eval-brand",
+        adapted_script_json=state["adapted_script"],
+        concept_brief_json=state["concept_brief"],
+        cultural_brief_json=state["cultural_brief"],
+        brand_guidelines=state.get("brand_guidelines", ""),
+    )
+    system_message = (
+        "You are a brand compliance reviewer. Produce ONLY valid JSON "
+        "matching the requested schema — no commentary."
+    )
+    prompt = _apply_chat_template(loader, system_message, user_prompt)
+
+    raw = generator(prompt, max_new_tokens=2048)
+    result = EvaluationResult.model_validate(json.loads(raw) if isinstance(raw, str) else raw)
+
+    # Append to evaluation history
+    from cw.tvspots.models import VideoAdUnit
+
+    job = VideoAdUnit.objects.get(id=state["job_id"])
+    history = job.evaluation_history or []
+    history.append({"type": "brand", **result.model_dump()})
+    job.evaluation_history = history
+    job.save(update_fields=["evaluation_history"])
+
+    elapsed = round(time.time() - start, 2)
+    logger.info(
+        f"Pipeline node: brand_eval done ({elapsed}s, passed={result.passed})",
+        extra={"job_id": state["job_id"]},
+    )
+
+    if result.passed:
+        return {"brand_feedback": None}
+    else:
+        return {
+            "brand_feedback": result.model_dump_json(),
+            "brand_revision_count": state.get("brand_revision_count", 0) + 1,
         }
