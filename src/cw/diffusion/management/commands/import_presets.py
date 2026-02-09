@@ -39,7 +39,12 @@ class Command(BaseCommand):
 
         # Load presets
         with open(file_path, "r") as f:
-            presets = json.load(f)
+            try:
+                presets = json.load(f)
+            except json.JSONDecodeError:
+                # Handle empty or invalid files as empty dict
+                self.stdout.write(self.style.WARNING("Warning: File is empty or invalid, treating as empty presets"))
+                presets = {"models": [], "loras": []}
 
         # Clear existing data if requested
         if options["clear"]:

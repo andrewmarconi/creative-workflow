@@ -53,7 +53,8 @@ class Command(BaseCommand):
             prompts = self._load_text(file_path, options["style"])
 
         if not prompts:
-            raise CommandError("No prompts found in file")
+            self.stdout.write(self.style.WARNING("No prompts found in file - nothing to import"))
+            return
 
         self.stdout.write(f"Found {len(prompts)} prompts to import")
 
@@ -109,7 +110,12 @@ class Command(BaseCommand):
     def _load_json(self, file_path: Path) -> list:
         """Load prompts from a JSON file."""
         with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                # Handle empty or invalid files as empty list
+                self.stdout.write(self.style.WARNING("Warning: File is empty or invalid, treating as empty list"))
+                return []
 
         if not isinstance(data, list):
             raise CommandError("JSON file must contain a list of prompt objects")

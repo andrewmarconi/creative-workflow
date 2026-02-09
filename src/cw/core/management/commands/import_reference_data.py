@@ -91,7 +91,12 @@ class Command(BaseCommand):
                 raise FileNotFoundError(f"{filename}")
 
             with open(file_path, "r", encoding="utf-8") as f:
-                data[key] = json.load(f)
+                try:
+                    data[key] = json.load(f)
+                except json.JSONDecodeError:
+                    # Handle empty or invalid files as empty arrays
+                    self.stdout.write(self.style.WARNING(f"  Warning: {filename} is empty or invalid, treating as empty array"))
+                    data[key] = []
 
             self.stdout.write(f"  ✓ Loaded {filename}: {len(data[key])} records")
 

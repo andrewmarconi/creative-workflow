@@ -70,7 +70,12 @@ class Command(BaseCommand):
             raise FileNotFoundError("personas.json")
 
         with open(personas_file, "r", encoding="utf-8") as f:
-            data["personas"] = json.load(f)
+            try:
+                data["personas"] = json.load(f)
+            except json.JSONDecodeError:
+                # Handle empty or invalid files as empty arrays
+                self.stdout.write(self.style.WARNING(f"  Warning: {personas_file.name} is empty or invalid, treating as empty array"))
+                data["personas"] = []
         self.stdout.write(f"  ✓ Loaded personas.json: {len(data['personas'])} records")
 
         # Load persona-segment mappings
@@ -79,7 +84,12 @@ class Command(BaseCommand):
             raise FileNotFoundError("persona_segments.json")
 
         with open(mappings_file, "r", encoding="utf-8") as f:
-            data["persona_segments"] = json.load(f)
+            try:
+                data["persona_segments"] = json.load(f)
+            except json.JSONDecodeError:
+                # Handle empty or invalid files as empty arrays
+                self.stdout.write(self.style.WARNING(f"  Warning: {mappings_file.name} is empty or invalid, treating as empty array"))
+                data["persona_segments"] = []
         self.stdout.write(f"  ✓ Loaded persona_segments.json: {len(data['persona_segments'])} records")
 
         return data

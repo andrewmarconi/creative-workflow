@@ -51,8 +51,10 @@ class Command(BaseCommand):
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 segments_data = json.load(f)
-        except json.JSONDecodeError as e:
-            raise CommandError(f"Invalid JSON: {e}")
+        except json.JSONDecodeError:
+            # Handle empty or invalid files as empty arrays
+            self.stdout.write(self.style.WARNING(f"  Warning: {file_path.name} is empty or invalid, treating as empty array"))
+            segments_data = []
 
         self.stdout.write(f"  ✓ Loaded {file_path}: {len(segments_data)} records")
 

@@ -86,6 +86,12 @@ echo "Importing presets (models, LoRAs)..."
 uv run manage.py import_presets
 echo ""
 
+# Import data
+echo "Importing base segments & personas..."
+uv run manage.py import_segments
+uv run manage.py import_personas
+echo ""
+
 echo "Importing reference data (regions, countries, languages, LLM models)..."
 uv run manage.py import_reference_data
 echo ""
