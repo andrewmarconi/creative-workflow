@@ -62,10 +62,13 @@ For each issue found, specify:
 - `suggestion`: Specific, actionable fix showing the corrected text
 
 Produce a JSON object with:
+- `reasoning`: string — Your step-by-step evaluation process. Explain which rows you checked, what language rule violations you found (if any), how you categorized severity, and how you calculated the score.
 - `passed`: boolean (true if the script follows language rules)
 - `score`: float from 0.0 to 1.0 (format compliance)
 - `issues`: array of issue objects (empty if no issues found)
 - `summary`: brief summary of the evaluation
+
+**IMPORTANT**: Start with the `reasoning` field. Walk through your evaluation systematically, checking each row and field against the language rules.
 
 Check EVERY script row individually. Do not skip any rows.
 

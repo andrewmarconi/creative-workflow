@@ -52,10 +52,13 @@ For each issue found, specify:
 - `suggestion`: Specific, actionable fix
 
 Produce a JSON object with:
+- `reasoning`: string — Your step-by-step evaluation process. Explain how you checked substitution compliance, tone alignment, pitfall avoidance, and cultural authenticity. Detail what you found and how you arrived at your score.
 - `passed`: boolean (true if the adaptation passes)
 - `score`: float from 0.0 to 1.0 (overall quality)
 - `issues`: array of issue objects (empty if no issues found)
 - `summary`: brief summary of the evaluation
+
+**IMPORTANT**: Start with the `reasoning` field. Walk through each evaluation criterion systematically and explain your assessment.
 
 Be thorough but fair. The goal is quality, not perfection.
 

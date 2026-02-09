@@ -35,6 +35,7 @@ Your task is to analyze the following TV spot script and produce a structured co
 8. **Brand Voice**: Describe the tone and personality — is it playful, authoritative, warm, edgy, aspirational? Note the register (formal/informal) and communication style.
 
 Produce a JSON object with these exact fields:
+- `reasoning`: string — Your step-by-step thinking process. Walk through how you analyzed the script, what patterns you noticed, what stood out as culturally specific vs. universal, and how you arrived at your conclusions for each field below.
 - `core_message`: string
 - `emotional_beats`: array of strings
 - `narrative_structure`: string
@@ -44,6 +45,6 @@ Produce a JSON object with these exact fields:
 - `can_adapt`: array of strings
 - `brand_voice`: string
 
-Be thorough and specific. The quality of downstream adaptation depends on the precision of this analysis.
+**IMPORTANT**: Start with the `reasoning` field. Explain your analytical process thoroughly before providing your conclusions. Be specific about what you observed in the script and how it informed each aspect of your analysis.
 
 Generate the concept brief:
