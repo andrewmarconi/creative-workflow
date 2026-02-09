@@ -100,6 +100,26 @@ echo "Importing prompt templates..."
 uv run manage.py import_prompt_templates
 echo ""
 
+echo "Creating pipeline settings (default: Qwen 2.5 7B for all nodes)..."
+uv run manage.py shell -c "
+from cw.core.models import LLMModel, PipelineSettings
+qwen7b = LLMModel.objects.filter(model_id='Qwen/Qwen2.5-7B-Instruct', is_active=True).first()
+ps, created = PipelineSettings.objects.get_or_create(pk=1)
+if qwen7b:
+    ps.global_default_model = qwen7b
+    ps.concept_default_model = qwen7b
+    ps.culture_default_model = qwen7b
+    ps.format_gate_default_model = qwen7b
+    ps.culture_gate_default_model = qwen7b
+    ps.concept_gate_default_model = qwen7b
+    ps.brand_gate_default_model = qwen7b
+    ps.save()
+    print(f'  Pipeline settings configured with {qwen7b.name}')
+else:
+    print('  Warning: Qwen 2.5 7B not found, pipeline settings created without defaults')
+"
+echo ""
+
 # Import brands if data file exists
 if [ -f "data/brands.json" ]; then
     echo "Importing brands..."
