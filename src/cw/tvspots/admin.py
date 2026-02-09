@@ -513,11 +513,6 @@ class AdUnitScriptRowInline(TabularInline):
 
 @admin.register(VideoAdUnit)
 class VideoAdUnitAdmin(ModelAdmin):
-    class Media:
-        css = {
-            'all': ('css/pipeline_progress.css',)
-        }
-
     list_display = [
         "show_id",
         "show_campaign",

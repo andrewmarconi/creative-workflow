@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",  # Required for ArrayField
-    "cw.core",
+    "cw.core",  # Core models (LLMModel, PromptTemplate)
     "cw.audiences",
     "cw.diffusion",
     "cw.tvspots",
@@ -151,6 +151,7 @@ UNFOLD = {
     "SITE_TITLE": "Generative Creative Lab",
     "SITE_HEADER": "Generative Creative Lab",
     "SITE_SUBHEADER": "Multi-Model Diffusion Pipeline",
+    # THEME omitted to enable user theme switcher (light/dark toggle)
     "SITE_DROPDOWN": [],
     "STYLES": [
         lambda request: static("core/css/styles.css"),
@@ -243,6 +244,11 @@ UNFOLD = {
                         "title": "LLM Models",
                         "icon": "smart_toy",
                         "link": "/app/core/llmmodel/",
+                    },
+                    {
+                        "title": "Prompt Templates",
+                        "icon": "code",
+                        "link": "/app/core/prompttemplate/",
                     },
                 ],
             },

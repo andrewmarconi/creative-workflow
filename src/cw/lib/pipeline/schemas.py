@@ -18,6 +18,9 @@ class Substitution(BaseModel):
 class ConceptBrief(BaseModel):
     """Output of the concept extraction node — decomposes the original script."""
 
+    reasoning: str = Field(
+        description="Step-by-step thinking process used to analyze the script and extract key concepts"
+    )
     core_message: str = Field(description="Primary selling proposition and key message")
     emotional_beats: list[str] = Field(description="Key emotional moments in the narrative")
     narrative_structure: str = Field(description="Story arc: setup, conflict, resolution")
@@ -37,6 +40,9 @@ class ConceptBrief(BaseModel):
 class CulturalBrief(BaseModel):
     """Output of the cultural research node — market-specific adaptation guidance."""
 
+    reasoning: str = Field(
+        description="Step-by-step thinking about the target market's cultural context, values, sensitivities, and how the original concept should be adapted"
+    )
     market_context: str = Field(description="Summary of target market cultural context")
     substitutions: list[Substitution] = Field(
         description="Recommended cultural reference substitutions"
@@ -65,6 +71,9 @@ class EvaluationIssue(BaseModel):
 class EvaluationResult(BaseModel):
     """Output of an evaluation node — quality assessment of an adapted script."""
 
+    reasoning: str = Field(
+        description="Step-by-step evaluation process explaining what was checked, what issues were found (if any), and how the score was determined"
+    )
     passed: bool = Field(description="Whether the adaptation passes this evaluation")
     score: float = Field(description="Quality score from 0.0 to 1.0")
     issues: list[EvaluationIssue] = Field(

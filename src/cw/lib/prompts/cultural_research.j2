@@ -45,12 +45,15 @@ Your task is to produce a cultural research brief for adapting a TV spot to the 
 6. **Regulatory Notes**: Note any advertising regulations, disclaimers, or compliance requirements specific to {{ target_market_name }}.
 
 Produce a JSON object with these exact fields:
+- `reasoning`: string — Your step-by-step research process. Explain how you analyzed the target market's cultural context, what cultural values and norms you considered, why specific substitutions are appropriate, and how you identified pitfalls and opportunities.
 - `market_context`: string
 - `substitutions`: array of objects with `original`, `replacement`, `rationale`
 - `tone_adjustments`: string
 - `pitfalls`: array of strings
 - `opportunities`: array of strings
 - `regulatory_notes`: string
+
+**IMPORTANT**: Start with the `reasoning` field. Walk through your cultural analysis thoroughly before providing recommendations. Be specific about what cultural knowledge informed your decisions.
 
 Be specific and actionable. Avoid stereotypes — ground recommendations in actual cultural knowledge.
 

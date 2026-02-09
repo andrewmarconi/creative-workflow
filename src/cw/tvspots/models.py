@@ -60,14 +60,14 @@ class AdUnit(models.Model):
         ("processing", "Processing"),
         ("completed", "Completed"),
         ("failed", "Failed"),
-        # Pipeline-specific statuses
-        ("concept_analysis", "Concept Analysis"),
-        ("cultural_analysis", "Cultural Analysis"),
-        ("writing", "Writing"),
-        ("format_evaluation", "Format Evaluation"),
-        ("cultural_evaluation", "Cultural Evaluation"),
-        ("concept_evaluation", "Concept Evaluation"),
-        ("revising", "Revising"),
+        # Pipeline-specific statuses (present tense - what's happening now)
+        ("concept_analysis", "Analyzing Concept"),
+        ("cultural_analysis", "Researching Culture"),
+        ("writing", "Writing Script"),
+        ("format_evaluation", "Evaluating Format"),
+        ("cultural_evaluation", "Evaluating Culture"),
+        ("concept_evaluation", "Evaluating Concept"),
+        ("revising", "Revising Script"),
     ]
 
     # Core fields

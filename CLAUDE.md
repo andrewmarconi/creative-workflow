@@ -35,6 +35,12 @@ uv run manage.py import_adaptations             # Import adaptations.json into p
 uv run manage.py preload_models                 # Pre-download models to HF cache
 uv run manage.py createsuperuser                # Create admin user
 
+# Prompt Templates (LLM prompts)
+uv run manage.py import_prompt_templates        # Import .j2 templates to PromptTemplate model
+uv run manage.py import_prompt_templates --dry-run  # Preview import without changes
+uv run manage.py export_prompt_templates        # Export active templates to data/prompt_templates.json
+uv run manage.py export_prompt_templates --dir custom/  # Export to custom directory
+
 # Reference Data (Regions, Countries, Languages, LLM Models)
 uv run manage.py export_reference_data          # Export to separate files in data/
 uv run manage.py export_reference_data --dir custom/  # Export to custom directory
@@ -273,6 +279,62 @@ data/
   - **Optional**: `ANTHROPIC_API_KEY` (for LLM prompt enhancement), `CIVITAI_API_KEY` (for auto-downloading LoRAs), `MODEL_BASE_PATH` (base directory for local `.safetensors` files)
 - `src/cw/settings.py` — Django settings including Celery config and Unfold admin setup
 - `grafana/provisioning/` — Grafana datasource/dashboard provisioning (auto-configures Loki on startup)
+
+### Prompt Templates
+
+**Database-Backed LLM Prompts** (since Issue #50):
+LLM prompts are stored in the `PromptTemplate` model for live editing via Django admin without code deployment. The system uses a **database-first lookup strategy** with file fallback:
+
+1. **Database Lookup** (primary):   - Templates loaded from `PromptTemplate` model by slug
+   - Results cached in Redis/memory (5-minute TTL)
+   - Usage analytics tracked (`usage_count`, `last_used_at`)
+   - Editable via Django admin at `/admin/prompts/prompttemplate/`
+
+2. **File Fallback** (legacy):
+   - If DB record not found, loads from `src/cw/lib/prompts/*.j2` files
+   - Provides backward compatibility during migration
+
+**Template Versioning**:
+- Each template edit creates a new version (auto-incrementing `version` number)
+- Only one version per slug can be `is_active=True` at a time
+- Old versions retained for rollback/audit trail
+
+**Management Commands**:
+```bash
+uv run manage.py import_prompt_templates   # Import .j2 files to database
+uv run manage.py import_prompt_templates --dry-run  # Preview import
+```
+
+**Usage** (backward compatible):
+```python
+from cw.lib.prompts import render_prompt
+
+# Works with slug (database lookup)
+prompt = render_prompt("adaptation", target_market_name="Japan", ...)
+
+# Works with .j2 filename (backward compatible)
+prompt = render_prompt("adaptation.j2", target_market_name="Japan", ...)
+```
+
+**Current Templates** (8 total):
+| Slug | Name | Category | Usage |
+|------|------|----------|-------|
+| `prompt-enhancer-system` | Prompt Enhancer System | enhancement | System prompt for HF/Anthropic enhancers |
+| `prompt-enhancer-user` | Prompt Enhancer User | enhancement | User prompt for enhancement requests |
+| `adaptation` | Cultural Adaptation | adaptation | Main TV spot localization prompt (104 lines) |
+| `concept-extraction` | Concept Extraction | concept | Analyzes original script for core concept |
+| `cultural-research` | Cultural Research | concept | Produces cultural brief for target market |
+| `eval-concept` | Concept Evaluation | evaluation | Evaluates concept fidelity |
+| `eval-cultural` | Cultural Evaluation | evaluation | Evaluates cultural appropriateness |
+| `eval-format` | Format Evaluation | evaluation | Evaluates language compliance |
+
+**Editing Prompts**:
+1. Navigate to Django admin → Prompt Templates
+2. Select template to edit3. Modify `template` field (Jinja2 syntax validated on save)
+4. Save → auto-creates new version and invalidates cache
+5. Changes take effect immediately (no deployment needed)
+
+**Location**: `src/cw/prompts/` (Django app), `src/cw/lib/prompts/__init__.py` (render_prompt())
 
 ### Model-Specific Notes
 | Model | Pipeline | Steps | CFG | Negative Prompt | Architecture |
