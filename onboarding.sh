@@ -96,6 +96,17 @@ echo "Importing reference data (regions, countries, languages, LLM models)..."
 uv run manage.py import_reference_data
 echo ""
 
+echo "Importing prompt templates..."
+uv run manage.py import_prompt_templates
+echo ""
+
+# Import brands if data file exists
+if [ -f "data/brands.json" ]; then
+    echo "Importing brands..."
+    uv run manage.py import_brands
+    echo ""
+fi
+
 # Check if prompts data file exists before importing
 if [ -f "data/prompts.json" ] || [ -f "data/prompts.txt" ]; then
     echo "Importing prompts..."
