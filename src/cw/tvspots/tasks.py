@@ -192,3 +192,463 @@ def generate_storyboard_task(self, storyboard_id, enhance_prompts=True):
             "storyboard_id": storyboard_id,
             "error": str(e),
         }
+
+
+# ---------------------------------------------------------------------------
+# Video Analysis Tasks (Origin Script Extraction)
+# ---------------------------------------------------------------------------
+
+
+@shared_task(bind=True, name="cw.tvspots.tasks.analyze_video_task", max_retries=3)
+def analyze_video_task(self, ad_unit_media_id: int):
+    """
+    Analyze uploaded video and extract script, scenes, transcription, and insights.
+
+    This task orchestrates the video processing pipeline:
+    1. Extract video metadata (duration, resolution, etc.)
+    2. Detect scenes using PySceneDetect
+    3. Transcribe audio with Whisper
+    4. Extract keyframes and detect objects with YOLO
+    5. Analyze visual style (colors, lighting, camera work)
+    6. Analyze sentiment (audio + visual)
+    7. Categorize scenes
+    8. Generate enhanced script
+    9. Generate audience insights with LLM
+    10. Create result object
+    11. Save keyframes to database
+
+    Progress tracking:
+    - Reports progress via self.update_state() at each phase
+    - Progress percentages: metadata (10%), scenes (30%), transcription (50%),
+      visual analysis (70%), script generation (90%), completion (100%)
+
+    Args:
+        ad_unit_media_id: ID of the AdUnitMedia to process
+
+    Returns:
+        Dict with processing results:
+        {
+            'status': 'success' | 'failed',
+            'media_id': int,
+            'result_id': int,
+            'processing_time': float
+        }
+    """
+    from cw.tvspots.models import AdUnitMedia, VideoProcessingResult
+
+    logger.info(
+        f"Starting video analysis for AdUnitMedia {ad_unit_media_id}",
+        extra={"ad_unit_media_id": ad_unit_media_id},
+    )
+
+    try:
+        media = AdUnitMedia.objects.get(id=ad_unit_media_id)
+        media.status = "processing"
+        media.processing_started_at = timezone.now()
+        media.celery_task_id = self.request.id
+        media.save(update_fields=["status", "processing_started_at", "celery_task_id"])
+
+        video_path = media.video_file.path
+
+        # Phase 1: Extract metadata (0-10%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 0,
+                "total": 100,
+                "status": "Extracting video metadata...",
+                "phase": "metadata",
+            }
+        )
+        logger.info("Extracting video metadata...")
+        from cw.lib.video_analysis import extract_video_metadata
+
+        metadata = extract_video_metadata(video_path)
+        media.duration = metadata["duration"]
+        media.resolution_width = metadata["width"]
+        media.resolution_height = metadata["height"]
+        media.frame_rate = metadata["frame_rate"]
+        media.audio_channels = metadata["audio_channels"]
+        media.audio_sample_rate = metadata["sample_rate"]
+        media.file_size = metadata["file_size"]
+        media.save(
+            update_fields=[
+                "duration",
+                "resolution_width",
+                "resolution_height",
+                "frame_rate",
+                "audio_channels",
+                "audio_sample_rate",
+                "file_size",
+            ]
+        )
+
+        logger.info(
+            f"Metadata extracted: {metadata['width']}x{metadata['height']}, "
+            f"{metadata['duration']:.1f}s",
+            extra={"metadata": metadata},
+        )
+
+        # Phase 2: Scene detection (10-30%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 10,
+                "total": 100,
+                "status": "Detecting scenes...",
+                "phase": "scene_detection",
+            }
+        )
+        logger.info("Detecting scenes...")
+        from cw.lib.video_analysis import detect_scenes
+
+        scenes = detect_scenes(video_path)
+        logger.info(
+            f"Detected {len(scenes)} scenes",
+            extra={"num_scenes": len(scenes)},
+        )
+
+        # Phase 3: Transcribe audio (30-50%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 30,
+                "total": 100,
+                "status": "Transcribing audio...",
+                "phase": "transcription",
+            }
+        )
+        logger.info("Transcribing audio...")
+        from cw.lib.video_analysis import transcribe_audio
+
+        transcription = transcribe_audio(video_path)
+        logger.info(
+            f"Transcription complete: {transcription['language']}, "
+            f"{len(transcription['segments'])} segments",
+            extra={
+                "language": transcription["language"],
+                "num_segments": len(transcription["segments"]),
+            },
+        )
+
+        # Phase 4: Extract keyframes and detect objects (50-70%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 50,
+                "total": 100,
+                "status": "Analyzing visual content...",
+                "phase": "visual_analysis",
+            }
+        )
+        import tempfile
+        keyframes_dir = tempfile.mkdtemp(prefix="keyframes_")
+
+        logger.info("Extracting keyframes...")
+        keyframes = _extract_keyframes(video_path, scenes, keyframes_dir)
+
+        logger.info("Detecting objects in keyframes...")
+        from cw.lib.video_analysis import detect_objects, summarize_objects
+
+        # Detect objects in each keyframe
+        keyframe_detections = {}
+        for scene_number, keyframe_path in keyframes.items():
+            detections = detect_objects(keyframe_path, conf_threshold=0.5)
+            keyframe_detections[scene_number] = detections
+
+        # Summarize all detections across all keyframes
+        all_detections = []
+        for detections in keyframe_detections.values():
+            all_detections.extend(detections)
+
+        objects_summary = summarize_objects(all_detections)
+        logger.info(
+            f"Object detection complete: {objects_summary['total_objects']} objects detected",
+            extra={"objects_summary": objects_summary},
+        )
+
+        # Phase 5: Analyze visual style (Phase 2)
+        logger.info("Analyzing visual style...")
+        from cw.lib.video_analysis import analyze_visual_style, analyze_camera_work
+
+        keyframe_paths = list(keyframes.values())
+        visual_style = analyze_visual_style(keyframe_paths)
+        camera_work = analyze_camera_work(scenes)
+        visual_style["camera_work"] = camera_work
+
+        logger.info(
+            f"Visual style analysis complete: {len(visual_style['dominant_colors'])} dominant colors",
+            extra={"visual_style": visual_style},
+        )
+
+        # Phase 6: Analyze sentiment (Phase 2)
+        logger.info("Analyzing sentiment...")
+        from cw.lib.video_analysis import analyze_sentiment
+
+        sentiment_analysis = analyze_sentiment(transcription, visual_style, objects_summary)
+        logger.info(
+            f"Sentiment analysis complete: {sentiment_analysis['overall_sentiment']}",
+            extra={"sentiment": sentiment_analysis},
+        )
+
+        # Phase 7: Categorize scenes (Phase 2)
+        logger.info("Categorizing scenes...")
+        from cw.lib.video_analysis import categorize_scenes, summarize_categories
+
+        categorized_scenes = categorize_scenes(scenes, keyframe_detections, transcription)
+        categories_summary = summarize_categories(categorized_scenes)
+
+        logger.info(
+            f"Scene categorization complete: {categories_summary['primary_categories']}",
+            extra={"categories": categories_summary},
+        )
+
+        # Phase 8: Generate enhanced script (70-90%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 70,
+                "total": 100,
+                "status": "Generating script...",
+                "phase": "script_generation",
+            }
+        )
+        logger.info("Generating enhanced script...")
+        script = _generate_basic_script(categorized_scenes, transcription)
+
+        # Phase 9: Generate audience insights (90-95%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 90,
+                "total": 100,
+                "status": "Generating audience insights...",
+                "phase": "insights",
+            }
+        )
+        logger.info("Generating audience insights...")
+        from cw.lib.video_analysis.audience_insights import generate_audience_insights
+
+        audience_insights = generate_audience_insights(
+            script=script,
+            visual_style=visual_style,
+            sentiment=sentiment_analysis,
+            transcription=transcription,
+            categories=categories_summary,
+        )
+        logger.info(
+            f"Audience insights generation complete",
+            extra={"audience_insights": audience_insights},
+        )
+
+        # Phase 10: Create result object and save keyframes (95-100%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 95,
+                "total": 100,
+                "status": "Finalizing results...",
+                "phase": "finalization",
+            }
+        )
+        result = VideoProcessingResult.objects.create(
+            scenes=categorized_scenes,
+            script=script,
+            transcription=transcription,
+            visual_style=visual_style,
+            objects_summary=objects_summary,
+            sentiment_analysis=sentiment_analysis,
+            categories=categories_summary,
+            audience_insights=audience_insights,
+            processing_time=(timezone.now() - media.processing_started_at).total_seconds(),
+            models_used={
+                "scene_detection": "PySceneDetect",
+                "transcription": "Whisper Large v3",
+                "object_detection": "YOLO v8x",
+                "visual_style": "OpenCV + k-means",
+                "sentiment": "keyword-based",
+                "script_generation": "Basic (MVP)",
+                "audience_insights": "LLM-based (Qwen 2.5)",
+            },
+        )
+
+        # Phase 11: Save keyframes with detected objects to KeyFrame model
+        from cw.tvspots.models import KeyFrame
+        from django.core.files import File
+
+        logger.info("Saving keyframes to database...")
+        for scene_number, keyframe_path in keyframes.items():
+            # Find corresponding scene for timestamp
+            scene = next((s for s in categorized_scenes if s["scene_number"] == scene_number), None)
+            if not scene:
+                continue
+
+            timestamp = (scene["start_time"] + scene["end_time"]) / 2
+            detections = keyframe_detections.get(scene_number, [])
+
+            # Create KeyFrame record
+            with open(keyframe_path, "rb") as f:
+                keyframe = KeyFrame.objects.create(
+                    result=result,
+                    scene_number=scene_number,
+                    timestamp=timestamp,
+                    detected_objects=detections,
+                    colors=visual_style.get("dominant_colors", [])[:3],  # Top 3 colors
+                )
+                keyframe.image.save(
+                    f"scene_{scene_number:03d}.jpg",
+                    File(f),
+                    save=True,
+                )
+
+        logger.info(f"Saved {len(keyframes)} keyframes to database")
+
+        # Clean up temporary keyframes directory
+        import shutil
+        shutil.rmtree(keyframes_dir, ignore_errors=True)
+
+        # Link result to media
+        media.result = result
+        media.status = "completed"
+        media.processing_completed_at = timezone.now()
+        media.save(
+            update_fields=["result", "status", "processing_completed_at"]
+        )
+
+        logger.info(
+            f"Video analysis complete for AdUnitMedia {ad_unit_media_id}",
+            extra={
+                "ad_unit_media_id": ad_unit_media_id,
+                "result_id": result.id,
+                "processing_time": result.processing_time,
+            },
+        )
+
+        return {
+            "status": "success",
+            "media_id": media.id,
+            "result_id": result.id,
+            "processing_time": result.processing_time,
+        }
+
+    except Exception as e:
+        logger.error(
+            f"Video analysis failed for AdUnitMedia {ad_unit_media_id}: {e}",
+            extra={"ad_unit_media_id": ad_unit_media_id, "error": str(e)},
+            exc_info=True,
+        )
+
+        # Update media with error
+        media = AdUnitMedia.objects.get(id=ad_unit_media_id)
+        media.status = "failed"
+        media.processing_error = str(e)
+        media.processing_completed_at = timezone.now()
+        media.save(
+            update_fields=["status", "processing_error", "processing_completed_at"]
+        )
+
+        # Retry with exponential backoff if not max retries
+        if self.request.retries < self.max_retries:
+            logger.info(
+                f"Retrying video analysis (attempt {self.request.retries + 1}/{self.max_retries})",
+                extra={"ad_unit_media_id": ad_unit_media_id},
+            )
+            raise self.retry(exc=e, countdown=60 * (2 ** self.request.retries))
+
+        return {
+            "status": "failed",
+            "media_id": ad_unit_media_id,
+            "error": str(e),
+        }
+
+
+def _extract_keyframes(video_path: str, scenes: list, output_dir: str) -> dict:
+    """
+    Extract one keyframe per scene (middle frame of each scene).
+
+    Args:
+        video_path: Path to video file
+        scenes: List of scene dictionaries
+        output_dir: Directory to save keyframe images
+
+    Returns:
+        Dict mapping scene_number to keyframe path
+    """
+    import cv2
+    import os
+    from pathlib import Path
+
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    keyframes = {}
+
+    for scene in scenes:
+        scene_number = scene["scene_number"]
+        # Extract middle frame of scene
+        mid_time = (scene["start_time"] + scene["end_time"]) / 2
+        mid_frame = int(mid_time * fps)
+
+        # Seek to frame
+        cap.set(cv2.CAP_PROP_POS_FRAMES, mid_frame)
+        ret, frame = cap.read()
+
+        if ret:
+            # Save keyframe
+            keyframe_path = os.path.join(output_dir, f"scene_{scene_number:03d}.jpg")
+            cv2.imwrite(keyframe_path, frame)
+            keyframes[scene_number] = keyframe_path
+
+    cap.release()
+    logger.info(f"Extracted {len(keyframes)} keyframes")
+    return keyframes
+
+
+def _generate_basic_script(scenes, transcription):
+    """
+    Generate a basic script from scenes and transcription (MVP version).
+
+    This is a simple implementation that maps transcription segments to scenes.
+    Phase 2 will add LLM-based script generation with visual descriptions.
+
+    Args:
+        scenes: List of detected scenes
+        transcription: Transcription dictionary with segments
+
+    Returns:
+        Script dictionary in tvspot.schema.json format
+    """
+    script_scenes = []
+
+    for scene in scenes:
+        # Find transcription segments that overlap with this scene
+        scene_audio = []
+        for segment in transcription["segments"]:
+            if (
+                segment["start"] >= scene["start_time"]
+                and segment["start"] < scene["end_time"]
+            ):
+                scene_audio.append(segment["text"])
+
+        # Combine audio segments
+        voiceover = " ".join(scene_audio) if scene_audio else ""
+
+        script_scenes.append(
+            {
+                "scene_number": scene["scene_number"],
+                "duration": scene["duration"],
+                "visual": f"Scene {scene['scene_number']} (extracting visual description in Phase 2)",
+                "audio": {
+                    "voiceover": voiceover,
+                    "music": "",
+                    "sfx": "",
+                },
+                "action": "",
+                "products": [],
+                "sentiment": "",
+            }
+        )
+
+    return {"scenes": script_scenes}

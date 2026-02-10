@@ -1,0 +1,154 @@
+{% extends "unfold/change_list.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.video-progress-container {
+    min-width: 150px;
+}
+.progress-bar-wrapper {
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 20px;
+}
+.progress-bar {
+    height: 100%;
+    background: #4CAF50;
+    transition: width 0.3s ease-in-out;
+}
+.progress-text {
+    text-align: center;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #666;
+}
+.progress-error {
+    color: #d32f2f;
+    font-weight: 500;
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+
+    // Track active polling intervals
+    const pollingIntervals = new Map();
+
+    function updateProgress(mediaId) {
+        const container = document.querySelector(`.video-progress-container[data-media-id="${mediaId}"]`);
+        if (!container) {
+            // Container removed, stop polling
+            if (pollingIntervals.has(mediaId)) {
+                clearInterval(pollingIntervals.get(mediaId));
+                pollingIntervals.delete(mediaId);
+            }
+            return;
+        }
+
+        const progressBar = container.querySelector('.progress-bar');
+        const progressText = container.querySelector('.progress-text');
+
+        if (!progressBar || !progressText) {
+            return;
+        }
+
+        // Fetch progress from API
+        fetch(`/app/tvspots/adunitmedia/${mediaId}/progress/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const progress = data.progress || 0;
+            const message = data.message || 'Processing...';
+            const status = data.status || 'unknown';
+
+            // Update progress bar
+            progressBar.style.width = `${progress}%`;
+
+            // Update text and styling based on status
+            if (status === 'failed') {
+                progressBar.style.background = '#d32f2f';
+                progressText.innerHTML = `<span class="progress-error">✗ ${message}</span>`;
+                // Stop polling on failure
+                if (pollingIntervals.has(mediaId)) {
+                    clearInterval(pollingIntervals.get(mediaId));
+                    pollingIntervals.delete(mediaId);
+                }
+                // Reload page after 2 seconds to show updated status
+                setTimeout(() => window.location.reload(), 2000);
+            } else if (status === 'completed') {
+                progressBar.style.background = '#4CAF50';
+                progressText.textContent = '✓ Complete';
+                // Stop polling on completion
+                if (pollingIntervals.has(mediaId)) {
+                    clearInterval(pollingIntervals.get(mediaId));
+                    pollingIntervals.delete(mediaId);
+                }
+                // Reload page after 1 second to show results
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                progressBar.style.background = '#4CAF50';
+                progressText.textContent = `${progress}% - ${message}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching progress:', error);
+            progressText.innerHTML = '<span class="progress-error">Error fetching progress</span>';
+        });
+    }
+
+    function startPolling(mediaId) {
+        // Don't start duplicate polling
+        if (pollingIntervals.has(mediaId)) {
+            return;
+        }
+
+        // Initial update
+        updateProgress(mediaId);
+
+        // Poll every 2 seconds
+        const intervalId = setInterval(() => updateProgress(mediaId), 2000);
+        pollingIntervals.set(mediaId, intervalId);
+    }
+
+    function initProgressTracking() {
+        // Find all progress containers
+        const containers = document.querySelectorAll('.video-progress-container[data-media-id]');
+
+        containers.forEach(container => {
+            const mediaId = container.getAttribute('data-media-id');
+            if (mediaId) {
+                startPolling(mediaId);
+            }
+        });
+    }
+
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initProgressTracking);
+    } else {
+        initProgressTracking();
+    }
+
+    // Clean up intervals when page unloads
+    window.addEventListener('beforeunload', () => {
+        pollingIntervals.forEach((intervalId) => {
+            clearInterval(intervalId);
+        });
+        pollingIntervals.clear();
+    });
+})();
+</script>
+{% endblock %}

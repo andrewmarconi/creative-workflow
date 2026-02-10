@@ -1,0 +1,230 @@
+{% extends "unfold/change_form.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.video-processing-status {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border-left: 4px solid #2196F3;
+}
+.video-processing-status.error {
+    border-left-color: #d32f2f;
+    background: #ffebee;
+}
+.video-processing-status.success {
+    border-left-color: #4CAF50;
+    background: #e8f5e9;
+}
+.progress-bar-wrapper {
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 24px;
+    margin: 10px 0;
+}
+.progress-bar {
+    height: 100%;
+    background: #2196F3;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 500;
+    font-size: 12px;
+}
+.progress-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+.progress-detail {
+    font-size: 13px;
+    color: #666;
+}
+.progress-detail strong {
+    color: #333;
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+
+    let pollingInterval = null;
+
+    function updateProgressDisplay() {
+        const statusContainer = document.getElementById('video-processing-status');
+        if (!statusContainer) {
+            return;
+        }
+
+        const mediaId = statusContainer.getAttribute('data-media-id');
+        if (!mediaId) {
+            return;
+        }
+
+        fetch(`/app/tvspots/adunitmedia/${mediaId}/progress/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const progress = data.progress || 0;
+            const message = data.message || 'Processing...';
+            const status = data.status || 'unknown';
+            const phase = data.phase || 'unknown';
+
+            // Update progress bar
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const phaseText = document.getElementById('progress-phase');
+            const statusText = document.getElementById('progress-status-text');
+
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+                progressBar.textContent = `${progress}%`;
+            }
+
+            if (progressText) {
+                progressText.textContent = message;
+            }
+
+            if (phaseText) {
+                const phaseLabels = {
+                    'metadata': 'Metadata Extraction',
+                    'scene_detection': 'Scene Detection',
+                    'transcription': 'Audio Transcription',
+                    'visual_analysis': 'Visual Analysis',
+                    'script_generation': 'Script Generation',
+                    'insights': 'Audience Insights',
+                    'finalization': 'Finalization',
+                    'completed': 'Complete',
+                    'failed': 'Failed'
+                };
+                phaseText.textContent = phaseLabels[phase] || phase;
+            }
+
+            // Update status styling
+            if (status === 'failed') {
+                statusContainer.className = 'video-processing-status error';
+                if (progressBar) {
+                    progressBar.style.background = '#d32f2f';
+                }
+                if (statusText) {
+                    statusText.innerHTML = '<strong>Status:</strong> Failed';
+                }
+                // Stop polling on failure
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+                // Reload page after 3 seconds to show error details
+                setTimeout(() => window.location.reload(), 3000);
+            } else if (status === 'completed') {
+                statusContainer.className = 'video-processing-status success';
+                if (progressBar) {
+                    progressBar.style.background = '#4CAF50';
+                }
+                if (statusText) {
+                    statusText.innerHTML = '<strong>Status:</strong> Completed';
+                }
+                // Stop polling on completion
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+                // Reload page after 2 seconds to show results
+                setTimeout(() => window.location.reload(), 2000);
+            } else {
+                statusContainer.className = 'video-processing-status';
+                if (progressBar) {
+                    progressBar.style.background = '#2196F3';
+                }
+                if (statusText) {
+                    statusText.innerHTML = '<strong>Status:</strong> Processing';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching progress:', error);
+            const progressText = document.getElementById('progress-text');
+            if (progressText) {
+                progressText.textContent = 'Error fetching progress';
+            }
+        });
+    }
+
+    function startProgressPolling() {
+        const statusContainer = document.getElementById('video-processing-status');
+        if (!statusContainer) {
+            return;
+        }
+
+        // Initial update
+        updateProgressDisplay();
+
+        // Poll every 2 seconds
+        pollingInterval = setInterval(updateProgressDisplay, 2000);
+    }
+
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startProgressPolling);
+    } else {
+        startProgressPolling();
+    }
+
+    // Clean up interval when page unloads
+    window.addEventListener('beforeunload', () => {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    });
+})();
+</script>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+{% if original.status == 'processing' and original.celery_task_id %}
+<div id="video-processing-status" class="video-processing-status" data-media-id="{{ original.pk }}">
+    <h3 style="margin-top: 0;">Video Processing in Progress</h3>
+
+    <div class="progress-bar-wrapper">
+        <div id="progress-bar" class="progress-bar" style="width: 0%;">0%</div>
+    </div>
+
+    <div class="progress-details">
+        <div class="progress-detail">
+            <strong>Phase:</strong> <span id="progress-phase">Starting...</span>
+        </div>
+        <div class="progress-detail">
+            <strong>Message:</strong> <span id="progress-text">Initializing...</span>
+        </div>
+        <div class="progress-detail" id="progress-status-text">
+            <strong>Status:</strong> Processing
+        </div>
+    </div>
+
+    <p style="margin-top: 15px; margin-bottom: 0; font-size: 13px; color: #666;">
+        This page will automatically refresh when processing is complete.
+    </p>
+</div>
+{% endif %}
+{% endblock %}

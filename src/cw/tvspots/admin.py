@@ -13,15 +13,18 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
 
-from cw.core.widgets import InsightsEditorWidget
+from cw.core.widgets import InsightsEditorWidget, ScriptEditorWidget, VideoPlayerWidget
 
 from .models import (
+    AdUnitMedia,
     AdUnitScriptRow,
     Brand,
     Campaign,
+    KeyFrame,
     Storyboard,
     StoryboardImage,
     VideoAdUnit,
+    VideoProcessingResult,
 )
 
 # ---------------------------------------------------------------------------
@@ -93,6 +96,84 @@ class BrandAdmin(ModelAdmin):
 # ---------------------------------------------------------------------------
 
 
+class AdUnitMediaInline(TabularInline):
+    """Inline display of uploaded videos for Campaign."""
+
+    model = AdUnitMedia
+    tab = True
+    extra = 1
+    fields = ["video_file", "show_status", "show_progress", "show_metadata", "show_actions"]
+    readonly_fields = ["show_status", "show_progress", "show_metadata", "show_actions"]
+    show_change_link = True
+
+    @display(
+        description=_("Status"),
+        label={
+            "pending": "info",
+            "uploaded": "info",
+            "processing": "warning",
+            "completed": "success",
+            "failed": "danger",
+            "reviewed": "success",
+        },
+    )
+    def show_status(self, obj):
+        if obj.pk:
+            return obj.get_status_display()
+        return "-"
+
+    @display(description=_("Progress"))
+    def show_progress(self, obj):
+        """Display progress bar for processing tasks."""
+        if not obj.pk or obj.status not in ["processing"]:
+            return "-"
+
+        # Add progress bar with data attributes for JavaScript polling
+        return mark_safe(
+            f'<div class="video-progress-container" data-media-id="{obj.pk}">'
+            f'<div class="progress-bar" style="width: 0%; height: 20px; background: #4CAF50; transition: width 0.3s;"></div>'
+            f'<div class="progress-text" style="text-align: center; margin-top: 4px; font-size: 12px;">Starting...</div>'
+            f'</div>'
+        )
+
+    @display(description=_("Video Info"))
+    def show_metadata(self, obj):
+        if not obj.pk or not obj.duration:
+            return "-"
+
+        parts = []
+        if obj.duration:
+            parts.append(f"{obj.duration:.1f}s")
+        if obj.resolution_width and obj.resolution_height:
+            parts.append(f"{obj.resolution_width}×{obj.resolution_height}")
+        if obj.file_size:
+            # Convert bytes to MB
+            size_mb = obj.file_size / (1024 * 1024)
+            parts.append(f"{size_mb:.1f}MB")
+
+        return " • ".join(parts) if parts else "-"
+
+    @display(description=_("Actions"))
+    def show_actions(self, obj):
+        if not obj.pk:
+            return "-"
+
+        links = []
+
+        # Link to processing result
+        if obj.result_id:
+            result_url = reverse("admin:tvspots_videoprocessingresult_change", args=[obj.result_id])
+            links.append(format_html('<a href="{}">View Results</a>', result_url))
+
+        # Link to created ad unit
+        if obj.video_ad_unit_id:
+            ad_unit_url = reverse("admin:tvspots_videoadunit_change", args=[obj.video_ad_unit_id])
+            links.append(format_html('<a href="{}">View Ad Unit</a>', ad_unit_url))
+
+        from django.utils.safestring import mark_safe
+        return mark_safe(" • ".join(str(link) for link in links)) if links else "-"
+
+
 class VideoAdUnitInline(TabularInline):
     """Inline display of ad units for Campaign."""
 
@@ -140,9 +221,14 @@ class CampaignAdmin(ModelAdmin):
     list_filter = ["client_name", "brand"]
     search_fields = ["script_title", "client_name", "job_id"]
     readonly_fields = ["created_at", "updated_at"]
-    inlines = [VideoAdUnitInline]
+    inlines = [AdUnitMediaInline, VideoAdUnitInline]
     actions_list = ["import_campaign_action"]
-    actions_detail = ["create_adaptation_action"]
+    actions_detail = [
+        "create_origin_ad_unit_action",
+        "create_adaptation_action",
+        "bulk_upload_videos_action",
+        "export_campaign_action",
+    ]
 
     fieldsets = (
         (
@@ -185,14 +271,61 @@ class CampaignAdmin(ModelAdmin):
             )
         return "0"
 
+    def save_formset(self, request, form, formset, change):
+        """Handle saving inline formsets and auto-queue video processing."""
+        # Only process AdUnitMedia formsets
+        if formset.model != AdUnitMedia:
+            super().save_formset(request, form, formset, change)
+            return
+
+        instances = formset.save(commit=False)
+
+        # Track new AdUnitMedia instances with videos
+        new_videos = []
+
+        for instance in instances:
+            # Check if this is a new AdUnitMedia with a video file
+            if not instance.pk and instance.video_file:
+                instance.status = "uploaded"
+                instance.save()
+                new_videos.append(instance)
+            else:
+                instance.save()
+
+        # Save many-to-many relationships
+        formset.save_m2m()
+
+        # Delete any marked for deletion
+        for obj in formset.deleted_objects:
+            obj.delete()
+
+        # Queue processing tasks for new videos
+        if new_videos:
+            from .tasks import analyze_video_task
+
+            for media in new_videos:
+                result = analyze_video_task.apply_async(args=[media.pk], queue="default")
+                # Store task ID for progress tracking
+                media.celery_task_id = result.id
+                media.save(update_fields=["celery_task_id"])
+                messages.info(
+                    request,
+                    f"Video processing queued for {media.video_file.name}",
+                )
+
     def get_urls(self):
-        """Add custom URLs for import and adaptation actions."""
+        """Add custom URLs for import, origin creation, and adaptation actions."""
         urls = super().get_urls()
         custom_urls = [
             path(
                 "import/",
                 self.admin_site.admin_view(self.import_campaign_view),
                 name="tvspots_campaign_import",
+            ),
+            path(
+                "<int:object_id>/create-origin/",
+                self.admin_site.admin_view(self.create_origin_ad_unit_view),
+                name="tvspots_campaign_create_origin",
             ),
             path(
                 "<int:object_id>/create-adaptation/",
@@ -203,6 +336,11 @@ class CampaignAdmin(ModelAdmin):
                 "language-models/<int:language_id>/",
                 self.admin_site.admin_view(self.language_models_api),
                 name="tvspots_campaign_language_models_api",
+            ),
+            path(
+                "<int:object_id>/bulk-upload-videos/",
+                self.admin_site.admin_view(self.bulk_upload_videos_view),
+                name="tvspots_campaign_bulk_upload_videos",
             ),
         ]
         return custom_urls + urls
@@ -354,6 +492,119 @@ class CampaignAdmin(ModelAdmin):
         return redirect("admin:tvspots_campaign_import")
 
     @action(
+        description=_("Create Origin Ad Unit"),
+        url_path="create-origin-ad-unit-action",
+    )
+    def create_origin_ad_unit_action(self, request, object_id):
+        """Redirect to the create origin ad unit view."""
+        return redirect("admin:tvspots_campaign_create_origin", object_id)
+
+    def create_origin_ad_unit_view(self, request, object_id):
+        """Handle creating an origin ad unit for a campaign."""
+        import json
+
+        from django.template.response import TemplateResponse
+
+        from cw.audiences.models import Language
+
+        campaign = Campaign.objects.get(pk=object_id)
+
+        if request.method == "POST":
+            from cw.audiences.models import Persona
+
+            title = request.POST.get("title")
+            code = request.POST.get("code")
+            language_id = request.POST.get("language")
+            brand_id = request.POST.get("brand")
+            persona_id = request.POST.get("persona")
+            script_data_raw = request.POST.get("script_data", "")
+
+            # Validate required fields
+            if not title or not code:
+                messages.error(request, "Please provide both title and code.")
+                return redirect("admin:tvspots_campaign_create_origin", object_id)
+
+            # Get the dimension objects
+            language = Language.objects.filter(pk=language_id).first() if language_id else None
+            brand = Brand.objects.filter(pk=brand_id).first() if brand_id else campaign.brand
+            persona = Persona.objects.filter(pk=persona_id).first() if persona_id else None
+
+            # Parse script data if provided
+            script_data = None
+            if script_data_raw:
+                try:
+                    script_data = json.loads(script_data_raw)
+                except json.JSONDecodeError:
+                    messages.error(request, "Invalid JSON in script data.")
+                    return redirect("admin:tvspots_campaign_create_origin", object_id)
+
+            # Check for existing origin with same code
+            existing_origin = campaign.ad_units.filter(
+                origin_or_adaptation="ORIGIN",
+                code=code
+            ).first()
+            if existing_origin:
+                messages.warning(
+                    request,
+                    f"An origin ad unit with code '{code}' already exists.",
+                )
+                return redirect("admin:tvspots_videoadunit_change", existing_origin.pk)
+
+            # Create VideoAdUnit for origin
+            origin = VideoAdUnit.objects.create(
+                campaign=campaign,
+                origin_or_adaptation="ORIGIN",
+                code=code,
+                title=title,
+                language=language,
+                brand=brand,
+                persona=persona,
+                use_pipeline=False,  # Origins don't use pipeline
+                status="draft",
+            )
+
+            # Create script rows if script data provided
+            if script_data and "scenes" in script_data:
+                for scene in script_data["scenes"]:
+                    AdUnitScriptRow.objects.create(
+                        ad_unit=origin,
+                        shot_number=scene.get("scene_number", 0),
+                        visual_description=scene.get("visual", ""),
+                        audio_voiceover=scene.get("audio", {}).get("voiceover", ""),
+                        audio_music=scene.get("audio", {}).get("music", ""),
+                        audio_sfx=scene.get("audio", {}).get("sfx", ""),
+                        notes=scene.get("action", ""),
+                    )
+
+            messages.success(
+                request,
+                f"Origin ad unit '{title}' created successfully.",
+            )
+            return redirect("admin:tvspots_videoadunit_change", origin.pk)
+
+        # Get available dimensions
+        from cw.audiences.models import Persona
+
+        languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
+        brands = Brand.objects.filter(is_active=True).order_by("name")
+        personas = Persona.objects.filter(is_active=True).order_by("name")
+
+        return TemplateResponse(
+            request,
+            "admin/tvspots/campaign/create_origin.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": _("Create Origin Ad Unit"),
+                "opts": self.model._meta,
+                "campaign": campaign,
+                "languages": languages,
+                "brands": brands,
+                "personas": personas,
+                "campaign_brand_id": campaign.brand_id,
+            },
+        )
+
+    @action(
         description=_("Create Adaptation"),
         url_path="create-adaptation-action",
         permissions=["create_adaptation_action"],
@@ -371,6 +622,14 @@ class CampaignAdmin(ModelAdmin):
             except Campaign.DoesNotExist:
                 return False
         return False
+
+    @action(
+        description=_("Bulk Upload Videos"),
+        url_path="bulk-upload-videos-action",
+    )
+    def bulk_upload_videos_action(self, request, object_id):
+        """Redirect to the bulk upload videos view."""
+        return redirect("admin:tvspots_campaign_bulk_upload_videos", object_id)
 
     def create_adaptation_view(self, request, object_id):
         """Handle creating an adaptation of a campaign."""
@@ -557,6 +816,136 @@ class CampaignAdmin(ModelAdmin):
                 "country_languages_json": json.dumps(country_languages),
             },
         )
+
+    def bulk_upload_videos_view(self, request, object_id):
+        """Handle bulk upload of multiple video files for a campaign."""
+        from django.template.response import TemplateResponse
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from cw.lib.security import VideoFileValidator
+
+        campaign = Campaign.objects.get(pk=object_id)
+
+        # Initialize validator with settings-based configuration
+        validator = VideoFileValidator()
+
+        if request.method == "POST":
+            video_files = request.FILES.getlist('video_files')
+
+            if not video_files:
+                messages.error(request, "Please select at least one video file to upload.")
+                return redirect("admin:tvspots_campaign_bulk_upload_videos", object_id)
+
+            # Validate all files using the comprehensive security validator
+            validation_results = validator.validate_multiple(video_files)
+
+            # Separate valid and invalid files
+            valid_videos = []
+            errors = []
+
+            for video_file in video_files:
+                file_errors = validation_results.get(video_file.name, [])
+                if file_errors:
+                    # File failed validation
+                    for error in file_errors:
+                        errors.append(f"{video_file.name}: {error}")
+                else:
+                    # File passed validation
+                    valid_videos.append(video_file)
+
+            # Report validation errors
+            if errors:
+                for error in errors:
+                    messages.error(request, error)
+
+            # Process valid videos
+            if valid_videos:
+                from .tasks import analyze_video_task
+
+                created_media = []
+                for video_file in valid_videos:
+                    # Create AdUnitMedia instance
+                    media = AdUnitMedia.objects.create(
+                        campaign=campaign,
+                        video_file=video_file,
+                        status="uploaded",
+                        file_size=video_file.size,
+                    )
+                    created_media.append(media)
+
+                    # Queue processing task and store task ID
+                    result = analyze_video_task.apply_async(args=[media.pk], queue="default")
+                    media.celery_task_id = result.id
+                    media.save(update_fields=["celery_task_id"])
+
+                # Report success
+                messages.success(
+                    request,
+                    f"Successfully uploaded and queued {len(created_media)} video(s) for processing. "
+                    f"Skipped {len(errors)} file(s) due to validation errors."
+                    if errors
+                    else f"Successfully uploaded and queued {len(created_media)} video(s) for processing."
+                )
+
+                return redirect("admin:tvspots_campaign_change", object_id)
+            else:
+                messages.error(
+                    request,
+                    "No valid videos were uploaded. Please check the validation errors above."
+                )
+                return redirect("admin:tvspots_campaign_bulk_upload_videos", object_id)
+
+        # Render upload form
+        from django.conf import settings as django_settings
+
+        max_size_mb = getattr(
+            django_settings,
+            "VIDEO_MAX_UPLOAD_SIZE_BYTES",
+            500 * 1024 * 1024
+        ) / (1024 * 1024)
+
+        allowed_exts = getattr(
+            django_settings,
+            "VIDEO_ALLOWED_EXTENSIONS",
+            [".mp4", ".mov", ".avi", ".mkv", ".webm"],
+        )
+
+        return TemplateResponse(
+            request,
+            "admin/tvspots/campaign/bulk_upload_videos.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": _("Bulk Upload Videos"),
+                "opts": self.model._meta,
+                "campaign": campaign,
+                "max_file_size_mb": max_size_mb,
+                "allowed_extensions": ", ".join(allowed_exts),
+            },
+        )
+
+    @action(
+        description=_("Export Campaign with Results"),
+        url_path="export-campaign-action",
+    )
+    def export_campaign_action(self, request, object_id):
+        """Export entire campaign with all ad unit media and processing results as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_campaign_with_results
+
+        campaign = Campaign.objects.prefetch_related(
+            "ad_unit_media__result__key_frames",
+            "ad_unit_media__video_ad_unit",
+        ).get(pk=object_id)
+
+        # Generate filename with job_id and timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        safe_job_id = campaign.job_id.replace("/", "-").replace(" ", "_")
+        filename = f"campaign-{safe_job_id}-{timestamp}"
+
+        # Export data
+        data = export_campaign_with_results(campaign)
+
+        return create_json_response(data, filename, pretty=True)
 
     def language_models_api(self, request, language_id):
         """API endpoint to fetch available LLM models for a language."""
@@ -1213,3 +1602,785 @@ class StoryboardAdmin(ModelAdmin):
             generate_storyboard_task.apply_async(
                 args=[obj.pk, True], queue="default"  # enhance_prompts=True by default
             )
+
+
+# ---------------------------------------------------------------------------
+# Ad Unit Media (Video Origin Extraction)
+# ---------------------------------------------------------------------------
+
+
+class KeyFrameInline(TabularInline):
+    """Inline display of key frames for VideoProcessingResult."""
+
+    model = KeyFrame
+    tab = True
+    extra = 0
+    fields = ["scene_number", "timestamp", "show_thumbnail", "show_objects_count"]
+    readonly_fields = ["scene_number", "timestamp", "show_thumbnail", "show_objects_count"]
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    @display(description=_("Thumbnail"))
+    def show_thumbnail(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="max-width: 120px; max-height: 80px; border-radius: 4px;">',
+                obj.image.url,
+            )
+        return "-"
+
+    @display(description=_("Objects"))
+    def show_objects_count(self, obj):
+        return len(obj.detected_objects) if obj.detected_objects else 0
+
+
+@admin.register(VideoProcessingResult)
+class VideoProcessingResultAdmin(ModelAdmin):
+    """Admin for video processing results with editable script."""
+
+    list_display = ["id", "show_media", "show_scene_count", "processing_time", "created_at"]
+    search_fields = ["media__campaign__script_title", "media__campaign__client_name"]
+    readonly_fields = [
+        "show_video_player",
+        "scenes",
+        "transcription",
+        "visual_style",
+        "objects_summary",
+        "sentiment_analysis",
+        "categories",
+        "audience_insights",
+        "processing_time",
+        "models_used",
+        "created_at",
+        "updated_at",
+    ]
+    inlines = [KeyFrameInline]
+    actions_detail = ["approve_script_action", "reject_script_action", "export_result_action"]
+    actions = ["export_results_action"]
+
+    fieldsets = (
+        (
+            _("Video Player"),
+            {
+                "classes": ["tab"],
+                "fields": ("show_video_player",),
+            },
+        ),
+        (
+            _("Overview"),
+            {
+                "classes": ["tab"],
+                "fields": ("processing_time", "models_used"),
+            },
+        ),
+        (
+            _("Edit Script"),
+            {
+                "classes": ["tab"],
+                "fields": ("script",),
+                "description": "Edit the generated script. Changes will be saved when you click Save.",
+            },
+        ),
+        (
+            _("Scenes"),
+            {
+                "classes": ["tab"],
+                "fields": ("scenes",),
+            },
+        ),
+        (
+            _("Transcription"),
+            {
+                "classes": ["tab"],
+                "fields": ("transcription",),
+            },
+        ),
+        (
+            _("Visual Analysis"),
+            {
+                "classes": ["tab"],
+                "fields": ("visual_style", "objects_summary"),
+            },
+        ),
+        (
+            _("Sentiment & Categories"),
+            {
+                "classes": ["tab"],
+                "fields": ("sentiment_analysis", "categories"),
+            },
+        ),
+        (
+            _("Audience Insights"),
+            {
+                "classes": ["tab"],
+                "fields": ("audience_insights",),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Use custom widget for script field."""
+        if db_field.name == "script":
+            kwargs["widget"] = ScriptEditorWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    @display(description=_("Video Player"))
+    def show_video_player(self, obj):
+        """Display video player with scene markers."""
+        if hasattr(obj, "media") and obj.media and obj.media.video_file:
+            from django.templatetags.static import static
+
+            video_url = obj.media.video_file.url
+            scenes = obj.scenes or []
+
+            # Render widget manually
+            widget = VideoPlayerWidget(video_url=video_url, scenes=scenes)
+            return mark_safe(widget.render("video_player", None, {}))
+        return mark_safe('<div class="text-base-500">No video available</div>')
+
+    def has_add_permission(self, request):
+        """Results are created by the video processing pipeline only."""
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Allow deletion of results."""
+        return True
+
+    @display(description=_("Media"))
+    def show_media(self, obj):
+        if hasattr(obj, "media") and obj.media:
+            url = reverse("admin:tvspots_adunitmedia_change", args=[obj.media.pk])
+            return format_html('<a href="{}">{}</a>', url, obj.media)
+        return "-"
+
+    @display(description=_("Scenes"))
+    def show_scene_count(self, obj):
+        return len(obj.scenes) if obj.scenes else 0
+
+    @action(description=_("Approve Script"))
+    def approve_script_action(self, request, object_id):
+        """Approve the edited script and mark media as reviewed."""
+        result = VideoProcessingResult.objects.get(pk=object_id)
+
+        if hasattr(result, "media") and result.media:
+            if result.media.status != "completed":
+                messages.error(
+                    request,
+                    "Cannot approve script for media that is not in completed status.",
+                )
+                return redirect(
+                    reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
+                )
+
+            # Update media status to reviewed
+            result.media.status = "reviewed"
+            result.media.save(update_fields=["status"])
+
+            messages.success(
+                request,
+                f"Script approved for {result.media}. You can now create an origin VideoAdUnit.",
+            )
+        else:
+            messages.warning(request, "No associated media found.")
+
+        return redirect(
+            reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
+        )
+
+    @action(description=_("Reject Script"))
+    def reject_script_action(self, request, object_id):
+        """Reject the script and reset media status for reprocessing."""
+        result = VideoProcessingResult.objects.get(pk=object_id)
+
+        if hasattr(result, "media") and result.media:
+            # Reset media status to uploaded for reprocessing
+            result.media.status = "uploaded"
+            result.media.processing_error = "Script rejected - needs reprocessing"
+            result.media.save(update_fields=["status", "processing_error"])
+
+            messages.warning(
+                request,
+                f"Script rejected for {result.media}. Status reset to 'uploaded' for reprocessing.",
+            )
+        else:
+            messages.warning(request, "No associated media found.")
+
+        return redirect(
+            reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
+        )
+
+    @action(description=_("Export as JSON"))
+    def export_result_action(self, request, object_id):
+        """Export a single VideoProcessingResult as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_video_processing_result
+
+        result = VideoProcessingResult.objects.select_related("media").get(pk=object_id)
+
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"result-{result.pk}-{timestamp}"
+
+        # Export data
+        data = export_video_processing_result(
+            result,
+            include_keyframes=True,
+            include_media_metadata=True,
+        )
+
+        return create_json_response(data, filename, pretty=True)
+
+    @action(description=_("Export selected results as JSON"))
+    def export_results_action(self, request, queryset):
+        """Export multiple VideoProcessingResults as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_video_processing_result
+
+        # Export all selected results
+        results_data = []
+        for result in queryset.select_related("media"):
+            results_data.append(export_video_processing_result(
+                result,
+                include_keyframes=True,
+                include_media_metadata=True,
+            ))
+
+        # Generate filename with timestamp and count
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"results-bulk-{len(results_data)}-{timestamp}"
+
+        # Wrap in container object
+        data = {
+            "export_metadata": {
+                "export_date": datetime.utcnow().isoformat(),
+                "export_version": "1.0",
+                "model": "VideoProcessingResult",
+                "count": len(results_data),
+            },
+            "results": results_data,
+        }
+
+        return create_json_response(data, filename, pretty=True)
+
+
+@admin.register(AdUnitMedia)
+class AdUnitMediaAdmin(ModelAdmin):
+    """Admin for uploaded video files awaiting processing."""
+
+    list_display = [
+        "id",
+        "campaign",
+        "show_status",
+        "show_progress",
+        "show_duration",
+        "show_resolution",
+        "created_at",
+    ]
+    list_filter = ["status", "created_at"]
+    search_fields = ["campaign__script_title", "campaign__client_name"]
+    readonly_fields = [
+        "status",
+        "duration",
+        "resolution_width",
+        "resolution_height",
+        "frame_rate",
+        "audio_channels",
+        "audio_sample_rate",
+        "file_size",
+        "processing_started_at",
+        "processing_completed_at",
+        "processing_error",
+        "result",
+        "video_ad_unit",
+        "created_at",
+        "updated_at",
+    ]
+    actions_detail = ["reprocess_video_action", "create_origin_ad_unit_action", "export_media_action"]
+    actions = ["export_media_bulk_action"]
+
+    fieldsets = (
+        (
+            _("Video Upload"),
+            {
+                "classes": ["tab"],
+                "fields": ("campaign", "video_file", "show_status"),
+            },
+        ),
+        (
+            _("Processing Status"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "status",
+                    "processing_started_at",
+                    "processing_completed_at",
+                    "processing_error",
+                ),
+            },
+        ),
+        (
+            _("Video Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "duration",
+                    ("resolution_width", "resolution_height"),
+                    "frame_rate",
+                    ("audio_channels", "audio_sample_rate"),
+                    "file_size",
+                ),
+            },
+        ),
+        (
+            _("Results"),
+            {
+                "classes": ["tab"],
+                "fields": ("result", "video_ad_unit"),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    @display(
+        description=_("Status"),
+        label={
+            "Pending Upload": "info",
+            "Uploaded": "info",
+            "Processing": "warning",
+            "Completed": "success",
+            "Failed": "danger",
+            "Reviewed": "success",
+        },
+    )
+    def show_status(self, obj):
+        return obj.get_status_display()
+
+    @display(description=_("Duration"))
+    def show_duration(self, obj):
+        if obj.duration:
+            mins, secs = divmod(int(obj.duration), 60)
+            return f"{mins}:{secs:02d}"
+        return "-"
+
+    @display(description=_("Resolution"))
+    def show_resolution(self, obj):
+        if obj.resolution_width and obj.resolution_height:
+            return f"{obj.resolution_width}×{obj.resolution_height}"
+        return "-"
+
+    @display(description=_("Progress"))
+    def show_progress(self, obj):
+        """Display progress bar for processing tasks in list view."""
+        if obj.status != "processing":
+            return "-"
+
+        # Add progress bar with data attributes for JavaScript polling
+        return mark_safe(
+            f'<div class="video-progress-container" data-media-id="{obj.pk}" '
+            f'style="min-width: 150px;">'
+            f'<div style="background: #e0e0e0; border-radius: 4px; overflow: hidden; height: 20px;">'
+            f'<div class="progress-bar" style="width: 0%; height: 100%; background: #4CAF50; '
+            f'transition: width 0.3s;"></div>'
+            f'</div>'
+            f'<div class="progress-text" style="text-align: center; margin-top: 4px; '
+            f'font-size: 11px; color: #666;">Starting...</div>'
+            f'</div>'
+        )
+
+    def save_model(self, request, obj, form, change):
+        """Auto-trigger processing when video is uploaded."""
+        is_new = obj.pk is None
+        has_video = bool(obj.video_file)
+
+        super().save_model(request, obj, form, change)
+
+        # Auto-queue processing for newly uploaded videos
+        if is_new and has_video:
+            obj.status = "uploaded"
+            obj.save(update_fields=["status"])
+
+            # Queue processing task and store task ID
+            from .tasks import analyze_video_task
+
+            result = analyze_video_task.apply_async(args=[obj.pk], queue="default")
+            obj.celery_task_id = result.id
+            obj.save(update_fields=["celery_task_id"])
+            messages.info(
+                request,
+                f"Video processing queued for {obj}. Check back in a few minutes.",
+            )
+
+    @action(description=_("Reprocess Video"))
+    def reprocess_video_action(self, request, object_id):
+        """Reprocess a failed or completed video."""
+        media = AdUnitMedia.objects.get(pk=object_id)
+
+        if media.status not in ["failed", "completed"]:
+            messages.error(
+                request,
+                f"Cannot reprocess video with status '{media.get_status_display()}'. "
+                "Only failed or completed videos can be reprocessed.",
+            )
+            return redirect(
+                reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+            )
+
+        # Reset status and queue processing
+        media.status = "uploaded"
+        media.processing_error = ""
+        media.save(update_fields=["status", "processing_error"])
+
+        from .tasks import analyze_video_task
+
+        result = analyze_video_task.apply_async(args=[media.pk], queue="default")
+        media.celery_task_id = result.id
+        media.save(update_fields=["celery_task_id"])
+
+        messages.success(request, f"Video reprocessing queued for {media}.")
+        return redirect(reverse("admin:tvspots_adunitmedia_change", args=[object_id]))
+
+    @action(description=_("Create Origin VideoAdUnit"))
+    def create_origin_ad_unit_action(self, request, object_id):
+        """Create an origin VideoAdUnit from processed results with comprehensive error handling."""
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        try:
+            media = AdUnitMedia.objects.get(pk=object_id)
+            logger.info(
+                f"Creating origin VideoAdUnit for AdUnitMedia {media.id}",
+                extra={
+                    "ad_unit_media_id": media.id,
+                    "campaign_id": media.campaign_id,
+                    "user": request.user.username,
+                },
+            )
+
+            # Validation - Status check
+            if media.status != "completed":
+                logger.warning(
+                    f"Cannot create VideoAdUnit: invalid status '{media.status}'",
+                    extra={"ad_unit_media_id": media.id, "status": media.status},
+                )
+                messages.error(
+                    request,
+                    f"Cannot create VideoAdUnit from video with status '{media.get_status_display()}'. "
+                    "Video must be fully processed first.",
+                )
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            # Validation - Duplicate check
+            if media.video_ad_unit:
+                logger.info(
+                    f"VideoAdUnit already exists for media {media.id}",
+                    extra={
+                        "ad_unit_media_id": media.id,
+                        "existing_ad_unit_id": media.video_ad_unit.pk,
+                    },
+                )
+                messages.warning(
+                    request,
+                    f"VideoAdUnit already exists for this media: {media.video_ad_unit}",
+                )
+                return redirect(
+                    reverse(
+                        "admin:tvspots_videoadunit_change", args=[media.video_ad_unit.pk]
+                    )
+                )
+
+            # Validation - Script check
+            if not media.result:
+                logger.error(
+                    f"No processing result found for media {media.id}",
+                    extra={"ad_unit_media_id": media.id},
+                )
+                messages.error(request, "No processing result found. Video may not have been processed yet.")
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            if not media.result.script:
+                logger.error(
+                    f"No script found in processing results for media {media.id}",
+                    extra={"ad_unit_media_id": media.id, "result_id": media.result.pk},
+                )
+                messages.error(request, "No script found in processing results.")
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            # Validate script structure
+            script_data = media.result.script
+            if "script_rows" not in script_data and "scenes" not in script_data:
+                logger.error(
+                    f"Invalid script structure for media {media.id}: missing script_rows/scenes",
+                    extra={"ad_unit_media_id": media.id, "script_keys": list(script_data.keys())},
+                )
+                messages.error(
+                    request,
+                    "Invalid script structure. Missing script_rows or scenes data.",
+                )
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            # Create origin VideoAdUnit
+            logger.info(f"Creating VideoAdUnit for media {media.id}")
+            ad_unit = VideoAdUnit.objects.create(
+                campaign=media.campaign,
+                ad_unit_type="VIDEO",
+                origin_or_adaptation="ORIGIN",
+                code=f"ORIGIN-{media.id:04d}",
+                title=script_data.get("script_title") or f"Origin from {media.campaign.script_title}",
+                status="completed",
+                duration=media.duration or script_data.get("total_runtime_seconds", 0),
+            )
+
+            logger.info(
+                f"VideoAdUnit {ad_unit.id} created for media {media.id}",
+                extra={
+                    "ad_unit_media_id": media.id,
+                    "video_ad_unit_id": ad_unit.id,
+                    "campaign_id": media.campaign_id,
+                },
+            )
+
+            # Create script rows from generated script
+            rows_created = 0
+            if "script_rows" in script_data:
+                # New format: script_rows array
+                for idx, row in enumerate(script_data["script_rows"]):
+                    AdUnitScriptRow.objects.create(
+                        ad_unit=ad_unit,
+                        order_index=idx,
+                        shot_number=row.get("shot_number", str(idx + 1)),
+                        visual_text=row.get("visual_text", ""),
+                        audio_text=row.get("audio_text", ""),
+                    )
+                    rows_created += 1
+            elif "scenes" in script_data:
+                # Old format: scenes array (Phase 1/2 compatibility)
+                for idx, scene in enumerate(script_data["scenes"]):
+                    audio_dict = scene.get("audio", {})
+                    audio_text = audio_dict.get("voiceover", "") if isinstance(audio_dict, dict) else str(audio_dict)
+
+                    AdUnitScriptRow.objects.create(
+                        ad_unit=ad_unit,
+                        order_index=idx,
+                        shot_number=str(scene.get("scene_number", idx + 1)),
+                        visual_text=scene.get("visual", ""),
+                        audio_text=audio_text,
+                    )
+                    rows_created += 1
+
+            logger.info(
+                f"Created {rows_created} script rows for VideoAdUnit {ad_unit.id}",
+                extra={"video_ad_unit_id": ad_unit.id, "rows_created": rows_created},
+            )
+
+            # Link back to media
+            media.video_ad_unit = ad_unit
+            media.status = "reviewed"
+            media.save(update_fields=["video_ad_unit", "status"])
+
+            logger.info(
+                f"Origin VideoAdUnit creation complete for media {media.id}",
+                extra={
+                    "ad_unit_media_id": media.id,
+                    "video_ad_unit_id": ad_unit.id,
+                    "rows_created": rows_created,
+                    "user": request.user.username,
+                },
+            )
+
+            messages.success(
+                request,
+                format_html(
+                    'Origin VideoAdUnit created: <a href="{}">{}</a>. '
+                    'Created {} script row(s). <a href="{}">Create Adaptation →</a>',
+                    reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]),
+                    ad_unit,
+                    rows_created,
+                    reverse("admin:tvspots_videoadunit_add") + f"?source_ad_unit={ad_unit.pk}",
+                ),
+            )
+            return redirect(reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]))
+
+        except AdUnitMedia.DoesNotExist:
+            logger.error(
+                f"AdUnitMedia {object_id} not found",
+                extra={"ad_unit_media_id": object_id, "user": request.user.username},
+            )
+            messages.error(request, f"AdUnitMedia with ID {object_id} not found.")
+            return redirect(reverse("admin:tvspots_adunitmedia_changelist"))
+
+        except Exception as e:
+            logger.exception(
+                f"Unexpected error creating origin VideoAdUnit for media {object_id}",
+                extra={
+                    "ad_unit_media_id": object_id,
+                    "error": str(e),
+                    "user": request.user.username,
+                },
+            )
+            messages.error(
+                request,
+                f"An unexpected error occurred while creating the VideoAdUnit: {str(e)}. "
+                "Please contact support if this persists.",
+            )
+            return redirect(
+                reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+            )
+
+    @action(description=_("Export as JSON"))
+    def export_media_action(self, request, object_id):
+        """Export a single AdUnitMedia with its processing result as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_ad_unit_media_with_result
+
+        media = AdUnitMedia.objects.select_related(
+            "campaign", "result", "video_ad_unit"
+        ).get(pk=object_id)
+
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"media-{media.pk}-{timestamp}"
+
+        # Export data
+        data = export_ad_unit_media_with_result(media)
+
+        return create_json_response(data, filename, pretty=True)
+
+    @action(description=_("Export selected media as JSON"))
+    def export_media_bulk_action(self, request, queryset):
+        """Export multiple AdUnitMedia instances with their results as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_ad_unit_media_with_result
+
+        # Export all selected media
+        media_data = []
+        for media in queryset.select_related("campaign", "result", "video_ad_unit"):
+            media_data.append(export_ad_unit_media_with_result(media))
+
+        # Generate filename with timestamp and count
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"media-bulk-{len(media_data)}-{timestamp}"
+
+        # Wrap in container object
+        data = {
+            "export_metadata": {
+                "export_date": datetime.utcnow().isoformat(),
+                "export_version": "1.0",
+                "model": "AdUnitMedia",
+                "count": len(media_data),
+            },
+            "media": media_data,
+        }
+
+        return create_json_response(data, filename, pretty=True)
+
+    def get_urls(self):
+        """Add custom URLs for reprocess, create, and progress actions."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "<int:object_id>/reprocess/",
+                self.admin_site.admin_view(self.reprocess_video_action),
+                name="tvspots_adunitmedia_reprocess",
+            ),
+            path(
+                "<int:object_id>/create-ad-unit/",
+                self.admin_site.admin_view(self.create_origin_ad_unit_action),
+                name="tvspots_adunitmedia_create_ad_unit",
+            ),
+            path(
+                "<int:object_id>/progress/",
+                self.admin_site.admin_view(self.progress_api),
+                name="tvspots_adunitmedia_progress",
+            ),
+        ]
+        return custom_urls + urls
+
+    def progress_api(self, request, object_id):
+        """API endpoint to fetch current progress of video processing task."""
+        from django.http import JsonResponse
+        from celery.result import AsyncResult
+
+        try:
+            media = AdUnitMedia.objects.get(pk=object_id)
+        except AdUnitMedia.DoesNotExist:
+            return JsonResponse({"error": "Media not found"}, status=404)
+
+        # If no task ID or not processing, return current status
+        if not media.celery_task_id or media.status not in ["processing"]:
+            return JsonResponse({
+                "status": media.status,
+                "progress": 100 if media.status == "completed" else 0,
+                "phase": media.status,
+                "message": media.get_status_display(),
+            })
+
+        # Fetch task result from Celery
+        task_result = AsyncResult(media.celery_task_id)
+
+        # Handle different task states
+        if task_result.state == "PENDING":
+            response = {
+                "status": "pending",
+                "progress": 0,
+                "phase": "queued",
+                "message": "Task is queued...",
+            }
+        elif task_result.state == "PROGRESS":
+            info = task_result.info or {}
+            response = {
+                "status": "processing",
+                "progress": info.get("current", 0),
+                "total": info.get("total", 100),
+                "phase": info.get("phase", "unknown"),
+                "message": info.get("status", "Processing..."),
+            }
+        elif task_result.state == "SUCCESS":
+            response = {
+                "status": "completed",
+                "progress": 100,
+                "phase": "completed",
+                "message": "Processing complete",
+                "result": task_result.result,
+            }
+        elif task_result.state == "FAILURE":
+            response = {
+                "status": "failed",
+                "progress": 0,
+                "phase": "failed",
+                "message": str(task_result.info) if task_result.info else "Task failed",
+                "error": str(task_result.info) if task_result.info else None,
+            }
+        else:
+            # RETRY, REVOKED, etc.
+            response = {
+                "status": task_result.state.lower(),
+                "progress": 0,
+                "phase": task_result.state.lower(),
+                "message": f"Task state: {task_result.state}",
+            }
+
+        return JsonResponse(response)
