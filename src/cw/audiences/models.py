@@ -477,20 +477,17 @@ class Persona(models.Model):
 class PersonaSegment(models.Model):
     """Many-to-many through table for Persona ↔ Segment relationship.
 
-    Explicit through table for future extensibility (ordering, weighting, etc.).
+    Explicit through table for future extensibility.
+    Segments are automatically sorted by category and vector.
     """
 
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
-    order_index = models.IntegerField(
-        default=0,
-        help_text="Display order (lower = earlier)",
-    )
 
     class Meta:
         db_table = "audiences_persona_segment"
         unique_together = [["persona", "segment"]]
-        ordering = ["order_index", "segment__category", "segment__vector"]
+        ordering = ["segment__category", "segment__vector", "segment__value"]
         verbose_name = "Persona Segment"
         verbose_name_plural = "Persona Segments"
 

@@ -1,0 +1,445 @@
+{% load i18n %}
+
+<div class="segment-builder-container" id="segment-builder-{{ widget.attrs.id }}">
+    {% if not persona_id %}
+    <div class="segment-builder-disabled">
+        <p style="padding: 20px; text-align: center; color: #6b7280; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+            {% trans "Please save the persona first before adding segments." %}
+        </p>
+    </div>
+    {% else %}
+    <style>
+        .segment-builder-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .segment-builder-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .segment-builder-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .segment-builder-field select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .segment-builder-field select:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .segment-add-btn {
+            padding: 10px 20px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .segment-add-btn:hover:not(:disabled) {
+            background-color: #1d4ed8;
+        }
+
+        .segment-add-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .segments-list {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .segments-list-header {
+            background-color: #f9fafb;
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .segments-list-empty {
+            padding: 40px 16px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .segment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .segment-item:last-child {
+            border-bottom: none;
+        }
+
+        .segment-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .segment-info {
+            flex: 1;
+        }
+
+        .segment-category-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+            margin-right: 8px;
+        }
+
+        .segment-category-demographic {
+            background-color: #3b82f6;
+        }
+
+        .segment-category-behavioral {
+            background-color: #10b981;
+        }
+
+        .segment-category-psychographic {
+            background-color: #8b5cf6;
+        }
+
+        .segment-vector {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .segment-value {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .segment-remove-btn {
+            padding: 6px 12px;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .segment-remove-btn:hover {
+            background-color: #b91c1c;
+        }
+
+        .segment-description {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+    </style>
+
+    <div class="segment-builder-controls">
+        <div class="segment-builder-field">
+            <label for="segment-category">{% trans "Category" %}</label>
+            <select id="segment-category" class="segment-category-select">
+                <option value="">{% trans "Select category..." %}</option>
+                {% for value, label in categories %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="segment-builder-field">
+            <label for="segment-vector">{% trans "Vector" %}</label>
+            <select id="segment-vector" class="segment-vector-select" disabled>
+                <option value="">{% trans "Select vector..." %}</option>
+            </select>
+        </div>
+
+        <div class="segment-builder-field">
+            <label for="segment-value">{% trans "Value" %}</label>
+            <select id="segment-value" class="segment-value-select" disabled>
+                <option value="">{% trans "Select value..." %}</option>
+            </select>
+        </div>
+
+        <button type="button" class="segment-add-btn" id="add-segment-btn" disabled>
+            {% trans "Add Segment" %}
+        </button>
+    </div>
+
+    <div class="segments-list">
+        <div class="segments-list-header">
+            {% trans "Attached Segments" %}
+        </div>
+        <div id="segments-list-body">
+            {% if existing_segments %}
+                {% for ps in existing_segments %}
+                <div class="segment-item" data-segment-id="{{ ps.segment.id }}">
+                    <div class="segment-info">
+                        <div>
+                            <span class="segment-category-badge segment-category-{{ ps.segment.category|lower }}">
+                                {{ ps.segment.get_category_display }}
+                            </span>
+                            <span class="segment-vector">{{ ps.segment.vector }}</span>
+                            <span class="segment-value">→ {{ ps.segment.value }}</span>
+                        </div>
+                        {% if ps.segment.description %}
+                        <div class="segment-description">{{ ps.segment.description }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="button" class="segment-remove-btn" data-segment-id="{{ ps.segment.id }}">
+                        {% trans "Remove" %}
+                    </button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="segments-list-empty">
+                    {% trans "No segments attached yet. Use the builder above to add segments." %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const personaId = {{ persona_id|default:"null" }};
+        const categorySelect = document.getElementById('segment-category');
+        const vectorSelect = document.getElementById('segment-vector');
+        const valueSelect = document.getElementById('segment-value');
+        const addBtn = document.getElementById('add-segment-btn');
+        const segmentsBody = document.getElementById('segments-list-body');
+
+        const ajaxVectorsUrl = '{{ ajax_vectors_url }}';
+        const ajaxValuesUrl = '{{ ajax_values_url }}';
+
+        // Category change handler
+        categorySelect.addEventListener('change', async function() {
+            const category = this.value;
+
+            // Reset downstream selects
+            vectorSelect.innerHTML = '<option value="">{% trans "Select vector..." %}</option>';
+            valueSelect.innerHTML = '<option value="">{% trans "Select value..." %}</option>';
+            vectorSelect.disabled = true;
+            valueSelect.disabled = true;
+            addBtn.disabled = true;
+
+            if (!category) return;
+
+            // Fetch vectors for category
+            try {
+                const response = await fetch(`${ajaxVectorsUrl}?category=${category}`);
+                const data = await response.json();
+
+                if (data.vectors && data.vectors.length > 0) {
+                    data.vectors.forEach(vector => {
+                        const option = document.createElement('option');
+                        option.value = vector;
+                        option.textContent = vector;
+                        vectorSelect.appendChild(option);
+                    });
+                    vectorSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error('Failed to fetch vectors:', error);
+            }
+        });
+
+        // Vector change handler
+        vectorSelect.addEventListener('change', async function() {
+            const category = categorySelect.value;
+            const vector = this.value;
+
+            // Reset value select
+            valueSelect.innerHTML = '<option value="">{% trans "Select value..." %}</option>';
+            valueSelect.disabled = true;
+            addBtn.disabled = true;
+
+            if (!vector) return;
+
+            // Fetch values for vector
+            try {
+                const response = await fetch(`${ajaxValuesUrl}?category=${category}&vector=${vector}`);
+                const data = await response.json();
+
+                if (data.segments && data.segments.length > 0) {
+                    data.segments.forEach(segment => {
+                        const option = document.createElement('option');
+                        option.value = segment.id;
+                        option.textContent = segment.value;
+                        option.dataset.description = segment.description || '';
+                        valueSelect.appendChild(option);
+                    });
+                    valueSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error('Failed to fetch values:', error);
+            }
+        });
+
+        // Value change handler
+        valueSelect.addEventListener('change', function() {
+            addBtn.disabled = !this.value;
+        });
+
+        // Add segment handler
+        addBtn.addEventListener('click', async function() {
+            const segmentId = valueSelect.value;
+            if (!segmentId || !personaId) return;
+
+            // Check if segment already exists
+            if (document.querySelector(`.segment-item[data-segment-id="${segmentId}"]`)) {
+                alert('{% trans "This segment is already attached to the persona." %}');
+                return;
+            }
+
+            // Add segment via AJAX
+            try {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const response = await fetch(`/audiences/ajax/add-segment/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        persona_id: personaId,
+                        segment_id: segmentId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Add to UI
+                    const categoryLabel = categorySelect.options[categorySelect.selectedIndex].text;
+                    const vector = vectorSelect.value;
+                    const valueOption = valueSelect.options[valueSelect.selectedIndex];
+                    const valueText = valueOption.text;
+                    const description = valueOption.dataset.description || '';
+
+                    const segmentHtml = `
+                        <div class="segment-item" data-segment-id="${segmentId}">
+                            <div class="segment-info">
+                                <div>
+                                    <span class="segment-category-badge segment-category-${categorySelect.value.toLowerCase()}">
+                                        ${categoryLabel}
+                                    </span>
+                                    <span class="segment-vector">${vector}</span>
+                                    <span class="segment-value">→ ${valueText}</span>
+                                </div>
+                                ${description ? `<div class="segment-description">${description}</div>` : ''}
+                            </div>
+                            <button type="button" class="segment-remove-btn" data-segment-id="${segmentId}">
+                                {% trans "Remove" %}
+                            </button>
+                        </div>
+                    `;
+
+                    // Remove empty message if present
+                    const emptyMsg = segmentsBody.querySelector('.segments-list-empty');
+                    if (emptyMsg) {
+                        emptyMsg.remove();
+                    }
+
+                    segmentsBody.insertAdjacentHTML('beforeend', segmentHtml);
+
+                    // Reset form
+                    categorySelect.value = '';
+                    vectorSelect.innerHTML = '<option value="">{% trans "Select vector..." %}</option>';
+                    valueSelect.innerHTML = '<option value="">{% trans "Select value..." %}</option>';
+                    vectorSelect.disabled = true;
+                    valueSelect.disabled = true;
+                    addBtn.disabled = true;
+
+                    // Bind remove handler to new button
+                    bindRemoveHandlers();
+                } else {
+                    alert(data.error || '{% trans "Failed to add segment." %}');
+                }
+            } catch (error) {
+                console.error('Failed to add segment:', error);
+                alert('{% trans "Failed to add segment." %}');
+            }
+        });
+
+        // Remove segment handler
+        function bindRemoveHandlers() {
+            document.querySelectorAll('.segment-remove-btn').forEach(btn => {
+                btn.onclick = async function() {
+                    const segmentId = this.dataset.segmentId;
+                    if (!segmentId || !personaId) return;
+
+                    if (!confirm('{% trans "Remove this segment from the persona?" %}')) {
+                        return;
+                    }
+
+                    try {
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        const response = await fetch(`/audiences/ajax/remove-segment/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken
+                            },
+                            body: JSON.stringify({
+                                persona_id: personaId,
+                                segment_id: segmentId
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Remove from UI
+                            const item = document.querySelector(`.segment-item[data-segment-id="${segmentId}"]`);
+                            if (item) {
+                                item.remove();
+                            }
+
+                            // Show empty message if no segments left
+                            if (segmentsBody.querySelectorAll('.segment-item').length === 0) {
+                                segmentsBody.innerHTML = `
+                                    <div class="segments-list-empty">
+                                        {% trans "No segments attached yet. Use the builder above to add segments." %}
+                                    </div>
+                                `;
+                            }
+                        } else {
+                            alert(data.error || '{% trans "Failed to remove segment." %}');
+                        }
+                    } catch (error) {
+                        console.error('Failed to remove segment:', error);
+                        alert('{% trans "Failed to remove segment." %}');
+                    }
+                };
+            });
+        }
+
+        // Initial bind
+        bindRemoveHandlers();
+    })();
+    </script>
+    {% endif %}
+</div>

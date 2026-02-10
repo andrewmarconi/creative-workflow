@@ -18,10 +18,11 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
     path("app/", admin.site.urls),
+    path("audiences/", include("cw.audiences.urls")),
 ]
 
 # Serve media files in development
