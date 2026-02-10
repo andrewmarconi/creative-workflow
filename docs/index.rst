@@ -1,86 +1,74 @@
-.. meta ::
-   :title: Generative Creative Lab
-
-.. rst-class:: hidden-title
-
 Generative Creative Lab
 =======================
 
-.. image:: _static/logo-wide.png
-   :alt: Generative Creative Lab
-   :align: center
+A Django + Celery application for multi-model diffusion image generation, multi-agent TV spot cultural adaptation, and audience targeting.
 
-A modular framework for creative development, exploration, and experimentation using generative AI.
----------------------------------------------------------------------------------------------------
+.. rubric:: Key Capabilities
 
-Generative Creative Lab is a flexible platform designed for creative experimentation with generative AI models. Built on `Django <https://www.djangoproject.com/>`_, `Celery <https://docs.celeryq.dev/>`_, and `LangGraph <https://langchain-ai.github.io/langgraph/>`_, it provides a modular architecture for multi-model diffusion image generation using `HuggingFace <https://huggingface.co/>`_ pipelines, multi-agent cultural adaptation of TV scripts, dynamic prompt enhancement, and systematic creative exploration through model composition and workflow orchestration.
+- **Multi-Model Diffusion** — 7+ models (Flux, SDXL, Qwen, Z-Image) with LoRA support, prompt enhancement, and Compel weighting
+- **Cultural Adaptation Pipeline** — LangGraph multi-agent system that adapts TV spots for target markets with evaluation gates
+- **Audience Targeting** — Geographic (Region/Country/Language) and non-geographic (Demographic/Behavioral/Psychographic) segmentation with persona composition
 
-Key Capabilities
-----------------
-
-**Visual Asset Generation**
-   Create concept imagery and storyboard frames using state-of-the-art AI image generation.
-   Experiment with multiple visual styles, refine creative direction through iterative prompt
-   development, and apply style treatments to maintain brand consistency across assets.
-
-**TV Spot Localization & Adaptation**
-   Explore how origin scripts translate across markets and cultures. The platform drafts
-   localized variations that account for cultural nuances, regional sensitivities, and
-   local context—giving creative teams a starting point for refinement. Generate visual
-   storyboards for each variation to accelerate internal concepting and client discussions.
-
-Citing This Software
-====================
-
-If you use this software in your research, please cite it using the following BibTeX entry:
-
-.. code-block:: bibtex
-
-   @misc{marconi2026generativecreativelab,
-     author       = {Andrew Marconi},
-     title        = {Generative Creative Lab},
-     year         = {2026},
-     howpublished = {\url{https://andrewmarconi.github.io/generative-creative-lab}},
-     note         = {Interactive web project},
-   }
-
-| **Marconi, A.** (2026). *Generative Creative Lab* [Interactive web project].
-| Retrieved from https://andrewmarconi.github.io/generative-creative-lab
-
+----
 
 .. toctree::
    :maxdepth: 2
-   :caption: About
-   :hidden:
+   :caption: Getting Started
 
-   about/philosophy
-   research/index
-   about/roadmap
-
+   getting-started/installation
+   getting-started/first-image
+   getting-started/first-adaptation
 
 .. toctree::
    :maxdepth: 2
-   :caption: User Documentation
-   :hidden:
+   :caption: Concepts
 
-   user/quickstart
-   user/guides/index
-   user/segmentation
-   user/troubleshooting
+   concepts/architecture
+   concepts/diffusion-models
+   concepts/adaptation-pipeline
+   concepts/audience-targeting
+   concepts/observability
 
 .. toctree::
    :maxdepth: 2
-   :caption: Developer Documentation
-   :hidden:
+   :caption: Guides
 
-   developer/architecture
-   developer/data-schemas
-   developer/contributing
-   developer/api/index
+   guides/image-generation/adding-models
+   guides/image-generation/loras
+   guides/image-generation/prompt-enhancement
+   guides/image-generation/compel-weighting
+   guides/tv-spot-adaptation/creating-campaigns
+   guides/tv-spot-adaptation/ad-units
+   guides/tv-spot-adaptation/importing-tvspots
+   guides/tv-spot-adaptation/video-analysis
+   guides/tv-spot-adaptation/storyboards
+   guides/audiences-brands/regions-countries-languages
+   guides/audiences-brands/segments-personas
+   guides/audiences-brands/brand-configuration
+   guides/pipeline/prompt-templates
+   guides/pipeline/per-node-models
+   guides/pipeline/pipeline-settings
+   guides/operations/data-import-export
+   guides/operations/grafana-logging
+   guides/operations/troubleshooting
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
+   reference/management-commands
+   reference/data-schemas
+   reference/model-specifications
+   reference/configuration
+   reference/celery-tasks
+   reference/api/index
 
 .. toctree::
    :maxdepth: 2
    :caption: Project
-   :hidden:
 
-   project-changelog
+   project/philosophy
+   project/contributing
+   project/roadmap
+   project/research-notes
+   project/changelog

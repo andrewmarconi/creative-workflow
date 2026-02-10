@@ -105,7 +105,7 @@ source_suffix = {
 }
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "DOCUMENTATION_PLAN.md"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "DOCUMENTATION_PLAN.md", "doc_v1"]
 
 # -- Linkcheck configuration -------------------------------------------------
 
