@@ -1912,7 +1912,7 @@ class AdUnitMediaAdmin(ModelAdmin):
             _("Video Upload"),
             {
                 "classes": ["tab"],
-                "fields": ("campaign", "video_file", "show_status"),
+                "fields": ("campaign", "video_file"),
             },
         ),
         (

@@ -428,6 +428,17 @@ def analyze_video_task(self, ad_unit_media_id: int):
         )
         logger.info("Generating audience insights...")
         from cw.lib.video_analysis.audience_insights import generate_audience_insights
+        from cw.core.models import LLMModel
+
+        # Get default LLM model for audience insights (or fallback to Qwen2.5-3B)
+        default_llm = LLMModel.objects.filter(is_active=True).first()
+        model_id = default_llm.model_id if default_llm else "Qwen/Qwen2.5-3B-Instruct"
+        load_in_4bit = False  # Enable if memory-constrained
+
+        logger.info(
+            f"Using LLM for audience insights: {model_id}",
+            extra={"model_id": model_id, "load_in_4bit": load_in_4bit},
+        )
 
         audience_insights = generate_audience_insights(
             script=script,
@@ -435,6 +446,8 @@ def analyze_video_task(self, ad_unit_media_id: int):
             sentiment=sentiment_analysis,
             transcription=transcription,
             categories=categories_summary,
+            model_id=model_id,
+            load_in_4bit=load_in_4bit,
         )
         logger.info(
             f"Audience insights generation complete",
@@ -538,14 +551,20 @@ def analyze_video_task(self, ad_unit_media_id: int):
             exc_info=True,
         )
 
-        # Update media with error
-        media = AdUnitMedia.objects.get(id=ad_unit_media_id)
-        media.status = "failed"
-        media.processing_error = str(e)
-        media.processing_completed_at = timezone.now()
-        media.save(
-            update_fields=["status", "processing_error", "processing_completed_at"]
-        )
+        # Update media with error (if it still exists)
+        try:
+            media = AdUnitMedia.objects.get(id=ad_unit_media_id)
+            media.status = "failed"
+            media.processing_error = str(e)
+            media.processing_completed_at = timezone.now()
+            media.save(
+                update_fields=["status", "processing_error", "processing_completed_at"]
+            )
+        except AdUnitMedia.DoesNotExist:
+            logger.warning(
+                f"AdUnitMedia {ad_unit_media_id} no longer exists, cannot update error status",
+                extra={"ad_unit_media_id": ad_unit_media_id},
+            )
 
         # Retry with exponential backoff if not max retries
         if self.request.retries < self.max_retries:

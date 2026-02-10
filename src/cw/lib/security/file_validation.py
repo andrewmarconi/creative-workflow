@@ -89,7 +89,7 @@ class FileSecurityValidator:
             "validator": self.__class__.__name__,
             "upload_filename": file.name,
             "file_size": file.size,
-            "content_type": file.content_type,
+            "content_type": getattr(file, 'content_type', None),
             "reason": reason,
             **extra_context,
         }
@@ -113,7 +113,7 @@ class FileSecurityValidator:
             "validator": self.__class__.__name__,
             "upload_filename": file.name,
             "file_size": file.size,
-            "content_type": file.content_type,
+            "content_type": getattr(file, 'content_type', None),
             **extra_context,
         }
         logger.info(f"File validation passed: {self.__class__.__name__}", extra=log_data)
@@ -321,7 +321,7 @@ class MimeTypeValidator(FileSecurityValidator):
         Raises:
             ValidationError: If MIME type is not allowed or doesn't match content
         """
-        declared_mime = file.content_type
+        declared_mime = getattr(file, 'content_type', 'application/octet-stream')
 
         if self.verify_content:
             # Detect actual MIME type from file content
@@ -662,18 +662,36 @@ class VideoFileValidator:
         """Run all validators on the uploaded file.
 
         Args:
-            file: The uploaded file to validate
+            file: The uploaded file to validate (UploadedFile for new uploads,
+                  FieldFile for existing files)
 
         Raises:
             ValidationError: If any validator fails
         """
+        # Skip validation for existing files (FieldFile) - only validate new uploads
+        from django.db.models.fields.files import FieldFile
+
+        if isinstance(file, FieldFile):
+            logger.debug(
+                f"Skipping validation for existing file '{file.name}'",
+                extra={
+                    "event": "video_validation_skipped",
+                    "upload_filename": file.name,
+                    "reason": "existing_file",
+                },
+            )
+            return
+
+        # Get content_type if available (UploadedFile has it, FieldFile doesn't)
+        content_type = getattr(file, 'content_type', None)
+
         logger.info(
             f"Starting video file validation for '{file.name}'",
             extra={
                 "event": "video_validation_started",
                 "upload_filename": file.name,
                 "file_size": file.size,
-                "content_type": file.content_type,
+                "content_type": content_type,
                 "validator_count": len(self.validators),
             },
         )

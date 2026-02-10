@@ -8,6 +8,8 @@ import json
 import logging
 from typing import Dict
 
+from cw.lib.prompts import render_prompt
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,6 +19,8 @@ def generate_audience_insights(
     sentiment: Dict,
     transcription: Dict,
     categories: Dict,
+    model_id: str = "Qwen/Qwen2.5-3B-Instruct",
+    load_in_4bit: bool = False,
 ) -> Dict:
     """
     Generate audience targeting insights using LLM analysis.
@@ -27,94 +31,93 @@ def generate_audience_insights(
         sentiment: Sentiment analysis results
         transcription: Audio transcription data
         categories: Scene categorization summary
+        model_id: LLM model to use for generation
+        load_in_4bit: Whether to use 4-bit quantization
 
     Returns:
-        Audience insights dictionary:
-        {
-            "primary_audience": {
-                "demographics": {
-                    "age_range": "25-45",
-                    "gender": "all",
-                    "income_level": "middle to upper-middle"
-                },
-                "psychographics": {
-                    "values": ["family", "quality", "convenience"],
-                    "interests": ["cooking", "home life", "wellness"],
-                    "lifestyle": "family-oriented, health-conscious"
-                }
-            },
-            "secondary_audiences": [
-                {
-                    "segment": "Young professionals",
-                    "fit_score": 0.75,
-                    "reasoning": "..."
-                }
-            ],
-            "market_potential": {
-                "high_fit_markets": ["US", "UK", "DE", "AU"],
-                "adaptation_needed": ["JP", "KR", "CN"],
-                "considerations": [
-                    "Family-focused messaging resonates in Western markets",
-                    "May need cultural adaptation for Asian markets"
-                ]
-            },
-            "messaging_recommendations": [
-                "Emphasize family togetherness and quality time",
-                "Highlight convenience and ease of use",
-                "Use warm, inviting visual style"
-            ]
-        }
+        Audience insights dictionary matching AudienceInsights schema
 
     Raises:
-        Exception: If LLM generation fails
+        Exception: If LLM generation fails (falls back to rule-based)
     """
-    logger.info("Generating audience insights with LLM")
+    # Prepare context data for insights generation
+    context = {
+        "script_scenes": script.get("scenes", []),
+        "dominant_colors": visual_style.get("dominant_colors", []),
+        "avg_brightness": visual_style.get("avg_brightness", 0),
+        "lighting_distribution": visual_style.get("lighting_distribution", {}),
+        "overall_sentiment": sentiment.get("overall_sentiment", "neutral"),
+        "sentiment_score": sentiment.get("overall_score", 0),
+        "transcription_language": transcription.get("language", "unknown"),
+        "primary_categories": categories.get("primary_categories", []),
+        "category_counts": categories.get("category_counts", {}),
+    }
 
     try:
-        from cw.lib.prompts import render_prompt
-        from cw.lib.pipeline.state import PipelineModelLoader
+        from cw.lib.pipeline.model_loader import get_model_loader
+        from cw.lib.video_analysis.schemas import AudienceInsights
 
-        # Prepare context data for prompt
-        context = {
-            "script_scenes": script.get("scenes", []),
-            "dominant_colors": visual_style.get("dominant_colors", []),
-            "avg_brightness": visual_style.get("avg_brightness", 0),
-            "lighting_distribution": visual_style.get("lighting_distribution", {}),
-            "overall_sentiment": sentiment.get("overall_sentiment", "neutral"),
-            "sentiment_score": sentiment.get("overall_score", 0),
-            "transcription_language": transcription.get("language", "unknown"),
-            "primary_categories": categories.get("primary_categories", []),
-            "category_counts": categories.get("category_counts", {}),
-        }
-
-        # Render prompt template
-        prompt = render_prompt("audience-insights", **context)
-
-        # Get LLM generator for audience insights node
-        loader = PipelineModelLoader()
-        generator = loader.get_generator(
-            state=None,
-            schema=None,
-            node_key="audience_insights",
+        logger.info(
+            "Generating audience insights with LLM",
+            extra={
+                "model_id": model_id,
+                "load_in_4bit": load_in_4bit,
+            },
         )
 
-        # Generate insights
-        logger.info("Invoking LLM for audience insights generation")
-        response = generator.invoke(prompt)
+        # Get model loader and generator
+        loader = get_model_loader(model_id=model_id, load_in_4bit=load_in_4bit)
+        generator = loader.get_generator(output_schema=AudienceInsights)
 
-        # Parse response
-        insights = json.loads(response.content)
+        # Render prompt template
+        user_prompt = render_prompt("audience-insights", **context)
 
-        logger.info("Audience insights generation complete")
+        # Apply chat template
+        system_message = (
+            "You are an expert marketing analyst specializing in audience "
+            "segmentation and targeting. Produce ONLY valid JSON matching "
+            "the requested schema — no commentary."
+        )
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_prompt},
+        ]
+        prompt = loader.tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+
+        # Generate insights with structured output
+        logger.info("Invoking LLM for structured audience insights generation")
+        raw_output = generator(prompt, max_new_tokens=4096)
+
+        # Validate and parse output
+        result = AudienceInsights.model_validate(
+            json.loads(raw_output) if isinstance(raw_output, str) else raw_output
+        )
+
+        # Convert to dict format
+        insights = result.model_dump()
+
+        logger.info(
+            "Audience insights generation complete",
+            extra={
+                "primary_audience_age": insights["primary_audience"]["demographics"][
+                    "age_range"
+                ],
+                "secondary_audiences_count": len(insights["secondary_audiences"]),
+                "high_fit_markets_count": len(
+                    insights["market_potential"]["high_fit_markets"]
+                ),
+            },
+        )
+
         return insights
 
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse LLM response as JSON: {e}")
-        # Return fallback insights
-        return _generate_fallback_insights(context)
-
     except Exception as e:
-        logger.error(f"Audience insights generation failed: {e}", exc_info=True)
+        logger.warning(
+            f"LLM-based audience insights failed: {e}. Falling back to rule-based approach.",
+            exc_info=True,
+        )
         # Return fallback insights
         return _generate_fallback_insights(context)
 
@@ -133,7 +136,9 @@ def _generate_fallback_insights(context: Dict) -> Dict:
     # Simple demographic inference from categories
     demographics = {"age_range": "all", "gender": "all", "income_level": "all"}
 
-    if "people" in primary_categories and "family" in str(context.get("script_scenes", [])).lower():
+    if "people" in primary_categories and "family" in str(
+        context.get("script_scenes", [])
+    ).lower():
         demographics["age_range"] = "25-54"
         demographics["income_level"] = "middle to upper-middle"
 
@@ -191,6 +196,7 @@ def _generate_fallback_insights(context: Dict) -> Dict:
         messaging.append("Balance emotional and rational appeals")
 
     return {
+        "reasoning": "Generated using rule-based heuristics from video analysis (LLM unavailable)",
         "primary_audience": {
             "demographics": demographics,
             "psychographics": {
@@ -204,13 +210,10 @@ def _generate_fallback_insights(context: Dict) -> Dict:
             "high_fit_markets": high_fit_markets,
             "adaptation_needed": [],
             "considerations": [
-                "Fallback insights generated without LLM analysis",
-                "Limited accuracy - consider manual review",
+                f"Content language is {language}",
+                f"Primary sentiment is {sentiment}",
+                "Consider cultural adaptation for non-primary markets",
             ],
         },
-        "messaging_recommendations": messaging if messaging else [
-            "Tailor messaging to target audience",
-            "Test different approaches",
-        ],
-        "generated_by": "fallback_rules",
+        "messaging_recommendations": messaging,
     }

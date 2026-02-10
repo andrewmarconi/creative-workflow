@@ -1,8 +1,1016 @@
 [
   {
-    "category": "DEMOGRAPHIC",
-    "vector": "Age",
-    "value": "0-4 (Toddlers/Preschoolers)",
+    "category": "BEHAVIORAL",
+    "vector": "Average Order Value",
+    "value": "High ($100-$250)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Average Order Value",
+    "value": "Low ($25-$50)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Average Order Value",
+    "value": "Medium ($50-$100)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Average Order Value",
+    "value": "Very High ($250+)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Average Order Value",
+    "value": "Very Low (<$25)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Convenience/Speed",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Customer Service/Support",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Customization/Personalization",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Innovation/Latest Features",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Price/Value",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Quality/Performance",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Reliability/Trust",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Status/Prestige",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Benefits Sought",
+    "value": "Sustainability/Ethics",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Content Consumption",
+    "value": "Active Reader/Viewer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Content Consumption",
+    "value": "Community Participant",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Content Consumption",
+    "value": "Content Creator/Contributor",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Content Consumption",
+    "value": "Influencer/Advocate",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Content Consumption",
+    "value": "Passive Consumer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Activation/First Use",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Advocacy",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Awareness",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Churn Risk",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Consideration",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Decision/Conversion",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Growth/Expansion",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Onboarding",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Retention",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Journey Stage",
+    "value": "Winback/Reactivation",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Loyalty",
+    "value": "Brand Loyalist/Advocate",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Loyalty",
+    "value": "Brand Switcher/Promiscuous",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Loyalty",
+    "value": "Habitual/Convenience Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Loyalty",
+    "value": "Price-Sensitive Shopper",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Loyalty",
+    "value": "Satisfied Repeat Customer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Loyalty",
+    "value": "VIP/Premium Member",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Satisfaction",
+    "value": "At-Risk Customer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Satisfaction",
+    "value": "Champion/Advocate",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Satisfaction",
+    "value": "Detractor (0-6 NPS)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Satisfaction",
+    "value": "Passive (7-8 NPS)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Customer Satisfaction",
+    "value": "Promoter (9-10 NPS)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Decision Speed",
+    "value": "Extended Research (1+ months)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Decision Speed",
+    "value": "Fast Decision (Within 24 hrs)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Decision Speed",
+    "value": "Immediate/Impulse Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Decision Speed",
+    "value": "Moderate Decision (1-7 days)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Decision Speed",
+    "value": "Slow/Deliberate (1-4 weeks)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "App Power User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Desktop-Preferred User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Email Responsive",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Mobile-First User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Omnichannel User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Push Notification Engaged",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "SMS/Text Preferred",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Social Media Engaged",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Digital Behavior",
+    "value": "Web Browser Only",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Engagement Level",
+    "value": "High Engagement",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Engagement Level",
+    "value": "Low Engagement",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Engagement Level",
+    "value": "Moderate Engagement",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Engagement Level",
+    "value": "Non-Engaged/Passive",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Engagement Level",
+    "value": "Power User/Champion",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Feature Usage",
+    "value": "Advanced Feature User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Feature Usage",
+    "value": "Core Features Only",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Feature Usage",
+    "value": "Moderate Feature Adoption",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Feature Usage",
+    "value": "Power User (All Features)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Feature Usage",
+    "value": "Under-Utilizing",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Loyalty Program Status",
+    "value": "Member - Bronze/Basic",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Loyalty Program Status",
+    "value": "Member - Gold/Premium",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Loyalty Program Status",
+    "value": "Member - Inactive",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Loyalty Program Status",
+    "value": "Member - Platinum/Elite",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Loyalty Program Status",
+    "value": "Member - Silver/Mid-Tier",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Loyalty Program Status",
+    "value": "Non-Member",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Birthday/Anniversary",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Daily Routine Purchase",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Emergency/Urgent Need",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Holiday/Special Event",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Milestone/Life Event",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Monthly/Recurring Need",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Seasonal Purchase",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Occasion/Timing",
+    "value": "Weekly Routine Purchase",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Price Sensitivity",
+    "value": "Highly Price-Sensitive",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Price Sensitivity",
+    "value": "Moderately Price-Conscious",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Price Sensitivity",
+    "value": "Premium-Willing",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Price Sensitivity",
+    "value": "Price-Insensitive/Luxury",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Price Sensitivity",
+    "value": "Value-Balanced Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Promotion Response",
+    "value": "Deal Seeker/Coupon User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Promotion Response",
+    "value": "FOMO Responder",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Promotion Response",
+    "value": "Limited Promotion Response",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Promotion Response",
+    "value": "Non-Promotion Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Promotion Response",
+    "value": "Sale-Driven Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Behavior Type",
+    "value": "Complex Decision-Maker (High Research)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Behavior Type",
+    "value": "Deliberate/Planned Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Behavior Type",
+    "value": "Dissonance-Reducing Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Behavior Type",
+    "value": "Habitual Buyer (Low Involvement)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Behavior Type",
+    "value": "Impulse Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Behavior Type",
+    "value": "Variety Seeker",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Channel",
+    "value": "In-Store Only",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Channel",
+    "value": "Marketplace (Amazon, etc.)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Channel",
+    "value": "Omnichannel (Both)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Channel",
+    "value": "Online Only",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Channel",
+    "value": "Social Commerce",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Channel",
+    "value": "Subscription/Auto-Renew",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "First-Time Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "Frequent Buyer (Monthly)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "Lapsed/Dormant Customer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "Occasional Buyer (Annually)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "One-Time/Rare Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "Power User/Repeat Buyer (Weekly+)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Purchase Frequency",
+    "value": "Regular Buyer (Quarterly)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Recency",
+    "value": "Active - Last 30 Days",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Recency",
+    "value": "Dormant - 365+ Days",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Recency",
+    "value": "Lapsed - 181-365 Days",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Recency",
+    "value": "Lapsing - 91-180 Days",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Recency",
+    "value": "Recent - 31-90 Days",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Spending Tier",
+    "value": "Budget/Value Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Spending Tier",
+    "value": "Luxury/High-Ticket Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Spending Tier",
+    "value": "Mid-Range Spender",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Spending Tier",
+    "value": "Premium Buyer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Spending Tier",
+    "value": "Whale/Top Spender",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Support Usage",
+    "value": "Frequent Support User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Support Usage",
+    "value": "High-Touch/Problem Account",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Support Usage",
+    "value": "Never Contacted Support",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Support Usage",
+    "value": "Occasional Support User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Support Usage",
+    "value": "Rare Support User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Usage Rate",
+    "value": "Heavy User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Usage Rate",
+    "value": "Light User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Usage Rate",
+    "value": "Medium User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Usage Rate",
+    "value": "Non-User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "BEHAVIORAL",
+    "vector": "Usage Rate",
+    "value": "Super User",
     "description": "",
     "insights": [],
     "is_active": true
@@ -10,7 +1018,7 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Age",
-    "value": "5-12 (Children)",
+    "value": "0-4 (Toddlers/Preschoolers)",
     "description": "",
     "insights": [],
     "is_active": true
@@ -58,6 +1066,14 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Age",
+    "value": "5-12 (Children)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Age",
     "value": "55-64 (Boomers - Younger)",
     "description": "",
     "insights": [],
@@ -73,56 +1089,384 @@
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Generation",
-    "value": "Silent Generation (Born 1928-1945)",
+    "vector": "Children in Household",
+    "value": "1 Child",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Generation",
-    "value": "Baby Boomers (Born 1946-1964)",
+    "vector": "Children in Household",
+    "value": "2 Children",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Generation",
-    "value": "Generation X (Born 1965-1980)",
+    "vector": "Children in Household",
+    "value": "3+ Children",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Generation",
-    "value": "Millennials (Born 1981-1996)",
+    "vector": "Children in Household",
+    "value": "Adult Children (18+)",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Generation",
-    "value": "Generation Z (Born 1997-2012)",
+    "vector": "Children in Household",
+    "value": "Infants (0-2 years)",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Generation",
-    "value": "Generation Alpha (Born 2013+)",
+    "vector": "Children in Household",
+    "value": "No Children",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Gender Identity",
-    "value": "Male",
+    "vector": "Children in Household",
+    "value": "Preschool Age (3-5 years)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Children in Household",
+    "value": "School Age (6-12 years)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Children in Household",
+    "value": "Teenagers (13-17 years)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Disability Status",
+    "value": "Chronic Illness/Medical Condition",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Disability Status",
+    "value": "Cognitive/Developmental Disability",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Disability Status",
+    "value": "No Disability",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Disability Status",
+    "value": "Physical Disability",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Disability Status",
+    "value": "Prefer Not to Say",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Disability Status",
+    "value": "Sensory Disability (Vision/Hearing)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "Associate Degree",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "Bachelor's Degree",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "Doctoral/Professional Degree",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "High School Graduate/GED",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "Less than High School",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "Master's Degree",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Education Level",
+    "value": "Some College/No Degree",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Full-Time Employed",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Homemaker",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Part-Time Employed",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Retired",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Self-Employed",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Student",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Unable to Work",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Unemployed - Not Seeking Work",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Employment Status",
+    "value": "Unemployed - Seeking Work",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Asian",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Black/African American",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Hispanic/Latino",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Middle Eastern",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Multiracial",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Native American/Indigenous",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Other/Prefer Not to Say",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "Pacific Islander",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Ethnicity/Race",
+    "value": "White/Caucasian",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Couple - No Children",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Empty Nesters",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Extended Family Living Together",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Multi-Generational Household",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Nuclear Family (Parents + Children)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Roommates/Non-Family",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Single - No Children",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Family Composition",
+    "value": "Single Parent Household",
     "description": "",
     "insights": [],
     "is_active": true
@@ -138,7 +1482,7 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Gender Identity",
-    "value": "Non-Binary",
+    "value": "Gender Fluid",
     "description": "",
     "insights": [],
     "is_active": true
@@ -146,7 +1490,15 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Gender Identity",
-    "value": "Gender Fluid",
+    "value": "Male",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Gender Identity",
+    "value": "Non-Binary",
     "description": "",
     "insights": [],
     "is_active": true
@@ -161,8 +1513,112 @@
   },
   {
     "category": "DEMOGRAPHIC",
+    "vector": "Generation",
+    "value": "Baby Boomers (Born 1946-1964)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Generation",
+    "value": "Generation Alpha (Born 2013+)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Generation",
+    "value": "Generation X (Born 1965-1980)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Generation",
+    "value": "Generation Z (Born 1997-2012)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Generation",
+    "value": "Millennials (Born 1981-1996)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Generation",
+    "value": "Silent Generation (Born 1928-1945)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Home Ownership",
+    "value": "Live with Family/Friends",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Home Ownership",
+    "value": "Other",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Home Ownership",
+    "value": "Own - Paid Off",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Home Ownership",
+    "value": "Own - With Mortgage",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Home Ownership",
+    "value": "Rent",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
     "vector": "Household Income",
-    "value": "Under $25K",
+    "value": "$100K-$150K",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Household Income",
+    "value": "$150K-$250K",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Household Income",
+    "value": "$250K+",
     "description": "",
     "insights": [],
     "is_active": true
@@ -202,423 +1658,7 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Household Income",
-    "value": "$100K-$150K",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Household Income",
-    "value": "$150K-$250K",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Household Income",
-    "value": "$250K+",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Income Tier",
-    "value": "Low Income",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Income Tier",
-    "value": "Lower-Middle Income",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Income Tier",
-    "value": "Middle Income",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Income Tier",
-    "value": "Upper-Middle Income",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Income Tier",
-    "value": "Affluent",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Income Tier",
-    "value": "High Net Worth",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "Less than High School",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "High School Graduate/GED",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "Some College/No Degree",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "Associate Degree",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "Bachelor's Degree",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "Master's Degree",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Education Level",
-    "value": "Doctoral/Professional Degree",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Professional/White Collar",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Management/Executive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Technical/Engineering",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Sales/Marketing",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Service/Hospitality",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Blue Collar/Manufacturing",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Creative/Arts",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Healthcare",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Education",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Government/Public Service",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Retired",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Student",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Unemployed/Not Working",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Occupation Type",
-    "value": "Self-Employed/Entrepreneur",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Full-Time Employed",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Part-Time Employed",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Self-Employed",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Unemployed - Seeking Work",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Unemployed - Not Seeking Work",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Student",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Retired",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Homemaker",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Employment Status",
-    "value": "Unable to Work",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Marital Status",
-    "value": "Single/Never Married",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Marital Status",
-    "value": "Married",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Marital Status",
-    "value": "Domestic Partnership/Cohabiting",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Marital Status",
-    "value": "Divorced",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Marital Status",
-    "value": "Separated",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Marital Status",
-    "value": "Widowed",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Single - No Children",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Couple - No Children",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Nuclear Family (Parents + Children)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Single Parent Household",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Multi-Generational Household",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Extended Family Living Together",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Empty Nesters",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Family Composition",
-    "value": "Roommates/Non-Family",
+    "value": "Under $25K",
     "description": "",
     "insights": [],
     "is_active": true
@@ -665,96 +1705,88 @@
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "No Children",
+    "vector": "Income Tier",
+    "value": "Affluent",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "1 Child",
+    "vector": "Income Tier",
+    "value": "High Net Worth",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "2 Children",
+    "vector": "Income Tier",
+    "value": "Lower-Middle Income",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "3+ Children",
+    "vector": "Income Tier",
+    "value": "Low Income",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "Infants (0-2 years)",
+    "vector": "Income Tier",
+    "value": "Middle Income",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "Preschool Age (3-5 years)",
+    "vector": "Income Tier",
+    "value": "Upper-Middle Income",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "School Age (6-12 years)",
+    "vector": "Language",
+    "value": "Bilingual",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "Teenagers (13-17 years)",
+    "vector": "Language",
+    "value": "English - Primary",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Children in Household",
-    "value": "Adult Children (18+)",
+    "vector": "Language",
+    "value": "Multilingual",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Life Stage",
-    "value": "Young Single",
+    "vector": "Language",
+    "value": "Other Language - Primary",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Life Stage",
-    "value": "Young Couple - No Children",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Life Stage",
-    "value": "New Parents",
+    "vector": "Language",
+    "value": "Spanish - Primary",
     "description": "",
     "insights": [],
     "is_active": true
@@ -762,7 +1794,7 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Life Stage",
-    "value": "Growing Family",
+    "value": "Empty Nester",
     "description": "",
     "insights": [],
     "is_active": true
@@ -778,7 +1810,15 @@
   {
     "category": "DEMOGRAPHIC",
     "vector": "Life Stage",
-    "value": "Empty Nester",
+    "value": "Growing Family",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Life Stage",
+    "value": "New Parents",
     "description": "",
     "insights": [],
     "is_active": true
@@ -801,232 +1841,64 @@
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "White/Caucasian",
+    "vector": "Life Stage",
+    "value": "Young Couple - No Children",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Black/African American",
+    "vector": "Life Stage",
+    "value": "Young Single",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Hispanic/Latino",
+    "vector": "Marital Status",
+    "value": "Divorced",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Asian",
+    "vector": "Marital Status",
+    "value": "Domestic Partnership/Cohabiting",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Native American/Indigenous",
+    "vector": "Marital Status",
+    "value": "Married",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Pacific Islander",
+    "vector": "Marital Status",
+    "value": "Separated",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Middle Eastern",
+    "vector": "Marital Status",
+    "value": "Single/Never Married",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Multiracial",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Ethnicity/Race",
-    "value": "Other/Prefer Not to Say",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Christian - Protestant",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Christian - Catholic",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Jewish",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Muslim",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Hindu",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Buddhist",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Agnostic/Atheist",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Spiritual but Not Religious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Other",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Religion",
-    "value": "Prefer Not to Say",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Home Ownership",
-    "value": "Own - Paid Off",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Home Ownership",
-    "value": "Own - With Mortgage",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Home Ownership",
-    "value": "Rent",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Home Ownership",
-    "value": "Live with Family/Friends",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Home Ownership",
-    "value": "Other",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Urbanicity",
-    "value": "Urban Core/City Center",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Urbanicity",
-    "value": "Urban Suburbs",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Urbanicity",
-    "value": "Suburban",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Urbanicity",
-    "value": "Rural/Small Town",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "DEMOGRAPHIC",
-    "vector": "Urbanicity",
-    "value": "Remote/Agricultural",
+    "vector": "Marital Status",
+    "value": "Widowed",
     "description": "",
     "insights": [],
     "is_active": true
@@ -1035,6 +1907,14 @@
     "category": "DEMOGRAPHIC",
     "vector": "Nationality",
     "value": "Domestic/Native-Born",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Nationality",
+    "value": "International/Tourist",
     "description": "",
     "insights": [],
     "is_active": true
@@ -1065,1648 +1945,232 @@
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Nationality",
-    "value": "International/Tourist",
+    "vector": "Occupation Type",
+    "value": "Blue Collar/Manufacturing",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Language",
-    "value": "English - Primary",
+    "vector": "Occupation Type",
+    "value": "Creative/Arts",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Language",
-    "value": "Spanish - Primary",
+    "vector": "Occupation Type",
+    "value": "Education",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Language",
-    "value": "Bilingual",
+    "vector": "Occupation Type",
+    "value": "Government/Public Service",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Language",
-    "value": "Multilingual",
+    "vector": "Occupation Type",
+    "value": "Healthcare",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Language",
-    "value": "Other Language - Primary",
+    "vector": "Occupation Type",
+    "value": "Management/Executive",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Disability Status",
-    "value": "No Disability",
+    "vector": "Occupation Type",
+    "value": "Professional/White Collar",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Disability Status",
-    "value": "Physical Disability",
+    "vector": "Occupation Type",
+    "value": "Retired",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Disability Status",
-    "value": "Sensory Disability (Vision/Hearing)",
+    "vector": "Occupation Type",
+    "value": "Sales/Marketing",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Disability Status",
-    "value": "Cognitive/Developmental Disability",
+    "vector": "Occupation Type",
+    "value": "Self-Employed/Entrepreneur",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Disability Status",
-    "value": "Chronic Illness/Medical Condition",
+    "vector": "Occupation Type",
+    "value": "Service/Hospitality",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "DEMOGRAPHIC",
-    "vector": "Disability Status",
+    "vector": "Occupation Type",
+    "value": "Student",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Occupation Type",
+    "value": "Technical/Engineering",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Occupation Type",
+    "value": "Unemployed/Not Working",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Agnostic/Atheist",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Buddhist",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Christian - Catholic",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Christian - Protestant",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Hindu",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Jewish",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Muslim",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Other",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
     "value": "Prefer Not to Say",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "First-Time Buyer",
+    "category": "DEMOGRAPHIC",
+    "vector": "Religion",
+    "value": "Spiritual but Not Religious",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "One-Time/Rare Buyer",
+    "category": "DEMOGRAPHIC",
+    "vector": "Urbanicity",
+    "value": "Remote/Agricultural",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "Occasional Buyer (Annually)",
+    "category": "DEMOGRAPHIC",
+    "vector": "Urbanicity",
+    "value": "Rural/Small Town",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "Regular Buyer (Quarterly)",
+    "category": "DEMOGRAPHIC",
+    "vector": "Urbanicity",
+    "value": "Suburban",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "Frequent Buyer (Monthly)",
+    "category": "DEMOGRAPHIC",
+    "vector": "Urbanicity",
+    "value": "Urban Core/City Center",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "Power User/Repeat Buyer (Weekly+)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Frequency",
-    "value": "Lapsed/Dormant Customer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Usage Rate",
-    "value": "Non-User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Usage Rate",
-    "value": "Light User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Usage Rate",
-    "value": "Medium User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Usage Rate",
-    "value": "Heavy User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Usage Rate",
-    "value": "Super User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Recency",
-    "value": "Active - Last 30 Days",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Recency",
-    "value": "Recent - 31-90 Days",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Recency",
-    "value": "Lapsing - 91-180 Days",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Recency",
-    "value": "Lapsed - 181-365 Days",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Recency",
-    "value": "Dormant - 365+ Days",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Loyalty",
-    "value": "Brand Switcher/Promiscuous",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Loyalty",
-    "value": "Price-Sensitive Shopper",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Loyalty",
-    "value": "Habitual/Convenience Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Loyalty",
-    "value": "Satisfied Repeat Customer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Loyalty",
-    "value": "Brand Loyalist/Advocate",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Loyalty",
-    "value": "VIP/Premium Member",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Loyalty Program Status",
-    "value": "Non-Member",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Loyalty Program Status",
-    "value": "Member - Inactive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Loyalty Program Status",
-    "value": "Member - Bronze/Basic",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Loyalty Program Status",
-    "value": "Member - Silver/Mid-Tier",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Loyalty Program Status",
-    "value": "Member - Gold/Premium",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Loyalty Program Status",
-    "value": "Member - Platinum/Elite",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Behavior Type",
-    "value": "Complex Decision-Maker (High Research)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Behavior Type",
-    "value": "Variety Seeker",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Behavior Type",
-    "value": "Habitual Buyer (Low Involvement)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Behavior Type",
-    "value": "Dissonance-Reducing Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Behavior Type",
-    "value": "Impulse Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Behavior Type",
-    "value": "Deliberate/Planned Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Spending Tier",
-    "value": "Budget/Value Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Spending Tier",
-    "value": "Mid-Range Spender",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Spending Tier",
-    "value": "Premium Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Spending Tier",
-    "value": "Luxury/High-Ticket Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Spending Tier",
-    "value": "Whale/Top Spender",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Average Order Value",
-    "value": "Very Low (<$25)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Average Order Value",
-    "value": "Low ($25-$50)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Average Order Value",
-    "value": "Medium ($50-$100)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Average Order Value",
-    "value": "High ($100-$250)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Average Order Value",
-    "value": "Very High ($250+)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Quality/Performance",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Price/Value",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Convenience/Speed",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Status/Prestige",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Innovation/Latest Features",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Sustainability/Ethics",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Customer Service/Support",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Customization/Personalization",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Benefits Sought",
-    "value": "Reliability/Trust",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Daily Routine Purchase",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Weekly Routine Purchase",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Monthly/Recurring Need",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Seasonal Purchase",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Holiday/Special Event",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Birthday/Anniversary",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Milestone/Life Event",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Occasion/Timing",
-    "value": "Emergency/Urgent Need",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Awareness",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Consideration",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Decision/Conversion",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Onboarding",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Activation/First Use",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Retention",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Growth/Expansion",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Advocacy",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Churn Risk",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Journey Stage",
-    "value": "Winback/Reactivation",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Engagement Level",
-    "value": "Non-Engaged/Passive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Engagement Level",
-    "value": "Low Engagement",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Engagement Level",
-    "value": "Moderate Engagement",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Engagement Level",
-    "value": "High Engagement",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Engagement Level",
-    "value": "Power User/Champion",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Mobile-First User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Desktop-Preferred User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Omnichannel User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "App Power User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Email Responsive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Social Media Engaged",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "SMS/Text Preferred",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Push Notification Engaged",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Digital Behavior",
-    "value": "Web Browser Only",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Channel",
-    "value": "Online Only",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Channel",
-    "value": "In-Store Only",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Channel",
-    "value": "Omnichannel (Both)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Channel",
-    "value": "Marketplace (Amazon, etc.)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Channel",
-    "value": "Social Commerce",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Purchase Channel",
-    "value": "Subscription/Auto-Renew",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Decision Speed",
-    "value": "Immediate/Impulse Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Decision Speed",
-    "value": "Fast Decision (Within 24 hrs)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Decision Speed",
-    "value": "Moderate Decision (1-7 days)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Decision Speed",
-    "value": "Slow/Deliberate (1-4 weeks)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Decision Speed",
-    "value": "Extended Research (1+ months)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Price Sensitivity",
-    "value": "Highly Price-Sensitive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Price Sensitivity",
-    "value": "Moderately Price-Conscious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Price Sensitivity",
-    "value": "Value-Balanced Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Price Sensitivity",
-    "value": "Premium-Willing",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Price Sensitivity",
-    "value": "Price-Insensitive/Luxury",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Promotion Response",
-    "value": "Deal Seeker/Coupon User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Promotion Response",
-    "value": "Sale-Driven Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Promotion Response",
-    "value": "FOMO Responder",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Promotion Response",
-    "value": "Limited Promotion Response",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Promotion Response",
-    "value": "Non-Promotion Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Feature Usage",
-    "value": "Core Features Only",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Feature Usage",
-    "value": "Moderate Feature Adoption",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Feature Usage",
-    "value": "Advanced Feature User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Feature Usage",
-    "value": "Power User (All Features)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Feature Usage",
-    "value": "Under-Utilizing",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Content Consumption",
-    "value": "Passive Consumer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Content Consumption",
-    "value": "Active Reader/Viewer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Content Consumption",
-    "value": "Content Creator/Contributor",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Content Consumption",
-    "value": "Community Participant",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Content Consumption",
-    "value": "Influencer/Advocate",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Satisfaction",
-    "value": "Detractor (0-6 NPS)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Satisfaction",
-    "value": "Passive (7-8 NPS)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Satisfaction",
-    "value": "Promoter (9-10 NPS)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Satisfaction",
-    "value": "At-Risk Customer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Customer Satisfaction",
-    "value": "Champion/Advocate",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Support Usage",
-    "value": "Never Contacted Support",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Support Usage",
-    "value": "Rare Support User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Support Usage",
-    "value": "Occasional Support User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Support Usage",
-    "value": "Frequent Support User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "BEHAVIORAL",
-    "vector": "Support Usage",
-    "value": "High-Touch/Problem Account",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Traditional/Conservative",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Modern/Progressive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Active/Outdoor Enthusiast",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Urban Professional",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Suburban Family-Oriented",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Rural/Country Living",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Minimalist",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Luxury/High-End",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Bohemian/Alternative",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Lifestyle - General",
-    "value": "Health & Wellness Focused",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Extroverted",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Introverted",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Adventurous/Risk-Taker",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Cautious/Risk-Averse",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Spontaneous/Impulsive",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Planned/Organized",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Creative/Artistic",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Analytical/Logical",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Competitive/Achievement-Oriented",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Cooperative/Harmonious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Independent/Self-Reliant",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Personality Type",
-    "value": "Community-Oriented/Social",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Family & Relationships",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Career & Achievement",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Financial Security",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Personal Growth & Learning",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Health & Wellness",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Creativity & Self-Expression",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Social Justice & Equality",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Environmental Sustainability",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Tradition & Heritage",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Innovation & Progress",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Freedom & Independence",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Community & Belonging",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Spirituality & Faith",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Core Values",
-    "value": "Fun & Enjoyment",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Frugal/Saver",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Practical/Value-Conscious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Balanced Spender",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Experience-Over-Things",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Status-Conscious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Indulgent/Treat-Yourself",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Spending",
-    "value": "Luxury-Seeking",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Technology",
-    "value": "Technophobe/Resistant",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Technology",
-    "value": "Technology Cautious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Technology",
-    "value": "Pragmatic Tech User",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Technology",
-    "value": "Early Adopter",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Technology",
-    "value": "Tech Enthusiast/Innovator",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Brand",
-    "value": "Brand Agnostic",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Brand",
-    "value": "Value-Brand Preferrer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Brand",
-    "value": "Quality-Brand Seeker",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Brand",
-    "value": "Premium-Brand Loyal",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Brand",
-    "value": "Luxury-Brand Devotee",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Brand",
-    "value": "Local/Small Business Supporter",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Environment",
-    "value": "Unconcerned",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Environment",
-    "value": "Somewhat Aware",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Environment",
-    "value": "Environmentally Conscious",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Environment",
-    "value": "Eco-Activist/Advocate",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Attitudes - Environment",
-    "value": "Zero-Waste/Extreme Sustainability",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Social Class",
-    "value": "Working Class",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Social Class",
-    "value": "Lower-Middle Class",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Social Class",
-    "value": "Middle Class",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Social Class",
-    "value": "Upper-Middle Class",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Social Class",
-    "value": "Upper Class",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Social Class",
-    "value": "Aspirational (Upward Mobile)",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Activities - Recreation",
-    "value": "Sports & Fitness",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Activities - Recreation",
-    "value": "Outdoor Adventures",
+    "category": "DEMOGRAPHIC",
+    "vector": "Urbanicity",
+    "value": "Urban Suburbs",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2722,7 +2186,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Activities - Recreation",
-    "value": "Entertainment & Media",
+    "value": "Crafts & DIY",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2738,7 +2202,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Activities - Recreation",
-    "value": "Travel & Exploration",
+    "value": "Entertainment & Media",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2754,7 +2218,15 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Activities - Recreation",
-    "value": "Crafts & DIY",
+    "value": "Home & Garden",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Activities - Recreation",
+    "value": "Outdoor Adventures",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2778,7 +2250,15 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Activities - Recreation",
-    "value": "Home & Garden",
+    "value": "Sports & Fitness",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Activities - Recreation",
+    "value": "Travel & Exploration",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2793,8 +2273,416 @@
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Interests - Hobbies",
-    "value": "Sports Fandom",
+    "vector": "Attitudes - Brand",
+    "value": "Brand Agnostic",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Brand",
+    "value": "Local/Small Business Supporter",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Brand",
+    "value": "Luxury-Brand Devotee",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Brand",
+    "value": "Premium-Brand Loyal",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Brand",
+    "value": "Quality-Brand Seeker",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Brand",
+    "value": "Value-Brand Preferrer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Environment",
+    "value": "Eco-Activist/Advocate",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Environment",
+    "value": "Environmentally Conscious",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Environment",
+    "value": "Somewhat Aware",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Environment",
+    "value": "Unconcerned",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Environment",
+    "value": "Zero-Waste/Extreme Sustainability",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Balanced Spender",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Experience-Over-Things",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Frugal/Saver",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Indulgent/Treat-Yourself",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Luxury-Seeking",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Practical/Value-Conscious",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Spending",
+    "value": "Status-Conscious",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Technology",
+    "value": "Early Adopter",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Technology",
+    "value": "Pragmatic Tech User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Technology",
+    "value": "Tech Enthusiast/Innovator",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Technology",
+    "value": "Technology Cautious",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Attitudes - Technology",
+    "value": "Technophobe/Resistant",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Career & Achievement",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Community & Belonging",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Creativity & Self-Expression",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Environmental Sustainability",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Family & Relationships",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Financial Security",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Freedom & Independence",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Fun & Enjoyment",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Health & Wellness",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Innovation & Progress",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Personal Growth & Learning",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Social Justice & Equality",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Spirituality & Faith",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Core Values",
+    "value": "Tradition & Heritage",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Achievement & Success",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Belonging & Connection",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Comfort & Familiarity",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Excitement & Novelty",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Freedom & Control",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Nostalgia & Tradition",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Purpose & Meaning",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Recognition & Status",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Security & Safety",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Emotional Drivers",
+    "value": "Self-Expression & Identity",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Innovation Adoption",
+    "value": "Early Adopters (13.5%)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Innovation Adoption",
+    "value": "Early Majority (34%)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Innovation Adoption",
+    "value": "Innovators (2.5%)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Innovation Adoption",
+    "value": "Laggards (16%)",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Innovation Adoption",
+    "value": "Late Majority (34%)",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2802,7 +2690,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Interests - Hobbies",
-    "value": "Fitness & Exercise",
+    "value": "Automotive",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2826,31 +2714,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Interests - Hobbies",
-    "value": "Music",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Interests - Hobbies",
-    "value": "Photography",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Interests - Hobbies",
-    "value": "Technology & Gadgets",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Interests - Hobbies",
-    "value": "Automotive",
+    "value": "Fitness & Exercise",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2866,7 +2730,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Interests - Hobbies",
-    "value": "Pet Care",
+    "value": "Music",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2875,6 +2739,22 @@
     "category": "PSYCHOGRAPHIC",
     "vector": "Interests - Hobbies",
     "value": "Parenting & Family",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Interests - Hobbies",
+    "value": "Pet Care",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Interests - Hobbies",
+    "value": "Photography",
     "description": "",
     "insights": [],
     "is_active": true
@@ -2897,136 +2777,256 @@
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Very Conservative",
+    "vector": "Interests - Hobbies",
+    "value": "Sports Fandom",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Conservative",
+    "vector": "Interests - Hobbies",
+    "value": "Technology & Gadgets",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Moderate/Centrist",
+    "vector": "Life Priorities",
+    "value": "Adventure/Experience-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Liberal",
+    "vector": "Life Priorities",
+    "value": "Career-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Very Liberal/Progressive",
+    "vector": "Life Priorities",
+    "value": "Creative Pursuit-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Libertarian",
+    "vector": "Life Priorities",
+    "value": "Family-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Opinions - Political",
-    "value": "Apolitical/Disengaged",
+    "vector": "Life Priorities",
+    "value": "Financial Independence-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Security & Safety",
+    "vector": "Life Priorities",
+    "value": "Health-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Belonging & Connection",
+    "vector": "Life Priorities",
+    "value": "Social Life-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Achievement & Success",
+    "vector": "Life Priorities",
+    "value": "Spiritual Growth-Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Recognition & Status",
+    "vector": "Life Priorities",
+    "value": "Work-Life Balance Seeker",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Freedom & Control",
+    "vector": "Lifestyle - General",
+    "value": "Active/Outdoor Enthusiast",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Excitement & Novelty",
+    "vector": "Lifestyle - General",
+    "value": "Bohemian/Alternative",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Comfort & Familiarity",
+    "vector": "Lifestyle - General",
+    "value": "Health & Wellness Focused",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Purpose & Meaning",
+    "vector": "Lifestyle - General",
+    "value": "Luxury/High-End",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Self-Expression & Identity",
+    "vector": "Lifestyle - General",
+    "value": "Minimalist",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Emotional Drivers",
-    "value": "Nostalgia & Tradition",
+    "vector": "Lifestyle - General",
+    "value": "Modern/Progressive",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Lifestyle - General",
+    "value": "Rural/Country Living",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Lifestyle - General",
+    "value": "Suburban Family-Oriented",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Lifestyle - General",
+    "value": "Traditional/Conservative",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Lifestyle - General",
+    "value": "Urban Professional",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Minimal Media Consumer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Podcast Listener",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Print/News Reader",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Radio Listener",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Social Media Heavy User",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Streaming-First Consumer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "Traditional TV Viewer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Media Consumption",
+    "value": "YouTube Consumer",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Motivations - Purchase",
+    "value": "Altruism & Giving",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Motivations - Purchase",
+    "value": "Aspirational Identity",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Motivations - Purchase",
+    "value": "Pleasure & Enjoyment",
     "description": "",
     "insights": [],
     "is_active": true
@@ -3035,6 +3035,14 @@
     "category": "PSYCHOGRAPHIC",
     "vector": "Motivations - Purchase",
     "value": "Problem-Solving Need",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Motivations - Purchase",
+    "value": "Risk Reduction",
     "description": "",
     "insights": [],
     "is_active": true
@@ -3066,14 +3074,6 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Motivations - Purchase",
-    "value": "Pleasure & Enjoyment",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Motivations - Purchase",
     "value": "Time-Saving Convenience",
     "description": "",
     "insights": [],
@@ -3081,224 +3081,152 @@
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Motivations - Purchase",
-    "value": "Risk Reduction",
+    "vector": "Opinions - Political",
+    "value": "Apolitical/Disengaged",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Motivations - Purchase",
-    "value": "Aspirational Identity",
+    "vector": "Opinions - Political",
+    "value": "Conservative",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Motivations - Purchase",
-    "value": "Altruism & Giving",
+    "vector": "Opinions - Political",
+    "value": "Liberal",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Innovators",
+    "vector": "Opinions - Political",
+    "value": "Libertarian",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Thinkers",
+    "vector": "Opinions - Political",
+    "value": "Moderate/Centrist",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Achievers",
+    "vector": "Opinions - Political",
+    "value": "Very Conservative",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Experiencers",
+    "vector": "Opinions - Political",
+    "value": "Very Liberal/Progressive",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Believers",
+    "vector": "Personality Type",
+    "value": "Adventurous/Risk-Taker",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Strivers",
+    "vector": "Personality Type",
+    "value": "Analytical/Logical",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Makers",
+    "vector": "Personality Type",
+    "value": "Cautious/Risk-Averse",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "VALS Framework",
-    "value": "Survivors",
+    "vector": "Personality Type",
+    "value": "Community-Oriented/Social",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Traditional TV Viewer",
+    "vector": "Personality Type",
+    "value": "Competitive/Achievement-Oriented",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Streaming-First Consumer",
+    "vector": "Personality Type",
+    "value": "Cooperative/Harmonious",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Social Media Heavy User",
+    "vector": "Personality Type",
+    "value": "Creative/Artistic",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Podcast Listener",
+    "vector": "Personality Type",
+    "value": "Extroverted",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Print/News Reader",
+    "vector": "Personality Type",
+    "value": "Independent/Self-Reliant",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "YouTube Consumer",
+    "vector": "Personality Type",
+    "value": "Introverted",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Radio Listener",
+    "vector": "Personality Type",
+    "value": "Planned/Organized",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Media Consumption",
-    "value": "Minimal Media Consumer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Researcher/Information Seeker",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Bargain Hunter",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Brand Loyalist",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Trendsetter/Early Adopter",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Convenience Shopper",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Experience Seeker",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Ethical Consumer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Impulse Buyer",
-    "description": "",
-    "insights": [],
-    "is_active": true
-  },
-  {
-    "category": "PSYCHOGRAPHIC",
-    "vector": "Shopping Style",
-    "value": "Minimalist/Selective Buyer",
+    "vector": "Personality Type",
+    "value": "Spontaneous/Impulsive",
     "description": "",
     "insights": [],
     "is_active": true
@@ -3306,7 +3234,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Risk Tolerance",
-    "value": "Risk-Averse/Conservative",
+    "value": "Adventurous/High Risk",
     "description": "",
     "insights": [],
     "is_active": true
@@ -3330,7 +3258,7 @@
   {
     "category": "PSYCHOGRAPHIC",
     "vector": "Risk Tolerance",
-    "value": "Adventurous/High Risk",
+    "value": "Risk-Averse/Conservative",
     "description": "",
     "insights": [],
     "is_active": true
@@ -3345,112 +3273,184 @@
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Innovation Adoption",
-    "value": "Innovators (2.5%)",
+    "vector": "Shopping Style",
+    "value": "Bargain Hunter",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Innovation Adoption",
-    "value": "Early Adopters (13.5%)",
+    "vector": "Shopping Style",
+    "value": "Brand Loyalist",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Innovation Adoption",
-    "value": "Early Majority (34%)",
+    "vector": "Shopping Style",
+    "value": "Convenience Shopper",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Innovation Adoption",
-    "value": "Late Majority (34%)",
+    "vector": "Shopping Style",
+    "value": "Ethical Consumer",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Innovation Adoption",
-    "value": "Laggards (16%)",
+    "vector": "Shopping Style",
+    "value": "Experience Seeker",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Career-Focused",
+    "vector": "Shopping Style",
+    "value": "Impulse Buyer",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Family-Focused",
+    "vector": "Shopping Style",
+    "value": "Minimalist/Selective Buyer",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Health-Focused",
+    "vector": "Shopping Style",
+    "value": "Researcher/Information Seeker",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Social Life-Focused",
+    "vector": "Shopping Style",
+    "value": "Trendsetter/Early Adopter",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Financial Independence-Focused",
+    "vector": "Social Class",
+    "value": "Aspirational (Upward Mobile)",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Adventure/Experience-Focused",
+    "vector": "Social Class",
+    "value": "Lower-Middle Class",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Creative Pursuit-Focused",
+    "vector": "Social Class",
+    "value": "Middle Class",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Spiritual Growth-Focused",
+    "vector": "Social Class",
+    "value": "Upper Class",
     "description": "",
     "insights": [],
     "is_active": true
   },
   {
     "category": "PSYCHOGRAPHIC",
-    "vector": "Life Priorities",
-    "value": "Work-Life Balance Seeker",
+    "vector": "Social Class",
+    "value": "Upper-Middle Class",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "Social Class",
+    "value": "Working Class",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Achievers",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Believers",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Experiencers",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Innovators",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Makers",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Strivers",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Survivors",
+    "description": "",
+    "insights": [],
+    "is_active": true
+  },
+  {
+    "category": "PSYCHOGRAPHIC",
+    "vector": "VALS Framework",
+    "value": "Thinkers",
     "description": "",
     "insights": [],
     "is_active": true

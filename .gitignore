@@ -85,3 +85,4 @@ node_modules/
 
 # Claude Code (personal settings only - shared settings.json and skills/ are committed)
 .claude/settings.local.json
+*.pt
