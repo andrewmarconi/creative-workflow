@@ -16,12 +16,15 @@ from unfold.decorators import action, display
 from cw.core.widgets import InsightsEditorWidget
 
 from .models import (
+    AdUnitMedia,
     AdUnitScriptRow,
     Brand,
     Campaign,
+    KeyFrame,
     Storyboard,
     StoryboardImage,
     VideoAdUnit,
+    VideoProcessingResult,
 )
 
 # ---------------------------------------------------------------------------
@@ -93,6 +96,70 @@ class BrandAdmin(ModelAdmin):
 # ---------------------------------------------------------------------------
 
 
+class AdUnitMediaInline(TabularInline):
+    """Inline display of uploaded videos for Campaign."""
+
+    model = AdUnitMedia
+    tab = True
+    extra = 1
+    fields = ["video_file", "show_status", "show_metadata", "show_actions"]
+    readonly_fields = ["show_status", "show_metadata", "show_actions"]
+    show_change_link = True
+
+    @display(
+        description=_("Status"),
+        label={
+            "pending": "info",
+            "uploaded": "info",
+            "processing": "warning",
+            "completed": "success",
+            "failed": "danger",
+            "reviewed": "success",
+        },
+    )
+    def show_status(self, obj):
+        if obj.pk:
+            return obj.get_status_display()
+        return "-"
+
+    @display(description=_("Video Info"))
+    def show_metadata(self, obj):
+        if not obj.pk or not obj.duration:
+            return "-"
+
+        parts = []
+        if obj.duration:
+            parts.append(f"{obj.duration:.1f}s")
+        if obj.resolution_width and obj.resolution_height:
+            parts.append(f"{obj.resolution_width}×{obj.resolution_height}")
+        if obj.file_size:
+            # Convert bytes to MB
+            size_mb = obj.file_size / (1024 * 1024)
+            parts.append(f"{size_mb:.1f}MB")
+
+        return " • ".join(parts) if parts else "-"
+
+    @display(description=_("Actions"))
+    def show_actions(self, obj):
+        if not obj.pk:
+            return "-"
+
+        links = []
+
+        # Link to processing result
+        if obj.result_id:
+            result_url = reverse("admin:tvspots_videoprocessingresult_change", args=[obj.result_id])
+            links.append(format_html('<a href="{}">View Results</a>', result_url))
+
+        # Link to created ad unit
+        if obj.video_ad_unit_id:
+            ad_unit_url = reverse("admin:tvspots_videoadunit_change", args=[obj.video_ad_unit_id])
+            links.append(format_html('<a href="{}">View Ad Unit</a>', ad_unit_url))
+
+        from django.utils.safestring import mark_safe
+        return mark_safe(" • ".join(str(link) for link in links)) if links else "-"
+
+
 class VideoAdUnitInline(TabularInline):
     """Inline display of ad units for Campaign."""
 
@@ -140,9 +207,9 @@ class CampaignAdmin(ModelAdmin):
     list_filter = ["client_name", "brand"]
     search_fields = ["script_title", "client_name", "job_id"]
     readonly_fields = ["created_at", "updated_at"]
-    inlines = [VideoAdUnitInline]
+    inlines = [AdUnitMediaInline, VideoAdUnitInline]
     actions_list = ["import_campaign_action"]
-    actions_detail = ["create_adaptation_action"]
+    actions_detail = ["create_origin_ad_unit_action", "create_adaptation_action"]
 
     fieldsets = (
         (
@@ -185,14 +252,58 @@ class CampaignAdmin(ModelAdmin):
             )
         return "0"
 
+    def save_formset(self, request, form, formset, change):
+        """Handle saving inline formsets and auto-queue video processing."""
+        # Only process AdUnitMedia formsets
+        if formset.model != AdUnitMedia:
+            super().save_formset(request, form, formset, change)
+            return
+
+        instances = formset.save(commit=False)
+
+        # Track new AdUnitMedia instances with videos
+        new_videos = []
+
+        for instance in instances:
+            # Check if this is a new AdUnitMedia with a video file
+            if not instance.pk and instance.video_file:
+                instance.status = "uploaded"
+                instance.save()
+                new_videos.append(instance)
+            else:
+                instance.save()
+
+        # Save many-to-many relationships
+        formset.save_m2m()
+
+        # Delete any marked for deletion
+        for obj in formset.deleted_objects:
+            obj.delete()
+
+        # Queue processing tasks for new videos
+        if new_videos:
+            from .tasks import analyze_video_task
+
+            for media in new_videos:
+                analyze_video_task.apply_async(args=[media.pk], queue="default")
+                messages.info(
+                    request,
+                    f"Video processing queued for {media.video_file.name}",
+                )
+
     def get_urls(self):
-        """Add custom URLs for import and adaptation actions."""
+        """Add custom URLs for import, origin creation, and adaptation actions."""
         urls = super().get_urls()
         custom_urls = [
             path(
                 "import/",
                 self.admin_site.admin_view(self.import_campaign_view),
                 name="tvspots_campaign_import",
+            ),
+            path(
+                "<int:object_id>/create-origin/",
+                self.admin_site.admin_view(self.create_origin_ad_unit_view),
+                name="tvspots_campaign_create_origin",
             ),
             path(
                 "<int:object_id>/create-adaptation/",
@@ -352,6 +463,119 @@ class CampaignAdmin(ModelAdmin):
     def import_campaign_action(self, request):
         """Redirect to the import campaign view."""
         return redirect("admin:tvspots_campaign_import")
+
+    @action(
+        description=_("Create Origin Ad Unit"),
+        url_path="create-origin-ad-unit-action",
+    )
+    def create_origin_ad_unit_action(self, request, object_id):
+        """Redirect to the create origin ad unit view."""
+        return redirect("admin:tvspots_campaign_create_origin", object_id)
+
+    def create_origin_ad_unit_view(self, request, object_id):
+        """Handle creating an origin ad unit for a campaign."""
+        import json
+
+        from django.template.response import TemplateResponse
+
+        from cw.audiences.models import Language
+
+        campaign = Campaign.objects.get(pk=object_id)
+
+        if request.method == "POST":
+            from cw.audiences.models import Persona
+
+            title = request.POST.get("title")
+            code = request.POST.get("code")
+            language_id = request.POST.get("language")
+            brand_id = request.POST.get("brand")
+            persona_id = request.POST.get("persona")
+            script_data_raw = request.POST.get("script_data", "")
+
+            # Validate required fields
+            if not title or not code:
+                messages.error(request, "Please provide both title and code.")
+                return redirect("admin:tvspots_campaign_create_origin", object_id)
+
+            # Get the dimension objects
+            language = Language.objects.filter(pk=language_id).first() if language_id else None
+            brand = Brand.objects.filter(pk=brand_id).first() if brand_id else campaign.brand
+            persona = Persona.objects.filter(pk=persona_id).first() if persona_id else None
+
+            # Parse script data if provided
+            script_data = None
+            if script_data_raw:
+                try:
+                    script_data = json.loads(script_data_raw)
+                except json.JSONDecodeError:
+                    messages.error(request, "Invalid JSON in script data.")
+                    return redirect("admin:tvspots_campaign_create_origin", object_id)
+
+            # Check for existing origin with same code
+            existing_origin = campaign.ad_units.filter(
+                origin_or_adaptation="ORIGIN",
+                code=code
+            ).first()
+            if existing_origin:
+                messages.warning(
+                    request,
+                    f"An origin ad unit with code '{code}' already exists.",
+                )
+                return redirect("admin:tvspots_videoadunit_change", existing_origin.pk)
+
+            # Create VideoAdUnit for origin
+            origin = VideoAdUnit.objects.create(
+                campaign=campaign,
+                origin_or_adaptation="ORIGIN",
+                code=code,
+                title=title,
+                language=language,
+                brand=brand,
+                persona=persona,
+                use_pipeline=False,  # Origins don't use pipeline
+                status="draft",
+            )
+
+            # Create script rows if script data provided
+            if script_data and "scenes" in script_data:
+                for scene in script_data["scenes"]:
+                    AdUnitScriptRow.objects.create(
+                        ad_unit=origin,
+                        shot_number=scene.get("scene_number", 0),
+                        visual_description=scene.get("visual", ""),
+                        audio_voiceover=scene.get("audio", {}).get("voiceover", ""),
+                        audio_music=scene.get("audio", {}).get("music", ""),
+                        audio_sfx=scene.get("audio", {}).get("sfx", ""),
+                        notes=scene.get("action", ""),
+                    )
+
+            messages.success(
+                request,
+                f"Origin ad unit '{title}' created successfully.",
+            )
+            return redirect("admin:tvspots_videoadunit_change", origin.pk)
+
+        # Get available dimensions
+        from cw.audiences.models import Persona
+
+        languages = Language.objects.filter(is_active=True).select_related("primary_model").order_by("name")
+        brands = Brand.objects.filter(is_active=True).order_by("name")
+        personas = Persona.objects.filter(is_active=True).order_by("name")
+
+        return TemplateResponse(
+            request,
+            "admin/tvspots/campaign/create_origin.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": _("Create Origin Ad Unit"),
+                "opts": self.model._meta,
+                "campaign": campaign,
+                "languages": languages,
+                "brands": brands,
+                "personas": personas,
+                "campaign_brand_id": campaign.brand_id,
+            },
+        )
 
     @action(
         description=_("Create Adaptation"),
@@ -1213,3 +1437,382 @@ class StoryboardAdmin(ModelAdmin):
             generate_storyboard_task.apply_async(
                 args=[obj.pk, True], queue="default"  # enhance_prompts=True by default
             )
+
+
+# ---------------------------------------------------------------------------
+# Ad Unit Media (Video Origin Extraction)
+# ---------------------------------------------------------------------------
+
+
+class KeyFrameInline(TabularInline):
+    """Inline display of key frames for VideoProcessingResult."""
+
+    model = KeyFrame
+    tab = True
+    extra = 0
+    fields = ["scene_number", "timestamp", "show_thumbnail", "show_objects_count"]
+    readonly_fields = ["scene_number", "timestamp", "show_thumbnail", "show_objects_count"]
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    @display(description=_("Thumbnail"))
+    def show_thumbnail(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="max-width: 120px; max-height: 80px; border-radius: 4px;">',
+                obj.image.url,
+            )
+        return "-"
+
+    @display(description=_("Objects"))
+    def show_objects_count(self, obj):
+        return len(obj.detected_objects) if obj.detected_objects else 0
+
+
+@admin.register(VideoProcessingResult)
+class VideoProcessingResultAdmin(ModelAdmin):
+    """Admin for video processing results (read-only)."""
+
+    list_display = ["id", "show_media", "show_scene_count", "processing_time", "created_at"]
+    search_fields = ["media__campaign__script_title", "media__campaign__client_name"]
+    readonly_fields = [
+        "scenes",
+        "script",
+        "transcription",
+        "visual_style",
+        "objects_summary",
+        "sentiment_analysis",
+        "categories",
+        "audience_insights",
+        "processing_time",
+        "models_used",
+        "created_at",
+        "updated_at",
+    ]
+    inlines = [KeyFrameInline]
+
+    fieldsets = (
+        (
+            _("Overview"),
+            {
+                "classes": ["tab"],
+                "fields": ("processing_time", "models_used"),
+            },
+        ),
+        (
+            _("Scenes"),
+            {
+                "classes": ["tab"],
+                "fields": ("scenes",),
+            },
+        ),
+        (
+            _("Generated Script"),
+            {
+                "classes": ["tab"],
+                "fields": ("script",),
+            },
+        ),
+        (
+            _("Transcription"),
+            {
+                "classes": ["tab"],
+                "fields": ("transcription",),
+            },
+        ),
+        (
+            _("Visual Analysis"),
+            {
+                "classes": ["tab"],
+                "fields": ("visual_style", "objects_summary"),
+            },
+        ),
+        (
+            _("Sentiment & Categories"),
+            {
+                "classes": ["tab"],
+                "fields": ("sentiment_analysis", "categories"),
+            },
+        ),
+        (
+            _("Audience Insights"),
+            {
+                "classes": ["tab"],
+                "fields": ("audience_insights",),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    def has_add_permission(self, request):
+        """Results are created by the video processing pipeline only."""
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Allow deletion of results."""
+        return True
+
+    @display(description=_("Media"))
+    def show_media(self, obj):
+        if hasattr(obj, "media") and obj.media:
+            url = reverse("admin:tvspots_adunitmedia_change", args=[obj.media.pk])
+            return format_html('<a href="{}">{}</a>', url, obj.media)
+        return "-"
+
+    @display(description=_("Scenes"))
+    def show_scene_count(self, obj):
+        return len(obj.scenes) if obj.scenes else 0
+
+
+@admin.register(AdUnitMedia)
+class AdUnitMediaAdmin(ModelAdmin):
+    """Admin for uploaded video files awaiting processing."""
+
+    list_display = [
+        "id",
+        "campaign",
+        "show_status",
+        "show_duration",
+        "show_resolution",
+        "created_at",
+    ]
+    list_filter = ["status", "created_at"]
+    search_fields = ["campaign__script_title", "campaign__client_name"]
+    readonly_fields = [
+        "status",
+        "duration",
+        "resolution_width",
+        "resolution_height",
+        "frame_rate",
+        "audio_channels",
+        "audio_sample_rate",
+        "file_size",
+        "processing_started_at",
+        "processing_completed_at",
+        "processing_error",
+        "result",
+        "video_ad_unit",
+        "created_at",
+        "updated_at",
+    ]
+    actions_detail = ["reprocess_video_action", "create_origin_ad_unit_action"]
+
+    fieldsets = (
+        (
+            _("Video Upload"),
+            {
+                "classes": ["tab"],
+                "fields": ("campaign", "video_file", "show_status"),
+            },
+        ),
+        (
+            _("Processing Status"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "status",
+                    "processing_started_at",
+                    "processing_completed_at",
+                    "processing_error",
+                ),
+            },
+        ),
+        (
+            _("Video Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "duration",
+                    ("resolution_width", "resolution_height"),
+                    "frame_rate",
+                    ("audio_channels", "audio_sample_rate"),
+                    "file_size",
+                ),
+            },
+        ),
+        (
+            _("Results"),
+            {
+                "classes": ["tab"],
+                "fields": ("result", "video_ad_unit"),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    @display(
+        description=_("Status"),
+        label={
+            "Pending Upload": "info",
+            "Uploaded": "info",
+            "Processing": "warning",
+            "Completed": "success",
+            "Failed": "danger",
+            "Reviewed": "success",
+        },
+    )
+    def show_status(self, obj):
+        return obj.get_status_display()
+
+    @display(description=_("Duration"))
+    def show_duration(self, obj):
+        if obj.duration:
+            mins, secs = divmod(int(obj.duration), 60)
+            return f"{mins}:{secs:02d}"
+        return "-"
+
+    @display(description=_("Resolution"))
+    def show_resolution(self, obj):
+        if obj.resolution_width and obj.resolution_height:
+            return f"{obj.resolution_width}×{obj.resolution_height}"
+        return "-"
+
+    def save_model(self, request, obj, form, change):
+        """Auto-trigger processing when video is uploaded."""
+        is_new = obj.pk is None
+        has_video = bool(obj.video_file)
+
+        super().save_model(request, obj, form, change)
+
+        # Auto-queue processing for newly uploaded videos
+        if is_new and has_video:
+            obj.status = "uploaded"
+            obj.save(update_fields=["status"])
+
+            # Queue processing task
+            from .tasks import analyze_video_task
+
+            analyze_video_task.apply_async(args=[obj.pk], queue="default")
+            messages.info(
+                request,
+                f"Video processing queued for {obj}. Check back in a few minutes.",
+            )
+
+    @action(description=_("Reprocess Video"))
+    def reprocess_video_action(self, request, object_id):
+        """Reprocess a failed or completed video."""
+        media = AdUnitMedia.objects.get(pk=object_id)
+
+        if media.status not in ["failed", "completed"]:
+            messages.error(
+                request,
+                f"Cannot reprocess video with status '{media.get_status_display()}'. "
+                "Only failed or completed videos can be reprocessed.",
+            )
+            return redirect(
+                reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+            )
+
+        # Reset status and queue processing
+        media.status = "uploaded"
+        media.processing_error = ""
+        media.save(update_fields=["status", "processing_error"])
+
+        from .tasks import analyze_video_task
+
+        analyze_video_task.apply_async(args=[media.pk], queue="default")
+
+        messages.success(request, f"Video reprocessing queued for {media}.")
+        return redirect(reverse("admin:tvspots_adunitmedia_change", args=[object_id]))
+
+    @action(description=_("Create Origin VideoAdUnit"))
+    def create_origin_ad_unit_action(self, request, object_id):
+        """Create an origin VideoAdUnit from processed results."""
+        media = AdUnitMedia.objects.get(pk=object_id)
+
+        # Validation
+        if media.status != "completed":
+            messages.error(
+                request,
+                f"Cannot create VideoAdUnit from video with status '{media.get_status_display()}'. "
+                "Video must be fully processed first.",
+            )
+            return redirect(
+                reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+            )
+
+        if media.video_ad_unit:
+            messages.warning(
+                request,
+                f"VideoAdUnit already exists for this media: {media.video_ad_unit}",
+            )
+            return redirect(
+                reverse(
+                    "admin:tvspots_videoadunit_change", args=[media.video_ad_unit.pk]
+                )
+            )
+
+        if not media.result or not media.result.script:
+            messages.error(request, "No script found in processing results.")
+            return redirect(
+                reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+            )
+
+        # Create origin VideoAdUnit
+        script_data = media.result.script
+        ad_unit = VideoAdUnit.objects.create(
+            campaign=media.campaign,
+            ad_unit_type="VIDEO",
+            origin_or_adaptation="ORIGIN",
+            code=f"ORIGIN-{media.id:04d}",
+            title=f"Origin from {media.campaign.script_title}",
+            status="completed",
+            duration=media.duration or 0,
+        )
+
+        # Create script rows from generated script
+        if "scenes" in script_data:
+            for idx, scene in enumerate(script_data["scenes"]):
+                AdUnitScriptRow.objects.create(
+                    ad_unit=ad_unit,
+                    order_index=idx,
+                    shot_number=str(scene.get("scene_number", idx + 1)),
+                    visual_text=scene.get("visual", ""),
+                    audio_text=scene.get("audio", {}).get("voiceover", ""),
+                )
+
+        # Link back to media
+        media.video_ad_unit = ad_unit
+        media.status = "reviewed"
+        media.save(update_fields=["video_ad_unit", "status"])
+
+        messages.success(
+            request,
+            format_html(
+                'Origin VideoAdUnit created: <a href="{}">{}</a>',
+                reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]),
+                ad_unit,
+            ),
+        )
+        return redirect(reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]))
+
+    def get_urls(self):
+        """Add custom URLs for reprocess and create actions."""
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "<int:object_id>/reprocess/",
+                self.admin_site.admin_view(self.reprocess_video_action),
+                name="tvspots_adunitmedia_reprocess",
+            ),
+            path(
+                "<int:object_id>/create-ad-unit/",
+                self.admin_site.admin_view(self.create_origin_ad_unit_action),
+                name="tvspots_adunitmedia_create_ad_unit",
+            ),
+        ]
+        return custom_urls + urls

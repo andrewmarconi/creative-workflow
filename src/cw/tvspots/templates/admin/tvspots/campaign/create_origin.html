@@ -1,0 +1,180 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="p-6">
+    <div class="max-w-4xl">
+        <h1 class="text-2xl font-bold mb-2">{% trans "Create Origin Ad Unit" %}</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {{ campaign.script_title }} ({{ campaign.job_id }})
+        </p>
+
+        <div class="mb-6">
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <h3 class="font-black mb-2">{% trans "Campaign" %}</h3>
+                <ul>
+                    <li>{% trans "Title" %}: &quot;{{ campaign.script_title }}&quot;</li>
+                    <li>{% trans "Campaign ID" %}: {{ campaign.job_id }}</li>
+                    {% if campaign.brand %}
+                    <li>{% trans "Brand" %}: {{ campaign.brand.name }}</li>
+                    {% endif %}
+                    <li>{% trans "Client" %}: {{ campaign.client_name }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="space-y-4">
+                {# Required Fields #}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="title" class="block text-sm font-medium mb-2">
+                            {% trans "Title" %} <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="title"
+                            id="title"
+                            required
+                            placeholder="{% trans 'e.g., Original English Version' %}"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label for="code" class="block text-sm font-medium mb-2">
+                            {% trans "Code" %} <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="code"
+                            id="code"
+                            required
+                            placeholder="{% trans 'e.g., US-EN or ORIGIN' %}"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        />
+                        <p class="text-xs text-gray-500 mt-1">
+                            {% trans "Unique identifier for this ad unit" %}
+                        </p>
+                    </div>
+                </div>
+
+                {# Optional Fields #}
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label for="language" class="block text-sm font-medium mb-2">
+                            {% trans "Language" %}
+                            <span class="text-gray-500 font-normal">({% trans "optional" %})</span>
+                        </label>
+                        <select
+                            name="language"
+                            id="language"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "No language specified" %}</option>
+                            {% for lang in languages %}
+                            <option value="{{ lang.id }}">{{ lang.name }} ({{ lang.code }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="brand" class="block text-sm font-medium mb-2">
+                            {% trans "Brand" %}
+                            <span class="text-gray-500 font-normal">({% trans "defaults from campaign" %})</span>
+                        </label>
+                        <select
+                            name="brand"
+                            id="brand"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "Use campaign brand" %}</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if brand.id == campaign_brand_id %}selected{% endif %}>
+                                {{ brand.name }} ({{ brand.code }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="persona" class="block text-sm font-medium mb-2">
+                            {% trans "Persona" %}
+                            <span class="text-gray-500 font-normal">({% trans "optional" %})</span>
+                        </label>
+                        <select
+                            name="persona"
+                            id="persona"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                            <option value="">{% trans "No persona" %}</option>
+                            {% for persona in personas %}
+                            <option value="{{ persona.id }}">{{ persona.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                {# Script Data #}
+                <div>
+                    <label for="script_data" class="block text-sm font-medium mb-2">
+                        {% trans "Script Data" %}
+                        <span class="text-gray-500 font-normal">({% trans "optional JSON" %})</span>
+                    </label>
+                    <textarea
+                        name="script_data"
+                        id="script_data"
+                        rows="10"
+                        placeholder='{"scenes": [{"scene_number": 1, "visual": "...", "audio": {"voiceover": "...", "music": "", "sfx": ""}, "action": "..."}]}'
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 font-mono text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    ></textarea>
+                    <p class="text-xs text-gray-500 mt-1">
+                        {% trans "Optional: Provide script content as JSON. Leave empty to add script rows later." %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <h3 class="text-sm font-medium mb-2">{% trans "Note" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "Origin ad units are created in 'draft' status. You can add or edit script rows after creation." %}
+                </p>
+            </div>
+
+            <div class="flex gap-4 mt-6">
+                <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Create Origin Ad Unit" %}
+                </button>
+                <a href="{% url 'admin:tvspots_campaign_change' campaign.pk %}"
+                   class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const scriptDataTextarea = document.getElementById('script_data');
+
+    // Simple JSON validation on blur
+    if (scriptDataTextarea) {
+        scriptDataTextarea.addEventListener('blur', function() {
+            const value = this.value.trim();
+            if (!value) return;
+
+            try {
+                JSON.parse(value);
+                this.classList.remove('border-red-500');
+            } catch (e) {
+                this.classList.add('border-red-500');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

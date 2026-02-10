@@ -71,7 +71,9 @@ class Campaign(models.Model):
         help_text="Primary brand for this campaign",
     )
     original_script_data = models.JSONField(
-        help_text="Original script content as JSON",
+        default=dict,
+        blank=True,
+        help_text="Original script content as JSON (optional, generated from video if not provided)",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -463,3 +465,315 @@ class StoryboardImage(models.Model):
 
     def __str__(self):
         return f"{self.storyboard} - Row {self.script_row.order_index} - Image {self.image_index}"
+
+
+class AdUnitMedia(models.Model):
+    """Uploaded video file for origin script extraction.
+
+    Tracks video upload status and processing lifecycle. Once processing
+    completes, can be converted into an origin VideoAdUnit.
+    """
+
+    STATUS_CHOICES = [
+        ("pending", "Pending Upload"),
+        ("uploaded", "Uploaded"),
+        ("processing", "Processing"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+        ("reviewed", "Reviewed"),
+    ]
+
+    # Core fields
+    campaign = models.ForeignKey(
+        "Campaign",
+        on_delete=models.CASCADE,
+        related_name="ad_unit_media",
+        help_text="Campaign this media belongs to",
+    )
+    video_file = models.FileField(
+        upload_to="ad_unit_media/%Y/%m/",
+        help_text="Uploaded MP4 video file",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending",
+    )
+
+    # Video metadata (extracted from file)
+    duration = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Duration in seconds",
+    )
+    resolution_width = models.IntegerField(null=True, blank=True)
+    resolution_height = models.IntegerField(null=True, blank=True)
+    frame_rate = models.FloatField(null=True, blank=True)
+    audio_channels = models.IntegerField(null=True, blank=True)
+    audio_sample_rate = models.IntegerField(null=True, blank=True)
+    file_size = models.BigIntegerField(
+        null=True,
+        blank=True,
+        help_text="Size in bytes",
+    )
+
+    # Processing tracking
+    processing_started_at = models.DateTimeField(null=True, blank=True)
+    processing_completed_at = models.DateTimeField(null=True, blank=True)
+    processing_error = models.TextField(blank=True)
+
+    # Results reference
+    result = models.OneToOneField(
+        "VideoProcessingResult",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="media",
+        help_text="Processing results (scenes, script, etc.)",
+    )
+
+    # Generated AdUnit (once reviewed/approved)
+    video_ad_unit = models.OneToOneField(
+        "VideoAdUnit",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="source_media",
+        help_text="Origin VideoAdUnit created from this media",
+    )
+
+    # Audit
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "tvspots_adunitmedia"
+        ordering = ["-created_at"]
+        verbose_name = "Ad Unit Media"
+        verbose_name_plural = "Ad Unit Media"
+
+    def __str__(self):
+        return f"Ad Unit Media for {self.campaign} ({self.status})"
+
+
+class VideoProcessingResult(models.Model):
+    """Complete analysis results from video processing pipeline.
+
+    Stores all extracted data: scenes, script, transcription, visual style,
+    sentiment analysis, and audience insights generated from uploaded video.
+    """
+
+    # Scene data
+    scenes = models.JSONField(
+        default=list,
+        help_text="""List of detected scenes with metadata:
+        [{
+            "scene_number": 1,
+            "start_time": 0.0,
+            "end_time": 3.5,
+            "duration": 3.5,
+            "visual_description": "...",
+            "objects_detected": ["product", "person"],
+            "colors": ["#FF5733", "#33FF57"],
+            "lighting": "warm, golden hour",
+            "camera_angle": "medium shot",
+            "sentiment": "positive"
+        }]
+        """,
+    )
+
+    # Generated script (tvspot.schema.json format)
+    script = models.JSONField(
+        default=dict,
+        help_text="""Structured script matching tvspot.schema.json:
+        {
+            "scenes": [
+                {
+                    "scene_number": 1,
+                    "duration": 3.5,
+                    "visual": "Description...",
+                    "audio": {
+                        "voiceover": "Text...",
+                        "music": "Description...",
+                        "sfx": "Sound effects..."
+                    },
+                    "action": "Camera movements...",
+                    "products": ["Product names"],
+                    "sentiment": "emotional tone"
+                }
+            ]
+        }
+        """,
+    )
+
+    # Audio transcription
+    transcription = models.JSONField(
+        default=dict,
+        help_text="""Full audio transcription with timestamps:
+        {
+            "language": "en-US",
+            "confidence": 0.95,
+            "segments": [
+                {
+                    "start": 0.5,
+                    "end": 3.2,
+                    "text": "Transcribed text...",
+                    "speaker": "narrator",
+                    "confidence": 0.96
+                }
+            ]
+        }
+        """,
+    )
+
+    # Visual analysis
+    visual_style = models.JSONField(
+        default=dict,
+        help_text="""Overall visual style analysis:
+        {
+            "dominant_colors": ["#FF5733", "#33FF57"],
+            "color_palette": "warm, inviting",
+            "lighting_style": "natural, golden hour",
+            "camera_work": "smooth pans, static shots",
+            "editing_pace": "slow, contemplative",
+            "visual_themes": ["family", "togetherness"]
+        }
+        """,
+    )
+
+    # Object detection summary
+    objects_summary = models.JSONField(
+        default=dict,
+        help_text="""Aggregated object detection:
+        {
+            "products": ["Brand Product X", "Logo"],
+            "people": {"count": 4, "demographics": ["adult", "child"]},
+            "locations": ["kitchen", "dining room"],
+            "props": ["table", "chairs", "food"]
+        }
+        """,
+    )
+
+    # Sentiment analysis
+    sentiment_analysis = models.JSONField(
+        default=dict,
+        help_text="""Overall sentiment and emotional analysis:
+        {
+            "overall_sentiment": "positive",
+            "confidence": 0.89,
+            "emotional_arc": [
+                {"time": 0, "emotion": "neutral"},
+                {"time": 10, "emotion": "warm"}
+            ],
+            "dominant_emotions": ["happiness", "warmth"]
+        }
+        """,
+    )
+
+    # Scene categorization
+    categories = models.JSONField(
+        default=list,
+        help_text="""Scene categorization:
+        ["lifestyle", "family", "product showcase"]
+        """,
+    )
+
+    # Audience insights
+    audience_insights = models.JSONField(
+        default=dict,
+        help_text="""AI-generated audience targeting insights:
+        {
+            "primary_audience": {
+                "demographics": {"age_range": "25-45", ...},
+                "psychographics": {"values": [...], ...}
+            },
+            "secondary_audiences": [...],
+            "market_potential": {
+                "high_fit_markets": ["US", "UK", "DE"],
+                "considerations": [...]
+            }
+        }
+        """,
+    )
+
+    # Processing metadata
+    processing_time = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Total processing time in seconds",
+    )
+    models_used = models.JSONField(
+        default=dict,
+        help_text="""Track which models/APIs were used:
+        {
+            "scene_detection": "PySceneDetect",
+            "transcription": "Whisper Large v3",
+            "object_detection": "YOLO v8",
+            "script_generation": "Qwen/Qwen2.5-7B-Instruct",
+            "sentiment": "distilbert-base-uncased-finetuned-sst-2-english"
+        }
+        """,
+    )
+
+    # Audit
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "tvspots_videoprocessingresult"
+        verbose_name = "Video Processing Result"
+        verbose_name_plural = "Video Processing Results"
+
+    def __str__(self):
+        return f"Processing Result (created {self.created_at:%Y-%m-%d %H:%M})"
+
+
+class KeyFrame(models.Model):
+    """Representative frame from a detected scene.
+
+    Stores extracted key frames with visual analysis metadata including
+    object detection results and dominant colors.
+    """
+
+    result = models.ForeignKey(
+        "VideoProcessingResult",
+        on_delete=models.CASCADE,
+        related_name="key_frames",
+    )
+    scene_number = models.IntegerField(help_text="Scene this frame represents")
+    timestamp = models.FloatField(help_text="Time in seconds")
+    image = models.ImageField(upload_to="keyframes/%Y/%m/")
+
+    # Visual analysis for this specific frame
+    detected_objects = models.JSONField(
+        default=list,
+        help_text="""Objects detected in this frame:
+        [
+            {"label": "person", "confidence": 0.95, "bbox": [x, y, w, h]},
+            {"label": "product", "confidence": 0.88, "bbox": [x, y, w, h]}
+        ]
+        """,
+    )
+    colors = models.JSONField(
+        default=list,
+        help_text="Dominant colors as hex codes: ['#FF5733', '#33FF57']",
+    )
+
+    # Embeddings for similarity search (future use)
+    embedding = models.JSONField(
+        null=True,
+        blank=True,
+        help_text="CLIP or similar embedding vector for similarity search",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "tvspots_keyframe"
+        ordering = ["result", "scene_number", "timestamp"]
+        unique_together = [["result", "scene_number"]]
+        verbose_name = "Key Frame"
+        verbose_name_plural = "Key Frames"
+
+    def __str__(self):
+        return f"KeyFrame Scene {self.scene_number} @ {self.timestamp}s"
