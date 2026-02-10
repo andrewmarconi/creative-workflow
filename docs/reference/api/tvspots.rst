@@ -1,13 +1,27 @@
 TV Spots
 ========
 
-.. admonition:: Stub
-   :class: warning
+TV Spots application: campaigns, brands, ad units, storyboards, and video analysis.
 
-   This page is a placeholder. Autodoc directives to be configured.
+Models
+------
 
-Planned autodoc modules:
+.. automodule:: cw.tvspots.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-- ``cw.tvspots.models`` — Campaign, Brand, AdUnit, VideoAdUnit, AdUnitScriptRow, Storyboard, StoryboardImage, AdUnitMedia, VideoProcessingResult, KeyFrame
-- ``cw.tvspots.tasks`` — ``create_adaptation_task``, ``generate_storyboard_task``
-- ``cw.tvspots.admin`` — Admin configuration
+Tasks
+-----
+
+.. automodule:: cw.tvspots.tasks
+   :members:
+   :undoc-members:
+
+Admin
+-----
+
+.. automodule:: cw.tvspots.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:

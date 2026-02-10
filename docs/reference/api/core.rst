@@ -1,13 +1,27 @@
 Core
 ====
 
-.. admonition:: Stub
-   :class: warning
+Core application: LLM models, prompt templates, and pipeline settings.
 
-   This page is a placeholder. Autodoc directives to be configured.
+Models
+------
 
-Planned autodoc modules:
+.. automodule:: cw.core.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-- ``cw.core.models`` — LLMModel, PromptTemplate, PipelineSettings
-- ``cw.core.admin`` — Admin configuration
-- ``cw.lib.prompts`` — ``render_prompt()`` and template loading
+Admin
+-----
+
+.. automodule:: cw.core.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Prompt Rendering
+----------------
+
+.. automodule:: cw.lib.prompts
+   :members:
+   :undoc-members:

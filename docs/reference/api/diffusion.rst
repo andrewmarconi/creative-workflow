@@ -1,13 +1,27 @@
 Diffusion
 =========
 
-.. admonition:: Stub
-   :class: warning
+Diffusion application: models, LoRAs, prompts, and image generation jobs.
 
-   This page is a placeholder. Autodoc directives to be configured.
+Models
+------
 
-Planned autodoc modules:
+.. automodule:: cw.diffusion.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-- ``cw.diffusion.models`` — DiffusionModel, LoraModel, Prompt, DiffusionJob
-- ``cw.diffusion.tasks`` — ``generate_images_task``, ``enhance_prompt_task``
-- ``cw.diffusion.admin`` — Admin configuration
+Tasks
+-----
+
+.. automodule:: cw.diffusion.tasks
+   :members:
+   :undoc-members:
+
+Admin
+-----
+
+.. automodule:: cw.diffusion.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:

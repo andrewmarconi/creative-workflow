@@ -1,13 +1,29 @@
 Audiences
 =========
 
-.. admonition:: Stub
-   :class: warning
+Audiences application: regions, countries, languages, segments, and personas.
 
-   This page is a placeholder. Autodoc directives to be configured.
+Models
+------
 
-Planned autodoc modules:
+.. automodule:: cw.audiences.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-- ``cw.audiences.models`` — Region, Country, Language, Segment, Persona, and through tables
-- ``cw.audiences.admin`` — Admin configuration with AJAX cascading selectors
-- ``cw.audiences.views`` — AJAX endpoints for segment management
+Admin
+-----
+
+.. automodule:: cw.audiences.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Views
+-----
+
+AJAX endpoints for cascading selectors and segment management.
+
+.. automodule:: cw.audiences.views
+   :members:
+   :undoc-members:

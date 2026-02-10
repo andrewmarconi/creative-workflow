@@ -1,20 +1,121 @@
 Library Modules
 ===============
 
-.. admonition:: Stub
-   :class: warning
+Supporting library modules under ``cw.lib``.
 
-   This page is a placeholder. Autodoc directives to be configured.
+Diffusion Models
+----------------
 
-Planned autodoc modules:
+Model Factory
+^^^^^^^^^^^^^
 
-- ``cw.lib.models`` — BaseModel, mixins, ModelFactory, concrete model implementations
-- ``cw.lib.pipeline`` — PipelineState, pipeline nodes, graph construction, model loader
-- ``cw.lib.prompt_enhancer`` — PromptEnhancer, HFPromptEnhancer, LLMPromptEnhancer
-- ``cw.lib.loras.manager`` — LoRA filtering and management
-- ``cw.lib.config`` — PresetsConfig
-- ``cw.lib.civitai`` — CivitAI AIR parsing and download
-- ``cw.lib.insights`` — Insights composition
-- ``cw.lib.storyboard`` — StoryboardGenerator
-- ``cw.lib.video_analysis`` — Video processing modules
-- ``cw.lib.security`` — VideoFileValidator
+.. automodule:: cw.lib.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Base Model
+^^^^^^^^^^
+
+.. automodule:: cw.lib.models.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Mixins
+^^^^^^
+
+.. automodule:: cw.lib.models.mixins
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Adaptation Pipeline
+-------------------
+
+State & Initialization
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: cw.lib.pipeline.state
+   :members:
+   :undoc-members:
+
+Pipeline Nodes
+^^^^^^^^^^^^^^
+
+.. automodule:: cw.lib.pipeline.nodes
+   :members:
+   :undoc-members:
+
+Graph Construction
+^^^^^^^^^^^^^^^^^^
+
+.. automodule:: cw.lib.pipeline.graph
+   :members:
+   :undoc-members:
+
+Model Loader
+^^^^^^^^^^^^^
+
+.. automodule:: cw.lib.pipeline.model_loader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Prompt Enhancement
+------------------
+
+.. automodule:: cw.lib.prompt_enhancer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+LoRA Management
+---------------
+
+.. automodule:: cw.lib.loras.manager
+   :members:
+   :undoc-members:
+
+Configuration
+-------------
+
+.. automodule:: cw.lib.config
+   :members:
+   :undoc-members:
+
+CivitAI Integration
+-------------------
+
+.. automodule:: cw.lib.civitai
+   :members:
+   :undoc-members:
+
+Insights Composition
+--------------------
+
+.. automodule:: cw.lib.insights
+   :members:
+   :undoc-members:
+
+Storyboard Generation
+---------------------
+
+.. automodule:: cw.lib.storyboard
+   :members:
+   :undoc-members:
+
+Video Analysis
+--------------
+
+.. automodule:: cw.lib.video_analysis
+   :members:
+   :undoc-members:
+
+File Security
+-------------
+
+.. automodule:: cw.lib.security.file_validation
+   :members:
+   :undoc-members:
+   :show-inheritance:
