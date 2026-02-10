@@ -629,14 +629,19 @@ class VideoProcessingResult(models.Model):
     # Visual analysis
     visual_style = models.JSONField(
         default=dict,
-        help_text="""Overall visual style analysis:
+        help_text="""Overall visual style analysis from keyframes:
         {
-            "dominant_colors": ["#FF5733", "#33FF57"],
-            "color_palette": "warm, inviting",
-            "lighting_style": "natural, golden hour",
-            "camera_work": "smooth pans, static shots",
-            "editing_pace": "slow, contemplative",
-            "visual_themes": ["family", "togetherness"]
+            "dominant_colors": ["#FF5733", "#3357FF", ...],
+            "avg_brightness": 0.58,
+            "avg_contrast": 0.45,
+            "lighting_distribution": {"soft": 3, "harsh": 1, "dramatic": 1},
+            "exposure_distribution": {"normal": 4, "overexposed": 1},
+            "camera_work": {
+                "avg_scene_duration": 4.5,
+                "total_scenes": 12,
+                "pacing": "fast",
+                "scene_transitions": 11
+            }
         }
         """,
     )
@@ -644,12 +649,15 @@ class VideoProcessingResult(models.Model):
     # Object detection summary
     objects_summary = models.JSONField(
         default=dict,
-        help_text="""Aggregated object detection:
+        help_text="""Aggregated object detection from YOLO v8:
         {
-            "products": ["Brand Product X", "Logo"],
-            "people": {"count": 4, "demographics": ["adult", "child"]},
-            "locations": ["kitchen", "dining room"],
-            "props": ["table", "chairs", "food"]
+            "total_objects": 15,
+            "classes": {
+                "person": {"count": 5, "avg_confidence": 0.92},
+                "car": {"count": 2, "avg_confidence": 0.85},
+                "bottle": {"count": 3, "avg_confidence": 0.88}
+            },
+            "most_common": ["person", "car", "bottle"]
         }
         """,
     )
@@ -657,24 +665,39 @@ class VideoProcessingResult(models.Model):
     # Sentiment analysis
     sentiment_analysis = models.JSONField(
         default=dict,
-        help_text="""Overall sentiment and emotional analysis:
+        help_text="""Sentiment analysis from audio and visual data:
         {
             "overall_sentiment": "positive",
-            "confidence": 0.89,
-            "emotional_arc": [
-                {"time": 0, "emotion": "neutral"},
-                {"time": 10, "emotion": "warm"}
-            ],
-            "dominant_emotions": ["happiness", "warmth"]
+            "overall_score": 0.65,
+            "confidence": 0.72,
+            "text_sentiment": {
+                "sentiment": "positive",
+                "score": 0.75,
+                "confidence": 0.68
+            },
+            "visual_sentiment": {
+                "sentiment": "positive",
+                "score": 0.6,
+                "brightness_factor": 0.7,
+                "object_factor": 0.5
+            }
         }
         """,
     )
 
     # Scene categorization
     categories = models.JSONField(
-        default=list,
-        help_text="""Scene categorization:
-        ["lifestyle", "family", "product showcase"]
+        default=dict,
+        help_text="""Scene categorization summary:
+        {
+            "total_scenes": 10,
+            "category_counts": {
+                "people": 6,
+                "product": 4,
+                "lifestyle": 3
+            },
+            "primary_categories": ["people", "product", "lifestyle"]
+        }
         """,
     )
 
@@ -708,9 +731,10 @@ class VideoProcessingResult(models.Model):
         {
             "scene_detection": "PySceneDetect",
             "transcription": "Whisper Large v3",
-            "object_detection": "YOLO v8",
-            "script_generation": "Qwen/Qwen2.5-7B-Instruct",
-            "sentiment": "distilbert-base-uncased-finetuned-sst-2-english"
+            "object_detection": "YOLO v8x",
+            "visual_style": "OpenCV + k-means",
+            "sentiment": "keyword-based",
+            "script_generation": "Basic (MVP)"
         }
         """,
     )

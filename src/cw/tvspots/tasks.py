@@ -292,29 +292,128 @@ def analyze_video_task(self, ad_unit_media_id: int):
             },
         )
 
-        # Phase 4: Generate basic script (MVP version)
-        # For MVP, create a simple script from scenes + transcription
-        # Advanced LLM-based script generation will be added in Phase 2
-        logger.info("Generating basic script...")
-        script = _generate_basic_script(scenes, transcription)
+        # Phase 4: Extract keyframes and detect objects (Phase 2)
+        import tempfile
+        keyframes_dir = tempfile.mkdtemp(prefix="keyframes_")
 
-        # Phase 5: Create result object
+        logger.info("Extracting keyframes...")
+        keyframes = _extract_keyframes(video_path, scenes, keyframes_dir)
+
+        logger.info("Detecting objects in keyframes...")
+        from cw.lib.video_analysis import detect_objects, summarize_objects
+
+        # Detect objects in each keyframe
+        keyframe_detections = {}
+        for scene_number, keyframe_path in keyframes.items():
+            detections = detect_objects(keyframe_path, conf_threshold=0.5)
+            keyframe_detections[scene_number] = detections
+
+        # Summarize all detections across all keyframes
+        all_detections = []
+        for detections in keyframe_detections.values():
+            all_detections.extend(detections)
+
+        objects_summary = summarize_objects(all_detections)
+        logger.info(
+            f"Object detection complete: {objects_summary['total_objects']} objects detected",
+            extra={"objects_summary": objects_summary},
+        )
+
+        # Phase 5: Analyze visual style (Phase 2)
+        logger.info("Analyzing visual style...")
+        from cw.lib.video_analysis import analyze_visual_style, analyze_camera_work
+
+        keyframe_paths = list(keyframes.values())
+        visual_style = analyze_visual_style(keyframe_paths)
+        camera_work = analyze_camera_work(scenes)
+        visual_style["camera_work"] = camera_work
+
+        logger.info(
+            f"Visual style analysis complete: {len(visual_style['dominant_colors'])} dominant colors",
+            extra={"visual_style": visual_style},
+        )
+
+        # Phase 6: Analyze sentiment (Phase 2)
+        logger.info("Analyzing sentiment...")
+        from cw.lib.video_analysis import analyze_sentiment
+
+        sentiment_analysis = analyze_sentiment(transcription, visual_style, objects_summary)
+        logger.info(
+            f"Sentiment analysis complete: {sentiment_analysis['overall_sentiment']}",
+            extra={"sentiment": sentiment_analysis},
+        )
+
+        # Phase 7: Categorize scenes (Phase 2)
+        logger.info("Categorizing scenes...")
+        from cw.lib.video_analysis import categorize_scenes, summarize_categories
+
+        categorized_scenes = categorize_scenes(scenes, keyframe_detections, transcription)
+        categories_summary = summarize_categories(categorized_scenes)
+
+        logger.info(
+            f"Scene categorization complete: {categories_summary['primary_categories']}",
+            extra={"categories": categories_summary},
+        )
+
+        # Phase 8: Generate enhanced script with vision inputs (Phase 2)
+        logger.info("Generating enhanced script...")
+        script = _generate_basic_script(categorized_scenes, transcription)
+
+        # Phase 9: Create result object
         result = VideoProcessingResult.objects.create(
-            scenes=scenes,
+            scenes=categorized_scenes,
             script=script,
             transcription=transcription,
-            visual_style={},  # Phase 2
-            objects_summary={},  # Phase 2
-            sentiment_analysis={},  # Phase 2
-            categories=[],  # Phase 2
+            visual_style=visual_style,
+            objects_summary=objects_summary,
+            sentiment_analysis=sentiment_analysis,
+            categories=categories_summary,
             audience_insights={},  # Phase 3
             processing_time=(timezone.now() - media.processing_started_at).total_seconds(),
             models_used={
                 "scene_detection": "PySceneDetect",
                 "transcription": "Whisper Large v3",
+                "object_detection": "YOLO v8x",
+                "visual_style": "OpenCV + k-means",
+                "sentiment": "keyword-based",
                 "script_generation": "Basic (MVP)",
             },
         )
+
+        # Phase 10: Save keyframes with detected objects to KeyFrame model
+        from cw.tvspots.models import KeyFrame
+        from django.core.files import File
+
+        logger.info("Saving keyframes to database...")
+        for scene_number, keyframe_path in keyframes.items():
+            # Find corresponding scene for timestamp
+            scene = next((s for s in categorized_scenes if s["scene_number"] == scene_number), None)
+            if not scene:
+                continue
+
+            timestamp = (scene["start_time"] + scene["end_time"]) / 2
+            detections = keyframe_detections.get(scene_number, [])
+
+            # Create KeyFrame record
+            with open(keyframe_path, "rb") as f:
+                keyframe = KeyFrame.objects.create(
+                    result=result,
+                    scene_number=scene_number,
+                    timestamp=timestamp,
+                    detected_objects=detections,
+                    colors=visual_style.get("dominant_colors", [])[:3],  # Top 3 colors
+                )
+                keyframe.image.save(
+                    f"scene_{scene_number:03d}.jpg",
+                    File(f),
+                    save=True,
+                )
+
+        logger.info(f"Saved {len(keyframes)} keyframes to database")
+
+        # Clean up temporary keyframes directory
+        import shutil
+        shutil.rmtree(keyframes_dir, ignore_errors=True)
 
         # Link result to media
         media.result = result
@@ -369,6 +468,50 @@ def analyze_video_task(self, ad_unit_media_id: int):
             "media_id": ad_unit_media_id,
             "error": str(e),
         }
+
+
+def _extract_keyframes(video_path: str, scenes: list, output_dir: str) -> dict:
+    """
+    Extract one keyframe per scene (middle frame of each scene).
+
+    Args:
+        video_path: Path to video file
+        scenes: List of scene dictionaries
+        output_dir: Directory to save keyframe images
+
+    Returns:
+        Dict mapping scene_number to keyframe path
+    """
+    import cv2
+    import os
+    from pathlib import Path
+
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    keyframes = {}
+
+    for scene in scenes:
+        scene_number = scene["scene_number"]
+        # Extract middle frame of scene
+        mid_time = (scene["start_time"] + scene["end_time"]) / 2
+        mid_frame = int(mid_time * fps)
+
+        # Seek to frame
+        cap.set(cv2.CAP_PROP_POS_FRAMES, mid_frame)
+        ret, frame = cap.read()
+
+        if ret:
+            # Save keyframe
+            keyframe_path = os.path.join(output_dir, f"scene_{scene_number:03d}.jpg")
+            cv2.imwrite(keyframe_path, frame)
+            keyframes[scene_number] = keyframe_path
+
+    cap.release()
+    logger.info(f"Extracted {len(keyframes)} keyframes")
+    return keyframes
 
 
 def _generate_basic_script(scenes, transcription):
