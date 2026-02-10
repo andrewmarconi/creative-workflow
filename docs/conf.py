@@ -86,6 +86,15 @@ html_theme_options = {
     "style_external_links": True,  # Add icon to external links
 }
 
+# GitHub integration (adds repo link + "Edit on GitHub" to every page)
+html_context = {
+    "display_github": True,
+    "github_user": "andrewmarconi",
+    "github_repo": "generative-creative-lab",
+    "github_version": "develop",
+    "conf_py_path": "/docs/",
+}
+
 # -- Intersphinx mapping -----------------------------------------------------
 
 intersphinx_mapping = {

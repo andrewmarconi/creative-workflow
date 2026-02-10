@@ -8,9 +8,9 @@ Design Goals
 
 The model system was designed around three constraints:
 
-1. **One model at a time** — GPU memory is limited. Only one diffusion model can be loaded at once.
-2. **Minimal per-model code** — Adding a new model should take 10–20 lines, not 200.
-3. **Configuration-driven behavior** — Model quirks (turbo guidance overrides, token limits, 8-bit quantization) are controlled by flags in ``presets.json``, not by branching code paths.
+1. **One model at a time** — GPU memory is limited. Only one diffusion model can be loaded at once. You don't need a mountain of H200s to run this framework. I use a stock NVIDIA RX 3080 and a Mac M4 as two of my workstations.
+2. **Minimal per-model code** — Adding a new model should take 10-20 lines, not 200.
+3. **Configuration-driven behavior** — Model quirks (turbo guidance overrides, token limits, 8-bit quantization) are controlled by flags in the data model (seeded with ``presets.json``), not by branching code paths.
 
 Template Method Pattern
 -----------------------

@@ -1,7 +1,14 @@
 Generative Creative Lab
 =======================
 
-A Django + Celery application for multi-model diffusion image generation, multi-agent TV spot cultural adaptation, and audience targeting.
+.. image:: _static/logo-wide.png
+   :alt: Generative Creative Lab
+   :align: center
+
+A modular framework for creative development, exploration, and experimentation using generative AI.
+---------------------------------------------------------------------------------------------------
+
+Generative Creative Lab is a flexible platform designed for creative experimentation with generative AI models. Built on `Django <https://www.djangoproject.com/>`_, `Celery <https://docs.celeryq.dev/>`_, `HugggingFace <https://huggingface.co/>`_, and `LangGraph <https://langchain-ai.github.io/langgraph/>`_, it provides a modular architecture for multi-model diffusion image generation, pipelines, multi-agent cultural adaptation of TV scripts, dynamic prompt enhancement, and systematic creative exploration through model composition and workflow orchestration.
 
 .. rubric:: Key Capabilities
 
@@ -13,6 +20,7 @@ A Django + Celery application for multi-model diffusion image generation, multi-
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Getting Started
 
    getting-started/installation
@@ -21,8 +29,10 @@ A Django + Celery application for multi-model diffusion image generation, multi-
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Concepts
 
+   concepts/for-marketers
    concepts/architecture
    concepts/diffusion-models
    concepts/adaptation-pipeline
@@ -31,6 +41,7 @@ A Django + Celery application for multi-model diffusion image generation, multi-
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Guides
 
    guides/image-generation/adding-models
@@ -54,6 +65,7 @@ A Django + Celery application for multi-model diffusion image generation, multi-
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Reference
 
    reference/management-commands
@@ -65,6 +77,7 @@ A Django + Celery application for multi-model diffusion image generation, multi-
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Project
 
    project/philosophy
@@ -72,3 +85,4 @@ A Django + Celery application for multi-model diffusion image generation, multi-
    project/roadmap
    project/research-notes
    project/changelog
+   project/license

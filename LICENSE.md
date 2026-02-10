@@ -1,6 +1,9 @@
-# Generative Creative Lab Non-Commercial License
+# Non-Commercial License
 
-**Last Updated:** 5 February, 2026
+- **Project:** Generative Creative Lab
+- **Documentation URI:** https://andrewmarconi.github.io/generative-creative-lab
+- **Code URI:** https://github.com/andrewmarconi/generative-creative-lab
+- **Last Updated:** 5 February, 2026
 
 This Generative Creative Lab Non-Commercial License (the "License") governs your access to and use, modification, and distribution of the software project known as **Generative Creative Lab** (as defined below). By downloading, accessing, installing, using, modifying, or distributing any part of Generative Creative Lab, you agree to be bound by this License. If you do not agree to this License, you must not use Generative Creative Lab.
 
