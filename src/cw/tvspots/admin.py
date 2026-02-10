@@ -1812,74 +1812,199 @@ class AdUnitMediaAdmin(ModelAdmin):
 
     @action(description=_("Create Origin VideoAdUnit"))
     def create_origin_ad_unit_action(self, request, object_id):
-        """Create an origin VideoAdUnit from processed results."""
-        media = AdUnitMedia.objects.get(pk=object_id)
+        """Create an origin VideoAdUnit from processed results with comprehensive error handling."""
+        import logging
 
-        # Validation
-        if media.status != "completed":
+        logger = logging.getLogger(__name__)
+
+        try:
+            media = AdUnitMedia.objects.get(pk=object_id)
+            logger.info(
+                f"Creating origin VideoAdUnit for AdUnitMedia {media.id}",
+                extra={
+                    "ad_unit_media_id": media.id,
+                    "campaign_id": media.campaign_id,
+                    "user": request.user.username,
+                },
+            )
+
+            # Validation - Status check
+            if media.status != "completed":
+                logger.warning(
+                    f"Cannot create VideoAdUnit: invalid status '{media.status}'",
+                    extra={"ad_unit_media_id": media.id, "status": media.status},
+                )
+                messages.error(
+                    request,
+                    f"Cannot create VideoAdUnit from video with status '{media.get_status_display()}'. "
+                    "Video must be fully processed first.",
+                )
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            # Validation - Duplicate check
+            if media.video_ad_unit:
+                logger.info(
+                    f"VideoAdUnit already exists for media {media.id}",
+                    extra={
+                        "ad_unit_media_id": media.id,
+                        "existing_ad_unit_id": media.video_ad_unit.pk,
+                    },
+                )
+                messages.warning(
+                    request,
+                    f"VideoAdUnit already exists for this media: {media.video_ad_unit}",
+                )
+                return redirect(
+                    reverse(
+                        "admin:tvspots_videoadunit_change", args=[media.video_ad_unit.pk]
+                    )
+                )
+
+            # Validation - Script check
+            if not media.result:
+                logger.error(
+                    f"No processing result found for media {media.id}",
+                    extra={"ad_unit_media_id": media.id},
+                )
+                messages.error(request, "No processing result found. Video may not have been processed yet.")
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            if not media.result.script:
+                logger.error(
+                    f"No script found in processing results for media {media.id}",
+                    extra={"ad_unit_media_id": media.id, "result_id": media.result.pk},
+                )
+                messages.error(request, "No script found in processing results.")
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            # Validate script structure
+            script_data = media.result.script
+            if "script_rows" not in script_data and "scenes" not in script_data:
+                logger.error(
+                    f"Invalid script structure for media {media.id}: missing script_rows/scenes",
+                    extra={"ad_unit_media_id": media.id, "script_keys": list(script_data.keys())},
+                )
+                messages.error(
+                    request,
+                    "Invalid script structure. Missing script_rows or scenes data.",
+                )
+                return redirect(
+                    reverse("admin:tvspots_adunitmedia_change", args=[object_id])
+                )
+
+            # Create origin VideoAdUnit
+            logger.info(f"Creating VideoAdUnit for media {media.id}")
+            ad_unit = VideoAdUnit.objects.create(
+                campaign=media.campaign,
+                ad_unit_type="VIDEO",
+                origin_or_adaptation="ORIGIN",
+                code=f"ORIGIN-{media.id:04d}",
+                title=script_data.get("script_title") or f"Origin from {media.campaign.script_title}",
+                status="completed",
+                duration=media.duration or script_data.get("total_runtime_seconds", 0),
+            )
+
+            logger.info(
+                f"VideoAdUnit {ad_unit.id} created for media {media.id}",
+                extra={
+                    "ad_unit_media_id": media.id,
+                    "video_ad_unit_id": ad_unit.id,
+                    "campaign_id": media.campaign_id,
+                },
+            )
+
+            # Create script rows from generated script
+            rows_created = 0
+            if "script_rows" in script_data:
+                # New format: script_rows array
+                for idx, row in enumerate(script_data["script_rows"]):
+                    AdUnitScriptRow.objects.create(
+                        ad_unit=ad_unit,
+                        order_index=idx,
+                        shot_number=row.get("shot_number", str(idx + 1)),
+                        visual_text=row.get("visual_text", ""),
+                        audio_text=row.get("audio_text", ""),
+                    )
+                    rows_created += 1
+            elif "scenes" in script_data:
+                # Old format: scenes array (Phase 1/2 compatibility)
+                for idx, scene in enumerate(script_data["scenes"]):
+                    audio_dict = scene.get("audio", {})
+                    audio_text = audio_dict.get("voiceover", "") if isinstance(audio_dict, dict) else str(audio_dict)
+
+                    AdUnitScriptRow.objects.create(
+                        ad_unit=ad_unit,
+                        order_index=idx,
+                        shot_number=str(scene.get("scene_number", idx + 1)),
+                        visual_text=scene.get("visual", ""),
+                        audio_text=audio_text,
+                    )
+                    rows_created += 1
+
+            logger.info(
+                f"Created {rows_created} script rows for VideoAdUnit {ad_unit.id}",
+                extra={"video_ad_unit_id": ad_unit.id, "rows_created": rows_created},
+            )
+
+            # Link back to media
+            media.video_ad_unit = ad_unit
+            media.status = "reviewed"
+            media.save(update_fields=["video_ad_unit", "status"])
+
+            logger.info(
+                f"Origin VideoAdUnit creation complete for media {media.id}",
+                extra={
+                    "ad_unit_media_id": media.id,
+                    "video_ad_unit_id": ad_unit.id,
+                    "rows_created": rows_created,
+                    "user": request.user.username,
+                },
+            )
+
+            messages.success(
+                request,
+                format_html(
+                    'Origin VideoAdUnit created: <a href="{}">{}</a>. '
+                    'Created {} script row(s). <a href="{}">Create Adaptation →</a>',
+                    reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]),
+                    ad_unit,
+                    rows_created,
+                    reverse("admin:tvspots_videoadunit_add") + f"?source_ad_unit={ad_unit.pk}",
+                ),
+            )
+            return redirect(reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]))
+
+        except AdUnitMedia.DoesNotExist:
+            logger.error(
+                f"AdUnitMedia {object_id} not found",
+                extra={"ad_unit_media_id": object_id, "user": request.user.username},
+            )
+            messages.error(request, f"AdUnitMedia with ID {object_id} not found.")
+            return redirect(reverse("admin:tvspots_adunitmedia_changelist"))
+
+        except Exception as e:
+            logger.exception(
+                f"Unexpected error creating origin VideoAdUnit for media {object_id}",
+                extra={
+                    "ad_unit_media_id": object_id,
+                    "error": str(e),
+                    "user": request.user.username,
+                },
+            )
             messages.error(
                 request,
-                f"Cannot create VideoAdUnit from video with status '{media.get_status_display()}'. "
-                "Video must be fully processed first.",
+                f"An unexpected error occurred while creating the VideoAdUnit: {str(e)}. "
+                "Please contact support if this persists.",
             )
             return redirect(
                 reverse("admin:tvspots_adunitmedia_change", args=[object_id])
             )
-
-        if media.video_ad_unit:
-            messages.warning(
-                request,
-                f"VideoAdUnit already exists for this media: {media.video_ad_unit}",
-            )
-            return redirect(
-                reverse(
-                    "admin:tvspots_videoadunit_change", args=[media.video_ad_unit.pk]
-                )
-            )
-
-        if not media.result or not media.result.script:
-            messages.error(request, "No script found in processing results.")
-            return redirect(
-                reverse("admin:tvspots_adunitmedia_change", args=[object_id])
-            )
-
-        # Create origin VideoAdUnit
-        script_data = media.result.script
-        ad_unit = VideoAdUnit.objects.create(
-            campaign=media.campaign,
-            ad_unit_type="VIDEO",
-            origin_or_adaptation="ORIGIN",
-            code=f"ORIGIN-{media.id:04d}",
-            title=f"Origin from {media.campaign.script_title}",
-            status="completed",
-            duration=media.duration or 0,
-        )
-
-        # Create script rows from generated script
-        if "scenes" in script_data:
-            for idx, scene in enumerate(script_data["scenes"]):
-                AdUnitScriptRow.objects.create(
-                    ad_unit=ad_unit,
-                    order_index=idx,
-                    shot_number=str(scene.get("scene_number", idx + 1)),
-                    visual_text=scene.get("visual", ""),
-                    audio_text=scene.get("audio", {}).get("voiceover", ""),
-                )
-
-        # Link back to media
-        media.video_ad_unit = ad_unit
-        media.status = "reviewed"
-        media.save(update_fields=["video_ad_unit", "status"])
-
-        messages.success(
-            request,
-            format_html(
-                'Origin VideoAdUnit created: <a href="{}">{}</a>',
-                reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]),
-                ad_unit,
-            ),
-        )
-        return redirect(reverse("admin:tvspots_videoadunit_change", args=[ad_unit.pk]))
 
     def get_urls(self):
         """Add custom URLs for reprocess and create actions."""
