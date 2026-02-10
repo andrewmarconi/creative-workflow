@@ -1,0 +1,158 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="p-6">
+    <div class="max-w-4xl">
+        <h1 class="text-2xl font-bold mb-6">{% trans "Bulk Upload Videos" %}</h1>
+
+        <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h3 class="font-medium text-blue-900 dark:text-blue-300 mb-2">
+                {% trans "Campaign" %}: {{ campaign.script_title }}
+            </h3>
+            <p class="text-sm text-blue-800 dark:text-blue-400">
+                {% trans "Client" %}: {{ campaign.client_name }}
+                {% if campaign.product_name %}| {{ campaign.product_name }}{% endif %}
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="video_files" class="block text-sm font-medium mb-2">
+                    {% trans "Select Video Files" %}
+                </label>
+                <input
+                    type="file"
+                    name="video_files"
+                    id="video_files"
+                    multiple
+                    accept="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm,.mp4,.mov,.avi,.mkv,.webm"
+                    class="block w-full text-sm text-gray-500 dark:text-gray-400
+                           file:mr-4 file:py-2 file:px-4
+                           file:rounded-lg file:border-0
+                           file:text-sm file:font-semibold
+                           file:bg-primary-50 file:text-primary-700
+                           hover:file:bg-primary-100
+                           dark:file:bg-primary-900/20 dark:file:text-primary-400
+                           dark:hover:file:bg-primary-900/30
+                           cursor-pointer"
+                    required
+                />
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    {% trans "Select one or more video files to upload" %}
+                </p>
+            </div>
+
+            <div id="file-list" class="hidden">
+                <h3 class="text-sm font-medium mb-2">{% trans "Selected Files" %}:</h3>
+                <ul id="file-list-items" class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                </ul>
+            </div>
+
+            <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h3 class="font-medium mb-2 text-gray-900 dark:text-gray-100">{% trans "Upload Requirements" %}</h3>
+                <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <li>{% trans "Maximum file size" %}: {{ max_file_size_mb|floatformat:0 }} MB</li>
+                    <li>{% trans "Allowed formats" %}: {{ allowed_extensions }}</li>
+                    <li>{% trans "Each video will be automatically queued for processing" %}</li>
+                    <li>{% trans "Processing includes scene detection, transcription, and script generation" %}</li>
+                </ul>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition-colors">
+                    {% trans "Upload Videos" %}
+                </button>
+                <a href="{% url 'admin:tvspots_campaign_change' campaign.pk %}"
+                   class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-6 py-2 rounded-lg transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+
+        <div class="mt-8 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <h3 class="font-medium text-yellow-900 dark:text-yellow-300 mb-2">
+                {% trans "What happens after upload?" %}
+            </h3>
+            <ol class="list-decimal list-inside text-sm text-yellow-800 dark:text-yellow-400 space-y-1">
+                <li>{% trans "Videos are uploaded and stored in the media library" %}</li>
+                <li>{% trans "Each video is queued for AI-powered analysis" %}</li>
+                <li>{% trans "Scene detection identifies key moments in each video" %}</li>
+                <li>{% trans "Audio transcription extracts voiceover and dialogue" %}</li>
+                <li>{% trans "Visual analysis detects objects, colors, and style" %}</li>
+                <li>{% trans "A structured script is generated from the analysis" %}</li>
+                <li>{% trans "Results appear in the campaign's Ad Unit Media section" %}</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script>
+// Display selected files
+document.getElementById('video_files').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    const fileList = document.getElementById('file-list');
+    const fileListItems = document.getElementById('file-list-items');
+
+    if (files.length === 0) {
+        fileList.classList.add('hidden');
+        return;
+    }
+
+    fileList.classList.remove('hidden');
+    fileListItems.innerHTML = '';
+
+    files.forEach((file, index) => {
+        const li = document.createElement('li');
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+
+        // Check if file exceeds max size
+        const maxSize = {{ max_file_size_mb }};
+        const isOversized = sizeInMB > maxSize;
+
+        li.className = isOversized
+            ? 'text-red-600 dark:text-red-400'
+            : 'text-gray-600 dark:text-gray-400';
+
+        li.innerHTML = `
+            <span class="font-mono">${file.name}</span>
+            <span class="text-xs ml-2">(${sizeInMB} MB)</span>
+            ${isOversized ? '<span class="text-xs ml-2 font-semibold">⚠ Exceeds size limit</span>' : ''}
+        `;
+
+        fileListItems.appendChild(li);
+    });
+});
+
+// Form submission validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const files = document.getElementById('video_files').files;
+
+    if (files.length === 0) {
+        e.preventDefault();
+        alert('{% trans "Please select at least one video file" %}');
+        return false;
+    }
+
+    // Check for oversized files
+    const maxSize = {{ max_file_size_mb }} * 1024 * 1024;
+    const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
+
+    if (oversizedFiles.length > 0) {
+        const fileNames = oversizedFiles.map(f => f.name).join(', ');
+        if (!confirm(`{% trans "The following files exceed the size limit and will be rejected" %}: ${fileNames}\n\n{% trans "Continue anyway?" %}`)) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
+    // Show loading state
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '{% trans "Uploading..." %}';
+});
+</script>
+{% endblock %}
