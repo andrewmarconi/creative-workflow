@@ -1,0 +1,68 @@
+{% load i18n %}
+
+<div x-data="videoPlayer('{{ video_url }}', {{ scenes_json }})" class="flex flex-col gap-4 max-w-4xl">
+    {# Hidden field #}
+    <input type="hidden" name="{{ widget.name }}"
+           {% for key, val in widget.attrs.items %}
+           {{ key }}="{{ val }}"
+           {% endfor %}
+           value="{% if widget.value %}{{ widget.value }}{% endif %}">
+
+    <div x-show="videoUrl" class="border border-base-200 rounded-default overflow-hidden dark:border-base-700 bg-black">
+        {# Video element #}
+        <video x-ref="videoPlayer"
+               :src="videoUrl"
+               controls
+               class="w-full"
+               @loadedmetadata="onVideoLoaded()"
+               @timeupdate="onTimeUpdate()">
+            {% trans "Your browser does not support the video tag." %}
+        </video>
+
+        {# Timeline with scene markers #}
+        <div class="bg-base-50 dark:bg-base-900 p-4">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-sm text-base-600 dark:text-base-400">timeline</span>
+                <span class="text-sm font-medium text-base-700 dark:text-base-300">{% trans "Scene Timeline" %}</span>
+            </div>
+
+            <div class="relative h-12 bg-base-200 dark:bg-base-800 rounded-default overflow-hidden">
+                {# Scene markers #}
+                <template x-for="(scene, index) in scenes" :key="index">
+                    <div @click="seekToScene(scene)"
+                         class="absolute top-0 bottom-0 border-l-2 border-primary-500 cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-900/20 transition-colors group"
+                         :style="`left: ${getScenePosition(scene)}%`"
+                         :title="`Scene ${scene.scene_number}: ${scene.start_time}s`">
+                        <div class="absolute top-1 left-1 text-xs font-medium text-primary-700 dark:text-primary-300 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
+                             x-text="`S${scene.scene_number}`"></div>
+                    </div>
+                </template>
+
+                {# Current playhead #}
+                <div class="absolute top-0 bottom-0 w-0.5 bg-red-500 pointer-events-none"
+                     :style="`left: ${currentProgress}%`"></div>
+            </div>
+
+            {# Scene list #}
+            <div class="mt-4 space-y-2 max-h-48 overflow-y-auto">
+                <template x-for="(scene, index) in scenes" :key="index">
+                    <div @click="seekToScene(scene)"
+                         class="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-base-100 dark:hover:bg-base-800 transition-colors"
+                         :class="{'bg-primary-50 dark:bg-primary-900/20': currentScene === index}">
+                        <span class="font-medium text-sm text-base-600 dark:text-base-400 w-12"
+                              x-text="`S${scene.scene_number}`"></span>
+                        <span class="text-sm text-base-500 dark:text-base-500 w-20"
+                              x-text="formatTime(scene.start_time)"></span>
+                        <span class="text-sm text-base-700 dark:text-base-300 flex-1 truncate"
+                              x-text="scene.visual_description || scene.description || 'Scene ' + scene.scene_number"></span>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="!videoUrl" class="border border-base-200 rounded-default p-8 text-center dark:border-base-700 bg-base-50 dark:bg-base-900">
+        <span class="material-symbols-outlined text-4xl text-base-400 dark:text-base-600">videocam_off</span>
+        <p class="text-sm text-base-600 dark:text-base-400 mt-2">{% trans "No video available" %}</p>
+    </div>
+</div>

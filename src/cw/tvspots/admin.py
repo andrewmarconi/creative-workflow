@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.decorators import action, display
 
-from cw.core.widgets import InsightsEditorWidget
+from cw.core.widgets import InsightsEditorWidget, ScriptEditorWidget, VideoPlayerWidget
 
 from .models import (
     AdUnitMedia,
@@ -1473,13 +1473,13 @@ class KeyFrameInline(TabularInline):
 
 @admin.register(VideoProcessingResult)
 class VideoProcessingResultAdmin(ModelAdmin):
-    """Admin for video processing results (read-only)."""
+    """Admin for video processing results with editable script."""
 
     list_display = ["id", "show_media", "show_scene_count", "processing_time", "created_at"]
     search_fields = ["media__campaign__script_title", "media__campaign__client_name"]
     readonly_fields = [
+        "show_video_player",
         "scenes",
-        "script",
         "transcription",
         "visual_style",
         "objects_summary",
@@ -1492,8 +1492,16 @@ class VideoProcessingResultAdmin(ModelAdmin):
         "updated_at",
     ]
     inlines = [KeyFrameInline]
+    actions_detail = ["approve_script_action", "reject_script_action"]
 
     fieldsets = (
+        (
+            _("Video Player"),
+            {
+                "classes": ["tab"],
+                "fields": ("show_video_player",),
+            },
+        ),
         (
             _("Overview"),
             {
@@ -1502,17 +1510,18 @@ class VideoProcessingResultAdmin(ModelAdmin):
             },
         ),
         (
+            _("Edit Script"),
+            {
+                "classes": ["tab"],
+                "fields": ("script",),
+                "description": "Edit the generated script. Changes will be saved when you click Save.",
+            },
+        ),
+        (
             _("Scenes"),
             {
                 "classes": ["tab"],
                 "fields": ("scenes",),
-            },
-        ),
-        (
-            _("Generated Script"),
-            {
-                "classes": ["tab"],
-                "fields": ("script",),
             },
         ),
         (
@@ -1552,6 +1561,26 @@ class VideoProcessingResultAdmin(ModelAdmin):
         ),
     )
 
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Use custom widget for script field."""
+        if db_field.name == "script":
+            kwargs["widget"] = ScriptEditorWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    @display(description=_("Video Player"))
+    def show_video_player(self, obj):
+        """Display video player with scene markers."""
+        if hasattr(obj, "media") and obj.media and obj.media.video_file:
+            from django.templatetags.static import static
+
+            video_url = obj.media.video_file.url
+            scenes = obj.scenes or []
+
+            # Render widget manually
+            widget = VideoPlayerWidget(video_url=video_url, scenes=scenes)
+            return mark_safe(widget.render("video_player", None, {}))
+        return mark_safe('<div class="text-base-500">No video available</div>')
+
     def has_add_permission(self, request):
         """Results are created by the video processing pipeline only."""
         return False
@@ -1570,6 +1599,58 @@ class VideoProcessingResultAdmin(ModelAdmin):
     @display(description=_("Scenes"))
     def show_scene_count(self, obj):
         return len(obj.scenes) if obj.scenes else 0
+
+    @action(description=_("Approve Script"))
+    def approve_script_action(self, request, object_id):
+        """Approve the edited script and mark media as reviewed."""
+        result = VideoProcessingResult.objects.get(pk=object_id)
+
+        if hasattr(result, "media") and result.media:
+            if result.media.status != "completed":
+                messages.error(
+                    request,
+                    "Cannot approve script for media that is not in completed status.",
+                )
+                return redirect(
+                    reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
+                )
+
+            # Update media status to reviewed
+            result.media.status = "reviewed"
+            result.media.save(update_fields=["status"])
+
+            messages.success(
+                request,
+                f"Script approved for {result.media}. You can now create an origin VideoAdUnit.",
+            )
+        else:
+            messages.warning(request, "No associated media found.")
+
+        return redirect(
+            reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
+        )
+
+    @action(description=_("Reject Script"))
+    def reject_script_action(self, request, object_id):
+        """Reject the script and reset media status for reprocessing."""
+        result = VideoProcessingResult.objects.get(pk=object_id)
+
+        if hasattr(result, "media") and result.media:
+            # Reset media status to uploaded for reprocessing
+            result.media.status = "uploaded"
+            result.media.processing_error = "Script rejected - needs reprocessing"
+            result.media.save(update_fields=["status", "processing_error"])
+
+            messages.warning(
+                request,
+                f"Script rejected for {result.media}. Status reset to 'uploaded' for reprocessing.",
+            )
+        else:
+            messages.warning(request, "No associated media found.")
+
+        return redirect(
+            reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
+        )
 
 
 @admin.register(AdUnitMedia)

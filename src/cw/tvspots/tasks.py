@@ -202,14 +202,20 @@ def generate_storyboard_task(self, storyboard_id, enhance_prompts=True):
 @shared_task(bind=True, name="cw.tvspots.tasks.analyze_video_task", max_retries=3)
 def analyze_video_task(self, ad_unit_media_id: int):
     """
-    Analyze uploaded video and extract script, scenes, transcription.
+    Analyze uploaded video and extract script, scenes, transcription, and insights.
 
     This task orchestrates the video processing pipeline:
     1. Extract video metadata (duration, resolution, etc.)
     2. Detect scenes using PySceneDetect
-    3. Extract audio and transcribe with Whisper
-    4. Generate basic script from transcription + scenes
-    5. Save results to VideoProcessingResult
+    3. Transcribe audio with Whisper
+    4. Extract keyframes and detect objects with YOLO
+    5. Analyze visual style (colors, lighting, camera work)
+    6. Analyze sentiment (audio + visual)
+    7. Categorize scenes
+    8. Generate enhanced script
+    9. Generate audience insights with LLM
+    10. Create result object
+    11. Save keyframes to database
 
     Args:
         ad_unit_media_id: ID of the AdUnitMedia to process
@@ -359,7 +365,23 @@ def analyze_video_task(self, ad_unit_media_id: int):
         logger.info("Generating enhanced script...")
         script = _generate_basic_script(categorized_scenes, transcription)
 
-        # Phase 9: Create result object
+        # Phase 9: Generate audience insights (Phase 3 Part 1)
+        logger.info("Generating audience insights...")
+        from cw.lib.video_analysis.audience_insights import generate_audience_insights
+
+        audience_insights = generate_audience_insights(
+            script=script,
+            visual_style=visual_style,
+            sentiment=sentiment_analysis,
+            transcription=transcription,
+            categories=categories_summary,
+        )
+        logger.info(
+            f"Audience insights generation complete",
+            extra={"audience_insights": audience_insights},
+        )
+
+        # Phase 10: Create result object
         result = VideoProcessingResult.objects.create(
             scenes=categorized_scenes,
             script=script,
@@ -368,7 +390,7 @@ def analyze_video_task(self, ad_unit_media_id: int):
             objects_summary=objects_summary,
             sentiment_analysis=sentiment_analysis,
             categories=categories_summary,
-            audience_insights={},  # Phase 3
+            audience_insights=audience_insights,
             processing_time=(timezone.now() - media.processing_started_at).total_seconds(),
             models_used={
                 "scene_detection": "PySceneDetect",
@@ -377,10 +399,11 @@ def analyze_video_task(self, ad_unit_media_id: int):
                 "visual_style": "OpenCV + k-means",
                 "sentiment": "keyword-based",
                 "script_generation": "Basic (MVP)",
+                "audience_insights": "LLM-based (Qwen 2.5)",
             },
         )
 
-        # Phase 10: Save keyframes with detected objects to KeyFrame model
+        # Phase 11: Save keyframes with detected objects to KeyFrame model
         from cw.tvspots.models import KeyFrame
         from django.core.files import File
 
