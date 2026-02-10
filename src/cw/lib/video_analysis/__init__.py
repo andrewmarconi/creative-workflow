@@ -25,6 +25,9 @@ from .visual_style import (
 from .sentiment import analyze_sentiment
 from .categorization import categorize_scenes, summarize_categories
 
+# Phase 3: Audience insights
+from .audience_insights import generate_audience_insights
+
 __all__ = [
     # Phase 1
     "extract_video_metadata",
@@ -41,4 +44,6 @@ __all__ = [
     "analyze_sentiment",
     "categorize_scenes",
     "summarize_categories",
+    # Phase 3
+    "generate_audience_insights",
 ]
