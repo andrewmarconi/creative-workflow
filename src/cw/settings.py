@@ -305,6 +305,43 @@ MODEL_BASE_PATH = Path(os.getenv("MODEL_BASE_PATH", PROJECT_ROOT / "models"))
 CIVITAI_API_KEY = os.getenv("CIVITAI_API_KEY", "")
 
 
+# Video Upload Security Settings
+# Maximum file size for video uploads (bytes)
+VIDEO_MAX_UPLOAD_SIZE_BYTES = int(
+    os.getenv("VIDEO_MAX_UPLOAD_SIZE_BYTES", 500 * 1024 * 1024)  # 500 MB default
+)
+
+# Allowed video file extensions
+VIDEO_ALLOWED_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"]
+
+# Allowed MIME types for video uploads
+VIDEO_ALLOWED_MIME_TYPES = [
+    "video/mp4",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/x-matroska",
+    "video/webm",
+]
+
+# Enable MIME type content verification (uses libmagic)
+VIDEO_VERIFY_MIME_CONTENT = True
+
+# Enable file header validation (magic bytes check)
+VIDEO_VALIDATE_HEADERS = True
+
+# Enable filename sanitization
+VIDEO_SANITIZE_FILENAMES = True
+
+# Upload rate limiting (optional - future implementation)
+VIDEO_UPLOAD_RATE_LIMIT_ENABLED = False
+VIDEO_UPLOAD_RATE_LIMIT_PER_USER = 10  # uploads per hour
+VIDEO_UPLOAD_RATE_LIMIT_PER_IP = 20  # uploads per hour
+
+# Virus scanning (optional - future implementation)
+VIDEO_VIRUS_SCAN_ENABLED = False
+VIDEO_VIRUS_SCAN_ENDPOINT = ""  # ClamAV endpoint if enabled
+
+
 # Logging Configuration
 # Creates logs directory and configures Django and Celery logging
 
@@ -390,6 +427,16 @@ LOGGING = {
         "cw.lib.civitai": {
             "handlers": ["console", "tasks_file"],
             "level": "DEBUG",
+            "propagate": False,
+        },
+        "cw.lib.security": {
+            "handlers": ["console", "tasks_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "cw.tvspots.tasks": {
+            "handlers": ["console", "tasks_file"],
+            "level": "INFO",
             "propagate": False,
         },
     },

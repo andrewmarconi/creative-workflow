@@ -102,8 +102,8 @@ class AdUnitMediaInline(TabularInline):
     model = AdUnitMedia
     tab = True
     extra = 1
-    fields = ["video_file", "show_status", "show_metadata", "show_actions"]
-    readonly_fields = ["show_status", "show_metadata", "show_actions"]
+    fields = ["video_file", "show_status", "show_progress", "show_metadata", "show_actions"]
+    readonly_fields = ["show_status", "show_progress", "show_metadata", "show_actions"]
     show_change_link = True
 
     @display(
@@ -121,6 +121,20 @@ class AdUnitMediaInline(TabularInline):
         if obj.pk:
             return obj.get_status_display()
         return "-"
+
+    @display(description=_("Progress"))
+    def show_progress(self, obj):
+        """Display progress bar for processing tasks."""
+        if not obj.pk or obj.status not in ["processing"]:
+            return "-"
+
+        # Add progress bar with data attributes for JavaScript polling
+        return mark_safe(
+            f'<div class="video-progress-container" data-media-id="{obj.pk}">'
+            f'<div class="progress-bar" style="width: 0%; height: 20px; background: #4CAF50; transition: width 0.3s;"></div>'
+            f'<div class="progress-text" style="text-align: center; margin-top: 4px; font-size: 12px;">Starting...</div>'
+            f'</div>'
+        )
 
     @display(description=_("Video Info"))
     def show_metadata(self, obj):
@@ -209,7 +223,12 @@ class CampaignAdmin(ModelAdmin):
     readonly_fields = ["created_at", "updated_at"]
     inlines = [AdUnitMediaInline, VideoAdUnitInline]
     actions_list = ["import_campaign_action"]
-    actions_detail = ["create_origin_ad_unit_action", "create_adaptation_action"]
+    actions_detail = [
+        "create_origin_ad_unit_action",
+        "create_adaptation_action",
+        "bulk_upload_videos_action",
+        "export_campaign_action",
+    ]
 
     fieldsets = (
         (
@@ -285,7 +304,10 @@ class CampaignAdmin(ModelAdmin):
             from .tasks import analyze_video_task
 
             for media in new_videos:
-                analyze_video_task.apply_async(args=[media.pk], queue="default")
+                result = analyze_video_task.apply_async(args=[media.pk], queue="default")
+                # Store task ID for progress tracking
+                media.celery_task_id = result.id
+                media.save(update_fields=["celery_task_id"])
                 messages.info(
                     request,
                     f"Video processing queued for {media.video_file.name}",
@@ -314,6 +336,11 @@ class CampaignAdmin(ModelAdmin):
                 "language-models/<int:language_id>/",
                 self.admin_site.admin_view(self.language_models_api),
                 name="tvspots_campaign_language_models_api",
+            ),
+            path(
+                "<int:object_id>/bulk-upload-videos/",
+                self.admin_site.admin_view(self.bulk_upload_videos_view),
+                name="tvspots_campaign_bulk_upload_videos",
             ),
         ]
         return custom_urls + urls
@@ -596,6 +623,14 @@ class CampaignAdmin(ModelAdmin):
                 return False
         return False
 
+    @action(
+        description=_("Bulk Upload Videos"),
+        url_path="bulk-upload-videos-action",
+    )
+    def bulk_upload_videos_action(self, request, object_id):
+        """Redirect to the bulk upload videos view."""
+        return redirect("admin:tvspots_campaign_bulk_upload_videos", object_id)
+
     def create_adaptation_view(self, request, object_id):
         """Handle creating an adaptation of a campaign."""
         import json
@@ -781,6 +816,136 @@ class CampaignAdmin(ModelAdmin):
                 "country_languages_json": json.dumps(country_languages),
             },
         )
+
+    def bulk_upload_videos_view(self, request, object_id):
+        """Handle bulk upload of multiple video files for a campaign."""
+        from django.template.response import TemplateResponse
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from cw.lib.security import VideoFileValidator
+
+        campaign = Campaign.objects.get(pk=object_id)
+
+        # Initialize validator with settings-based configuration
+        validator = VideoFileValidator()
+
+        if request.method == "POST":
+            video_files = request.FILES.getlist('video_files')
+
+            if not video_files:
+                messages.error(request, "Please select at least one video file to upload.")
+                return redirect("admin:tvspots_campaign_bulk_upload_videos", object_id)
+
+            # Validate all files using the comprehensive security validator
+            validation_results = validator.validate_multiple(video_files)
+
+            # Separate valid and invalid files
+            valid_videos = []
+            errors = []
+
+            for video_file in video_files:
+                file_errors = validation_results.get(video_file.name, [])
+                if file_errors:
+                    # File failed validation
+                    for error in file_errors:
+                        errors.append(f"{video_file.name}: {error}")
+                else:
+                    # File passed validation
+                    valid_videos.append(video_file)
+
+            # Report validation errors
+            if errors:
+                for error in errors:
+                    messages.error(request, error)
+
+            # Process valid videos
+            if valid_videos:
+                from .tasks import analyze_video_task
+
+                created_media = []
+                for video_file in valid_videos:
+                    # Create AdUnitMedia instance
+                    media = AdUnitMedia.objects.create(
+                        campaign=campaign,
+                        video_file=video_file,
+                        status="uploaded",
+                        file_size=video_file.size,
+                    )
+                    created_media.append(media)
+
+                    # Queue processing task and store task ID
+                    result = analyze_video_task.apply_async(args=[media.pk], queue="default")
+                    media.celery_task_id = result.id
+                    media.save(update_fields=["celery_task_id"])
+
+                # Report success
+                messages.success(
+                    request,
+                    f"Successfully uploaded and queued {len(created_media)} video(s) for processing. "
+                    f"Skipped {len(errors)} file(s) due to validation errors."
+                    if errors
+                    else f"Successfully uploaded and queued {len(created_media)} video(s) for processing."
+                )
+
+                return redirect("admin:tvspots_campaign_change", object_id)
+            else:
+                messages.error(
+                    request,
+                    "No valid videos were uploaded. Please check the validation errors above."
+                )
+                return redirect("admin:tvspots_campaign_bulk_upload_videos", object_id)
+
+        # Render upload form
+        from django.conf import settings as django_settings
+
+        max_size_mb = getattr(
+            django_settings,
+            "VIDEO_MAX_UPLOAD_SIZE_BYTES",
+            500 * 1024 * 1024
+        ) / (1024 * 1024)
+
+        allowed_exts = getattr(
+            django_settings,
+            "VIDEO_ALLOWED_EXTENSIONS",
+            [".mp4", ".mov", ".avi", ".mkv", ".webm"],
+        )
+
+        return TemplateResponse(
+            request,
+            "admin/tvspots/campaign/bulk_upload_videos.html",
+            {
+                **self.admin_site.each_context(request),
+                "title": _("Bulk Upload Videos"),
+                "opts": self.model._meta,
+                "campaign": campaign,
+                "max_file_size_mb": max_size_mb,
+                "allowed_extensions": ", ".join(allowed_exts),
+            },
+        )
+
+    @action(
+        description=_("Export Campaign with Results"),
+        url_path="export-campaign-action",
+    )
+    def export_campaign_action(self, request, object_id):
+        """Export entire campaign with all ad unit media and processing results as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_campaign_with_results
+
+        campaign = Campaign.objects.prefetch_related(
+            "ad_unit_media__result__key_frames",
+            "ad_unit_media__video_ad_unit",
+        ).get(pk=object_id)
+
+        # Generate filename with job_id and timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        safe_job_id = campaign.job_id.replace("/", "-").replace(" ", "_")
+        filename = f"campaign-{safe_job_id}-{timestamp}"
+
+        # Export data
+        data = export_campaign_with_results(campaign)
+
+        return create_json_response(data, filename, pretty=True)
 
     def language_models_api(self, request, language_id):
         """API endpoint to fetch available LLM models for a language."""
@@ -1492,7 +1657,8 @@ class VideoProcessingResultAdmin(ModelAdmin):
         "updated_at",
     ]
     inlines = [KeyFrameInline]
-    actions_detail = ["approve_script_action", "reject_script_action"]
+    actions_detail = ["approve_script_action", "reject_script_action", "export_result_action"]
+    actions = ["export_results_action"]
 
     fieldsets = (
         (
@@ -1652,6 +1818,59 @@ class VideoProcessingResultAdmin(ModelAdmin):
             reverse("admin:tvspots_videoprocessingresult_change", args=[object_id])
         )
 
+    @action(description=_("Export as JSON"))
+    def export_result_action(self, request, object_id):
+        """Export a single VideoProcessingResult as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_video_processing_result
+
+        result = VideoProcessingResult.objects.select_related("media").get(pk=object_id)
+
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"result-{result.pk}-{timestamp}"
+
+        # Export data
+        data = export_video_processing_result(
+            result,
+            include_keyframes=True,
+            include_media_metadata=True,
+        )
+
+        return create_json_response(data, filename, pretty=True)
+
+    @action(description=_("Export selected results as JSON"))
+    def export_results_action(self, request, queryset):
+        """Export multiple VideoProcessingResults as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_video_processing_result
+
+        # Export all selected results
+        results_data = []
+        for result in queryset.select_related("media"):
+            results_data.append(export_video_processing_result(
+                result,
+                include_keyframes=True,
+                include_media_metadata=True,
+            ))
+
+        # Generate filename with timestamp and count
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"results-bulk-{len(results_data)}-{timestamp}"
+
+        # Wrap in container object
+        data = {
+            "export_metadata": {
+                "export_date": datetime.utcnow().isoformat(),
+                "export_version": "1.0",
+                "model": "VideoProcessingResult",
+                "count": len(results_data),
+            },
+            "results": results_data,
+        }
+
+        return create_json_response(data, filename, pretty=True)
+
 
 @admin.register(AdUnitMedia)
 class AdUnitMediaAdmin(ModelAdmin):
@@ -1661,6 +1880,7 @@ class AdUnitMediaAdmin(ModelAdmin):
         "id",
         "campaign",
         "show_status",
+        "show_progress",
         "show_duration",
         "show_resolution",
         "created_at",
@@ -1684,7 +1904,8 @@ class AdUnitMediaAdmin(ModelAdmin):
         "created_at",
         "updated_at",
     ]
-    actions_detail = ["reprocess_video_action", "create_origin_ad_unit_action"]
+    actions_detail = ["reprocess_video_action", "create_origin_ad_unit_action", "export_media_action"]
+    actions = ["export_media_bulk_action"]
 
     fieldsets = (
         (
@@ -1762,6 +1983,25 @@ class AdUnitMediaAdmin(ModelAdmin):
             return f"{obj.resolution_width}×{obj.resolution_height}"
         return "-"
 
+    @display(description=_("Progress"))
+    def show_progress(self, obj):
+        """Display progress bar for processing tasks in list view."""
+        if obj.status != "processing":
+            return "-"
+
+        # Add progress bar with data attributes for JavaScript polling
+        return mark_safe(
+            f'<div class="video-progress-container" data-media-id="{obj.pk}" '
+            f'style="min-width: 150px;">'
+            f'<div style="background: #e0e0e0; border-radius: 4px; overflow: hidden; height: 20px;">'
+            f'<div class="progress-bar" style="width: 0%; height: 100%; background: #4CAF50; '
+            f'transition: width 0.3s;"></div>'
+            f'</div>'
+            f'<div class="progress-text" style="text-align: center; margin-top: 4px; '
+            f'font-size: 11px; color: #666;">Starting...</div>'
+            f'</div>'
+        )
+
     def save_model(self, request, obj, form, change):
         """Auto-trigger processing when video is uploaded."""
         is_new = obj.pk is None
@@ -1774,10 +2014,12 @@ class AdUnitMediaAdmin(ModelAdmin):
             obj.status = "uploaded"
             obj.save(update_fields=["status"])
 
-            # Queue processing task
+            # Queue processing task and store task ID
             from .tasks import analyze_video_task
 
-            analyze_video_task.apply_async(args=[obj.pk], queue="default")
+            result = analyze_video_task.apply_async(args=[obj.pk], queue="default")
+            obj.celery_task_id = result.id
+            obj.save(update_fields=["celery_task_id"])
             messages.info(
                 request,
                 f"Video processing queued for {obj}. Check back in a few minutes.",
@@ -1805,7 +2047,9 @@ class AdUnitMediaAdmin(ModelAdmin):
 
         from .tasks import analyze_video_task
 
-        analyze_video_task.apply_async(args=[media.pk], queue="default")
+        result = analyze_video_task.apply_async(args=[media.pk], queue="default")
+        media.celery_task_id = result.id
+        media.save(update_fields=["celery_task_id"])
 
         messages.success(request, f"Video reprocessing queued for {media}.")
         return redirect(reverse("admin:tvspots_adunitmedia_change", args=[object_id]))
@@ -2006,8 +2250,55 @@ class AdUnitMediaAdmin(ModelAdmin):
                 reverse("admin:tvspots_adunitmedia_change", args=[object_id])
             )
 
+    @action(description=_("Export as JSON"))
+    def export_media_action(self, request, object_id):
+        """Export a single AdUnitMedia with its processing result as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_ad_unit_media_with_result
+
+        media = AdUnitMedia.objects.select_related(
+            "campaign", "result", "video_ad_unit"
+        ).get(pk=object_id)
+
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"media-{media.pk}-{timestamp}"
+
+        # Export data
+        data = export_ad_unit_media_with_result(media)
+
+        return create_json_response(data, filename, pretty=True)
+
+    @action(description=_("Export selected media as JSON"))
+    def export_media_bulk_action(self, request, queryset):
+        """Export multiple AdUnitMedia instances with their results as JSON."""
+        from datetime import datetime
+        from cw.lib.export import create_json_response, export_ad_unit_media_with_result
+
+        # Export all selected media
+        media_data = []
+        for media in queryset.select_related("campaign", "result", "video_ad_unit"):
+            media_data.append(export_ad_unit_media_with_result(media))
+
+        # Generate filename with timestamp and count
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"media-bulk-{len(media_data)}-{timestamp}"
+
+        # Wrap in container object
+        data = {
+            "export_metadata": {
+                "export_date": datetime.utcnow().isoformat(),
+                "export_version": "1.0",
+                "model": "AdUnitMedia",
+                "count": len(media_data),
+            },
+            "media": media_data,
+        }
+
+        return create_json_response(data, filename, pretty=True)
+
     def get_urls(self):
-        """Add custom URLs for reprocess and create actions."""
+        """Add custom URLs for reprocess, create, and progress actions."""
         urls = super().get_urls()
         custom_urls = [
             path(
@@ -2020,5 +2311,76 @@ class AdUnitMediaAdmin(ModelAdmin):
                 self.admin_site.admin_view(self.create_origin_ad_unit_action),
                 name="tvspots_adunitmedia_create_ad_unit",
             ),
+            path(
+                "<int:object_id>/progress/",
+                self.admin_site.admin_view(self.progress_api),
+                name="tvspots_adunitmedia_progress",
+            ),
         ]
         return custom_urls + urls
+
+    def progress_api(self, request, object_id):
+        """API endpoint to fetch current progress of video processing task."""
+        from django.http import JsonResponse
+        from celery.result import AsyncResult
+
+        try:
+            media = AdUnitMedia.objects.get(pk=object_id)
+        except AdUnitMedia.DoesNotExist:
+            return JsonResponse({"error": "Media not found"}, status=404)
+
+        # If no task ID or not processing, return current status
+        if not media.celery_task_id or media.status not in ["processing"]:
+            return JsonResponse({
+                "status": media.status,
+                "progress": 100 if media.status == "completed" else 0,
+                "phase": media.status,
+                "message": media.get_status_display(),
+            })
+
+        # Fetch task result from Celery
+        task_result = AsyncResult(media.celery_task_id)
+
+        # Handle different task states
+        if task_result.state == "PENDING":
+            response = {
+                "status": "pending",
+                "progress": 0,
+                "phase": "queued",
+                "message": "Task is queued...",
+            }
+        elif task_result.state == "PROGRESS":
+            info = task_result.info or {}
+            response = {
+                "status": "processing",
+                "progress": info.get("current", 0),
+                "total": info.get("total", 100),
+                "phase": info.get("phase", "unknown"),
+                "message": info.get("status", "Processing..."),
+            }
+        elif task_result.state == "SUCCESS":
+            response = {
+                "status": "completed",
+                "progress": 100,
+                "phase": "completed",
+                "message": "Processing complete",
+                "result": task_result.result,
+            }
+        elif task_result.state == "FAILURE":
+            response = {
+                "status": "failed",
+                "progress": 0,
+                "phase": "failed",
+                "message": str(task_result.info) if task_result.info else "Task failed",
+                "error": str(task_result.info) if task_result.info else None,
+            }
+        else:
+            # RETRY, REVOKED, etc.
+            response = {
+                "status": task_result.state.lower(),
+                "progress": 0,
+                "phase": task_result.state.lower(),
+                "message": f"Task state: {task_result.state}",
+            }
+
+        return JsonResponse(response)

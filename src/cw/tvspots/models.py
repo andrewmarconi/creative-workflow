@@ -518,6 +518,11 @@ class AdUnitMedia(models.Model):
     )
 
     # Processing tracking
+    celery_task_id = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Celery task ID for async video processing",
+    )
     processing_started_at = models.DateTimeField(null=True, blank=True)
     processing_completed_at = models.DateTimeField(null=True, blank=True)
     processing_error = models.TextField(blank=True)
@@ -554,6 +559,22 @@ class AdUnitMedia(models.Model):
 
     def __str__(self):
         return f"Ad Unit Media for {self.campaign} ({self.status})"
+
+    def save(self, *args, **kwargs):
+        """Override save to validate video file before saving."""
+        # Only validate if there's a new video file being uploaded
+        if self.video_file and not self.pk:
+            from cw.lib.security import VideoFileValidator
+            from django.core.exceptions import ValidationError
+
+            validator = VideoFileValidator()
+            try:
+                validator.validate(self.video_file)
+            except ValidationError as e:
+                # Re-raise with context about which model failed
+                raise ValidationError(f"Video file validation failed: {e}")
+
+        super().save(*args, **kwargs)
 
 
 class VideoProcessingResult(models.Model):

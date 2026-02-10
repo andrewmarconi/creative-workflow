@@ -217,6 +217,11 @@ def analyze_video_task(self, ad_unit_media_id: int):
     10. Create result object
     11. Save keyframes to database
 
+    Progress tracking:
+    - Reports progress via self.update_state() at each phase
+    - Progress percentages: metadata (10%), scenes (30%), transcription (50%),
+      visual analysis (70%), script generation (90%), completion (100%)
+
     Args:
         ad_unit_media_id: ID of the AdUnitMedia to process
 
@@ -240,11 +245,21 @@ def analyze_video_task(self, ad_unit_media_id: int):
         media = AdUnitMedia.objects.get(id=ad_unit_media_id)
         media.status = "processing"
         media.processing_started_at = timezone.now()
-        media.save(update_fields=["status", "processing_started_at"])
+        media.celery_task_id = self.request.id
+        media.save(update_fields=["status", "processing_started_at", "celery_task_id"])
 
         video_path = media.video_file.path
 
-        # Phase 1: Extract metadata
+        # Phase 1: Extract metadata (0-10%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 0,
+                "total": 100,
+                "status": "Extracting video metadata...",
+                "phase": "metadata",
+            }
+        )
         logger.info("Extracting video metadata...")
         from cw.lib.video_analysis import extract_video_metadata
 
@@ -274,7 +289,16 @@ def analyze_video_task(self, ad_unit_media_id: int):
             extra={"metadata": metadata},
         )
 
-        # Phase 2: Scene detection
+        # Phase 2: Scene detection (10-30%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 10,
+                "total": 100,
+                "status": "Detecting scenes...",
+                "phase": "scene_detection",
+            }
+        )
         logger.info("Detecting scenes...")
         from cw.lib.video_analysis import detect_scenes
 
@@ -284,7 +308,16 @@ def analyze_video_task(self, ad_unit_media_id: int):
             extra={"num_scenes": len(scenes)},
         )
 
-        # Phase 3: Transcribe audio
+        # Phase 3: Transcribe audio (30-50%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 30,
+                "total": 100,
+                "status": "Transcribing audio...",
+                "phase": "transcription",
+            }
+        )
         logger.info("Transcribing audio...")
         from cw.lib.video_analysis import transcribe_audio
 
@@ -298,7 +331,16 @@ def analyze_video_task(self, ad_unit_media_id: int):
             },
         )
 
-        # Phase 4: Extract keyframes and detect objects (Phase 2)
+        # Phase 4: Extract keyframes and detect objects (50-70%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 50,
+                "total": 100,
+                "status": "Analyzing visual content...",
+                "phase": "visual_analysis",
+            }
+        )
         import tempfile
         keyframes_dir = tempfile.mkdtemp(prefix="keyframes_")
 
@@ -361,11 +403,29 @@ def analyze_video_task(self, ad_unit_media_id: int):
             extra={"categories": categories_summary},
         )
 
-        # Phase 8: Generate enhanced script with vision inputs (Phase 2)
+        # Phase 8: Generate enhanced script (70-90%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 70,
+                "total": 100,
+                "status": "Generating script...",
+                "phase": "script_generation",
+            }
+        )
         logger.info("Generating enhanced script...")
         script = _generate_basic_script(categorized_scenes, transcription)
 
-        # Phase 9: Generate audience insights (Phase 3 Part 1)
+        # Phase 9: Generate audience insights (90-95%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 90,
+                "total": 100,
+                "status": "Generating audience insights...",
+                "phase": "insights",
+            }
+        )
         logger.info("Generating audience insights...")
         from cw.lib.video_analysis.audience_insights import generate_audience_insights
 
@@ -381,7 +441,16 @@ def analyze_video_task(self, ad_unit_media_id: int):
             extra={"audience_insights": audience_insights},
         )
 
-        # Phase 10: Create result object
+        # Phase 10: Create result object and save keyframes (95-100%)
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current": 95,
+                "total": 100,
+                "status": "Finalizing results...",
+                "phase": "finalization",
+            }
+        )
         result = VideoProcessingResult.objects.create(
             scenes=categorized_scenes,
             script=script,
