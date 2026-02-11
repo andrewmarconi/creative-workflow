@@ -150,11 +150,11 @@ DJANGO_SUPERUSER_PASSWORD=admin uv run manage.py createsuperuser \
 echo ""
 
 # Import World Values Survey data from Kaggle
-if [ -n "$KAGGLE_API_TOKEN" ]; then
+# if [ -n "$KAGGLE_API_TOKEN" ]; then
     echo "Importing World Values Survey data..."
     uv run manage.py import_wvs
     echo ""
-fi
+# fi
 
 # # Stop Docker containers
 # echo "Stopping Docker containers..."

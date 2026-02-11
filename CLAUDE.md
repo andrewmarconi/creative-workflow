@@ -42,6 +42,9 @@ uv run manage.py export_prompt_templates        # Export active templates to dat
 uv run manage.py export_prompt_templates --dir custom/  # Export to custom directory
 
 # Reference Data (Regions, Countries, Languages, LLM Models)
+uv run manage.py generate_reference_data        # Generate countries/languages from Babel CLDR to data/
+uv run manage.py generate_reference_data --dry-run    # Preview without writing files
+uv run manage.py generate_reference_data --min-population 10  # Higher language inclusion threshold
 uv run manage.py export_reference_data          # Export to separate files in data/
 uv run manage.py export_reference_data --dir custom/  # Export to custom directory
 uv run manage.py import_reference_data          # Import from data/ directory

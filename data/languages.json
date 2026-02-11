@@ -1,19 +1,581 @@
 [
   {
-    "code": "en-US",
-    "name": "English (United States)",
-    "base_language": "en",
+    "code": "af-ZA",
+    "name": "Afrikaans (South Africa)",
+    "base_language": "af",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ak-GH",
+    "name": "Akan (Ghana)",
+    "base_language": "ak",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [
       "CohereForAI/aya-expanse-8b"
     ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "am-ET",
+    "name": "Amharic (Ethiopia)",
+    "base_language": "am",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-AE",
+    "name": "Arabic (United Arab Emirates)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-BH",
+    "name": "Arabic (Bahrain)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-DJ",
+    "name": "Arabic (Djibouti)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-DZ",
+    "name": "Arabic (Algeria)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-EG",
+    "name": "Arabic (Egypt)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-EH",
+    "name": "Arabic (Western Sahara)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-ER",
+    "name": "Arabic (Eritrea)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-IL",
+    "name": "Arabic (Israel)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-IQ",
+    "name": "Arabic (Iraq)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-JO",
+    "name": "Arabic (Jordan)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-KM",
+    "name": "Arabic (Comoros)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-KW",
+    "name": "Arabic (Kuwait)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-LB",
+    "name": "Arabic (Lebanon)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-LY",
+    "name": "Arabic (Libya)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-MA",
+    "name": "Arabic (Morocco)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-MR",
+    "name": "Arabic (Mauritania)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-OM",
+    "name": "Arabic (Oman)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-PS",
+    "name": "Arabic (Palestinian Territories)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-QA",
+    "name": "Arabic (Qatar)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-SA",
+    "name": "Arabic (Saudi Arabia)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ar-SD",
+    "name": "Arabic (Sudan)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-SO",
+    "name": "Arabic (Somalia)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-SY",
+    "name": "Arabic (Syria)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-TD",
+    "name": "Arabic (Chad)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-TN",
+    "name": "Arabic (Tunisia)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ar-YE",
+    "name": "Arabic (Yemen)",
+    "base_language": "ar",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ay-BO",
+    "name": "Aymara (Bolivia)",
+    "base_language": "ay",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "az-AZ",
+    "name": "Azerbaijani (Latin, Azerbaijan)",
+    "base_language": "az",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "be-BY",
+    "name": "Belarusian (Belarus)",
+    "base_language": "be",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "bg-BG",
+    "name": "Bulgarian (Bulgaria)",
+    "base_language": "bg",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "bi-VU",
+    "name": "Bislama (Vanuatu)",
+    "base_language": "bi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "bn-BD",
+    "name": "Bangla (Bangladesh)",
+    "base_language": "bn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "bn-IN",
+    "name": "Bangla (India)",
+    "base_language": "bn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "bs-BA",
+    "name": "Bosnian (Cyrillic, Bosnia & Herzegovina)",
+    "base_language": "bs",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ca-AD",
+    "name": "Catalan (Andorra)",
+    "base_language": "ca",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ca-ES",
+    "name": "Catalan (Spain)",
+    "base_language": "ca",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ceb-PH",
+    "name": "Cebuano (Philippines)",
+    "base_language": "ceb",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ch-GU",
+    "name": "Chamorro (Guam)",
+    "base_language": "ch",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ckb-IQ",
+    "name": "Central Kurdish (Iraq)",
+    "base_language": "ckb",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "cs-CZ",
+    "name": "Czech (Czechia)",
+    "base_language": "cs",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "da-DK",
+    "name": "Danish (Denmark)",
+    "base_language": "da",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "de-AT",
+    "name": "German (Austria)",
+    "base_language": "de",
+    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "alternative_models": [],
     "insights": [
       {
         "points": [
-          "American spelling: color, honor, organize (not colour, honour, organise)",
-          "Informal tone acceptable in most advertising contexts",
-          "Active voice and direct phrasing preferred",
-          "Contractions common and natural (it's, you're, we've)"
+          "Greeting: 'Grüß Gott' (AT) vs 'Hallo/Guten Tag' (DE)",
+          "January: 'Jänner' (AT) vs 'Januar' (DE)",
+          "Potato: 'Erdapfel' (AT) vs 'Kartoffel' (DE)",
+          "Tomato: 'Paradeiser' (AT) vs 'Tomate' (DE)"
+        ],
+        "heading": "Vocabulary differences from Germany"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "de-BE",
+    "name": "German (Belgium)",
+    "base_language": "de",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "de-CH",
+    "name": "German (Switzerland)",
+    "base_language": "de",
+    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "alternative_models": [],
+    "insights": [
+      {
+        "points": [
+          "Swiss Standard German (Hochdeutsch) for written advertising",
+          "Schweizerdeutsch (Swiss German) for spoken VO - significantly different from Standard German",
+          "Helvetisms: Swiss-specific vocabulary and expressions",
+          "Formal and precise language expected"
+        ],
+        "heading": "Language considerations"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "de-DE",
+    "name": "German (Germany)",
+    "base_language": "de",
+    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "alternative_models": [
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
+    "insights": [
+      {
+        "points": [
+          "Formal address (Sie) expected in most advertising",
+          "Compound words common - keep messaging concise",
+          "Precision and accuracy valued - avoid vague claims",
+          "Gender-neutral language increasingly expected"
         ],
         "heading": "Language characteristics"
       }
@@ -22,8 +584,114 @@
     "is_active": true
   },
   {
-    "code": "en-GB",
-    "name": "English (United Kingdom)",
+    "code": "de-DK",
+    "name": "German (Denmark)",
+    "base_language": "de",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "de-LI",
+    "name": "German (Liechtenstein)",
+    "base_language": "de",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "de-LU",
+    "name": "German (Luxembourg)",
+    "base_language": "de",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "de-PL",
+    "name": "German (Poland)",
+    "base_language": "de",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "dv-MV",
+    "name": "Divehi (Maldives)",
+    "base_language": "dv",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "dz-BT",
+    "name": "Dzongkha (Bhutan)",
+    "base_language": "dz",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ee-GH",
+    "name": "Ewe (Ghana)",
+    "base_language": "ee",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "el-CY",
+    "name": "Greek (Cyprus)",
+    "base_language": "el",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "el-GR",
+    "name": "Greek (Greece)",
+    "base_language": "el",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-AG",
+    "name": "English (Antigua & Barbuda)",
     "base_language": "en",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [
@@ -31,7 +699,113 @@
     ],
     "insights": [],
     "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-AI",
+    "name": "English (Anguilla)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-AS",
+    "name": "English (American Samoa)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-AU",
+    "name": "English (Australia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
     "is_active": true
+  },
+  {
+    "code": "en-BB",
+    "name": "English (Barbados)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-BI",
+    "name": "English (Burundi)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-BM",
+    "name": "English (Bermuda)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-BS",
+    "name": "English (Bahamas)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-BW",
+    "name": "English (Botswana)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-BZ",
+    "name": "English (Belize)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "en-CA",
@@ -56,24 +830,256 @@
     "is_active": true
   },
   {
-    "code": "en-AU",
-    "name": "English (Australia)",
+    "code": "en-CC",
+    "name": "English (Cocos (Keeling) Islands)",
     "base_language": "en",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-CK",
+    "name": "English (Cook Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-CM",
+    "name": "English (Cameroon)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-CQ",
+    "name": "English (Sark)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-CX",
+    "name": "English (Christmas Island)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-DG",
+    "name": "English (Diego Garcia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-DM",
+    "name": "English (Dominica)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-ER",
+    "name": "English (Eritrea)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-FJ",
+    "name": "English (Fiji)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-FK",
+    "name": "English (Falkland Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-FM",
+    "name": "English (Micronesia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GB",
+    "name": "English (United Kingdom)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
     "is_active": true
   },
   {
-    "code": "en-NZ",
-    "name": "English (New Zealand)",
+    "code": "en-GD",
+    "name": "English (Grenada)",
     "base_language": "en",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
+  },
+  {
+    "code": "en-GG",
+    "name": "English (Guernsey)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GH",
+    "name": "English (Ghana)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GI",
+    "name": "English (Gibraltar)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GM",
+    "name": "English (Gambia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GS",
+    "name": "English (South Georgia & South Sandwich Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GU",
+    "name": "English (Guam)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-GY",
+    "name": "English (Guyana)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-HK",
+    "name": "English (Hong Kong SAR China)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "en-IE",
@@ -86,14 +1092,16 @@
     "is_active": true
   },
   {
-    "code": "en-ZA",
-    "name": "English (South Africa)",
+    "code": "en-IM",
+    "name": "English (Isle of Man)",
     "base_language": "en",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
     "code": "en-IN",
@@ -104,6 +1112,786 @@
     "insights": [],
     "notes": "",
     "is_active": true
+  },
+  {
+    "code": "en-IO",
+    "name": "English (British Indian Ocean Territory)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-JE",
+    "name": "English (Jersey)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-JM",
+    "name": "English (Jamaica)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-KE",
+    "name": "English (Kenya)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-KI",
+    "name": "English (Kiribati)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-KN",
+    "name": "English (St. Kitts & Nevis)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-KY",
+    "name": "English (Cayman Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-LC",
+    "name": "English (St. Lucia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-LR",
+    "name": "English (Liberia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-LS",
+    "name": "English (Lesotho)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MG",
+    "name": "English (Madagascar)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MH",
+    "name": "English (Marshall Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MP",
+    "name": "English (Northern Mariana Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MS",
+    "name": "English (Montserrat)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MT",
+    "name": "English (Malta)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MU",
+    "name": "English (Mauritius)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-MW",
+    "name": "English (Malawi)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-NA",
+    "name": "English (Namibia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-NF",
+    "name": "English (Norfolk Island)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-NG",
+    "name": "English (Nigeria)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-NR",
+    "name": "English (Nauru)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-NU",
+    "name": "English (Niue)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-NZ",
+    "name": "English (New Zealand)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-PG",
+    "name": "English (Papua New Guinea)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-PH",
+    "name": "English (Philippines)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-PK",
+    "name": "English (Pakistan)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-PN",
+    "name": "English (Pitcairn Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-PR",
+    "name": "English (Puerto Rico)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-PW",
+    "name": "English (Palau)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-RW",
+    "name": "English (Rwanda)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SB",
+    "name": "English (Solomon Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SC",
+    "name": "English (Seychelles)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SD",
+    "name": "English (Sudan)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SG",
+    "name": "English (Singapore)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SH",
+    "name": "English (St. Helena)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SL",
+    "name": "English (Sierra Leone)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SS",
+    "name": "English (South Sudan)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SX",
+    "name": "English (Sint Maarten)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-SZ",
+    "name": "English (Eswatini)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-TC",
+    "name": "English (Turks & Caicos Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-TK",
+    "name": "English (Tokelau)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-TO",
+    "name": "English (Tonga)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-TT",
+    "name": "English (Trinidad & Tobago)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-TV",
+    "name": "English (Tuvalu)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-TZ",
+    "name": "English (Tanzania)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-UG",
+    "name": "English (Uganda)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-UM",
+    "name": "English (U.S. Outlying Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-US",
+    "name": "English (United States)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [
+      {
+        "points": [
+          "American spelling: color, honor, organize (not colour, honour, organise)",
+          "Informal tone acceptable in most advertising contexts",
+          "Active voice and direct phrasing preferred",
+          "Contractions common and natural (it's, you're, we've)"
+        ],
+        "heading": "Language characteristics"
+      }
+    ],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-VC",
+    "name": "English (St. Vincent & Grenadines)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-VG",
+    "name": "English (British Virgin Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-VI",
+    "name": "English (U.S. Virgin Islands)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-VU",
+    "name": "English (Vanuatu)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-WS",
+    "name": "English (Samoa)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-ZA",
+    "name": "English (South Africa)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "en-ZM",
+    "name": "English (Zambia)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "en-ZW",
+    "name": "English (Zimbabwe)",
+    "base_language": "en",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-AR",
+    "name": "Spanish (Argentina)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-BO",
+    "name": "Spanish (Bolivia)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-CL",
+    "name": "Spanish (Chile)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-CO",
+    "name": "Spanish (Colombia)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "es-CR",
+    "name": "Spanish (Costa Rica)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-CU",
+    "name": "Spanish (Cuba)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-DO",
+    "name": "Spanish (Dominican Republic)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-EA",
+    "name": "Spanish (Ceuta & Melilla)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-EC",
+    "name": "Spanish (Ecuador)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "es-ES",
@@ -124,6 +1912,54 @@
     ],
     "notes": "",
     "is_active": true
+  },
+  {
+    "code": "es-GQ",
+    "name": "Spanish (Equatorial Guinea)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-GT",
+    "name": "Spanish (Guatemala)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-HN",
+    "name": "Spanish (Honduras)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-IC",
+    "name": "Spanish (Canary Islands)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "es-MX",
@@ -157,34 +1993,28 @@
     "is_active": true
   },
   {
-    "code": "es-AR",
-    "name": "Spanish (Argentina)",
+    "code": "es-NI",
+    "name": "Spanish (Nicaragua)",
     "base_language": "es",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "es-CO",
-    "name": "Spanish (Colombia)",
+    "code": "es-PA",
+    "name": "Spanish (Panama)",
     "base_language": "es",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "es-CL",
-    "name": "Spanish (Chile)",
-    "base_language": "es",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
     "code": "es-PE",
@@ -197,27 +2027,236 @@
     "is_active": true
   },
   {
-    "code": "fr-FR",
-    "name": "French (France)",
+    "code": "es-PR",
+    "name": "Spanish (Puerto Rico)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-PY",
+    "name": "Spanish (Paraguay)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-SV",
+    "name": "Spanish (El Salvador)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-US",
+    "name": "Spanish (United States)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-UY",
+    "name": "Spanish (Uruguay)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "es-VE",
+    "name": "Spanish (Venezuela)",
+    "base_language": "es",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "et-EE",
+    "name": "Estonian (Estonia)",
+    "base_language": "et",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fa-AF",
+    "name": "Persian (Afghanistan)",
+    "base_language": "fa",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fa-IR",
+    "name": "Persian (Iran)",
+    "base_language": "fa",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ff-SN",
+    "name": "Fula (Latin, Senegal)",
+    "base_language": "ff",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fi-FI",
+    "name": "Finnish (Finland)",
+    "base_language": "fi",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "fil-PH",
+    "name": "Filipino (Philippines)",
+    "base_language": "fil",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fj-FJ",
+    "name": "Fijian (Fiji)",
+    "base_language": "fj",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fo-FO",
+    "name": "Faroese (Faroe Islands)",
+    "base_language": "fo",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-BE",
+    "name": "French (Belgium)",
     "base_language": "fr",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [
-      "CohereForAI/aya-expanse-8b",
-      "mistralai/Mistral-7B-Instruct-v0.3"
+      "CohereForAI/aya-expanse-8b"
     ],
     "insights": [
       {
         "points": [
-          "Formal register (vous) expected in most advertising",
-          "Informal (tu) reserved for youth-oriented or digital-native contexts",
-          "Avoid excessive Anglicisms - French equivalents preferred",
-          "Subjunctive mood and formal constructions common"
+          "Belgian French closer to France French than Quebec French",
+          "Distinct vocabulary: 'septante' (70), 'nonante' (90) instead of soixante-dix, quatre-vingt-dix",
+          "Formal 'vous' expected in advertising",
+          "Flemish influence in Brussels - bilingual considerations"
         ],
         "heading": "Language characteristics"
       }
     ],
     "notes": "",
     "is_active": true
+  },
+  {
+    "code": "fr-BF",
+    "name": "French (Burkina Faso)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-BI",
+    "name": "French (Burundi)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-BJ",
+    "name": "French (Benin)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-BL",
+    "name": "French (St. Barthélemy)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "fr-CA",
@@ -261,26 +2300,40 @@
     "is_active": true
   },
   {
-    "code": "fr-BE",
-    "name": "French (Belgium)",
+    "code": "fr-CD",
+    "name": "French (Congo - Kinshasa)",
     "base_language": "fr",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [
       "CohereForAI/aya-expanse-8b"
     ],
-    "insights": [
-      {
-        "points": [
-          "Belgian French closer to France French than Quebec French",
-          "Distinct vocabulary: 'septante' (70), 'nonante' (90) instead of soixante-dix, quatre-vingt-dix",
-          "Formal 'vous' expected in advertising",
-          "Flemish influence in Brussels - bilingual considerations"
-        ],
-        "heading": "Language characteristics"
-      }
-    ],
+    "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
+  },
+  {
+    "code": "fr-CF",
+    "name": "French (Central African Republic)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-CG",
+    "name": "French (Congo - Brazzaville)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "fr-CH",
@@ -303,20 +2356,69 @@
     "is_active": true
   },
   {
-    "code": "de-DE",
-    "name": "German (Germany)",
-    "base_language": "de",
-    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "code": "fr-CI",
+    "name": "French (Côte d’Ivoire)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [
-      "Qwen/Qwen2.5-7B-Instruct"
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-CM",
+    "name": "French (Cameroon)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-DJ",
+    "name": "French (Djibouti)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-DZ",
+    "name": "French (Algeria)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-FR",
+    "name": "French (France)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b",
+      "mistralai/Mistral-7B-Instruct-v0.3"
     ],
     "insights": [
       {
         "points": [
-          "Formal address (Sie) expected in most advertising",
-          "Compound words common - keep messaging concise",
-          "Precision and accuracy valued - avoid vague claims",
-          "Gender-neutral language increasingly expected"
+          "Formal register (vous) expected in most advertising",
+          "Informal (tu) reserved for youth-oriented or digital-native contexts",
+          "Avoid excessive Anglicisms - French equivalents preferred",
+          "Subjunctive mood and formal constructions common"
         ],
         "heading": "Language characteristics"
       }
@@ -325,42 +2427,614 @@
     "is_active": true
   },
   {
-    "code": "de-AT",
-    "name": "German (Austria)",
-    "base_language": "de",
-    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
-    "alternative_models": [],
-    "insights": [
-      {
-        "points": [
-          "Greeting: 'Grüß Gott' (AT) vs 'Hallo/Guten Tag' (DE)",
-          "January: 'Jänner' (AT) vs 'Januar' (DE)",
-          "Potato: 'Erdapfel' (AT) vs 'Kartoffel' (DE)",
-          "Tomato: 'Paradeiser' (AT) vs 'Tomate' (DE)"
-        ],
-        "heading": "Vocabulary differences from Germany"
-      }
+    "code": "fr-GA",
+    "name": "French (Gabon)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
     ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-GF",
+    "name": "French (French Guiana)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-GN",
+    "name": "French (Guinea)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-GP",
+    "name": "French (Guadeloupe)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-GQ",
+    "name": "French (Equatorial Guinea)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-HT",
+    "name": "French (Haiti)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-IT",
+    "name": "French (Italy)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-KM",
+    "name": "French (Comoros)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-LU",
+    "name": "French (Luxembourg)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-MA",
+    "name": "French (Morocco)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-MC",
+    "name": "French (Monaco)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-MF",
+    "name": "French (St. Martin)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-MG",
+    "name": "French (Madagascar)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-ML",
+    "name": "French (Mali)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-MQ",
+    "name": "French (Martinique)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-MU",
+    "name": "French (Mauritius)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-NC",
+    "name": "French (New Caledonia)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-NE",
+    "name": "French (Niger)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-PF",
+    "name": "French (French Polynesia)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-PM",
+    "name": "French (St. Pierre & Miquelon)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-RE",
+    "name": "French (Réunion)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-RW",
+    "name": "French (Rwanda)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-SC",
+    "name": "French (Seychelles)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-SN",
+    "name": "French (Senegal)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-TD",
+    "name": "French (Chad)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-TG",
+    "name": "French (Togo)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-TN",
+    "name": "French (Tunisia)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-VU",
+    "name": "French (Vanuatu)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-WF",
+    "name": "French (Wallis & Futuna)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "fr-YT",
+    "name": "French (Mayotte)",
+    "base_language": "fr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ga-IE",
+    "name": "Irish (Ireland)",
+    "base_language": "ga",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "gil-KI",
+    "name": "Gilbertese (Kiribati)",
+    "base_language": "gil",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "gl-ES",
+    "name": "Galician (Spain)",
+    "base_language": "gl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "gn-PY",
+    "name": "Guarani (Paraguay)",
+    "base_language": "gn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "gsw-CH",
+    "name": "Swiss German (Switzerland)",
+    "base_language": "gsw",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "gsw-LI",
+    "name": "Swiss German (Liechtenstein)",
+    "base_language": "gsw",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "gv-IM",
+    "name": "Manx (Isle of Man)",
+    "base_language": "gv",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "hak-TW",
+    "name": "Hakka Chinese (Taiwan)",
+    "base_language": "hak",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "he-IL",
+    "name": "Hebrew (Israel)",
+    "base_language": "he",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
     "notes": "",
     "is_active": true
   },
   {
-    "code": "de-CH",
-    "name": "German (Switzerland)",
-    "base_language": "de",
-    "primary_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "code": "hi-IN",
+    "name": "Hindi (India)",
+    "base_language": "hi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
-    "insights": [
-      {
-        "points": [
-          "Swiss Standard German (Hochdeutsch) for written advertising",
-          "Schweizerdeutsch (Swiss German) for spoken VO - significantly different from Standard German",
-          "Helvetisms: Swiss-specific vocabulary and expressions",
-          "Formal and precise language expected"
-        ],
-        "heading": "Language considerations"
-      }
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "hif-FJ",
+    "name": "Fiji Hindi (Fiji)",
+    "base_language": "hif",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
     ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "hil-PH",
+    "name": "Hiligaynon (Philippines)",
+    "base_language": "hil",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ho-PG",
+    "name": "Hiri Motu (Papua New Guinea)",
+    "base_language": "ho",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "hr-BA",
+    "name": "Croatian (Bosnia & Herzegovina)",
+    "base_language": "hr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "hr-HR",
+    "name": "Croatian (Croatia)",
+    "base_language": "hr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ht-HT",
+    "name": "Haitian Creole (Haiti)",
+    "base_language": "ht",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "hu-HU",
+    "name": "Hungarian (Hungary)",
+    "base_language": "hu",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "hy-AM",
+    "name": "Armenian (Armenia)",
+    "base_language": "hy",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "id-ID",
+    "name": "Indonesian (Indonesia)",
+    "base_language": "id",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ilo-PH",
+    "name": "Iloko (Philippines)",
+    "base_language": "ilo",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "is-IS",
+    "name": "Icelandic (Iceland)",
+    "base_language": "is",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "it-CH",
+    "name": "Italian (Switzerland)",
+    "base_language": "it",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
     "notes": "",
     "is_active": true
   },
@@ -375,19 +3049,33 @@
     "is_active": true
   },
   {
-    "code": "it-CH",
-    "name": "Italian (Switzerland)",
+    "code": "it-SM",
+    "name": "Italian (San Marino)",
     "base_language": "it",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "pt-BR",
-    "name": "Portuguese (Brazil)",
-    "base_language": "pt",
+    "code": "it-VA",
+    "name": "Italian (Vatican City)",
+    "base_language": "it",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ja-JP",
+    "name": "Japanese (Japan)",
+    "base_language": "ja",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -395,9 +3083,69 @@
     "is_active": true
   },
   {
-    "code": "pt-PT",
-    "name": "Portuguese (Portugal)",
-    "base_language": "pt",
+    "code": "ka-GE",
+    "name": "Georgian (Georgia)",
+    "base_language": "ka",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "kk-KZ",
+    "name": "Kazakh (Kazakhstan)",
+    "base_language": "kk",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "kl-GL",
+    "name": "Kalaallisut (Greenland)",
+    "base_language": "kl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "km-KH",
+    "name": "Khmer (Cambodia)",
+    "base_language": "km",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ko-KP",
+    "name": "Korean (North Korea)",
+    "base_language": "ko",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ko-KR",
+    "name": "Korean (South Korea)",
+    "base_language": "ko",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -405,14 +3153,294 @@
     "is_active": true
   },
   {
-    "code": "nl-NL",
-    "name": "Dutch (Netherlands)",
+    "code": "ky-KG",
+    "name": "Kyrgyz (Kyrgyzstan)",
+    "base_language": "ky",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "lb-LU",
+    "name": "Luxembourgish (Luxembourg)",
+    "base_language": "lb",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "lo-LA",
+    "name": "Lao (Laos)",
+    "base_language": "lo",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "lt-LT",
+    "name": "Lithuanian (Lithuania)",
+    "base_language": "lt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "lua-CD",
+    "name": "Luba-Lulua (Congo - Kinshasa)",
+    "base_language": "lua",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "lv-LV",
+    "name": "Latvian (Latvia)",
+    "base_language": "lv",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "mg-MG",
+    "name": "Malagasy (Madagascar)",
+    "base_language": "mg",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "mh-MH",
+    "name": "Marshallese (Marshall Islands)",
+    "base_language": "mh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "mi-NZ",
+    "name": "Māori (New Zealand)",
+    "base_language": "mi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "mk-MK",
+    "name": "Macedonian (North Macedonia)",
+    "base_language": "mk",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "mn-MN",
+    "name": "Mongolian (Mongolia)",
+    "base_language": "mn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "mr-IN",
+    "name": "Marathi (India)",
+    "base_language": "mr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ms-BN",
+    "name": "Malay (Brunei)",
+    "base_language": "ms",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ms-MY",
+    "name": "Malay (Malaysia)",
+    "base_language": "ms",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ms-SG",
+    "name": "Malay (Singapore)",
+    "base_language": "ms",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "mt-MT",
+    "name": "Maltese (Malta)",
+    "base_language": "mt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "my-MM",
+    "name": "Burmese (Myanmar (Burma))",
+    "base_language": "my",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "na-NR",
+    "name": "Nauru (Nauru)",
+    "base_language": "na",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nan-TW",
+    "name": "Min Nan Chinese (Taiwan)",
+    "base_language": "nan",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nb-NO",
+    "name": "Norwegian Bokmål (Norway)",
+    "base_language": "nb",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "nb-SJ",
+    "name": "Norwegian Bokmål (Svalbard & Jan Mayen)",
+    "base_language": "nb",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nd-ZW",
+    "name": "North Ndebele (Zimbabwe)",
+    "base_language": "nd",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ne-NP",
+    "name": "Nepali (Nepal)",
+    "base_language": "ne",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "niu-NU",
+    "name": "Niuean (Niue)",
+    "base_language": "niu",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nl-AW",
+    "name": "Dutch (Aruba)",
     "base_language": "nl",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
     "code": "nl-BE",
@@ -427,22 +3455,68 @@
     "is_active": true
   },
   {
-    "code": "sv-SE",
-    "name": "Swedish (Sweden)",
-    "base_language": "sv",
-    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "code": "nl-BQ",
+    "name": "Dutch (Caribbean Netherlands)",
+    "base_language": "nl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [
-      "Qwen/Qwen2.5-7B-Instruct"
+      "CohereForAI/aya-expanse-8b"
     ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nl-CW",
+    "name": "Dutch (Curaçao)",
+    "base_language": "nl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nl-NL",
+    "name": "Dutch (Netherlands)",
+    "base_language": "nl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
     "insights": [],
     "notes": "",
     "is_active": true
   },
   {
-    "code": "da-DK",
-    "name": "Danish (Denmark)",
-    "base_language": "da",
-    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "code": "nl-SR",
+    "name": "Dutch (Suriname)",
+    "base_language": "nl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nl-SX",
+    "name": "Dutch (Sint Maarten)",
+    "base_language": "nl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "nn-NO",
+    "name": "Norwegian Nynorsk (Norway)",
+    "base_language": "nn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
     "notes": "",
@@ -468,34 +3542,64 @@
     "is_active": true
   },
   {
-    "code": "fi-FI",
-    "name": "Finnish (Finland)",
-    "base_language": "fi",
-    "primary_model": "microsoft/Phi-3.5-mini-instruct",
-    "alternative_models": [],
+    "code": "nso-ZA",
+    "name": "Northern Sotho (South Africa)",
+    "base_language": "nso",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "nb-NO",
-    "name": "Norwegian Bokmål (Norway)",
-    "base_language": "nb",
+    "code": "ny-MW",
+    "name": "Nyanja (Malawi)",
+    "base_language": "ny",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "nn-NO",
-    "name": "Norwegian Nynorsk (Norway)",
-    "base_language": "nn",
+    "code": "pap-AW",
+    "name": "Papiamento (Aruba)",
+    "base_language": "pap",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
+  },
+  {
+    "code": "pap-CW",
+    "name": "Papiamento (Curaçao)",
+    "base_language": "pap",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pau-PW",
+    "name": "Palauan (Palau)",
+    "base_language": "pau",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "pl-PL",
@@ -508,9 +3612,33 @@
     "is_active": true
   },
   {
-    "code": "ru-RU",
-    "name": "Russian (Russia)",
-    "base_language": "ru",
+    "code": "ps-AF",
+    "name": "Pashto (Afghanistan)",
+    "base_language": "ps",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-AO",
+    "name": "Portuguese (Angola)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-BR",
+    "name": "Portuguese (Brazil)",
+    "base_language": "pt",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -518,9 +3646,69 @@
     "is_active": true
   },
   {
-    "code": "uk-UA",
-    "name": "Ukrainian (Ukraine)",
-    "base_language": "uk",
+    "code": "pt-CV",
+    "name": "Portuguese (Cape Verde)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-GQ",
+    "name": "Portuguese (Equatorial Guinea)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-GW",
+    "name": "Portuguese (Guinea-Bissau)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-MO",
+    "name": "Portuguese (Macao SAR China)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-MZ",
+    "name": "Portuguese (Mozambique)",
+    "base_language": "pt",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "pt-PT",
+    "name": "Portuguese (Portugal)",
+    "base_language": "pt",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -528,34 +3716,100 @@
     "is_active": true
   },
   {
-    "code": "cs-CZ",
-    "name": "Czech (Czech Republic)",
-    "base_language": "cs",
+    "code": "pt-ST",
+    "name": "Portuguese (São Tomé & Príncipe)",
+    "base_language": "pt",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "sk-SK",
-    "name": "Slovak (Slovakia)",
-    "base_language": "sk",
+    "code": "pt-TL",
+    "name": "Portuguese (Timor-Leste)",
+    "base_language": "pt",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "hu-HU",
-    "name": "Hungarian (Hungary)",
-    "base_language": "hu",
+    "code": "qu-BO",
+    "name": "Quechua (Bolivia)",
+    "base_language": "qu",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
+  },
+  {
+    "code": "qu-EC",
+    "name": "Quechua (Ecuador)",
+    "base_language": "qu",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "qu-PE",
+    "name": "Quechua (Peru)",
+    "base_language": "qu",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "quc-GT",
+    "name": "Kʼicheʼ (Guatemala)",
+    "base_language": "quc",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "rn-BI",
+    "name": "Rundi (Burundi)",
+    "base_language": "rn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ro-MD",
+    "name": "Romanian (Moldova)",
+    "base_language": "ro",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
   },
   {
     "code": "ro-RO",
@@ -568,9 +3822,45 @@
     "is_active": true
   },
   {
-    "code": "bg-BG",
-    "name": "Bulgarian (Bulgaria)",
-    "base_language": "bg",
+    "code": "ru-BY",
+    "name": "Russian (Belarus)",
+    "base_language": "ru",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ru-KG",
+    "name": "Russian (Kyrgyzstan)",
+    "base_language": "ru",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ru-KZ",
+    "name": "Russian (Kazakhstan)",
+    "base_language": "ru",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ru-RU",
+    "name": "Russian (Russia)",
+    "base_language": "ru",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -578,19 +3868,57 @@
     "is_active": true
   },
   {
-    "code": "hr-HR",
-    "name": "Croatian (Croatia)",
-    "base_language": "hr",
+    "code": "ru-UA",
+    "name": "Russian (Ukraine)",
+    "base_language": "ru",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
-    "code": "sr-RS",
-    "name": "Serbian (Serbia)",
-    "base_language": "sr",
+    "code": "rw-RW",
+    "name": "Kinyarwanda (Rwanda)",
+    "base_language": "rw",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sg-CF",
+    "name": "Sango (Central African Republic)",
+    "base_language": "sg",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "si-LK",
+    "name": "Sinhala (Sri Lanka)",
+    "base_language": "si",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sk-SK",
+    "name": "Slovak (Slovakia)",
+    "base_language": "sk",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -608,9 +3936,117 @@
     "is_active": true
   },
   {
-    "code": "et-EE",
-    "name": "Estonian (Estonia)",
-    "base_language": "et",
+    "code": "sm-AS",
+    "name": "Samoan (American Samoa)",
+    "base_language": "sm",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sm-WS",
+    "name": "Samoan (Samoa)",
+    "base_language": "sm",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sn-ZW",
+    "name": "Shona (Zimbabwe)",
+    "base_language": "sn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "so-SO",
+    "name": "Somali (Somalia)",
+    "base_language": "so",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sq-AL",
+    "name": "Albanian (Albania)",
+    "base_language": "sq",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sq-MK",
+    "name": "Albanian (North Macedonia)",
+    "base_language": "sq",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sq-XK",
+    "name": "Albanian (Kosovo)",
+    "base_language": "sq",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sr-BA",
+    "name": "Serbian (Latin, Bosnia & Herzegovina)",
+    "base_language": "sr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sr-ME",
+    "name": "Serbian (Latin, Montenegro)",
+    "base_language": "sr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sr-RS",
+    "name": "Serbian (Latin, Serbia)",
+    "base_language": "sr",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -618,254 +4054,112 @@
     "is_active": true
   },
   {
-    "code": "lv-LV",
-    "name": "Latvian (Latvia)",
-    "base_language": "lv",
+    "code": "sr-XK",
+    "name": "Serbian (Latin, Kosovo)",
+    "base_language": "sr",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "srr-SN",
+    "name": "Serer (Senegal)",
+    "base_language": "srr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ss-SZ",
+    "name": "Swati (Eswatini)",
+    "base_language": "ss",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "st-LS",
+    "name": "Southern Sotho (Lesotho)",
+    "base_language": "st",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "st-ZA",
+    "name": "Southern Sotho (South Africa)",
+    "base_language": "st",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sv-AX",
+    "name": "Swedish (Åland Islands)",
+    "base_language": "sv",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sv-FI",
+    "name": "Swedish (Finland)",
+    "base_language": "sv",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sv-SE",
+    "name": "Swedish (Sweden)",
+    "base_language": "sv",
+    "primary_model": "microsoft/Phi-3.5-mini-instruct",
+    "alternative_models": [
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
     "insights": [],
     "notes": "",
     "is_active": true
   },
   {
-    "code": "lt-LT",
-    "name": "Lithuanian (Lithuania)",
-    "base_language": "lt",
+    "code": "sw-CD",
+    "name": "Swahili (Congo - Kinshasa)",
+    "base_language": "sw",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
     "insights": [],
     "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "el-GR",
-    "name": "Greek (Greece)",
-    "base_language": "el",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "tr-TR",
-    "name": "Turkish (Turkey)",
-    "base_language": "tr",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ar-SA",
-    "name": "Arabic (Saudi Arabia)",
-    "base_language": "ar",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ar-AE",
-    "name": "Arabic (United Arab Emirates)",
-    "base_language": "ar",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ar-EG",
-    "name": "Arabic (Egypt)",
-    "base_language": "ar",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "he-IL",
-    "name": "Hebrew (Israel)",
-    "base_language": "he",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ja-JP",
-    "name": "Japanese (Japan)",
-    "base_language": "ja",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ko-KR",
-    "name": "Korean (South Korea)",
-    "base_language": "ko",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "zh-CN",
-    "name": "Chinese (China, Simplified)",
-    "base_language": "zh",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "zh-TW",
-    "name": "Chinese (Taiwan, Traditional)",
-    "base_language": "zh",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "zh-HK",
-    "name": "Chinese (Hong Kong, Traditional)",
-    "base_language": "zh",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "th-TH",
-    "name": "Thai (Thailand)",
-    "base_language": "th",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "vi-VN",
-    "name": "Vietnamese (Vietnam)",
-    "base_language": "vi",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "id-ID",
-    "name": "Indonesian (Indonesia)",
-    "base_language": "id",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ms-MY",
-    "name": "Malay (Malaysia)",
-    "base_language": "ms",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "tl-PH",
-    "name": "Tagalog (Philippines)",
-    "base_language": "tl",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "hi-IN",
-    "name": "Hindi (India)",
-    "base_language": "hi",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "bn-BD",
-    "name": "Bengali (Bangladesh)",
-    "base_language": "bn",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ta-IN",
-    "name": "Tamil (India)",
-    "base_language": "ta",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "te-IN",
-    "name": "Telugu (India)",
-    "base_language": "te",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "mr-IN",
-    "name": "Marathi (India)",
-    "base_language": "mr",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "ur-PK",
-    "name": "Urdu (Pakistan)",
-    "base_language": "ur",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "fa-IR",
-    "name": "Persian (Iran)",
-    "base_language": "fa",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
+    "is_active": false
   },
   {
     "code": "sw-KE",
@@ -878,9 +4172,433 @@
     "is_active": true
   },
   {
-    "code": "af-ZA",
-    "name": "Afrikaans (South Africa)",
-    "base_language": "af",
+    "code": "sw-TZ",
+    "name": "Swahili (Tanzania)",
+    "base_language": "sw",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "sw-UG",
+    "name": "Swahili (Uganda)",
+    "base_language": "sw",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ta-IN",
+    "name": "Tamil (India)",
+    "base_language": "ta",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ta-LK",
+    "name": "Tamil (Sri Lanka)",
+    "base_language": "ta",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ta-SG",
+    "name": "Tamil (Singapore)",
+    "base_language": "ta",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "te-IN",
+    "name": "Telugu (India)",
+    "base_language": "te",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "tet-TL",
+    "name": "Tetum (Timor-Leste)",
+    "base_language": "tet",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tg-TJ",
+    "name": "Tajik (Tajikistan)",
+    "base_language": "tg",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "th-TH",
+    "name": "Thai (Thailand)",
+    "base_language": "th",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ti-ER",
+    "name": "Tigrinya (Eritrea)",
+    "base_language": "ti",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tk-TM",
+    "name": "Turkmen (Turkmenistan)",
+    "base_language": "tk",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tkl-TK",
+    "name": "Tokelau (Tokelau)",
+    "base_language": "tkl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tl-PH",
+    "name": "Tagalog (Philippines)",
+    "base_language": "tl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "tn-BW",
+    "name": "Tswana (Botswana)",
+    "base_language": "tn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tn-ZA",
+    "name": "Tswana (South Africa)",
+    "base_language": "tn",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "to-TO",
+    "name": "Tongan (Tonga)",
+    "base_language": "to",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tpi-PG",
+    "name": "Tok Pisin (Papua New Guinea)",
+    "base_language": "tpi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tr-CY",
+    "name": "Turkish (Cyprus)",
+    "base_language": "tr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tr-TR",
+    "name": "Turkish (Türkiye)",
+    "base_language": "tr",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "tvl-TV",
+    "name": "Tuvalu (Tuvalu)",
+    "base_language": "tvl",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ty-PF",
+    "name": "Tahitian (French Polynesia)",
+    "base_language": "ty",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "tzm-MA",
+    "name": "Central Atlas Tamazight (Morocco)",
+    "base_language": "tzm",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "uk-UA",
+    "name": "Ukrainian (Ukraine)",
+    "base_language": "uk",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "ur-IN",
+    "name": "Urdu (India)",
+    "base_language": "ur",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "ur-PK",
+    "name": "Urdu (Pakistan)",
+    "base_language": "ur",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "uz-UZ",
+    "name": "Uzbek (Latin, Uzbekistan)",
+    "base_language": "uz",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "vi-VN",
+    "name": "Vietnamese (Vietnam)",
+    "base_language": "vi",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "wni-KM",
+    "name": "wni (Comoros)",
+    "base_language": "wni",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "wo-SN",
+    "name": "Wolof (Senegal)",
+    "base_language": "wo",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "xh-ZA",
+    "name": "Xhosa (South Africa)",
+    "base_language": "xh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "yo-NG",
+    "name": "Yoruba (Nigeria)",
+    "base_language": "yo",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "yue-MO",
+    "name": "Cantonese (Traditional, Macao SAR China)",
+    "base_language": "yue",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "zdj-KM",
+    "name": "zdj (Comoros)",
+    "base_language": "zdj",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "zh-CN",
+    "name": "Chinese (Simplified, China)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "zh-HK",
+    "name": "Chinese (Traditional, Hong Kong SAR China)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [],
+    "insights": [],
+    "notes": "",
+    "is_active": true
+  },
+  {
+    "code": "zh-MO",
+    "name": "Chinese (Traditional, Macao SAR China)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "zh-SG",
+    "name": "Chinese (Simplified, Singapore)",
+    "base_language": "zh",
+    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
+    "alternative_models": [
+      "CohereForAI/aya-expanse-8b"
+    ],
+    "insights": [],
+    "notes": "",
+    "is_active": false
+  },
+  {
+    "code": "zh-TW",
+    "name": "Chinese (Traditional, Taiwan)",
+    "base_language": "zh",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],
@@ -891,16 +4609,6 @@
     "code": "zu-ZA",
     "name": "Zulu (South Africa)",
     "base_language": "zu",
-    "primary_model": "Qwen/Qwen2.5-7B-Instruct",
-    "alternative_models": [],
-    "insights": [],
-    "notes": "",
-    "is_active": true
-  },
-  {
-    "code": "am-ET",
-    "name": "Amharic (Ethiopia)",
-    "base_language": "am",
     "primary_model": "Qwen/Qwen2.5-7B-Instruct",
     "alternative_models": [],
     "insights": [],

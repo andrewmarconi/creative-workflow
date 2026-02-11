@@ -1,5 +1,10 @@
 [
   {
+    "country_code": "AD",
+    "language_code": "ca-AD",
+    "is_primary": true
+  },
+  {
     "country_code": "AE",
     "language_code": "ar-AE",
     "is_primary": true
@@ -10,8 +15,53 @@
     "is_primary": false
   },
   {
+    "country_code": "AF",
+    "language_code": "fa-AF",
+    "is_primary": true
+  },
+  {
+    "country_code": "AF",
+    "language_code": "ps-AF",
+    "is_primary": false
+  },
+  {
+    "country_code": "AG",
+    "language_code": "en-AG",
+    "is_primary": true
+  },
+  {
+    "country_code": "AI",
+    "language_code": "en-AI",
+    "is_primary": true
+  },
+  {
+    "country_code": "AL",
+    "language_code": "sq-AL",
+    "is_primary": true
+  },
+  {
+    "country_code": "AM",
+    "language_code": "hy-AM",
+    "is_primary": true
+  },
+  {
+    "country_code": "AO",
+    "language_code": "pt-AO",
+    "is_primary": true
+  },
+  {
     "country_code": "AR",
     "language_code": "es-AR",
+    "is_primary": true
+  },
+  {
+    "country_code": "AS",
+    "language_code": "en-AS",
+    "is_primary": false
+  },
+  {
+    "country_code": "AS",
+    "language_code": "sm-AS",
     "is_primary": true
   },
   {
@@ -25,14 +75,54 @@
     "is_primary": true
   },
   {
+    "country_code": "AW",
+    "language_code": "nl-AW",
+    "is_primary": true
+  },
+  {
+    "country_code": "AW",
+    "language_code": "pap-AW",
+    "is_primary": false
+  },
+  {
+    "country_code": "AX",
+    "language_code": "sv-AX",
+    "is_primary": true
+  },
+  {
+    "country_code": "AZ",
+    "language_code": "az-AZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "BA",
+    "language_code": "bs-BA",
+    "is_primary": true
+  },
+  {
+    "country_code": "BA",
+    "language_code": "hr-BA",
+    "is_primary": false
+  },
+  {
+    "country_code": "BA",
+    "language_code": "sr-BA",
+    "is_primary": false
+  },
+  {
+    "country_code": "BB",
+    "language_code": "en-BB",
+    "is_primary": true
+  },
+  {
     "country_code": "BD",
     "language_code": "bn-BD",
     "is_primary": true
   },
   {
     "country_code": "BE",
-    "language_code": "nl-BE",
-    "is_primary": true
+    "language_code": "de-BE",
+    "is_primary": false
   },
   {
     "country_code": "BE",
@@ -40,8 +130,23 @@
     "is_primary": false
   },
   {
+    "country_code": "BE",
+    "language_code": "nl-BE",
+    "is_primary": true
+  },
+  {
+    "country_code": "BF",
+    "language_code": "fr-BF",
+    "is_primary": true
+  },
+  {
     "country_code": "BG",
     "language_code": "bg-BG",
+    "is_primary": true
+  },
+  {
+    "country_code": "BH",
+    "language_code": "ar-BH",
     "is_primary": true
   },
   {
@@ -55,13 +160,103 @@
     "is_primary": false
   },
   {
+    "country_code": "BI",
+    "language_code": "en-BI",
+    "is_primary": false
+  },
+  {
+    "country_code": "BI",
+    "language_code": "fr-BI",
+    "is_primary": false
+  },
+  {
+    "country_code": "BI",
+    "language_code": "rn-BI",
+    "is_primary": true
+  },
+  {
+    "country_code": "BJ",
+    "language_code": "fr-BJ",
+    "is_primary": true
+  },
+  {
+    "country_code": "BL",
+    "language_code": "fr-BL",
+    "is_primary": true
+  },
+  {
+    "country_code": "BM",
+    "language_code": "en-BM",
+    "is_primary": true
+  },
+  {
+    "country_code": "BN",
+    "language_code": "ms-BN",
+    "is_primary": true
+  },
+  {
+    "country_code": "BO",
+    "language_code": "ay-BO",
+    "is_primary": false
+  },
+  {
+    "country_code": "BO",
+    "language_code": "es-BO",
+    "is_primary": true
+  },
+  {
     "country_code": "BO",
     "language_code": "es-ES",
     "is_primary": true
   },
   {
+    "country_code": "BO",
+    "language_code": "qu-BO",
+    "is_primary": false
+  },
+  {
+    "country_code": "BQ",
+    "language_code": "nl-BQ",
+    "is_primary": true
+  },
+  {
     "country_code": "BR",
     "language_code": "pt-BR",
+    "is_primary": true
+  },
+  {
+    "country_code": "BS",
+    "language_code": "en-BS",
+    "is_primary": true
+  },
+  {
+    "country_code": "BT",
+    "language_code": "dz-BT",
+    "is_primary": true
+  },
+  {
+    "country_code": "BW",
+    "language_code": "en-BW",
+    "is_primary": true
+  },
+  {
+    "country_code": "BW",
+    "language_code": "tn-BW",
+    "is_primary": false
+  },
+  {
+    "country_code": "BY",
+    "language_code": "be-BY",
+    "is_primary": true
+  },
+  {
+    "country_code": "BY",
+    "language_code": "ru-BY",
+    "is_primary": false
+  },
+  {
+    "country_code": "BZ",
+    "language_code": "en-BZ",
     "is_primary": true
   },
   {
@@ -75,6 +270,41 @@
     "is_primary": false
   },
   {
+    "country_code": "CC",
+    "language_code": "en-CC",
+    "is_primary": true
+  },
+  {
+    "country_code": "CD",
+    "language_code": "fr-CD",
+    "is_primary": true
+  },
+  {
+    "country_code": "CD",
+    "language_code": "lua-CD",
+    "is_primary": false
+  },
+  {
+    "country_code": "CD",
+    "language_code": "sw-CD",
+    "is_primary": false
+  },
+  {
+    "country_code": "CF",
+    "language_code": "fr-CF",
+    "is_primary": false
+  },
+  {
+    "country_code": "CF",
+    "language_code": "sg-CF",
+    "is_primary": true
+  },
+  {
+    "country_code": "CG",
+    "language_code": "fr-CG",
+    "is_primary": true
+  },
+  {
     "country_code": "CH",
     "language_code": "de-CH",
     "is_primary": true
@@ -86,12 +316,37 @@
   },
   {
     "country_code": "CH",
+    "language_code": "gsw-CH",
+    "is_primary": false
+  },
+  {
+    "country_code": "CH",
     "language_code": "it-CH",
     "is_primary": false
   },
   {
+    "country_code": "CI",
+    "language_code": "fr-CI",
+    "is_primary": true
+  },
+  {
+    "country_code": "CK",
+    "language_code": "en-CK",
+    "is_primary": true
+  },
+  {
     "country_code": "CL",
     "language_code": "es-CL",
+    "is_primary": true
+  },
+  {
+    "country_code": "CM",
+    "language_code": "en-CM",
+    "is_primary": false
+  },
+  {
+    "country_code": "CM",
+    "language_code": "fr-CM",
     "is_primary": true
   },
   {
@@ -105,13 +360,53 @@
     "is_primary": true
   },
   {
+    "country_code": "CQ",
+    "language_code": "en-CQ",
+    "is_primary": true
+  },
+  {
+    "country_code": "CR",
+    "language_code": "es-CR",
+    "is_primary": true
+  },
+  {
     "country_code": "CR",
     "language_code": "es-MX",
     "is_primary": true
   },
   {
     "country_code": "CU",
+    "language_code": "es-CU",
+    "is_primary": true
+  },
+  {
+    "country_code": "CU",
     "language_code": "es-ES",
+    "is_primary": true
+  },
+  {
+    "country_code": "CV",
+    "language_code": "pt-CV",
+    "is_primary": true
+  },
+  {
+    "country_code": "CW",
+    "language_code": "nl-CW",
+    "is_primary": true
+  },
+  {
+    "country_code": "CW",
+    "language_code": "pap-CW",
+    "is_primary": false
+  },
+  {
+    "country_code": "CX",
+    "language_code": "en-CX",
+    "is_primary": true
+  },
+  {
+    "country_code": "CY",
+    "language_code": "el-CY",
     "is_primary": true
   },
   {
@@ -122,6 +417,11 @@
   {
     "country_code": "CY",
     "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "CY",
+    "language_code": "tr-CY",
     "is_primary": false
   },
   {
@@ -135,8 +435,38 @@
     "is_primary": true
   },
   {
+    "country_code": "DG",
+    "language_code": "en-DG",
+    "is_primary": true
+  },
+  {
+    "country_code": "DJ",
+    "language_code": "ar-DJ",
+    "is_primary": false
+  },
+  {
+    "country_code": "DJ",
+    "language_code": "fr-DJ",
+    "is_primary": true
+  },
+  {
     "country_code": "DK",
     "language_code": "da-DK",
+    "is_primary": true
+  },
+  {
+    "country_code": "DK",
+    "language_code": "de-DK",
+    "is_primary": false
+  },
+  {
+    "country_code": "DM",
+    "language_code": "en-DM",
+    "is_primary": true
+  },
+  {
+    "country_code": "DO",
+    "language_code": "es-DO",
     "is_primary": true
   },
   {
@@ -146,8 +476,18 @@
   },
   {
     "country_code": "DZ",
+    "language_code": "ar-DZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "DZ",
     "language_code": "ar-SA",
     "is_primary": true
+  },
+  {
+    "country_code": "DZ",
+    "language_code": "fr-DZ",
+    "is_primary": false
   },
   {
     "country_code": "DZ",
@@ -155,9 +495,24 @@
     "is_primary": false
   },
   {
+    "country_code": "EA",
+    "language_code": "es-EA",
+    "is_primary": true
+  },
+  {
+    "country_code": "EC",
+    "language_code": "es-EC",
+    "is_primary": true
+  },
+  {
     "country_code": "EC",
     "language_code": "es-ES",
     "is_primary": true
+  },
+  {
+    "country_code": "EC",
+    "language_code": "qu-EC",
+    "is_primary": false
   },
   {
     "country_code": "EE",
@@ -170,9 +525,39 @@
     "is_primary": true
   },
   {
+    "country_code": "EH",
+    "language_code": "ar-EH",
+    "is_primary": true
+  },
+  {
+    "country_code": "ER",
+    "language_code": "ar-ER",
+    "is_primary": false
+  },
+  {
+    "country_code": "ER",
+    "language_code": "en-ER",
+    "is_primary": true
+  },
+  {
+    "country_code": "ER",
+    "language_code": "ti-ER",
+    "is_primary": false
+  },
+  {
+    "country_code": "ES",
+    "language_code": "ca-ES",
+    "is_primary": false
+  },
+  {
     "country_code": "ES",
     "language_code": "es-ES",
     "is_primary": true
+  },
+  {
+    "country_code": "ES",
+    "language_code": "gl-ES",
+    "is_primary": false
   },
   {
     "country_code": "ET",
@@ -185,8 +570,48 @@
     "is_primary": true
   },
   {
+    "country_code": "FI",
+    "language_code": "sv-FI",
+    "is_primary": false
+  },
+  {
+    "country_code": "FJ",
+    "language_code": "en-FJ",
+    "is_primary": true
+  },
+  {
+    "country_code": "FJ",
+    "language_code": "fj-FJ",
+    "is_primary": false
+  },
+  {
+    "country_code": "FJ",
+    "language_code": "hif-FJ",
+    "is_primary": false
+  },
+  {
+    "country_code": "FK",
+    "language_code": "en-FK",
+    "is_primary": true
+  },
+  {
+    "country_code": "FM",
+    "language_code": "en-FM",
+    "is_primary": true
+  },
+  {
+    "country_code": "FO",
+    "language_code": "fo-FO",
+    "is_primary": true
+  },
+  {
     "country_code": "FR",
     "language_code": "fr-FR",
+    "is_primary": true
+  },
+  {
+    "country_code": "GA",
+    "language_code": "fr-GA",
     "is_primary": true
   },
   {
@@ -195,13 +620,98 @@
     "is_primary": true
   },
   {
+    "country_code": "GD",
+    "language_code": "en-GD",
+    "is_primary": true
+  },
+  {
+    "country_code": "GE",
+    "language_code": "ka-GE",
+    "is_primary": true
+  },
+  {
+    "country_code": "GF",
+    "language_code": "fr-GF",
+    "is_primary": true
+  },
+  {
+    "country_code": "GG",
+    "language_code": "en-GG",
+    "is_primary": true
+  },
+  {
+    "country_code": "GH",
+    "language_code": "ak-GH",
+    "is_primary": false
+  },
+  {
+    "country_code": "GH",
+    "language_code": "ee-GH",
+    "is_primary": false
+  },
+  {
     "country_code": "GH",
     "language_code": "en-GB",
     "is_primary": true
   },
   {
+    "country_code": "GH",
+    "language_code": "en-GH",
+    "is_primary": true
+  },
+  {
+    "country_code": "GI",
+    "language_code": "en-GI",
+    "is_primary": true
+  },
+  {
+    "country_code": "GL",
+    "language_code": "kl-GL",
+    "is_primary": true
+  },
+  {
+    "country_code": "GM",
+    "language_code": "en-GM",
+    "is_primary": true
+  },
+  {
+    "country_code": "GN",
+    "language_code": "fr-GN",
+    "is_primary": true
+  },
+  {
+    "country_code": "GP",
+    "language_code": "fr-GP",
+    "is_primary": true
+  },
+  {
+    "country_code": "GQ",
+    "language_code": "es-GQ",
+    "is_primary": true
+  },
+  {
+    "country_code": "GQ",
+    "language_code": "fr-GQ",
+    "is_primary": false
+  },
+  {
+    "country_code": "GQ",
+    "language_code": "pt-GQ",
+    "is_primary": false
+  },
+  {
     "country_code": "GR",
     "language_code": "el-GR",
+    "is_primary": true
+  },
+  {
+    "country_code": "GS",
+    "language_code": "en-GS",
+    "is_primary": true
+  },
+  {
+    "country_code": "GT",
+    "language_code": "es-GT",
     "is_primary": true
   },
   {
@@ -210,14 +720,49 @@
     "is_primary": true
   },
   {
-    "country_code": "HK",
-    "language_code": "zh-HK",
+    "country_code": "GT",
+    "language_code": "quc-GT",
+    "is_primary": false
+  },
+  {
+    "country_code": "GU",
+    "language_code": "ch-GU",
+    "is_primary": true
+  },
+  {
+    "country_code": "GU",
+    "language_code": "en-GU",
+    "is_primary": false
+  },
+  {
+    "country_code": "GW",
+    "language_code": "pt-GW",
+    "is_primary": true
+  },
+  {
+    "country_code": "GY",
+    "language_code": "en-GY",
     "is_primary": true
   },
   {
     "country_code": "HK",
     "language_code": "en-GB",
     "is_primary": false
+  },
+  {
+    "country_code": "HK",
+    "language_code": "en-HK",
+    "is_primary": false
+  },
+  {
+    "country_code": "HK",
+    "language_code": "zh-HK",
+    "is_primary": true
+  },
+  {
+    "country_code": "HN",
+    "language_code": "es-HN",
+    "is_primary": true
   },
   {
     "country_code": "HN",
@@ -230,8 +775,23 @@
     "is_primary": true
   },
   {
+    "country_code": "HT",
+    "language_code": "fr-HT",
+    "is_primary": false
+  },
+  {
+    "country_code": "HT",
+    "language_code": "ht-HT",
+    "is_primary": true
+  },
+  {
     "country_code": "HU",
     "language_code": "hu-HU",
+    "is_primary": true
+  },
+  {
+    "country_code": "IC",
+    "language_code": "es-IC",
     "is_primary": true
   },
   {
@@ -245,9 +805,14 @@
     "is_primary": true
   },
   {
+    "country_code": "IE",
+    "language_code": "ga-IE",
+    "is_primary": false
+  },
+  {
     "country_code": "IL",
-    "language_code": "he-IL",
-    "is_primary": true
+    "language_code": "ar-IL",
+    "is_primary": false
   },
   {
     "country_code": "IL",
@@ -255,9 +820,19 @@
     "is_primary": false
   },
   {
-    "country_code": "IN",
-    "language_code": "hi-IN",
+    "country_code": "IL",
+    "language_code": "he-IL",
     "is_primary": true
+  },
+  {
+    "country_code": "IM",
+    "language_code": "en-IM",
+    "is_primary": true
+  },
+  {
+    "country_code": "IM",
+    "language_code": "gv-IM",
+    "is_primary": false
   },
   {
     "country_code": "IN",
@@ -266,8 +841,18 @@
   },
   {
     "country_code": "IN",
+    "language_code": "bn-IN",
+    "is_primary": false
+  },
+  {
+    "country_code": "IN",
     "language_code": "en-IN",
     "is_primary": false
+  },
+  {
+    "country_code": "IN",
+    "language_code": "hi-IN",
+    "is_primary": true
   },
   {
     "country_code": "IN",
@@ -285,6 +870,26 @@
     "is_primary": false
   },
   {
+    "country_code": "IN",
+    "language_code": "ur-IN",
+    "is_primary": false
+  },
+  {
+    "country_code": "IO",
+    "language_code": "en-IO",
+    "is_primary": true
+  },
+  {
+    "country_code": "IQ",
+    "language_code": "ar-IQ",
+    "is_primary": true
+  },
+  {
+    "country_code": "IQ",
+    "language_code": "ckb-IQ",
+    "is_primary": false
+  },
+  {
     "country_code": "IR",
     "language_code": "fa-IR",
     "is_primary": true
@@ -295,8 +900,33 @@
     "is_primary": true
   },
   {
+    "country_code": "IS",
+    "language_code": "is-IS",
+    "is_primary": true
+  },
+  {
+    "country_code": "IT",
+    "language_code": "fr-IT",
+    "is_primary": false
+  },
+  {
     "country_code": "IT",
     "language_code": "it-IT",
+    "is_primary": true
+  },
+  {
+    "country_code": "JE",
+    "language_code": "en-JE",
+    "is_primary": true
+  },
+  {
+    "country_code": "JM",
+    "language_code": "en-JM",
+    "is_primary": true
+  },
+  {
+    "country_code": "JO",
+    "language_code": "ar-JO",
     "is_primary": true
   },
   {
@@ -311,13 +941,73 @@
   },
   {
     "country_code": "KE",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "KE",
+    "language_code": "en-KE",
+    "is_primary": false
+  },
+  {
+    "country_code": "KE",
     "language_code": "sw-KE",
     "is_primary": true
   },
   {
-    "country_code": "KE",
-    "language_code": "en-GB",
+    "country_code": "KG",
+    "language_code": "ky-KG",
+    "is_primary": true
+  },
+  {
+    "country_code": "KG",
+    "language_code": "ru-KG",
     "is_primary": false
+  },
+  {
+    "country_code": "KH",
+    "language_code": "km-KH",
+    "is_primary": true
+  },
+  {
+    "country_code": "KI",
+    "language_code": "en-KI",
+    "is_primary": true
+  },
+  {
+    "country_code": "KI",
+    "language_code": "gil-KI",
+    "is_primary": false
+  },
+  {
+    "country_code": "KM",
+    "language_code": "ar-KM",
+    "is_primary": true
+  },
+  {
+    "country_code": "KM",
+    "language_code": "fr-KM",
+    "is_primary": false
+  },
+  {
+    "country_code": "KM",
+    "language_code": "wni-KM",
+    "is_primary": false
+  },
+  {
+    "country_code": "KM",
+    "language_code": "zdj-KM",
+    "is_primary": false
+  },
+  {
+    "country_code": "KN",
+    "language_code": "en-KN",
+    "is_primary": true
+  },
+  {
+    "country_code": "KP",
+    "language_code": "ko-KP",
+    "is_primary": true
   },
   {
     "country_code": "KR",
@@ -326,7 +1016,37 @@
   },
   {
     "country_code": "KW",
+    "language_code": "ar-KW",
+    "is_primary": true
+  },
+  {
+    "country_code": "KW",
     "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "KY",
+    "language_code": "en-KY",
+    "is_primary": true
+  },
+  {
+    "country_code": "KZ",
+    "language_code": "kk-KZ",
+    "is_primary": false
+  },
+  {
+    "country_code": "KZ",
+    "language_code": "ru-KZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "LA",
+    "language_code": "lo-LA",
+    "is_primary": true
+  },
+  {
+    "country_code": "LB",
+    "language_code": "ar-LB",
     "is_primary": true
   },
   {
@@ -338,6 +1058,46 @@
     "country_code": "LB",
     "language_code": "fr-FR",
     "is_primary": false
+  },
+  {
+    "country_code": "LC",
+    "language_code": "en-LC",
+    "is_primary": true
+  },
+  {
+    "country_code": "LI",
+    "language_code": "de-LI",
+    "is_primary": true
+  },
+  {
+    "country_code": "LI",
+    "language_code": "gsw-LI",
+    "is_primary": false
+  },
+  {
+    "country_code": "LK",
+    "language_code": "si-LK",
+    "is_primary": true
+  },
+  {
+    "country_code": "LK",
+    "language_code": "ta-LK",
+    "is_primary": false
+  },
+  {
+    "country_code": "LR",
+    "language_code": "en-LR",
+    "is_primary": true
+  },
+  {
+    "country_code": "LS",
+    "language_code": "en-LS",
+    "is_primary": false
+  },
+  {
+    "country_code": "LS",
+    "language_code": "st-LS",
+    "is_primary": true
   },
   {
     "country_code": "LT",
@@ -346,17 +1106,42 @@
   },
   {
     "country_code": "LU",
+    "language_code": "de-DE",
+    "is_primary": false
+  },
+  {
+    "country_code": "LU",
+    "language_code": "de-LU",
+    "is_primary": false
+  },
+  {
+    "country_code": "LU",
     "language_code": "fr-FR",
     "is_primary": true
   },
   {
     "country_code": "LU",
-    "language_code": "de-DE",
+    "language_code": "fr-LU",
+    "is_primary": true
+  },
+  {
+    "country_code": "LU",
+    "language_code": "lb-LU",
     "is_primary": false
   },
   {
     "country_code": "LV",
     "language_code": "lv-LV",
+    "is_primary": true
+  },
+  {
+    "country_code": "LY",
+    "language_code": "ar-LY",
+    "is_primary": true
+  },
+  {
+    "country_code": "MA",
+    "language_code": "ar-MA",
     "is_primary": true
   },
   {
@@ -370,8 +1155,158 @@
     "is_primary": false
   },
   {
+    "country_code": "MA",
+    "language_code": "fr-MA",
+    "is_primary": false
+  },
+  {
+    "country_code": "MA",
+    "language_code": "tzm-MA",
+    "is_primary": false
+  },
+  {
+    "country_code": "MC",
+    "language_code": "fr-MC",
+    "is_primary": true
+  },
+  {
+    "country_code": "MD",
+    "language_code": "ro-MD",
+    "is_primary": true
+  },
+  {
+    "country_code": "ME",
+    "language_code": "sr-ME",
+    "is_primary": true
+  },
+  {
+    "country_code": "MF",
+    "language_code": "fr-MF",
+    "is_primary": true
+  },
+  {
+    "country_code": "MG",
+    "language_code": "en-MG",
+    "is_primary": false
+  },
+  {
+    "country_code": "MG",
+    "language_code": "fr-MG",
+    "is_primary": false
+  },
+  {
+    "country_code": "MG",
+    "language_code": "mg-MG",
+    "is_primary": true
+  },
+  {
+    "country_code": "MH",
+    "language_code": "en-MH",
+    "is_primary": true
+  },
+  {
+    "country_code": "MH",
+    "language_code": "mh-MH",
+    "is_primary": false
+  },
+  {
+    "country_code": "MK",
+    "language_code": "mk-MK",
+    "is_primary": true
+  },
+  {
+    "country_code": "MK",
+    "language_code": "sq-MK",
+    "is_primary": false
+  },
+  {
+    "country_code": "ML",
+    "language_code": "fr-ML",
+    "is_primary": true
+  },
+  {
+    "country_code": "MM",
+    "language_code": "my-MM",
+    "is_primary": true
+  },
+  {
+    "country_code": "MN",
+    "language_code": "mn-MN",
+    "is_primary": true
+  },
+  {
+    "country_code": "MO",
+    "language_code": "pt-MO",
+    "is_primary": false
+  },
+  {
+    "country_code": "MO",
+    "language_code": "yue-MO",
+    "is_primary": false
+  },
+  {
+    "country_code": "MO",
+    "language_code": "zh-MO",
+    "is_primary": true
+  },
+  {
+    "country_code": "MP",
+    "language_code": "en-MP",
+    "is_primary": true
+  },
+  {
+    "country_code": "MQ",
+    "language_code": "fr-MQ",
+    "is_primary": true
+  },
+  {
+    "country_code": "MR",
+    "language_code": "ar-MR",
+    "is_primary": true
+  },
+  {
+    "country_code": "MS",
+    "language_code": "en-MS",
+    "is_primary": true
+  },
+  {
     "country_code": "MT",
     "language_code": "en-GB",
+    "is_primary": true
+  },
+  {
+    "country_code": "MT",
+    "language_code": "en-MT",
+    "is_primary": false
+  },
+  {
+    "country_code": "MT",
+    "language_code": "mt-MT",
+    "is_primary": true
+  },
+  {
+    "country_code": "MU",
+    "language_code": "en-MU",
+    "is_primary": false
+  },
+  {
+    "country_code": "MU",
+    "language_code": "fr-MU",
+    "is_primary": true
+  },
+  {
+    "country_code": "MV",
+    "language_code": "dv-MV",
+    "is_primary": true
+  },
+  {
+    "country_code": "MW",
+    "language_code": "en-MW",
+    "is_primary": false
+  },
+  {
+    "country_code": "MW",
+    "language_code": "ny-MW",
     "is_primary": true
   },
   {
@@ -381,13 +1316,38 @@
   },
   {
     "country_code": "MY",
+    "language_code": "en-GB",
+    "is_primary": false
+  },
+  {
+    "country_code": "MY",
     "language_code": "ms-MY",
     "is_primary": true
   },
   {
-    "country_code": "MY",
-    "language_code": "en-GB",
-    "is_primary": false
+    "country_code": "MZ",
+    "language_code": "pt-MZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "NA",
+    "language_code": "en-NA",
+    "is_primary": true
+  },
+  {
+    "country_code": "NC",
+    "language_code": "fr-NC",
+    "is_primary": true
+  },
+  {
+    "country_code": "NE",
+    "language_code": "fr-NE",
+    "is_primary": true
+  },
+  {
+    "country_code": "NF",
+    "language_code": "en-NF",
+    "is_primary": true
   },
   {
     "country_code": "NG",
@@ -395,8 +1355,23 @@
     "is_primary": true
   },
   {
+    "country_code": "NG",
+    "language_code": "en-NG",
+    "is_primary": true
+  },
+  {
+    "country_code": "NG",
+    "language_code": "yo-NG",
+    "is_primary": false
+  },
+  {
     "country_code": "NI",
     "language_code": "es-MX",
+    "is_primary": true
+  },
+  {
+    "country_code": "NI",
+    "language_code": "es-NI",
     "is_primary": true
   },
   {
@@ -415,8 +1390,48 @@
     "is_primary": false
   },
   {
+    "country_code": "NO",
+    "language_code": "no-NO",
+    "is_primary": true
+  },
+  {
+    "country_code": "NP",
+    "language_code": "ne-NP",
+    "is_primary": true
+  },
+  {
+    "country_code": "NR",
+    "language_code": "en-NR",
+    "is_primary": true
+  },
+  {
+    "country_code": "NR",
+    "language_code": "na-NR",
+    "is_primary": false
+  },
+  {
+    "country_code": "NU",
+    "language_code": "en-NU",
+    "is_primary": false
+  },
+  {
+    "country_code": "NU",
+    "language_code": "niu-NU",
+    "is_primary": true
+  },
+  {
     "country_code": "NZ",
     "language_code": "en-NZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "NZ",
+    "language_code": "mi-NZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "OM",
+    "language_code": "ar-OM",
     "is_primary": true
   },
   {
@@ -430,13 +1445,53 @@
     "is_primary": true
   },
   {
+    "country_code": "PA",
+    "language_code": "es-PA",
+    "is_primary": true
+  },
+  {
     "country_code": "PE",
     "language_code": "es-PE",
     "is_primary": true
   },
   {
+    "country_code": "PE",
+    "language_code": "qu-PE",
+    "is_primary": false
+  },
+  {
+    "country_code": "PF",
+    "language_code": "fr-PF",
+    "is_primary": true
+  },
+  {
+    "country_code": "PF",
+    "language_code": "ty-PF",
+    "is_primary": false
+  },
+  {
+    "country_code": "PG",
+    "language_code": "en-PG",
+    "is_primary": false
+  },
+  {
+    "country_code": "PG",
+    "language_code": "ho-PG",
+    "is_primary": false
+  },
+  {
+    "country_code": "PG",
+    "language_code": "tpi-PG",
+    "is_primary": true
+  },
+  {
     "country_code": "PH",
-    "language_code": "tl-PH",
+    "language_code": "ceb-PH",
+    "is_primary": false
+  },
+  {
+    "country_code": "PH",
+    "language_code": "en-PH",
     "is_primary": true
   },
   {
@@ -445,8 +1500,23 @@
     "is_primary": false
   },
   {
-    "country_code": "PK",
-    "language_code": "ur-PK",
+    "country_code": "PH",
+    "language_code": "fil-PH",
+    "is_primary": false
+  },
+  {
+    "country_code": "PH",
+    "language_code": "hil-PH",
+    "is_primary": false
+  },
+  {
+    "country_code": "PH",
+    "language_code": "ilo-PH",
+    "is_primary": false
+  },
+  {
+    "country_code": "PH",
+    "language_code": "tl-PH",
     "is_primary": true
   },
   {
@@ -455,9 +1525,44 @@
     "is_primary": false
   },
   {
+    "country_code": "PK",
+    "language_code": "en-PK",
+    "is_primary": false
+  },
+  {
+    "country_code": "PK",
+    "language_code": "ur-PK",
+    "is_primary": true
+  },
+  {
+    "country_code": "PL",
+    "language_code": "de-PL",
+    "is_primary": false
+  },
+  {
     "country_code": "PL",
     "language_code": "pl-PL",
     "is_primary": true
+  },
+  {
+    "country_code": "PM",
+    "language_code": "fr-PM",
+    "is_primary": true
+  },
+  {
+    "country_code": "PN",
+    "language_code": "en-PN",
+    "is_primary": true
+  },
+  {
+    "country_code": "PR",
+    "language_code": "en-PR",
+    "is_primary": false
+  },
+  {
+    "country_code": "PR",
+    "language_code": "en-US",
+    "is_primary": false
   },
   {
     "country_code": "PR",
@@ -466,8 +1571,13 @@
   },
   {
     "country_code": "PR",
-    "language_code": "en-US",
-    "is_primary": false
+    "language_code": "es-PR",
+    "is_primary": true
+  },
+  {
+    "country_code": "PS",
+    "language_code": "ar-PS",
+    "is_primary": true
   },
   {
     "country_code": "PT",
@@ -475,8 +1585,33 @@
     "is_primary": true
   },
   {
+    "country_code": "PW",
+    "language_code": "en-PW",
+    "is_primary": false
+  },
+  {
+    "country_code": "PW",
+    "language_code": "pau-PW",
+    "is_primary": true
+  },
+  {
     "country_code": "PY",
     "language_code": "es-AR",
+    "is_primary": true
+  },
+  {
+    "country_code": "PY",
+    "language_code": "es-PY",
+    "is_primary": false
+  },
+  {
+    "country_code": "PY",
+    "language_code": "gn-PY",
+    "is_primary": true
+  },
+  {
+    "country_code": "QA",
+    "language_code": "ar-QA",
     "is_primary": true
   },
   {
@@ -488,6 +1623,11 @@
     "country_code": "QA",
     "language_code": "en-GB",
     "is_primary": false
+  },
+  {
+    "country_code": "RE",
+    "language_code": "fr-RE",
+    "is_primary": true
   },
   {
     "country_code": "RO",
@@ -505,8 +1645,48 @@
     "is_primary": true
   },
   {
+    "country_code": "RW",
+    "language_code": "en-RW",
+    "is_primary": false
+  },
+  {
+    "country_code": "RW",
+    "language_code": "fr-RW",
+    "is_primary": false
+  },
+  {
+    "country_code": "RW",
+    "language_code": "rw-RW",
+    "is_primary": true
+  },
+  {
     "country_code": "SA",
     "language_code": "ar-SA",
+    "is_primary": true
+  },
+  {
+    "country_code": "SB",
+    "language_code": "en-SB",
+    "is_primary": true
+  },
+  {
+    "country_code": "SC",
+    "language_code": "en-SC",
+    "is_primary": false
+  },
+  {
+    "country_code": "SC",
+    "language_code": "fr-SC",
+    "is_primary": true
+  },
+  {
+    "country_code": "SD",
+    "language_code": "ar-SD",
+    "is_primary": false
+  },
+  {
+    "country_code": "SD",
+    "language_code": "en-SD",
     "is_primary": true
   },
   {
@@ -521,7 +1701,22 @@
   },
   {
     "country_code": "SG",
+    "language_code": "en-SG",
+    "is_primary": true
+  },
+  {
+    "country_code": "SG",
     "language_code": "ms-MY",
+    "is_primary": false
+  },
+  {
+    "country_code": "SG",
+    "language_code": "ms-SG",
+    "is_primary": false
+  },
+  {
+    "country_code": "SG",
+    "language_code": "ta-SG",
     "is_primary": false
   },
   {
@@ -530,8 +1725,23 @@
     "is_primary": false
   },
   {
+    "country_code": "SG",
+    "language_code": "zh-SG",
+    "is_primary": false
+  },
+  {
+    "country_code": "SH",
+    "language_code": "en-SH",
+    "is_primary": true
+  },
+  {
     "country_code": "SI",
     "language_code": "sl-SI",
+    "is_primary": true
+  },
+  {
+    "country_code": "SJ",
+    "language_code": "nb-SJ",
     "is_primary": true
   },
   {
@@ -540,13 +1750,148 @@
     "is_primary": true
   },
   {
+    "country_code": "SL",
+    "language_code": "en-SL",
+    "is_primary": true
+  },
+  {
+    "country_code": "SM",
+    "language_code": "it-SM",
+    "is_primary": true
+  },
+  {
+    "country_code": "SN",
+    "language_code": "ff-SN",
+    "is_primary": false
+  },
+  {
+    "country_code": "SN",
+    "language_code": "fr-SN",
+    "is_primary": true
+  },
+  {
+    "country_code": "SN",
+    "language_code": "srr-SN",
+    "is_primary": false
+  },
+  {
+    "country_code": "SN",
+    "language_code": "wo-SN",
+    "is_primary": false
+  },
+  {
+    "country_code": "SO",
+    "language_code": "ar-SO",
+    "is_primary": false
+  },
+  {
+    "country_code": "SO",
+    "language_code": "so-SO",
+    "is_primary": true
+  },
+  {
+    "country_code": "SR",
+    "language_code": "nl-SR",
+    "is_primary": true
+  },
+  {
+    "country_code": "SS",
+    "language_code": "en-SS",
+    "is_primary": true
+  },
+  {
+    "country_code": "ST",
+    "language_code": "pt-ST",
+    "is_primary": true
+  },
+  {
     "country_code": "SV",
     "language_code": "es-MX",
     "is_primary": true
   },
   {
+    "country_code": "SV",
+    "language_code": "es-SV",
+    "is_primary": true
+  },
+  {
+    "country_code": "SX",
+    "language_code": "en-SX",
+    "is_primary": true
+  },
+  {
+    "country_code": "SX",
+    "language_code": "nl-SX",
+    "is_primary": false
+  },
+  {
+    "country_code": "SY",
+    "language_code": "ar-SY",
+    "is_primary": true
+  },
+  {
+    "country_code": "SZ",
+    "language_code": "en-SZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "SZ",
+    "language_code": "ss-SZ",
+    "is_primary": false
+  },
+  {
+    "country_code": "TC",
+    "language_code": "en-TC",
+    "is_primary": true
+  },
+  {
+    "country_code": "TD",
+    "language_code": "ar-TD",
+    "is_primary": true
+  },
+  {
+    "country_code": "TD",
+    "language_code": "fr-TD",
+    "is_primary": false
+  },
+  {
+    "country_code": "TG",
+    "language_code": "fr-TG",
+    "is_primary": true
+  },
+  {
     "country_code": "TH",
     "language_code": "th-TH",
+    "is_primary": true
+  },
+  {
+    "country_code": "TJ",
+    "language_code": "tg-TJ",
+    "is_primary": true
+  },
+  {
+    "country_code": "TK",
+    "language_code": "en-TK",
+    "is_primary": false
+  },
+  {
+    "country_code": "TK",
+    "language_code": "tkl-TK",
+    "is_primary": true
+  },
+  {
+    "country_code": "TL",
+    "language_code": "pt-TL",
+    "is_primary": false
+  },
+  {
+    "country_code": "TL",
+    "language_code": "tet-TL",
+    "is_primary": true
+  },
+  {
+    "country_code": "TM",
+    "language_code": "tk-TM",
     "is_primary": true
   },
   {
@@ -556,8 +1901,28 @@
   },
   {
     "country_code": "TN",
+    "language_code": "ar-TN",
+    "is_primary": true
+  },
+  {
+    "country_code": "TN",
     "language_code": "fr-FR",
     "is_primary": false
+  },
+  {
+    "country_code": "TN",
+    "language_code": "fr-TN",
+    "is_primary": false
+  },
+  {
+    "country_code": "TO",
+    "language_code": "en-TO",
+    "is_primary": false
+  },
+  {
+    "country_code": "TO",
+    "language_code": "to-TO",
+    "is_primary": true
   },
   {
     "country_code": "TR",
@@ -565,13 +1930,68 @@
     "is_primary": true
   },
   {
+    "country_code": "TT",
+    "language_code": "en-TT",
+    "is_primary": true
+  },
+  {
+    "country_code": "TV",
+    "language_code": "en-TV",
+    "is_primary": false
+  },
+  {
+    "country_code": "TV",
+    "language_code": "tvl-TV",
+    "is_primary": true
+  },
+  {
+    "country_code": "TW",
+    "language_code": "hak-TW",
+    "is_primary": false
+  },
+  {
+    "country_code": "TW",
+    "language_code": "nan-TW",
+    "is_primary": false
+  },
+  {
     "country_code": "TW",
     "language_code": "zh-TW",
     "is_primary": true
   },
   {
+    "country_code": "TZ",
+    "language_code": "en-TZ",
+    "is_primary": false
+  },
+  {
+    "country_code": "TZ",
+    "language_code": "sw-TZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "UA",
+    "language_code": "ru-UA",
+    "is_primary": false
+  },
+  {
     "country_code": "UA",
     "language_code": "uk-UA",
+    "is_primary": true
+  },
+  {
+    "country_code": "UG",
+    "language_code": "en-UG",
+    "is_primary": false
+  },
+  {
+    "country_code": "UG",
+    "language_code": "sw-UG",
+    "is_primary": true
+  },
+  {
+    "country_code": "UM",
+    "language_code": "en-UM",
     "is_primary": true
   },
   {
@@ -585,8 +2005,33 @@
     "is_primary": false
   },
   {
+    "country_code": "US",
+    "language_code": "es-US",
+    "is_primary": false
+  },
+  {
     "country_code": "UY",
     "language_code": "es-AR",
+    "is_primary": true
+  },
+  {
+    "country_code": "UY",
+    "language_code": "es-UY",
+    "is_primary": true
+  },
+  {
+    "country_code": "UZ",
+    "language_code": "uz-UZ",
+    "is_primary": true
+  },
+  {
+    "country_code": "VA",
+    "language_code": "it-VA",
+    "is_primary": true
+  },
+  {
+    "country_code": "VC",
+    "language_code": "en-VC",
     "is_primary": true
   },
   {
@@ -595,13 +2040,73 @@
     "is_primary": true
   },
   {
+    "country_code": "VE",
+    "language_code": "es-VE",
+    "is_primary": true
+  },
+  {
+    "country_code": "VG",
+    "language_code": "en-VG",
+    "is_primary": true
+  },
+  {
+    "country_code": "VI",
+    "language_code": "en-VI",
+    "is_primary": true
+  },
+  {
     "country_code": "VN",
     "language_code": "vi-VN",
     "is_primary": true
   },
   {
-    "country_code": "ZA",
-    "language_code": "en-ZA",
+    "country_code": "VU",
+    "language_code": "bi-VU",
+    "is_primary": true
+  },
+  {
+    "country_code": "VU",
+    "language_code": "en-VU",
+    "is_primary": false
+  },
+  {
+    "country_code": "VU",
+    "language_code": "fr-VU",
+    "is_primary": false
+  },
+  {
+    "country_code": "WF",
+    "language_code": "fr-WF",
+    "is_primary": true
+  },
+  {
+    "country_code": "WS",
+    "language_code": "en-WS",
+    "is_primary": false
+  },
+  {
+    "country_code": "WS",
+    "language_code": "sm-WS",
+    "is_primary": true
+  },
+  {
+    "country_code": "XK",
+    "language_code": "sq-XK",
+    "is_primary": true
+  },
+  {
+    "country_code": "XK",
+    "language_code": "sr-XK",
+    "is_primary": false
+  },
+  {
+    "country_code": "YE",
+    "language_code": "ar-YE",
+    "is_primary": true
+  },
+  {
+    "country_code": "YT",
+    "language_code": "fr-YT",
     "is_primary": true
   },
   {
@@ -611,7 +2116,52 @@
   },
   {
     "country_code": "ZA",
+    "language_code": "en-ZA",
+    "is_primary": true
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "nso-ZA",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "st-ZA",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "tn-ZA",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZA",
+    "language_code": "xh-ZA",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZA",
     "language_code": "zu-ZA",
     "is_primary": false
+  },
+  {
+    "country_code": "ZM",
+    "language_code": "en-ZM",
+    "is_primary": true
+  },
+  {
+    "country_code": "ZW",
+    "language_code": "en-ZW",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZW",
+    "language_code": "nd-ZW",
+    "is_primary": false
+  },
+  {
+    "country_code": "ZW",
+    "language_code": "sn-ZW",
+    "is_primary": true
   }
 ]
