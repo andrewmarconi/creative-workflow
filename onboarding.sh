@@ -149,10 +149,17 @@ DJANGO_SUPERUSER_PASSWORD=admin uv run manage.py createsuperuser \
     --noinput 2>/dev/null || echo "  (Admin user may already exist)"
 echo ""
 
-# Stop Docker containers
-echo "Stopping Docker containers..."
-docker compose down
-echo ""
+# Import World Values Survey data from Kaggle
+if [ -n "$KAGGLE_API_TOKEN" ]; then
+    echo "Importing World Values Survey data..."
+    uv run manage.py import_wvs
+    echo ""
+fi
+
+# # Stop Docker containers
+# echo "Stopping Docker containers..."
+# docker compose down
+# echo ""
 
 echo "========================================"
 echo "  Onboarding Complete!"

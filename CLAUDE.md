@@ -76,6 +76,13 @@ open docs/_build/html/index.html                # View documentation
 cd docs && make clean                           # Clean build artifacts
 ```
 
+### World Values Survey
+```bash
+uv run manage.py import_wvs                     # Download & import WVS cultural profiles into Country insights
+uv run manage.py import_wvs --dry-run            # Preview without importing
+uv run manage.py import_wvs --force-download      # Force re-download from Kaggle
+```
+
 ### Observability & Logging
 ```bash
 # View logs locally (JSON format)
@@ -223,6 +230,7 @@ PipelineSettings (singleton: per-node default models + global default)
 - `prompt_enhancer.py` — Three enhancers: rule-based (`PromptEnhancer`), local LLM (`HFPromptEnhancer` using Qwen2.5-3B), Anthropic API (`LLMPromptEnhancer`)
 - `civitai.py` — Auto-download LoRAs from CivitAI by AIR URN
 - `loras/manager.py` — LoRA filtering by base architecture and optional theme (e.g., 'anime', 'photorealistic', 'fantasy')
+- `wvs.py` — World Values Survey parser: downloads from Kaggle via kagglehub, parses country-level cultural dimension profiles (Inglehart-Welzel axes, trust, tolerance, gender attitudes, civic participation), and transforms them into structured insights for Country records. Data flows automatically into the cultural research pipeline via `compose_insights_as_markdown()`.
 - `pipeline/state.py` — `resolve_pipeline_models()` resolves per-node LLM models with fallback chain; `build_initial_state()` builds PipelineState from VideoAdUnit
 - `pipeline/nodes.py` — `_get_generator(state, schema, node_key)` loads node-specific LLM via PipelineModelLoader singleton
 
@@ -291,7 +299,7 @@ data/
 - `data/*.json` — Reference data (regions, countries, languages, LLM models) in separate files
 - `.env` — Environment variables:
   - **Required**: `POSTGRES_*`, `VALKEY_*`, `DJANGO_SECRET_KEY`
-  - **Optional**: `ANTHROPIC_API_KEY` (for LLM prompt enhancement), `CIVITAI_API_KEY` (for auto-downloading LoRAs), `MODEL_BASE_PATH` (base directory for local `.safetensors` files)
+  - **Optional**: `ANTHROPIC_API_KEY` (for LLM prompt enhancement), `CIVITAI_API_KEY` (for auto-downloading LoRAs), `KAGGLE_API_TOKEN` (for downloading WVS dataset via kagglehub), `MODEL_BASE_PATH` (base directory for local `.safetensors` files)
 - `src/cw/settings.py` — Django settings including Celery config and Unfold admin setup
 - `grafana/provisioning/` — Grafana datasource/dashboard provisioning (auto-configures Loki on startup)
 

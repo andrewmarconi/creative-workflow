@@ -493,3 +493,53 @@ class PersonaSegment(models.Model):
 
     def __str__(self):
         return f"{self.persona.name} → {self.segment}"
+
+
+# ---------------------------------------------------------------------------
+# World Values Survey Data
+# ---------------------------------------------------------------------------
+
+
+class WVSProfile(models.Model):
+    """Raw World Values Survey data for a country and wave.
+
+    Stores all WVS variable means as a JSON object, enabling dynamic
+    lookups by theme. The pipeline can query specific variables based
+    on script concept (e.g., environmental themes → V33, V34, V81).
+
+    The ``raw_data`` field holds ``{variable_code: mean_value}`` pairs
+    for all ~945 variables in a given country-wave combination.
+    """
+
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.CASCADE,
+        related_name="wvs_profiles",
+        help_text="Country this profile belongs to",
+    )
+    wave = models.IntegerField(
+        help_text="WVS wave number (1-7)",
+    )
+    raw_data = models.JSONField(
+        default=dict,
+        help_text="All WVS variable means: {variable_code: value}",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "audiences_wvs_profile"
+        unique_together = [["country", "wave"]]
+        ordering = ["country__code", "-wave"]
+        verbose_name = "WVS Profile"
+        verbose_name_plural = "WVS Profiles"
+
+    def __str__(self):
+        return f"{self.country.code} — Wave {self.wave}"
+
+    @property
+    def variable_count(self) -> int:
+        """Number of variables with non-null values."""
+        if not self.raw_data:
+            return 0
+        return sum(1 for v in self.raw_data.values() if v is not None)

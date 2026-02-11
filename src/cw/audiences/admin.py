@@ -1,8 +1,11 @@
 """Django admin configuration for audience segmentation models."""
 
+from collections import defaultdict
+
 from django.contrib import admin
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.template.response import TemplateResponse
+from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -23,6 +26,7 @@ from .models import (
     PersonaSegment,
     Region,
     Segment,
+    WVSProfile,
 )
 
 
@@ -473,3 +477,120 @@ class PersonaAdmin(ModelAdmin):
     @display(description=_("Active"), boolean=True)
     def show_active(self, obj):
         return obj.is_active
+
+
+@admin.register(WVSProfile)
+class WVSProfileAdmin(ModelAdmin):
+    list_display = [
+        "country",
+        "wave",
+        "show_variable_count",
+        "show_view_data_link",
+        "updated_at",
+    ]
+    list_filter = ["wave"]
+    search_fields = ["country__name", "country__code"]
+    readonly_fields = ["created_at", "updated_at"]
+    autocomplete_fields = ["country"]
+
+    fieldsets = (
+        (
+            _("Profile"),
+            {
+                "classes": ["tab"],
+                "fields": ("country", "wave"),
+            },
+        ),
+        (
+            _("Raw Data"),
+            {
+                "classes": ["tab"],
+                "fields": ("raw_data",),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    @display(description=_("Variables"))
+    def show_variable_count(self, obj):
+        return str(obj.variable_count)
+
+    @display(description=_("View"))
+    def show_view_data_link(self, obj):
+        url = reverse("admin:audiences_wvsprofile_view_data", args=[obj.pk])
+        return format_html(
+            '<a href="{}" style="white-space: nowrap;">View Data</a>',
+            url,
+        )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "<int:object_id>/view-data/",
+                self.admin_site.admin_view(self.view_data),
+                name="audiences_wvsprofile_view_data",
+            ),
+        ]
+        return custom_urls + urls
+
+    def view_data(self, request, object_id):
+        """Read-only formatted view of WVS raw data grouped by theme."""
+        from cw.lib.wvs import load_codebook
+
+        profile = WVSProfile.objects.select_related("country").get(pk=object_id)
+        codebook = load_codebook()
+
+        # Group variables by theme, excluding _Sd (standard deviation) columns
+        themed: dict[str, list] = defaultdict(list)
+        for var_code, value in sorted(profile.raw_data.items()):
+            if var_code.endswith("_Sd") or var_code.endswith("_CO_Sd"):
+                continue
+            entry = codebook.get(var_code, {})
+            theme = entry.get("theme", "Other / Computed Indices") or "Other / Computed Indices"
+            label = entry.get("label", "") or var_code
+            scale = entry.get("scale", "")
+            themed[theme].append({
+                "code": var_code,
+                "label": label,
+                "value": value,
+                "scale": scale,
+            })
+
+        # Sort themes: named themes first alphabetically, "Other" last
+        sorted_themes = []
+        other_theme = None
+        for theme in sorted(themed.keys()):
+            if theme == "Other / Computed Indices":
+                other_theme = (theme, themed[theme])
+            else:
+                sorted_themes.append((theme, themed[theme]))
+        if other_theme:
+            sorted_themes.append(other_theme)
+
+        # Count non-null variables
+        total_vars = sum(len(vs) for _, vs in sorted_themes)
+        non_null_vars = sum(
+            1 for _, vs in sorted_themes for v in vs if v["value"] is not None
+        )
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": f"WVS Profile: {profile.country.name} — Wave {profile.wave}",
+            "profile": profile,
+            "themed_data": sorted_themes,
+            "total_vars": total_vars,
+            "non_null_vars": non_null_vars,
+            "opts": self.model._meta,
+        }
+        return TemplateResponse(
+            request,
+            "admin/audiences/wvsprofile/view_data.html",
+            context,
+        )

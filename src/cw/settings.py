@@ -234,6 +234,11 @@ UNFOLD = {
                         "icon": "translate",
                         "link": "/app/audiences/language/",
                     },
+                    {
+                        "title": "WVS Profiles",
+                        "icon": "bar_chart",
+                        "link": "/app/audiences/wvsprofile/",
+                    },
                 ],
             },
             {

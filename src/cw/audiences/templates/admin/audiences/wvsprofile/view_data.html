@@ -1,0 +1,155 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <div class="max-w-6xl">
+
+        {# Header #}
+        <div class="mb-6">
+            <div class="flex items-center gap-3 mb-2">
+                <a href="{% url 'admin:audiences_wvsprofile_changelist' %}"
+                   class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                    &larr; Back to list
+                </a>
+            </div>
+            <h1 class="text-2xl font-bold mb-1">{{ profile.country.name }}</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+                WVS Wave {{ profile.wave }}
+                &middot; {{ non_null_vars }} of {{ total_vars }} variables with data
+                &middot; Standard deviation columns excluded
+            </p>
+        </div>
+
+        {# Search #}
+        <div class="mb-6">
+            <input
+                type="text"
+                id="wvs-search"
+                placeholder="Search by variable code or label..."
+                class="w-full max-w-md px-4 py-2 text-sm border border-gray-300 dark:border-gray-600
+                       dark:bg-gray-800 dark:text-gray-100 rounded-lg
+                       focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            />
+            <p id="wvs-search-count" class="mt-1 text-xs text-gray-500 dark:text-gray-400 hidden"></p>
+        </div>
+
+        {# Theme sections #}
+        {% for theme, variables in themed_data %}
+        <div class="mb-6 wvs-theme-section" data-theme="{{ theme }}">
+            <button
+                type="button"
+                class="wvs-collapse-btn flex items-center gap-2 w-full text-left py-2 px-3
+                       bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200
+                       dark:hover:bg-gray-700 transition-colors"
+                onclick="toggleSection(this)"
+            >
+                <span class="wvs-chevron text-gray-400 transition-transform duration-200"
+                      style="display: inline-block;">&#9654;</span>
+                <span class="font-semibold text-sm">{{ theme }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 ml-auto">{{ variables|length }} variables</span>
+            </button>
+
+            <div class="wvs-section-body hidden mt-2">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-200 dark:border-gray-700">
+                            <th class="text-left py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">Code</th>
+                            <th class="text-left py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Label</th>
+                            <th class="text-right py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-20">Scale</th>
+                            <th class="text-right py-2 px-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-28">Mean</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for var in variables %}
+                        <tr class="wvs-row border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                            data-code="{{ var.code|lower }}" data-label="{{ var.label|lower }}">
+                            <td class="py-1.5 px-3 font-mono text-xs text-gray-600 dark:text-gray-300">{{ var.code }}</td>
+                            <td class="py-1.5 px-3 text-gray-700 dark:text-gray-200">{{ var.label }}</td>
+                            <td class="py-1.5 px-3 text-right font-mono text-xs text-gray-400 dark:text-gray-500">
+                                {% if var.scale %}{{ var.scale }}{% endif %}
+                            </td>
+                            <td class="py-1.5 px-3 text-right font-mono text-xs
+                                {% if var.value == None %}text-gray-400 dark:text-gray-600{% else %}text-gray-700 dark:text-gray-200{% endif %}">
+                                {% if var.value == None %}
+                                    N/A
+                                {% else %}
+                                    {{ var.value|floatformat:2 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+function toggleSection(btn) {
+    const body = btn.nextElementSibling;
+    const chevron = btn.querySelector('.wvs-chevron');
+    if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        chevron.style.transform = 'rotate(90deg)';
+    } else {
+        body.classList.add('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Search functionality
+const searchInput = document.getElementById('wvs-search');
+const searchCount = document.getElementById('wvs-search-count');
+
+searchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    const sections = document.querySelectorAll('.wvs-theme-section');
+    let totalVisible = 0;
+
+    sections.forEach(function(section) {
+        const rows = section.querySelectorAll('.wvs-row');
+        let sectionVisible = 0;
+
+        rows.forEach(function(row) {
+            const code = row.dataset.code;
+            const label = row.dataset.label;
+            if (!query || code.includes(query) || label.includes(query)) {
+                row.style.display = '';
+                sectionVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Show/hide entire section based on whether it has visible rows
+        if (query && sectionVisible === 0) {
+            section.style.display = 'none';
+        } else {
+            section.style.display = '';
+            // Auto-expand sections with matches when searching
+            if (query && sectionVisible > 0) {
+                const body = section.querySelector('.wvs-section-body');
+                const chevron = section.querySelector('.wvs-chevron');
+                body.classList.remove('hidden');
+                chevron.style.transform = 'rotate(90deg)';
+            }
+        }
+        totalVisible += sectionVisible;
+    });
+
+    // Update count indicator
+    if (query) {
+        searchCount.textContent = totalVisible + ' matching variables';
+        searchCount.classList.remove('hidden');
+    } else {
+        searchCount.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}

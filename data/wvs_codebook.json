@@ -1,0 +1,7192 @@
+{
+  "A001": {
+    "label": "Important in life: Family",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A001_CO": {
+    "label": "Family important",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A002": {
+    "label": "Important in life: Friends",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A002_CO": {
+    "label": "Friends important",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A003": {
+    "label": "Important in life: Leisure time",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A003_CO": {
+    "label": "Leisure time",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A004": {
+    "label": "Important in life: Politics",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A004_CO": {
+    "label": "Politics important",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A005": {
+    "label": "Important in life: Work",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A005_CO": {
+    "label": "Work important",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A006": {
+    "label": "Important in life: Religion",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A006_CO": {
+    "label": "Religion important",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A007": {
+    "label": "Service to others important in life",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A008": {
+    "label": "Feeling of happiness",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A009": {
+    "label": "State of health (subjective)",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A010": {
+    "label": "Ever felt very excited or interested",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A011": {
+    "label": "Ever felt restless",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A012": {
+    "label": "Ever felt proud because someone complimented you",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A013": {
+    "label": "Ever felt very lonely or remote from other people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A014": {
+    "label": "Ever felt pleased about having accomplished something",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A015": {
+    "label": "Ever felt bored",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A016": {
+    "label": "Ever felt on top of the world",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A017": {
+    "label": "Ever felt depressed or very unhappy",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A018": {
+    "label": "Ever felt that things were going your way",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A019": {
+    "label": "Ever felt upset because somebody criticized you",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A020": {
+    "label": "When you are home, do you feel relaxed",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A021": {
+    "label": "When you are home, do you feel anxious",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A022": {
+    "label": "When you are home, do you feel happy",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A023": {
+    "label": "When you are home, do you feel aggressive",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A024": {
+    "label": "When you are home, do you feel secure",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A025": {
+    "label": "Respect and love for parents",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A026": {
+    "label": "Parents responsibilities to their children",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "a026_01": {
+    "label": "Children responsibilities to their parents in need at expense of/not sacrifice own well-being",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A027": {
+    "label": "Important child qualities: good manners",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A028": {
+    "label": "Important child qualities: politeness and neatness",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A029": {
+    "label": "Important child qualities: independence",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A030": {
+    "label": "Important child qualities: hard work",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A031": {
+    "label": "Important child qualities: honesty",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A032": {
+    "label": "Important child qualities: feeling of responsibility",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A033": {
+    "label": "Important child qualities: patience",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A034": {
+    "label": "Important child qualities: imagination",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A035": {
+    "label": "Important child qualities: tolerance and respect for other people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A036": {
+    "label": "Important child qualities: leadership",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A037": {
+    "label": "Important child qualities: self-control",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A038": {
+    "label": "Important child qualities: thrift saving money and things",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A039": {
+    "label": "Important child qualities: determination perseverance",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A040": {
+    "label": "Important child qualities: religious faith",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A041": {
+    "label": "Important child qualities: unselfishness",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A042": {
+    "label": "Important child qualities: obedience",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A043": {
+    "label": "Important child qualities: loyalty",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "a043_01": {
+    "label": "Important child qualities: none",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "a043_01f": {
+    "label": "Flag variable: learn children at home: none",
+    "theme": "Perceptions of life",
+    "scale": "0-8"
+  },
+  "a043_f": {
+    "label": "Flag variable: learn children at home",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A043B": {
+    "label": "Important child qualities: Self-expression",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A044": {
+    "label": "What children should learn 1",
+    "theme": "Perceptions of life",
+    "scale": "1-7"
+  },
+  "A045": {
+    "label": "What children should learn 2",
+    "theme": "Perceptions of life",
+    "scale": "1-7"
+  },
+  "A046": {
+    "label": "Abortion when the mothers health is at risk",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A047": {
+    "label": "Abortion when child physically handicapped",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A048": {
+    "label": "Abortion when woman not married",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A049": {
+    "label": "Abortion if not wanting more children",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A050": {
+    "label": "Way of spending leisure time",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "a050_01": {
+    "label": "Leisure time: meeting nice people",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "a050_02": {
+    "label": "Leisure time: relaxing",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "a050_03": {
+    "label": "Leisure time: doing as I want",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "a050_04": {
+    "label": "Leisure time: learning something new",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A051": {
+    "label": "Spend leisure time: alone",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A052": {
+    "label": "Spend leisure time: with family",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A053": {
+    "label": "Spend leisure time: with friends",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A054": {
+    "label": "Spend leisure time: in a lively place",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A055": {
+    "label": "Spend leisure time: all equally",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A056": {
+    "label": "Spend leisure time with: don’t know",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A057": {
+    "label": "Spend time with parents or other relatives",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A058": {
+    "label": "Spend time with friends",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A059": {
+    "label": "Spend time with colleagues from work",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A060": {
+    "label": "Spend time with people at your church, mosque or synagogue",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A061": {
+    "label": "Spend time with people at sport, culture, communal organization",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A062": {
+    "label": "How often discusses political matters with friends",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A063": {
+    "label": "Persuading friends, relatives or fellow workers",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A064": {
+    "label": "Member: Belong to social welfare service for elderly",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A065": {
+    "label": "Member: Belong to religious organization",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A066": {
+    "label": "Member: Belong to education, arts, music or cultural activities",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A067": {
+    "label": "Member: Belong to labour unions",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A068": {
+    "label": "Member: Belong to political parties",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A069": {
+    "label": "Member: Belong to local political actions",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A070": {
+    "label": "Member: Belong to human rights",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A071": {
+    "label": "Member: Belong to conservation, the environment, ecology, animal rights",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A071B": {
+    "label": "Member: Belong to conservation, the environment, ecology",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A071C": {
+    "label": "Member: Belong to animal rights",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A072": {
+    "label": "Member: Belong to professional associations",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A073": {
+    "label": "Member: Belong to youth work",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A074": {
+    "label": "Member: Belong to sports or recreation",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A075": {
+    "label": "Member: Belong to women´s group",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A076": {
+    "label": "Member: Belong to peace movement",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A077": {
+    "label": "Member: Belong to organization concerned with health",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A078": {
+    "label": "Belong: Cconsumer groups",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A079": {
+    "label": "Member: Belong to other groups",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A080": {
+    "label": "Member: Belong to none",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "a080_f": {
+    "label": "Flag variable: do you belong to: none",
+    "theme": "Perceptions of life",
+    "scale": "0-8"
+  },
+  "A081": {
+    "label": "Voluntary work: Unpaid work social welfare service for elderly, handicapped or deprived people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A082": {
+    "label": "Voluntary work: Unpaid work religious or church organization",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A083": {
+    "label": "Voluntary work: Unpaid work education, arts, music or cultural activities",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A084": {
+    "label": "Voluntary work: Unpaid work labour unions",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A085": {
+    "label": "Voluntary work: Unpaid work political parties or groups",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A086": {
+    "label": "Voluntary work: Unpaid work local political action groups",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A087": {
+    "label": "Voluntary work: Unpaid work human rights",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A088": {
+    "label": "Voluntary work: Unpaid work environment, conservation, animal rights",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A088B": {
+    "label": "Voluntary work: Unpaid work environment, conservation, ecology",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A088C": {
+    "label": "Voluntary work: Unpaid work animal rights",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A089": {
+    "label": "Voluntary work: Unpaid work professional associations",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A090": {
+    "label": "Voluntary work: Unpaid work youth work",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A091": {
+    "label": "Voluntary work: Unpaid work sports or recreation",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A092": {
+    "label": "Voluntary work: Unpaid work women´s group",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A093": {
+    "label": "Voluntary work: Unpaid work peace movement",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A094": {
+    "label": "Voluntary work: Unpaid work organization concerned with health",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A095": {
+    "label": "Voluntary work: Unpaid work consumer groups",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A096": {
+    "label": "Voluntary work: Unpaid work other groups",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A097": {
+    "label": "Voluntary work: Unpaid work none",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "a097_f": {
+    "label": "Flag variable: do you work unpaid for: none",
+    "theme": "Perceptions of life",
+    "scale": "0-8"
+  },
+  "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A102": {
+    "label": "Active/Inactive membership of political party",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A106C": {
+    "label": "Active/Inactive membership: Self-help group, mutual aid group",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A107": {
+    "label": "Reasons voluntary work: Solidarity with the poor and disadvantaged",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A108": {
+    "label": "Reasons voluntary work: Compassion for those in need",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A109": {
+    "label": "Reasons voluntary work: Opportunity to repay something",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A110": {
+    "label": "Reasons voluntary work: Sense of duty, moral, obligation",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A111": {
+    "label": "Reasons voluntary work: Identifying with people who suffer",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A112": {
+    "label": "Reasons voluntary work: Time on my hands",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A113": {
+    "label": "Reasons voluntary work: Personal satisfaction",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A114": {
+    "label": "Reasons voluntary work: Religious belief",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A115": {
+    "label": "Reasons voluntary work: Help disadvantaged people",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A116": {
+    "label": "Reasons voluntary work: Make a contribution to my local community",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A117": {
+    "label": "Reasons voluntary work: Bring about social or political change",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A118": {
+    "label": "Reasons voluntary work: For social reasons",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A119": {
+    "label": "Reasons voluntary work: Gain new skills and useful experience",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A120": {
+    "label": "Reasons voluntary work: Did not want to, but could not refuse",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A121": {
+    "label": "Dislike being with people with different ideas",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A122": {
+    "label": "Do you ever feel very lonely",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A123": {
+    "label": "People´s will to help each other today",
+    "theme": "Perceptions of life",
+    "scale": "1-3"
+  },
+  "A124_01": {
+    "label": "Neighbours: People with a criminal record",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_02": {
+    "label": "Neighbours: People of a different race",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_03": {
+    "label": "Neighbours: Heavy drinkers",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_04": {
+    "label": "Neighbours: Emotionally unstable people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_05": {
+    "label": "Neighbours: Muslims",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_06": {
+    "label": "Neighbours: Immigrants/foreign workers",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_07": {
+    "label": "Neighbours: People who have AIDS",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_08": {
+    "label": "Neighbours: Drug addicts",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_09": {
+    "label": "Neighbours: Homosexuals",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_10": {
+    "label": "Neighbours: Jews",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_11": {
+    "label": "Neighbours: Evangelists",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_12": {
+    "label": "Neighbours: People of a different religion",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_13": {
+    "label": "Neighbours: People of the same religion",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_14": {
+    "label": "Neighbours: Militant minority",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_15": {
+    "label": "Neighbours: Zoroastrians",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_16": {
+    "label": "Neighbours: People not from country of origin",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_17": {
+    "label": "Neighbours: Gypsies",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_18": {
+    "label": "Neighbours: Political Extremists",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_19": {
+    "label": "Neighbours: Trafficants",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_20": {
+    "label": "Neighbours: Indians or Lebanese",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_21": {
+    "label": "Neighbours: Chinese or Philippino Chinese",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_22": {
+    "label": "Neighbours: Spiritists",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_23": {
+    "label": "Neighbours: Protestants",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_24": {
+    "label": "Neighbours: Christians",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_25": {
+    "label": "Neighbours: Witchdoctors and related labels",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_26": {
+    "label": "Neighbours: Left wing extremists",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_27": {
+    "label": "Neighbours: Right wing extremists",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_28": {
+    "label": "Neighbours: People with large families",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_29": {
+    "label": "Neighbours: Hindus",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_30": {
+    "label": "Neighbours: North-American persons",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_31": {
+    "label": "Neighbours: Haitians",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_32": {
+    "label": "Neighbours: Members of new religious movements",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_33": {
+    "label": "Neighbours: Jews, Arabs, Asians, gypsies, etc",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_34": {
+    "label": "Neighbours: Black people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_35": {
+    "label": "Neighbours: White people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_36": {
+    "label": "Neighbours: Coloured people",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_37": {
+    "label": "Neighbours: Indians",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_38": {
+    "label": "Neighbours: Kurds, Esids",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_39": {
+    "label": "Neighbours: Students",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_40": {
+    "label": "Neighbours: Unmarried mothers",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_41": {
+    "label": "Neighbours: Members of minority religious sects or cults",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_42": {
+    "label": "Neighbours: Unmarried couples living together",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_43": {
+    "label": "Neighbours: People who speak a different language",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_44": {
+    "label": "Neighbours: Members of ETA (terrorists)",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_45": {
+    "label": "Neighbours: Sunnis",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_46": {
+    "label": "Neighbours: Shia",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_47": {
+    "label": "Neighbours: French",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_48": {
+    "label": "Neighbours: British",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_49": {
+    "label": "Neighbours: Iranian",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_50": {
+    "label": "Neighbours: Kuwaiti",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_51": {
+    "label": "Neighbours: Turkish",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_52": {
+    "label": "Neighbours: Jordanian",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_53": {
+    "label": "Neighbours: Kildani",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_54": {
+    "label": "Neighbours: Indigenes; Aborigenes",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_55": {
+    "label": "Neighbours: Maori",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_56": {
+    "label": "Neighbours: Pacific Islanders",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_57": {
+    "label": "Neighbours: Europeans/Pakeha",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_58": {
+    "label": "Neighbours: Americans",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_59": {
+    "label": "Neighbours: Chaldean",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_60": {
+    "label": "Neighbours: Mapuches",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A124_61": {
+    "label": "Neighbours: Russians",
+    "theme": "Perceptions of life",
+    "scale": "0-1"
+  },
+  "A165": {
+    "label": "Most people can be trusted",
+    "theme": "Perceptions of life",
+    "scale": "1-2"
+  },
+  "A166": {
+    "label": "Young peoples trust in older people",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A167": {
+    "label": "Older peoples trust in young people",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A168": {
+    "label": "Do you think most people try to take advantage of you",
+    "theme": "Perceptions of life",
+    "scale": "1-2"
+  },
+  "a168_01": {
+    "label": "Most of the time people try to be helpful or mostly looking out for themselves",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A168A": {
+    "label": "Do you think most people try to take advantage of you (10 point scale)",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A169": {
+    "label": "Good human relationships",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A170": {
+    "label": "Satisfaction with your life",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A171": {
+    "label": "Satisfaction with your life 5 years ago",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A172": {
+    "label": "Expected satisfaction with your life in 5 years",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A173": {
+    "label": "How much freedom of choice and control",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A174": {
+    "label": "Membership consumer organisation",
+    "theme": "Perceptions of life",
+    "scale": "0-2"
+  },
+  "A189": {
+    "label": "Schwartz: It is important to this person to think up new ideas and be creative",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A190": {
+    "label": "Schwartz: It is important to this person to be rich",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A191": {
+    "label": "Schwartz: It is important to this person living in secure surroundings",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A192": {
+    "label": "Schwartz: It is important to this person to have a good time",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A193": {
+    "label": "Schwartz: It is important to this person to help the people nearby",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A194": {
+    "label": "Schwartz: It is important to this person being very successful",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A195": {
+    "label": "Schwartz: It is important to this person adventure and taking risks",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A196": {
+    "label": "Schwartz: It is important to this person to always behave properly",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A197": {
+    "label": "Schwartz: It is important to this person looking after the environment",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A198": {
+    "label": "Schwartz: It is important to this person tradition",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A199": {
+    "label": "Schwartz: It is important to this person to do something for the good of society",
+    "theme": "Perceptions of life",
+    "scale": "1-6"
+  },
+  "A200": {
+    "label": "Social position: People in their 20s",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A201": {
+    "label": "Social position: People in their 40s",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A202": {
+    "label": "Social position: People in their 70s",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A203": {
+    "label": "Is a 30-year old boss acceptable",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A204": {
+    "label": "People over 70: are seen as friendly",
+    "theme": "Perceptions of life",
+    "scale": "0-4"
+  },
+  "A205": {
+    "label": "People over 70: are seen as competent",
+    "theme": "Perceptions of life",
+    "scale": "0-4"
+  },
+  "A206": {
+    "label": "People over 70: viewed with respect",
+    "theme": "Perceptions of life",
+    "scale": "0-4"
+  },
+  "A207": {
+    "label": "Is a 70-year old boss acceptable",
+    "theme": "Perceptions of life",
+    "scale": "1-10"
+  },
+  "A208": {
+    "label": "Older people are not respected much these days",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A209": {
+    "label": "Older people get more than their fair share from the government",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A210": {
+    "label": "Older people are a burden on society",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A211": {
+    "label": "Companies that employ young people perform better than those that employ people of different ages",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A212": {
+    "label": "Old people have too much political influence",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "A213": {
+    "label": "I see myself as someone who: is reserved",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A214": {
+    "label": "I see myself as someone who: is generally trusting",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A215": {
+    "label": "I see myself as someone who: tends to be lazy",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A216": {
+    "label": "I see myself as someone who: is relaxed, handles stress well",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A217": {
+    "label": "I see myself as someone who: has few artistic interests",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A218": {
+    "label": "I see myself as someone who: is outgoing, sociable",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A219": {
+    "label": "I see myself as someone who: tends to find fault with others",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A220": {
+    "label": "I see myself as someone who: does a thorough job",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A221": {
+    "label": "I see myself as someone who: gets nervous easily",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "A222": {
+    "label": "I see myself as someone who: has an active imagination",
+    "theme": "Perceptions of life",
+    "scale": "1-5"
+  },
+  "B001": {
+    "label": "Would give part of my income for the environment",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B002": {
+    "label": "Increase in taxes if used to prevent environmental pollution",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B003": {
+    "label": "Government should reduce environmental pollution",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B004": {
+    "label": "Would buy things at a 20% higher price if it helped to protect environment",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B005": {
+    "label": "All talk about the environment make people anxious",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B006": {
+    "label": "Combatting unemployment, we have to accept environmental problems",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B007": {
+    "label": "Protecting environment and fighting pollution is less urgent than suggested",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B008": {
+    "label": "Protecting environment vs. Economic growth",
+    "theme": "Environment",
+    "scale": "1-3"
+  },
+  "B009": {
+    "label": "Human & nature",
+    "theme": "Environment",
+    "scale": "1-5"
+  },
+  "B010": {
+    "label": "[Country]s environmental problems can be solved without any international agreements to handle them",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B011": {
+    "label": "Environmental action: chosen products that are better for environment",
+    "theme": "Environment",
+    "scale": "0-1"
+  },
+  "B012": {
+    "label": "Environmental action: recycle",
+    "theme": "Environment",
+    "scale": "0-1"
+  },
+  "B013": {
+    "label": "Environmental action: reduce water consumption",
+    "theme": "Environment",
+    "scale": "0-1"
+  },
+  "B014": {
+    "label": "Environmental action: attend meeting, signed petition",
+    "theme": "Environment",
+    "scale": "0-1"
+  },
+  "B015": {
+    "label": "Environmental action: contributed to environmental organization",
+    "theme": "Environment",
+    "scale": "0-1"
+  },
+  "B016": {
+    "label": "Tradition vs. high economic growth",
+    "theme": "Environment",
+    "scale": "1-5"
+  },
+  "B017": {
+    "label": "Humanity has a bright or bleak future",
+    "theme": "Environment",
+    "scale": "1-5"
+  },
+  "B018": {
+    "label": "Environmental problems in your community: Poor water quality.",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B019": {
+    "label": "Environmental problems in your community: Poor air quality.",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B020": {
+    "label": "Environmental problems in your community: Poor sewage and sanitation.",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B021": {
+    "label": "Environmental problems in the world: Global warming or the greenhouse effect.",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B022": {
+    "label": "Environmental problems in the world: Loss of plant or animal species or biodiversity.",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "B023": {
+    "label": "Environmental problems in the world: Pollution of rivers, lakes and oceans.",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b024": {
+    "label": "Environment: approaching the limit of people",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b025": {
+    "label": "Environment: interference produces disastrous consequences",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b026": {
+    "label": "Environment: human ingenuity insures earth remaining fit",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b027": {
+    "label": "Environment: nature is strong enough to cope with impacts of industry",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b028": {
+    "label": "Environment: humans were meant to rule over nature",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b029": {
+    "label": "Environment: if things continue we will experience a catastrophe",
+    "theme": "Environment",
+    "scale": "1-4"
+  },
+  "b030": {
+    "label": "Past two years: given money to ecological organization",
+    "theme": "Environment",
+    "scale": "1-2"
+  },
+  "b031": {
+    "label": "Past two years: participated in demonstration for environment",
+    "theme": "Environment",
+    "scale": "1-2"
+  },
+  "C001": {
+    "label": "Jobs scarce: Men should have more right to a job than women",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C002": {
+    "label": "Jobs scarce: Employers should give priority to (nation) people than immigrants",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C003": {
+    "label": "Jobs scarce: Jobs to local people",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C004": {
+    "label": "Jobs scarce: older people should be forced to retire",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C005": {
+    "label": "Unfair to give work to handicapped people when able bodied people can´t find jobs",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C006": {
+    "label": "Satisfaction with financial situation of household",
+    "theme": "Work",
+    "scale": "1-10"
+  },
+  "C007": {
+    "label": "Financial situation of household in 12months",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C008": {
+    "label": "Work compared with Leisure",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C009": {
+    "label": "First choice, if looking for a job",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C010": {
+    "label": "Second choice if looking for a job",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C011": {
+    "label": "Important in a job: good pay",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C012": {
+    "label": "Important in a job: not too much pressure",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C013": {
+    "label": "Important in a job: good job security",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C014": {
+    "label": "Important in a job: a respected job",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C015": {
+    "label": "Important in a job: good hours",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C016": {
+    "label": "Important in a job: an opportunity to use initiative",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C017": {
+    "label": "Important in a job: generous holidays",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C018": {
+    "label": "Important in a job: that you can achieve something",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C019": {
+    "label": "Important in a job: a responsible job",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C020": {
+    "label": "Important in a job: a job that is interesting",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C021": {
+    "label": "Important in a job: a job that meets one´s abilities",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C022": {
+    "label": "Important in a job: pleasant people to work with",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C023": {
+    "label": "Important in a job: good chances for promotion",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C024": {
+    "label": "Important in a job: a useful job for society",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C025": {
+    "label": "Important in a job: meeting people",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C026": {
+    "label": "Important in a job: good physical working conditions",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C027": {
+    "label": "Important in a job: to have time off at the weekends",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "c027_1": {
+    "label": "Important in a job: learning new skills",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "c027_2": {
+    "label": "Important in a job: family friendly",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "c027_3": {
+    "label": "Important in a job: have a say",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "c027_4": {
+    "label": "Important in a job: people treated equally",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C028": {
+    "label": "Important in a job: none of these",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "c028_f": {
+    "label": "Flag variable: important in a job: none of these",
+    "theme": "Work",
+    "scale": "0-8"
+  },
+  "C029": {
+    "label": "Employed",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C030": {
+    "label": "Look forward to work after weekend",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C031": {
+    "label": "Degree of pride in your work",
+    "theme": "Work",
+    "scale": "1-4"
+  },
+  "C032": {
+    "label": "Often exploited in your job",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C033": {
+    "label": "Job satisfaction",
+    "theme": "Work",
+    "scale": "1-10"
+  },
+  "C034": {
+    "label": "Freedom decision taking in job",
+    "theme": "Work",
+    "scale": "1-10"
+  },
+  "C035": {
+    "label": "Satisfaction job security",
+    "theme": "Work",
+    "scale": "1-10"
+  },
+  "C036": {
+    "label": "To develop talents you need to have a job",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C037": {
+    "label": "Humiliating to receive money without having to work for it",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C038": {
+    "label": "People who don´t work turn lazy",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C039": {
+    "label": "Work is a duty towards society",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C040": {
+    "label": "People should not have to work if they don´t want to",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C041": {
+    "label": "Work should come first even if it means less spare time",
+    "theme": "Work",
+    "scale": "1-5"
+  },
+  "C042B1": {
+    "label": "Why people work: work is like a business transaction",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C042B2": {
+    "label": "Why people work: I do the best I can regardless of pay",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C042B3": {
+    "label": "Why people work: I wouldn’t work if I didn’t have to",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C042B4": {
+    "label": "Why people work: I wouldn´t work if work interfered my life",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C042B5": {
+    "label": "Why people work: work most important in my life",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C042B6": {
+    "label": "Why people work: I never had a paid job",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C042B7": {
+    "label": "Why people work: don’t know",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C049": {
+    "label": "Paid free days: find extra work for money",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C050": {
+    "label": "Paid free days: use spare time to study",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C051": {
+    "label": "Paid free days: spend time with family and friends",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C052": {
+    "label": "Paid free days: find additional work to avoid boredom",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C053": {
+    "label": "Paid free days: use spare time for voluntary work",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C054": {
+    "label": "Paid free days: spend time on hobbies",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C055": {
+    "label": "Paid free days: run own business in spare time",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C056": {
+    "label": "Paid free days: spend the time relaxing",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C057": {
+    "label": "Paid free days: none of these",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C058": {
+    "label": "Paid free days: don’t know",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C059": {
+    "label": "Fairness: One secretary is paid more",
+    "theme": "Work",
+    "scale": "0-1"
+  },
+  "C060": {
+    "label": "How business and industry should be managed",
+    "theme": "Work",
+    "scale": "1-4"
+  },
+  "C061": {
+    "label": "Following instructions at work",
+    "theme": "Work",
+    "scale": "1-3"
+  },
+  "C062": {
+    "label": "Work: until satisfied with results",
+    "theme": "Work",
+    "scale": "1-4"
+  },
+  "C063": {
+    "label": "Work: accomplish personal goals",
+    "theme": "Work",
+    "scale": "1-4"
+  },
+  "C064": {
+    "label": "Work: stay up late to finish",
+    "theme": "Work",
+    "scale": "1-4"
+  },
+  "D001": {
+    "label": "How much do you trust your family",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D001_B": {
+    "label": "How much you trust: Your family (B)",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D002": {
+    "label": "Satisfaction with home life",
+    "theme": "Family",
+    "scale": "1-10"
+  },
+  "D003": {
+    "label": "Sharing with partner: attitudes towards religion",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D004": {
+    "label": "Sharing with partner: moral standards",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D005": {
+    "label": "Sharing with partner: social attitudes",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D006": {
+    "label": "Sharing with partner: political views",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D007": {
+    "label": "Sharing with partner: sexual attitudes",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D008": {
+    "label": "Sharing with partner: no sharing attitudes",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D009": {
+    "label": "Sharing with partner: don´t know or missing",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D010": {
+    "label": "Sharing with parents: attitudes towards religion",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D011": {
+    "label": "Sharing with parents: moral standards´",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D012": {
+    "label": "Sharing with parents: social attitudes",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D013": {
+    "label": "Sharing with parents: political views",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D014": {
+    "label": "Sharing with parents: sexual attitudes",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D015": {
+    "label": "Sharing with parents: no sharing attitudes",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D016": {
+    "label": "Sharing with parents: don´t know or missing",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D017": {
+    "label": "Ideal number of children",
+    "theme": "Family",
+    "scale": "0-10"
+  },
+  "D018": {
+    "label": "Child needs a home with father and mother",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D019": {
+    "label": "A woman has to have children to be fulfilled",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D020": {
+    "label": "A man has to have children to be fulfilled",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D021": {
+    "label": "Sex cannot entirely be left to individual choice",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D022": {
+    "label": "Marriage is an out-dated institution",
+    "theme": "Family",
+    "scale": "0-2"
+  },
+  "D023": {
+    "label": "Woman as a single parent",
+    "theme": "Family",
+    "scale": "0-2"
+  },
+  "D024": {
+    "label": "Enjoy sexual freedom",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D025": {
+    "label": "If only one child allowed: boy or girl",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D026": {
+    "label": "Long-term relationship is necessary to be happy",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "d026_01": {
+    "label": "Homosexual couples - adopt children",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "d026_02": {
+    "label": "It is alright to live together without getting married",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "d026_03": {
+    "label": "Duty towards society to have children",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "d026_04": {
+    "label": "People should decide themselves to have children",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "d026_05": {
+    "label": "It is childs duty to take care of ill parent",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D027": {
+    "label": "Important for succesful marriage: Faithfulness",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D028": {
+    "label": "Important for succesful marriage: Adequate income",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D029": {
+    "label": "Important for succesful marriage: Same social background",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D030": {
+    "label": "Important for succesful marriage: Respect and appreciation",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D031": {
+    "label": "Important for succesful marriage: Religious beliefs",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D032": {
+    "label": "Important for succesful marriage: Good housing",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D033": {
+    "label": "Important for succesful marriage: Agreement on politics",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D034": {
+    "label": "Important in succesful marriage: Understanding and tolerance",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D035": {
+    "label": "Important for succesful marriage: Apart from in-laws",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D036": {
+    "label": "Important for succesful marriage: Happy sexual relationship",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D037": {
+    "label": "Important for succesful marriage: Sharing household chores",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D038": {
+    "label": "Important for succesful marriage: Children",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D039": {
+    "label": "Important in succesful marriage: Discussing problems",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D040": {
+    "label": "Important for succesful marriage: Spending time together",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D041": {
+    "label": "Important in succesful marriage: Talking",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D042": {
+    "label": "Important for succesful marriage: Same ethnic background",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D043": {
+    "label": "Important for succesful marriage: Tastes and interests in common",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "d043_01": {
+    "label": "Important in marriage: time for friends and personal hobbies",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D044": {
+    "label": "Divorce: when financially broke",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "d044a": {
+    "label": "Divorce: when partner ill for a long time",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D045": {
+    "label": "Divorce: when partner is a heavy drinker",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D046": {
+    "label": "Divorce: when partner is violent",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D047": {
+    "label": "Divorce: when partner is unfaithful",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D048": {
+    "label": "Divorce: when sexual relationship is not satisfactory",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D049": {
+    "label": "Divorce: when partner has ceased to love",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D050": {
+    "label": "Divorce: when can not stand relatives",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D051": {
+    "label": "Divorce: when can not have children",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D052": {
+    "label": "Divorce: when personalities do not watch",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D053": {
+    "label": "Divorce: none of these",
+    "theme": "Family",
+    "scale": "0-1"
+  },
+  "D054": {
+    "label": "One of main goals in life has been to make my parents proud",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D055": {
+    "label": "Make effort to live up to what my friends expect",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D056": {
+    "label": "Relationship working mother",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D057": {
+    "label": "Being a housewife just as fulfilling",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D058": {
+    "label": "Husband and wife should both contribute to income",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D059": {
+    "label": "Men make better political leaders than women do",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D060": {
+    "label": "University is more important for a boy than for a girl",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D061": {
+    "label": "Pre-school child suffers with working mother",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D062": {
+    "label": "Women want a home and children",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D063": {
+    "label": "Job best way for women to be independent",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D063_B": {
+    "label": "Job best way for women to be independent (b)",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D064": {
+    "label": "Fathers are well suited for looking after children",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "d064_01": {
+    "label": "Men should take as much responsibility as women for home and children",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D065": {
+    "label": "Men are less able to handle emotions",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D066": {
+    "label": "Problem if women have more income than husband",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D066_B": {
+    "label": "Problem if women have more income than husband (B)",
+    "theme": "Family",
+    "scale": "1-3"
+  },
+  "D067": {
+    "label": "Traits in a woman: Woman wearing weil",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D068": {
+    "label": "Traits in a woman: Woman good mother",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D069": {
+    "label": "Traits in a woman: Woman good wife",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D070": {
+    "label": "Traits in a woman: Woman religious",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D071": {
+    "label": "Traits in a woman: Woman educated",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D072": {
+    "label": "Traits in a woman: Woman being independent",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D073": {
+    "label": "Traits in a woman: Woman having work outside home",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D074": {
+    "label": "Traits in a woman: Woman maintaining her family",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D075": {
+    "label": "Traits in a woman: Woman being sociable",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D076": {
+    "label": "More than one wife",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D077": {
+    "label": "Wife must obey",
+    "theme": "Family",
+    "scale": "1-5"
+  },
+  "D078": {
+    "label": "Men make better business executives than women do",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D079": {
+    "label": "I seek to be myself rather than to follow others",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "D080": {
+    "label": "I decide my goals in life by myself",
+    "theme": "Family",
+    "scale": "1-4"
+  },
+  "E001": {
+    "label": "Aims of country: first choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E001_HK": {
+    "label": "Aims of country: first choice (HK)",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E002": {
+    "label": "Aims of country: second choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E002_HK": {
+    "label": "Aims of country: second choice (HK)",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E003": {
+    "label": "Aims of respondent: first choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "e003_f": {
+    "label": "Flag variable: aims of this country - most/second important",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E004": {
+    "label": "Aims of respondent: second choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E005": {
+    "label": "Most important: first choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E005_HK": {
+    "label": "Most important: second choice (HK)",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E006": {
+    "label": "Most important: second choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E006_HK": {
+    "label": "Most important: first choice (HK)",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E007": {
+    "label": "National goals: Maintaining order in the nation",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E008": {
+    "label": "National goals: Giving people more say",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E009": {
+    "label": "National goals: Fighting rising prices",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E010": {
+    "label": "National goals: free speech",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E011": {
+    "label": "The main aim of imprisonment",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E012": {
+    "label": "Willingness to fight for country",
+    "theme": "Politics and Society",
+    "scale": "0-2"
+  },
+  "E013": {
+    "label": "Will there be war in your country in the next 5 years",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E014": {
+    "label": "Future changes: Less emphasis on money and material possessions",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E015": {
+    "label": "Future changes: Less importance placed on work",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E016": {
+    "label": "Future changes: More emphasis on technology",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E017": {
+    "label": "Future changes: More emphasis on individual",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E018": {
+    "label": "Future changes: Greater respect for authority",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E019": {
+    "label": "Future changes: More emphasis on family life",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E020": {
+    "label": "Future changes: A simple and more natural lifestyle",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E021": {
+    "label": "Future changes: More power to local authorities",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E022": {
+    "label": "Opinion about scientific advances",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E023": {
+    "label": "Interest in politics",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E024": {
+    "label": "Interest in politics (ii)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E025": {
+    "label": "Political action: signing a petition",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E025B": {
+    "label": "Political action recently done: signing a petition",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E026": {
+    "label": "Political action: joining in boycotts",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E026B": {
+    "label": "Political action recently done: joining in boycotts",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E027": {
+    "label": "Political action: attending lawful/peaceful demonstrations",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E028": {
+    "label": "Political action: joining unofficial strikes",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E028B": {
+    "label": "Political acition recently done: Joining strikes",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E029": {
+    "label": "Political action: occupying buildings or factories",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E030": {
+    "label": "Political action: damaging things, breaking windows, street violence",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E031": {
+    "label": "Political action: personal violence",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E032": {
+    "label": "Freedom or equality",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E033": {
+    "label": "Self positioning in political scale",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E034": {
+    "label": "Basic kinds of attitudes concerning society",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E035": {
+    "label": "Income equality",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E036": {
+    "label": "Private vs state ownership of business",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E037": {
+    "label": "Government responsibility",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E038": {
+    "label": "Job taking of the unemployed",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E039": {
+    "label": "Competition good or harmful",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E040": {
+    "label": "Hard work brings success",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E041": {
+    "label": "Wealth accumulation",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E042": {
+    "label": "Firms and freedom",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E043": {
+    "label": "Responsibility pension",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E044": {
+    "label": "Responsibility housing",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E045": {
+    "label": "Major changes in life",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E046": {
+    "label": "New and old ideas",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E047": {
+    "label": "Personal characteristics: Changes, worry or welcome possibility",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E048": {
+    "label": "Personal characteristics: I usually count on being successful in everything I do",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E049": {
+    "label": "Personal characteristics: I enjoy convincing others of my opinion",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E050": {
+    "label": "Personal characteristics: I serve as a model for others",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E051": {
+    "label": "Personal characteristics: I am good at getting what I want",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E052": {
+    "label": "Personal characteristics: I own many things others envy me for",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E053": {
+    "label": "Personal characteristics: I like to assume responsibility",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E054": {
+    "label": "Personal characteristics: I am rarely unsure about how I should behave",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E055": {
+    "label": "Personal characteristics: I often give others advice",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E056": {
+    "label": "Personal characteristics: None of the above",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E057": {
+    "label": "The economic system needs fundamental changes",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E058": {
+    "label": "Our government should be made much more open to the public",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E059": {
+    "label": "Allow more freedom for individuals",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E060": {
+    "label": "I could do nothing about an unjust law",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E061": {
+    "label": "Political reform is moving too rapidly",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E062": {
+    "label": "Importation of goods",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E063": {
+    "label": "Current society: Egalitarian vs. competitive society",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E064": {
+    "label": "Current society: Extensive welfare vs. low taxes",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E065": {
+    "label": "Current society: Regulated vs. responsible society",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E066": {
+    "label": "Society aimed:  egalitarian vs. competitive",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E067": {
+    "label": "Society aimed: extensive welfare vs. low taxes",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E068": {
+    "label": "Society aimed: regulated vs. responsible society",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E069_01": {
+    "label": "Confidence: Churches",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_02": {
+    "label": "Confidence: Armed Forces",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_03": {
+    "label": "Confidence: Education System",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_04": {
+    "label": "Confidence: The Press",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_05": {
+    "label": "Confidence: Labour Unions",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_06": {
+    "label": "Confidence: The Police",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_07": {
+    "label": "Confidence: Parliament",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_08": {
+    "label": "Confidence: The Civil Services",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_09": {
+    "label": "Confidence: Social Security System",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_10": {
+    "label": "Confidence: Television",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_11": {
+    "label": "Confidence: The Government",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_12": {
+    "label": "Confidence: The Political Parties",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_13": {
+    "label": "Confidence: Major Companies",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_14": {
+    "label": "Confidence: The Environmental Protection Movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_15": {
+    "label": "Confidence: The Women´s Movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_16": {
+    "label": "Confidence: Health Care System",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_17": {
+    "label": "Confidence: Justice System/Courts",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_18": {
+    "label": "Confidence: The European Union",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_19": {
+    "label": "Confidence: NATO",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_20": {
+    "label": "Confidence: The United Nations",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_21": {
+    "label": "Confidence: The Arab League",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_22": {
+    "label": "Confidence: The Association of South East Asian Nations -ASEAN",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_23": {
+    "label": "Confidence: The Organization for African Unity-OAU",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_24": {
+    "label": "Confidence: The NAFTA",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_25": {
+    "label": "Confidence: The Andean pact",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_26": {
+    "label": "Confidence: The Mercosur",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_27": {
+    "label": "Confidence: The SAARC",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_28": {
+    "label": "Confidence: The ECO",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_29": {
+    "label": "Confidence: The APEC",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_30": {
+    "label": "Confidence: The Free Commerce Treaty (Tratado de libre comercio)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_31": {
+    "label": "Confidence: The United American States Organization (Organización de Estados Unidos Americanos - OEA)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_32": {
+    "label": "Confidence: The “Movimiento en pro de Vieques”(Puerto Rico)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_33": {
+    "label": "Confidence: Local/Regional Government",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_34": {
+    "label": "Confidence: SADC/SADEC",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_35": {
+    "label": "Confidence: East African Cooperation (EAC)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_36": {
+    "label": "Confidence: Other television",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_37": {
+    "label": "Confidence: The Americans",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_38": {
+    "label": "Confidence: The Presidency",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_39": {
+    "label": "Confidence: The Civil Society Groups",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_40": {
+    "label": "Confidence: Charitable or humanitarian organizations",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_41": {
+    "label": "Confidence: Banks",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_42": {
+    "label": "Confidence: CARICOM",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_43": {
+    "label": "Confidence: CIS",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_44": {
+    "label": "Confidence: Confidence in CER with Australia",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_45": {
+    "label": "Confidence: International Monetary Found (IMF)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_46": {
+    "label": "Confidence: Non governmental Organizations (NGOs)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_47": {
+    "label": "Confidence: The American Forces",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_48": {
+    "label": "Confidence: The non-Iraqi television",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_49": {
+    "label": "Confidence: TV News",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_50": {
+    "label": "Confidence: Community Organisations",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_51": {
+    "label": "Confidence: Religious leaders",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_52": {
+    "label": "Confidence: Evangelic Church",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_54": {
+    "label": "Confidence: Universities",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_55": {
+    "label": "Confidence: The Organization of the Islamic World",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_56": {
+    "label": "Confidence: The Organization of American States (OAE)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_57": {
+    "label": "Confidence: UNASUR",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_58": {
+    "label": "Confidence: The Arab Maghreb Union",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_59": {
+    "label": "Confidence: Cooperation Council for the Arab states of Gulf (GCC)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E069_60": {
+    "label": "Confidence: Mainland government",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E104": {
+    "label": "Approval: Ecology movement or nature protection",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E105": {
+    "label": "Approval: Anti-nuclear energy movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E106": {
+    "label": "Approval: Disarmament movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E107": {
+    "label": "Approval: Human rights movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E108": {
+    "label": "Approval: Women’s movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E109": {
+    "label": "Approval: Anti-apartheid movement",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E110": {
+    "label": "Satisfaction with the way democracy develops",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E111": {
+    "label": "Rate political system for governing country",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E112": {
+    "label": "Rate political system as it was before",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E113": {
+    "label": "Rate political system in ten years",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E114": {
+    "label": "Political system: Having a strong leader",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E114_MX": {
+    "label": "Political system: Having a strong leader (MX, 5 cats)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E115": {
+    "label": "Political system: Having experts make decisions",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E115_MX": {
+    "label": "Having experts make decisions (MX, 5 cats)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E116": {
+    "label": "Political system: Having the army rule",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E116_MX": {
+    "label": "Having the army rule (MX, 5 cats)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E117": {
+    "label": "Political system: Having a democratic political system",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E117_IQA": {
+    "label": "Political system: Having an Islamic government, where religious authorities have absolute power",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E117_IQB": {
+    "label": "Political system: Having an Arab socialist state",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E117_MX": {
+    "label": "Having a democratic political system (MX, 5 cats)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E118": {
+    "label": "Firm party leader vs. Cooperating party leader",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E119": {
+    "label": "Government order vs. freedom",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E120": {
+    "label": "In democracy, the economic system runs badly",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E121": {
+    "label": "Democracies are indecisive and have too much squabbling",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E122": {
+    "label": "Democracies aren´t good at maintaining order",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E123": {
+    "label": "Democracy may have problems but is better",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E124": {
+    "label": "Respect for individual human rights nowadays",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E125": {
+    "label": "Satisfaction with the people in national office",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E127": {
+    "label": "Free market economy right for country future",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E128": {
+    "label": "Country is run by big interest vs. for all people’s benefit",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E129": {
+    "label": "Economic aid to poorer countries",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E129A": {
+    "label": "Amount of foreign aid of this country",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E129B": {
+    "label": "How much more foreign aid this country should contribute",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E129C": {
+    "label": "Be willing to pay higher taxes in order to increase country´s foreign aid",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E129D": {
+    "label": "Economic aid to poorer countries (favor/against)",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E130": {
+    "label": "Poverty compared to 10 years ago",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E131": {
+    "label": "Why are people in need",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E132": {
+    "label": "Chance to escape from poverty",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E133": {
+    "label": "How much is the government doing against poverty",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E134": {
+    "label": "Amount of help for less developed countries",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E135": {
+    "label": "Who should decide: international peacekeeping",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E136": {
+    "label": "Who should decide: protection of the environment",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E137": {
+    "label": "Who should decide: aid to developing countries",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E138": {
+    "label": "Who should decide: refugees",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E139": {
+    "label": "Who should decide: human rights",
+    "theme": "Politics and Society",
+    "scale": "1-6"
+  },
+  "E140": {
+    "label": "Country cannot solve environmental problems by itself",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E141": {
+    "label": "Country cannot solve crime problems by itself",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E142": {
+    "label": "Country cannot solve employment problems by itself",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E143": {
+    "label": "Immigrant policy",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E144": {
+    "label": "Living day to day because of uncertain future",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E145": {
+    "label": "Immigrants and their customs and traditions",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E146": {
+    "label": "Importance of eliminating big income inequalities",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E147": {
+    "label": "Importance of guaranteeing basic needs for all",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E148": {
+    "label": "Importance of recognizing people on their merits",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E149": {
+    "label": "Importance of equalizing chances for education",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E150": {
+    "label": "How often follows politics in the news",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E151": {
+    "label": "Give authorities information to help justice",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E152": {
+    "label": "Stick to own affairs",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E153": {
+    "label": "Concerned with immediate family",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E154": {
+    "label": "Concerned with people in the neighbourhood",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E155": {
+    "label": "Concerned with people in the region",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E156": {
+    "label": "Concerned with fellow countrymen",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E157": {
+    "label": "Concerned with Europeans",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E158": {
+    "label": "Concerned with human kind",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E159": {
+    "label": "Concerned with elderly people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E160": {
+    "label": "Concerned with unemployed people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E161": {
+    "label": "Concerned with immigrants",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E162": {
+    "label": "Concerned with sick and disabled people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "e162_01": {
+    "label": "Concerned with poor children",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E163": {
+    "label": "Prepared to help immediate family",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E164": {
+    "label": "Prepared to help people in the neighbourhood",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E165": {
+    "label": "Prepared to help elderly people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E166": {
+    "label": "Prepared to help immigrants",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E167": {
+    "label": "Prepared to help sick and disabled people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E168": {
+    "label": "Reason to help: Moral duty to help elderly people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E169": {
+    "label": "Reason to help: Sympathise with old people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E170": {
+    "label": "Reason to help: In the interest of society",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E171": {
+    "label": "Reason to help: Own interest",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E172": {
+    "label": "Reason to help: Do something in return for old people",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E173": {
+    "label": "Reason to help: Moral duty to help immigrants",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E174": {
+    "label": "Reason to help: Sympathise with immigrants",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E175": {
+    "label": "Reason to help: In the interest of society",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E176": {
+    "label": "Reason to help: Own interest",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E177": {
+    "label": "Reason to help: Do something in return for immigrants",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E178": {
+    "label": "Close to any particular party",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "e178_01": {
+    "label": "Would you vote at a general election tomorrow",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E179": {
+    "label": "Which party would you vote for: first choice",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "e179_01": {
+    "label": "Which political party would you vote for - left/right scale",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E180": {
+    "label": "Which party would you vote for: second choice",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "E181": {
+    "label": "If don´t know, which party appeals to you most",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "e181_01": {
+    "label": "Which political party appeals to you most - left/right scale",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E182": {
+    "label": "Party that would never vote",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "E183": {
+    "label": "Are you close to this party",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E184": {
+    "label": "Aggression from neighbouring country",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E185": {
+    "label": "Exploitation of local resources",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E186": {
+    "label": "Cultural invasion by the west",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E187": {
+    "label": "Regularly read a daily newspaper",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E188": {
+    "label": "Frequency watches TV",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E189": {
+    "label": "TV most important entertainment",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E190": {
+    "label": "Why are there people living in need: first",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E191": {
+    "label": "Why are there people living in need: second",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "e191_f": {
+    "label": "Flag variable: why do people live in need - most/second important",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E192": {
+    "label": "Least liked group in society",
+    "theme": "Politics and Society",
+    "scale": "1-81"
+  },
+  "E193": {
+    "label": "Least liked allow: hold office",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E194": {
+    "label": "Least liked allow: teach",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E195": {
+    "label": "Least liked allow: demonstrate",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E196": {
+    "label": "Extent of political corruption",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E197": {
+    "label": "Opinion on terrorism",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E198": {
+    "label": "Using violence for political goals not justified",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E203": {
+    "label": "Rapid implementation of market reforms have negative impact on national stability",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E204": {
+    "label": "Effect of market economic reforms",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E205": {
+    "label": "Political parties serve the social and political needs of people",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E206": {
+    "label": "Free and fair elections will reduce terrorism",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E207": {
+    "label": "[Country] should have close relations with France",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E208": {
+    "label": "[Country] should have close relations with United States",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E209": {
+    "label": "Would persist to immigrate abroad if R´s economic situation was better",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E211": {
+    "label": "Opinion about the problem of Palestine and Israel",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E212": {
+    "label": "Opinion about 11th september airliners crash action by religious fundamentalists",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E213": {
+    "label": "Woman should not work outside unless forced to do so",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E214": {
+    "label": "Western democracy is the best political system for country",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E215": {
+    "label": "It is necessary to fight terrorism by military means",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E216": {
+    "label": "[Country] needs foreign military cooperation to combat terrorism",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E217": {
+    "label": "Science and technology are making our lives healthier, easier, and more comfortable",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E218": {
+    "label": "Because of science and technology, there will be more opportunities for the next generation",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E219": {
+    "label": "Science and technology make our way of life change too fast",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E220": {
+    "label": "We depend too much on science and not enough on faith",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E221B": {
+    "label": "Political action recently done: Attending peaceful/lawful demonstrations",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E222": {
+    "label": "Political action: Other",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E222B": {
+    "label": "Political action recently done: Other",
+    "theme": "Politics and Society",
+    "scale": "1-2"
+  },
+  "E224": {
+    "label": "Democracy: Governments tax the rich and subsidize the poor.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E225": {
+    "label": "Democracy: Religious authorities interpret the laws.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E226": {
+    "label": "Democracy: People choose their leaders in free elections.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E227": {
+    "label": "Democracy: People receive state aid for unemployment.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E228": {
+    "label": "Democracy: The army takes over when government is incompetent.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E229": {
+    "label": "Democracy: Civil rights protect people’s liberty against oppression.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E230": {
+    "label": "Democracy: The economy is prospering.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E231": {
+    "label": "Democracy: Criminals are severely punished.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E232": {
+    "label": "Democracy: People can change the laws in referendums.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E233": {
+    "label": "Democracy: Women have the same rights as men.",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E233A": {
+    "label": "Democracy: The state makes people's incomes equal",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E233B": {
+    "label": "Democracy: People obey their rulers",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E234": {
+    "label": "The world is better off, or worse off, because of science and technology",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E235": {
+    "label": "Importance of democracy",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E236": {
+    "label": "Democraticness in own country",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E237": {
+    "label": "Heard of the Millennium Development Goals",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E238": {
+    "label": "Most serious problem of the world: 1st choice",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E238_ES": {
+    "label": "Most serious problem of the world: 1st choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E239": {
+    "label": "Most serious problem of the world: 2nd choice",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E239_ES": {
+    "label": "Most serious problem of the world: 2nd choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E240": {
+    "label": "Most serious problem for own country: 1st choice",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E240_ES": {
+    "label": "Most serious problem for own country: 1st choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E241": {
+    "label": "Most serious problem for own country: 2nd choice",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E241_ES": {
+    "label": "Most serious problem for own country: 2nd choice",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E242": {
+    "label": "MDG: Reduce extreme poverty",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E243": {
+    "label": "MDG: Increase primary education",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E244": {
+    "label": "MDG: Reduce child mortality",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E245": {
+    "label": "MDG: Fight HIV",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E246": {
+    "label": "MDG: Improve housing conditions",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E247": {
+    "label": "Priority: Global poverty versus National problems",
+    "theme": "Politics and Society",
+    "scale": "1-10"
+  },
+  "E248": {
+    "label": "Information source: Daily newspaper",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E248B": {
+    "label": "Information source: Daily newspaper (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E249": {
+    "label": "Information source: News broadcasts on radio or TV",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E250": {
+    "label": "Information source: Printed magazines",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E250B": {
+    "label": "Information source: Printed magazines (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E251": {
+    "label": "Information source: In depth reports on radio or TV",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E252": {
+    "label": "Information source: Books",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E253": {
+    "label": "Information source: Internet, Email",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E254": {
+    "label": "Information source: Talk with friends or colleagues",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E254B": {
+    "label": "Information source: Talk with friends or colleagues (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E255": {
+    "label": "How often use of PC",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E256": {
+    "label": "General party preference",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "E257": {
+    "label": "Voted in recent parliament elections",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E258": {
+    "label": "Information source: TV news",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E258B": {
+    "label": "Information source: TV news (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E259": {
+    "label": "Information source: Radio news",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E259B": {
+    "label": "Information source: Radio news (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E260": {
+    "label": "Information source: Mobile phone",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E260B": {
+    "label": "Information source: Mobile phone (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E261": {
+    "label": "Information source: Email",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E261B": {
+    "label": "Information source: Email (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E262": {
+    "label": "Information source: Internet",
+    "theme": "Politics and Society",
+    "scale": "0-1"
+  },
+  "E262B": {
+    "label": "Information source: Internet (B)",
+    "theme": "Politics and Society",
+    "scale": "1-5"
+  },
+  "E263": {
+    "label": "Vote in elections: local level",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E264": {
+    "label": "Vote in elections: National level",
+    "theme": "Politics and Society",
+    "scale": "1-3"
+  },
+  "E265_01": {
+    "label": "How often in country's elections: Votes are counted fairly",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_02": {
+    "label": "How often in country's elections: Opposition candidates are prevented from running",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_03": {
+    "label": "How often in country's elections: TV news favors the governing party",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_04": {
+    "label": "How often in country's elections: Voters are bribed",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_05": {
+    "label": "How often in country's elections: Journalists provide fair coverage of elections",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_06": {
+    "label": "How often in country's elections: Election officials are fair",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_08": {
+    "label": "How often in country's elections: Voters are threatened with  violence at the polls",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E265_09": {
+    "label": "How often in country's elections: Voters are offered a genuine choice in the elections",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E266": {
+    "label": "Some people think that having honest elections makes a lot of difference in their lives;  other people think that it doesn’t matter much",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "E267": {
+    "label": "Importance of having honest elections in whether or not this country develops economically",
+    "theme": "Politics and Society",
+    "scale": "1-4"
+  },
+  "F001": {
+    "label": "Thinking about meaning and purpose of life",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F002": {
+    "label": "Feeling that life is meaningless",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F003": {
+    "label": "Thinking about death",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F004": {
+    "label": "Life is meaningful because God exits",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F005": {
+    "label": "Try to get the best out of life",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F006": {
+    "label": "Death is inevitable",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F007": {
+    "label": "Death has meaning if you believe in God",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F008": {
+    "label": "Death is a natural resting point",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F009": {
+    "label": "Sorrow has meaning if you believe in God",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F010": {
+    "label": "Life has no meaning",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F011": {
+    "label": "Is there good and evil in everyone",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F012": {
+    "label": "Do you ever regret having done something",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F014": {
+    "label": "Worth risking life for: my country",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F015": {
+    "label": "Worth risking life for: another’s life",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F016": {
+    "label": "Worth risking life for: justice",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F017": {
+    "label": "Worth risking life for: freedom",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F018": {
+    "label": "Worth risking life for: peace",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F019": {
+    "label": "Worth risking life for: religion",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F020": {
+    "label": "Worth risking life for: other",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F021": {
+    "label": "Worth risking life for: don’t know",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F022": {
+    "label": "Statement: good and evil",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "f022_01": {
+    "label": "Statement: good/evil, clear/no clear guidelines",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F023": {
+    "label": "Statement: religion and truth",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F024": {
+    "label": "Belong to religious denomination",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F025": {
+    "label": "Religious denomination",
+    "theme": "Religion and Morale",
+    "scale": "0-710002"
+  },
+  "f025_01": {
+    "label": "Religious denomination country specific",
+    "theme": "Religion and Morale",
+    "scale": "801-91596"
+  },
+  "F026": {
+    "label": "Former religious denomination",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F027": {
+    "label": "Which former religious denomination",
+    "theme": "Religion and Morale",
+    "scale": "0-91"
+  },
+  "f027_01": {
+    "label": "Did you belong to a religious denomination, country specific",
+    "theme": "Religion and Morale",
+    "scale": "801-91596"
+  },
+  "F028": {
+    "label": "How often do you attend religious services",
+    "theme": "Religion and Morale",
+    "scale": "1-8"
+  },
+  "F028B": {
+    "label": "How often to you pray",
+    "theme": "Religion and Morale",
+    "scale": "1-8"
+  },
+  "F029": {
+    "label": "Raised religiously",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F030": {
+    "label": "Attendance religious services 12 years old",
+    "theme": "Religion and Morale",
+    "scale": "1-8"
+  },
+  "F031": {
+    "label": "Important: Religious service birth",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F032": {
+    "label": "Important: Religious service marriage",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F033": {
+    "label": "Important: Religious service death",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F034": {
+    "label": "Religious person",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F035": {
+    "label": "Churches give answers: moral problems",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F036": {
+    "label": "Churches give answers: the problems of family life",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F037": {
+    "label": "Churches give answers: people´s spiritual needs",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F038": {
+    "label": "Churches give answers: the social problems",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F039": {
+    "label": "Importance of religion in the future",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F040": {
+    "label": "Churches speak out on: disarmament",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F041": {
+    "label": "Churches speak out on: abortion",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F042": {
+    "label": "Churches speak out on: third world problems",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F043": {
+    "label": "Churches speak out on: extramarital affairs",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F044": {
+    "label": "Churches speak out on: unemployment",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F045": {
+    "label": "Churches speak out on: racial discrimination",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F046": {
+    "label": "Churches speak out on: euthanasia",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F047": {
+    "label": "Churches speak out on: homosexuality",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F048": {
+    "label": "Churches speak out on: ecology and environmental issues",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F049": {
+    "label": "Churches speak out on: government policy",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F050": {
+    "label": "Believe in: God",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F051": {
+    "label": "Believe in: life after death",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F052": {
+    "label": "Believe in: people have a soul",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F053": {
+    "label": "Believe in: hell",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F054": {
+    "label": "Believe in: heaven",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F055": {
+    "label": "Believe in: sin",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F056": {
+    "label": "Believe in: telepathy",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F057": {
+    "label": "Believe in: re-incarnation",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F058": {
+    "label": "Believe in: angels",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F059": {
+    "label": "Believe in: devil",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F060": {
+    "label": "Believe in: resurrection of the dead",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F061": {
+    "label": "Stick to religion vs. Explore different traditions",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F062": {
+    "label": "Personal God vs. Spirit or Life Force",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "f062_01": {
+    "label": "Own way of connecting with the divine",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "f062_02": {
+    "label": "How spiritual are you",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "f062_03": {
+    "label": "Only one true religion or no religion offers any truths",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F063": {
+    "label": "How important is God in your life",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F064": {
+    "label": "Get comfort and strength from religion",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F065": {
+    "label": "Moments of prayer, meditation...",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F066": {
+    "label": "Pray to God outside of religious services (I)",
+    "theme": "Religion and Morale",
+    "scale": "1-7"
+  },
+  "F067": {
+    "label": "Pray to God outside of religious services (ii)",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F068": {
+    "label": "1st commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F069": {
+    "label": "2nd commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F070": {
+    "label": "3rd commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F071": {
+    "label": "4th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F072": {
+    "label": "5th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F073": {
+    "label": "6th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F074": {
+    "label": "7th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F075": {
+    "label": "8th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F076": {
+    "label": "9th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F077": {
+    "label": "10th commandment applies for myself",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F078": {
+    "label": "1st commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F079": {
+    "label": "2nd commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F080": {
+    "label": "3rd commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F081": {
+    "label": "4th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F082": {
+    "label": "5th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F083": {
+    "label": "6th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F084": {
+    "label": "7th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F085": {
+    "label": "8th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F086": {
+    "label": "9th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F087": {
+    "label": "10th commandment applies to most people",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F088": {
+    "label": "Felt in touch with someone far away",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F089": {
+    "label": "Seen events that happened far away",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F090": {
+    "label": "Felt in touch with someone dead",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F091": {
+    "label": "Felt close to a powerful life force",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F092": {
+    "label": "Experience altered outlook on life",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F093": {
+    "label": "Relationship between your parents",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F094": {
+    "label": "Relationship between you and your mother",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F095": {
+    "label": "Relationship between you and your father",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F096": {
+    "label": "How strict were your parents",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F097": {
+    "label": "Believe in: supernatural forces",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F098": {
+    "label": "Do you have a lucky charm",
+    "theme": "Religion and Morale",
+    "scale": "0-1"
+  },
+  "F099": {
+    "label": "Lucky charm protects",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F100": {
+    "label": "Consult horoscope",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F101": {
+    "label": "Taking horoscope into account in daily life",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F102": {
+    "label": "Politicians who don´t believe in God are unfit for public office",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F103": {
+    "label": "Religious leaders should not influence how people vote",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F104": {
+    "label": "Better if more people with strong religious beliefs in public office",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F105": {
+    "label": "Religious leaders should not influence government",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F106": {
+    "label": "Nurse refusing legal abortion on religious grounds",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F107": {
+    "label": "Time for prayer and meditation in all schools",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F108": {
+    "label": "Government protects freedom",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F109": {
+    "label": "Government protects religion",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F110": {
+    "label": "Laws: people’s wishes",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F111": {
+    "label": "Only laws of the Shari´a",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F112": {
+    "label": "Prohibiting or allowing books that attack religion",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F113": {
+    "label": "Church(es) influence on national politics",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F114": {
+    "label": "Justifiable: claiming government benefits",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F114_01": {
+    "label": "Justifiable: Stealing property",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F114_02": {
+    "label": "Justifiable: Parents beating children",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F114_03": {
+    "label": "Justifiable: Violence against other people",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F115": {
+    "label": "Justifiable: avoiding a fare on public transport",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F116": {
+    "label": "Justifiable: cheating on taxes",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F117": {
+    "label": "Justifiable: someone accepting a bribe",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F118": {
+    "label": "Justifiable: homosexuality",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F119": {
+    "label": "Justifiable: prostitution",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F120": {
+    "label": "Justifiable: abortion",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F121": {
+    "label": "Justifiable: divorce",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F122": {
+    "label": "Justifiable: euthanasia",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F123": {
+    "label": "Justifiable: suicide",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F124": {
+    "label": "Justifiable: drinking alcohol",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F125": {
+    "label": "Justifiable: joyriding",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F126": {
+    "label": "Justifiable: taking soft drugs",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F127": {
+    "label": "Justifiable: lying",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F128": {
+    "label": "Justifiable: adultery",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F129": {
+    "label": "Justifiable: throwing away litter",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F130": {
+    "label": "Justifiable: driving under influence of alcohol",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F131": {
+    "label": "Justifiable: paying cash",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F132": {
+    "label": "Justifiable: having casual sex",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F133": {
+    "label": "Justifiable: smoking in public places",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F134": {
+    "label": "Justifiable: speeding over the limit",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F135": {
+    "label": "Justifiable: sex under the legal age of consent",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F135A": {
+    "label": "Justifiable: Sex before marriage",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F136": {
+    "label": "Justifiable: political assassination",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F137": {
+    "label": "Justifiable: experiments with human embryos",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F138": {
+    "label": "Justifiable: manipulation of food",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F139": {
+    "label": "Justifiable: buy stolen goods",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F140": {
+    "label": "Justifiable: keeping money that you have found",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F141": {
+    "label": "Justifiable: fighting with the police",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F142": {
+    "label": "Justifiable: failing to report damage you’ve done accidentally to a parked vehicle",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F143": {
+    "label": "Justifiable: threatening workers who refuse to join a strike",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F144": {
+    "label": "Justifiable: killing in self-defence",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "f144_01": {
+    "label": "Justifiable: invitro fertilization",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "f144_02": {
+    "label": "Justifiable: death penalty",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F145": {
+    "label": "Compatriots do: claiming  state benefits",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F146": {
+    "label": "Compatriots do: cheating on taxes",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F147": {
+    "label": "Compatriots do: paying  in cash",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F148": {
+    "label": "Compatriots do: taking soft drugs",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F149": {
+    "label": "Compatriots do: throwing  away litter",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F150": {
+    "label": "Compatriots do: speeding over the limit in build up areas",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F151": {
+    "label": "Compatriots do: driving under the influence of alcohol",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F152": {
+    "label": "Compatriots do: having  casual sex",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F153": {
+    "label": "Compatriots do: avoiding a fare on public transport",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F154": {
+    "label": "Compatriots do: lying in own interest",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F155": {
+    "label": "Compatriots do: accepting a bribe",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F156": {
+    "label": "How often do you drink alcohol",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F157": {
+    "label": "Do you drink more or less than others",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F158": {
+    "label": "How serious is illegal drug-taking",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F159": {
+    "label": "How serious is alcoholism",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F160": {
+    "label": "Stealing food punished less: young thief",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F161": {
+    "label": "Stealing food punished less: poor thief",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F163": {
+    "label": "Stealing food punished less: shop part of a supermarket chain",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F164": {
+    "label": "Islam requires woman to dress modestly but does not require cover face with veil",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F165": {
+    "label": "Violation of Islam for male and female university students to attend classes together",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F166": {
+    "label": "By requiring man treat all wives equally, Islam true intent is prohibit taking more than one wife",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F167": {
+    "label": "Monarchy is a form of government that is compatible with Islam",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F168": {
+    "label": "Democracy is a Western form of government that is not compatible with Islam",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F169": {
+    "label": "Nationalism is incompatible with Islam because Islam requires ´ummah´",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F170": {
+    "label": "If Palestinian state established and peace with Israel, Islam would not oppose existence of Israel",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F171": {
+    "label": "If country pursues policies harmful to Muslims, Islam permits killing civilians in that country",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F172": {
+    "label": "A truly Islamic country should not have a parliament with the right to pass laws",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F173": {
+    "label": "Islam requires that political rights of non Muslims should be inferior to those of Muslims",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F174": {
+    "label": "Islams requires country with majority of Muslims be governed by men of Islamic learning",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F175": {
+    "label": "Religions limit democratic processes",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F176": {
+    "label": "Some US Policies toward other countries are good and some are bad",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F177": {
+    "label": "While US policies toward other countries are often bad, most ordinary americans are good people",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F178": {
+    "label": "The culture of US and other Western countries has many positive attributes",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F179": {
+    "label": "Exposure to the culture of the US and other Western countries harmful effect on our country",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F186": {
+    "label": "Religion is a cause of terrorism",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F187": {
+    "label": "The content of [Country] education contributes to religious extremism",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F188": {
+    "label": "Which is more important as a basis for marriage:  parents´ approval or love",
+    "theme": "Religion and Morale",
+    "scale": "1-2"
+  },
+  "F189": {
+    "label": "When you were growing up, did your father or mother have more influence in the affairs of the house",
+    "theme": "Religion and Morale",
+    "scale": "1-3"
+  },
+  "F190": {
+    "label": "How frequently do you perform the five prescribed prayers of the Islam",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F191": {
+    "label": "How frequently do you perform in the mosque",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F192": {
+    "label": "If you feel sad and want to talk to someone, to whom do you usually turn to",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F193": {
+    "label": "Civil marriage is very important because it helps maintain the family",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F194": {
+    "label": "How important: daily prayer",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F195": {
+    "label": "How important: building a prosperous society",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F196": {
+    "label": "How important: forming a happy secure family",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F197": {
+    "label": "How important: building a successful professional future",
+    "theme": "Religion and Morale",
+    "scale": "1-5"
+  },
+  "F198": {
+    "label": "Fate versus control",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F199": {
+    "label": "Justifiable: For a man to beat his wife",
+    "theme": "Religion and Morale",
+    "scale": "1-10"
+  },
+  "F200": {
+    "label": "Meaning of religion: To follow religious norms and ceremonies vs To do good to other people",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F201": {
+    "label": "Meaning of religion: To make sense of life after death vs To make sense of life in this world",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F202": {
+    "label": "Whenever science and religion conflict,  religion is always right",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F203": {
+    "label": "The only acceptable religion  is my religion",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F204": {
+    "label": "All religions should be taught in public schools",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "F205": {
+    "label": "People who belong to different religions are probably just as moral as those who belong to mine",
+    "theme": "Religion and Morale",
+    "scale": "1-4"
+  },
+  "G001": {
+    "label": "Geographical groups belonging to first",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "g001_f": {
+    "label": "Flag variable: belong to geographic group - most/second",
+    "theme": "National Identity",
+    "scale": "0-1"
+  },
+  "G001CS": {
+    "label": "Geographical groups belonging to first (country specific)",
+    "theme": "National Identity",
+    "scale": "47001-840006"
+  },
+  "G002": {
+    "label": "Geographical groups belonging to second",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G002CS": {
+    "label": "Geographical groups belonging to second  (country specific)",
+    "theme": "National Identity",
+    "scale": "47001-840006"
+  },
+  "G003": {
+    "label": "Geographical groups belonging to least of all",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G003CS": {
+    "label": "Geographical groups belonging to least of all (country specific)",
+    "theme": "National Identity",
+    "scale": "47001-840006"
+  },
+  "G004": {
+    "label": "Citizenship",
+    "theme": "National Identity",
+    "scale": "1-3"
+  },
+  "G005": {
+    "label": "Citizen of [country]",
+    "theme": "National Identity",
+    "scale": "0-1"
+  },
+  "G006": {
+    "label": "How proud of nationality",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G007_01": {
+    "label": "Trust: Other people in country",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_02": {
+    "label": "Trust: French",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_03": {
+    "label": "Trust: Nepalis",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_04": {
+    "label": "Trust: Korean residents in Japan",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_05": {
+    "label": "Trust: Chinese residents in Japan",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_06": {
+    "label": "Trust: Mestizo",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_07": {
+    "label": "Trust: Indians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_08": {
+    "label": "Trust: Central Americans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_09": {
+    "label": "Trust: Hausas",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_10": {
+    "label": "Trust: Igbos",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_11": {
+    "label": "Trust: Yorubas",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_12": {
+    "label": "Trust: Ghanaians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_13": {
+    "label": "Trust: Czechs",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_14": {
+    "label": "Trust: East Germans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_15": {
+    "label": "Trust: Hungarians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_16": {
+    "label": "Trust: West Germans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_17": {
+    "label": "Trust: Your friends",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_18": {
+    "label": "Trust: Your neighborhood",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_18_B": {
+    "label": "Trust: Your neighborhood (B)",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G007_19": {
+    "label": "Trust: White South Africans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_20": {
+    "label": "Trust: Black South Africans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_21": {
+    "label": "Trust: Coloured South Africans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_22": {
+    "label": "Trust: Asian South Africans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_23": {
+    "label": "Trust: Zulus",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_24": {
+    "label": "Trust: Xhosas",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_25": {
+    "label": "Trust: Greeks",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_26": {
+    "label": "Trust: Iranians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_27": {
+    "label": "Trust: Europeans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_28": {
+    "label": "Trust: Moroccans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_29": {
+    "label": "Trust: Immigrants",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_30": {
+    "label": "Trust: Portuguese",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_31": {
+    "label": "Trust: Koreans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_32": {
+    "label": "Trust: Soviet Union people",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_33": {
+    "label": "Trust: People you know personally",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_33_B": {
+    "label": "Trust: People you know personally (B)",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G007_34": {
+    "label": "Trust: People you meet for the first time",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_34_B": {
+    "label": "Trust: People you meet for the first time (B)",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G007_35": {
+    "label": "Trust: People of another religion",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_35_B": {
+    "label": "Trust: People of another religion (B)",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G007_36": {
+    "label": "Trust: People of another nationality",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_36_B": {
+    "label": "Trust: People of another nationality (B)",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G007_37": {
+    "label": "Trust: Americans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_38": {
+    "label": "Trust: Mexicans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_39": {
+    "label": "Trust: Russians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_40": {
+    "label": "Trust: Chinese",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_41": {
+    "label": "Trust: Italians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_42": {
+    "label": "Trust: Latin Americans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_43": {
+    "label": "Trust: Japanese",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_44": {
+    "label": "Trust: Blacks",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_45": {
+    "label": "Trust: Germans",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_46": {
+    "label": "Trust: Arabs",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_47": {
+    "label": "Trust: Jews",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_48": {
+    "label": "Trust: Mapuche Indians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_49": {
+    "label": "Trust: Pascuences",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_50": {
+    "label": "Trust: Argentines",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_51": {
+    "label": "Trust: Peruvians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_52": {
+    "label": "Trust: Chinese Zhuan Nationality",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_53": {
+    "label": "Trust: Chinese Hui Nationality",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_54": {
+    "label": "Trust: English",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_55": {
+    "label": "Trust: Slovaks",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_56": {
+    "label": "Trust: Gypsies",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_57": {
+    "label": "Trust: Poles",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_58": {
+    "label": "Trust: Indian Hindus",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_59": {
+    "label": "Trust: Indian Non-Hindus",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_60": {
+    "label": "Trust: Pakistanis",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_61": {
+    "label": "Trust: Canadian people in general",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_62": {
+    "label": "Trust: Christians",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_63": {
+    "label": "Trust: Kurds",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_64": {
+    "label": "Trust: People in general",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_65": {
+    "label": "Trust: Relatives",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_66": {
+    "label": "Trust: Shi´i",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G007_67": {
+    "label": "Trust: Sunni",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G014": {
+    "label": "Opinion European union",
+    "theme": "National Identity",
+    "scale": "1-7"
+  },
+  "G015": {
+    "label": "Which of the following best describes you",
+    "theme": "National Identity",
+    "scale": "301-8806"
+  },
+  "G015B": {
+    "label": "Which of the following best describes you (B)",
+    "theme": "National Identity",
+    "scale": "1-9905"
+  },
+  "G016": {
+    "label": "Language at home",
+    "theme": "National Identity",
+    "scale": ""
+  },
+  "G017": {
+    "label": "Born in this country: birth country",
+    "theme": "National Identity",
+    "scale": "1-8"
+  },
+  "G018": {
+    "label": "When came to country",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "G019": {
+    "label": "I see myself as a world citizen",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G020": {
+    "label": "I see myself as member of my local community",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G021": {
+    "label": "I see myself as citizen of the [country] nation",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022A": {
+    "label": "I see myself as citizen of [Latinamerica]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022B": {
+    "label": "I see myself as citizen of [North America]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022C": {
+    "label": "I see myself as citizen of the [European Union]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022D": {
+    "label": "I see myself as citizen of [APEC]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022E": {
+    "label": "I see myself as citizen of [ASIA]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022F": {
+    "label": "I see myself as citizen of [Mercosur]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022G": {
+    "label": "I see myself as citizen of [my province or region]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022H": {
+    "label": "I see myself as citizen of [a country other than mine]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022I": {
+    "label": "I see myself as citizen of [CIS]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022J": {
+    "label": "I see myself as citizen of [The Caribbean]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022K": {
+    "label": "I see myself as citizen of [The African Union]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022L": {
+    "label": "I see myself as citizen of [Arab Maghreb Union]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022M": {
+    "label": "I see myself as citizen of [ASEAN]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022N": {
+    "label": "I see myself as citizen of [Arab Union]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022O": {
+    "label": "I see myself as citizen of the [Northeast Asia Region]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022P": {
+    "label": "I see myself as citizen of the [UNASUR]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022Q": {
+    "label": "I see myself as citizen of the [Islamic nation]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022R": {
+    "label": "I see myself as part of the Cooperation Council for the Arab states of Gulf (GCC)",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G022S": {
+    "label": "I see myself as part of  [SAARC]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G023": {
+    "label": "I see myself as an autonomous individual",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "G024": {
+    "label": "What thing are you proud of in your country -1st",
+    "theme": "National Identity",
+    "scale": "1-9"
+  },
+  "G025": {
+    "label": "What thing are you proud of in your country -2nd",
+    "theme": "National Identity",
+    "scale": "1-9"
+  },
+  "G026": {
+    "label": "Mother immigrant",
+    "theme": "National Identity",
+    "scale": "0-1"
+  },
+  "G026_01": {
+    "label": "Mother's Country of origin",
+    "theme": "National Identity",
+    "scale": "1101-9299"
+  },
+  "G027": {
+    "label": "Father immigrant",
+    "theme": "National Identity",
+    "scale": "0-1"
+  },
+  "G027_01": {
+    "label": "Father's Country of origin",
+    "theme": "National Identity",
+    "scale": "1101-9299"
+  },
+  "G027A": {
+    "label": "Respondent immigrant",
+    "theme": "National Identity",
+    "scale": "1-2"
+  },
+  "G027B": {
+    "label": "Respondent citizen",
+    "theme": "National Identity",
+    "scale": "0-1"
+  },
+  "G028": {
+    "label": "Requirements for citizenship: having ancestors from my country",
+    "theme": "National Identity",
+    "scale": "1-3"
+  },
+  "G029": {
+    "label": "Requirements for citizenship: being born on my country’s soil",
+    "theme": "National Identity",
+    "scale": "1-3"
+  },
+  "G030": {
+    "label": "Requirements for citizenship: adopting the customs of my country",
+    "theme": "National Identity",
+    "scale": "1-3"
+  },
+  "G031": {
+    "label": "Requirements for citizenship: abiding by my country´s laws",
+    "theme": "National Identity",
+    "scale": "1-3"
+  },
+  "G032": {
+    "label": "Ethnic diversity",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g033": {
+    "label": "Important: to have been born in [country]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "g034": {
+    "label": "Important: to respect [country nationality] political institutions and laws",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "g035": {
+    "label": "Important: to have [country nationality] ancestry",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "g036": {
+    "label": "Important: to be able to speak [country language]",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "g037": {
+    "label": "Important: to have lived in [country] for a long time",
+    "theme": "National Identity",
+    "scale": "1-4"
+  },
+  "g038": {
+    "label": "Immigrants take away jobs from [nationality]",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g039": {
+    "label": "Immigrants undermine countrys cultural life",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g040": {
+    "label": "Immigrants increase crime problems",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g041": {
+    "label": "Immigrants are a strain on welfare system",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g042": {
+    "label": "Immigrants will become a threat to society",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g043": {
+    "label": "Immigrants maintain own/take over customs",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g044": {
+    "label": "Immigrants living in your country: feels like a stranger",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "g045": {
+    "label": "Immigrants living in your country: there are too many",
+    "theme": "National Identity",
+    "scale": "1-5"
+  },
+  "g046": {
+    "label": "EU fears: loss of social security",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g047": {
+    "label": "EU fears: lose national identity/culture",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g048": {
+    "label": "EU fears: own country pays",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g049": {
+    "label": "EU fears: loss of power",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g050": {
+    "label": "EU fears: loss of jobs",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "g051": {
+    "label": "European Union enlargement",
+    "theme": "National Identity",
+    "scale": "1-10"
+  },
+  "H001": {
+    "label": "Secure in neighborhood",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H002_01": {
+    "label": "Frequency in your neighborhood: Robberies",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H002_02": {
+    "label": "Frequency in your neighborhood: Alcohol consumed in the streets",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H002_03": {
+    "label": "Frequency in your neighborhood: Police or military interfere with people’s private life",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H002_04": {
+    "label": "Frequency in your neighborhood: Racist behavior",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H002_05": {
+    "label": "Frequency in your neighborhood: Drug sale in streets",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H003_01": {
+    "label": "Things done for reasons of security: Didn’t carry much money",
+    "theme": "Security",
+    "scale": "0-1"
+  },
+  "H003_02": {
+    "label": "Things done for reasons of security: Preferred not to go out at night",
+    "theme": "Security",
+    "scale": "0-1"
+  },
+  "H003_03": {
+    "label": "Things done for reasons of security: Carried a knife, gun or other weapon",
+    "theme": "Security",
+    "scale": "0-1"
+  },
+  "H004": {
+    "label": "Respondent was victim of a crime during the past year",
+    "theme": "Security",
+    "scale": "0-1"
+  },
+  "H005": {
+    "label": "Respondent's family was victim of a crime during last year",
+    "theme": "Security",
+    "scale": "0-1"
+  },
+  "H006_01": {
+    "label": "Worries: Losing my job or not finding a job",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H006_02": {
+    "label": "Worries: Not being able to give one's children a good education",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H006_03": {
+    "label": "Worries: A war involving my country",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H006_04": {
+    "label": "Worries: A terrorist attack",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H006_05": {
+    "label": "Worries: A civil war",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H006_06": {
+    "label": "Worries: Government wire-tapping or reading my mail or email",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H007": {
+    "label": "Under some conditions, war is necessary to obtain justice",
+    "theme": "Security",
+    "scale": "0-1"
+  },
+  "H008_01": {
+    "label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H008_02": {
+    "label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H008_03": {
+    "label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment that you needed",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "theme": "Security",
+    "scale": "1-4"
+  },
+  "I001": {
+    "label": "One of the bad effects of science is that it breaks down people’s ideas of right and wrong",
+    "theme": "Science",
+    "scale": "1-10"
+  },
+  "I002": {
+    "label": "It is not important for me to know about science in my daily life",
+    "theme": "Science",
+    "scale": "1-10"
+  },
+  "S001": {
+    "label": "Study",
+    "theme": "Structure of the file",
+    "scale": "1-2"
+  },
+  "S002": {
+    "label": "Wave",
+    "theme": "Structure of the file",
+    "scale": "1-6"
+  },
+  "s002evs": {
+    "label": "EVS-wave",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "S003": {
+    "label": "Country/region",
+    "theme": "Structure of the file",
+    "scale": "4-915"
+  },
+  "S003A": {
+    "label": "Country/regions [with split ups]",
+    "theme": "Structure of the file",
+    "scale": "4-915"
+  },
+  "S004": {
+    "label": "Set",
+    "theme": "Structure of the file",
+    "scale": "1-2"
+  },
+  "S006": {
+    "label": "Original respondent number",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S007": {
+    "label": "Unified respondent number",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "s007_01": {
+    "label": "Unified respondent number (EVS/WVS LF)",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S008": {
+    "label": "Interviewer number",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S010": {
+    "label": "Total length of interview",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "s010_01": {
+    "label": "Time of interview: start hour",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "s010_02": {
+    "label": "Time of interview: start minute",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "s010_03": {
+    "label": "Time of interview: end hour",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "s010_04": {
+    "label": "Time of interview: end minute",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S011": {
+    "label": "Time at the end of interview",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S012": {
+    "label": "Date interview",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S013": {
+    "label": "Respondent interested during the interview",
+    "theme": "Structure of the file",
+    "scale": "1-3"
+  },
+  "S013B": {
+    "label": "Interview privacy",
+    "theme": "Structure of the file",
+    "scale": "1-2"
+  },
+  "S014": {
+    "label": "Confidence respondent during the interview",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "S015": {
+    "label": "On the whole respondent looked",
+    "theme": "Structure of the file",
+    "scale": "1-3"
+  },
+  "S016": {
+    "label": "Language in which interview was conducted",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S017": {
+    "label": "Weight",
+    "theme": "Structure of the file",
+    "scale": "1-1"
+  },
+  "S017A": {
+    "label": "Weight [with split ups]",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S018": {
+    "label": "Equilibrated weight-1000",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S018A": {
+    "label": "Equilibrated weight-1000 [with split ups]",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S019": {
+    "label": "Equilibrated weight-1500",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S019A": {
+    "label": "Equilibrated weight-1500 [with split ups]",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S020": {
+    "label": "Year survey",
+    "theme": "Structure of the file",
+    "scale": "1981-2014"
+  },
+  "S021": {
+    "label": "Country - wave - study - set - year",
+    "theme": "Structure of the file",
+    "scale": "803211998-91403211998"
+  },
+  "S021A": {
+    "label": "Country2 - wave - study - set - year",
+    "theme": "Structure of the file",
+    "scale": "803211998-91403211998"
+  },
+  "S022": {
+    "label": "Year/month of start-fieldwork",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S023": {
+    "label": "Year/month of end-fieldwork",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S024": {
+    "label": "Country - wave",
+    "theme": "Structure of the file",
+    "scale": "83-9154"
+  },
+  "S024A": {
+    "label": "Country - wave [with split ups]",
+    "theme": "Structure of the file",
+    "scale": "83-9154"
+  },
+  "S025": {
+    "label": "Country - year",
+    "theme": "Structure of the file",
+    "scale": "81998-9152008"
+  },
+  "S025A": {
+    "label": "Country - year [with split ups]",
+    "theme": "Structure of the file",
+    "scale": "81998-9152008"
+  },
+  "S026": {
+    "label": "File version (yyyymmdd)",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "S027": {
+    "label": "split ballot",
+    "theme": "Structure of the file",
+    "scale": "1-2"
+  },
+  "S028": {
+    "label": "split oecd",
+    "theme": "Structure of the file",
+    "scale": "1-2"
+  },
+  "StudyNo": {
+    "label": "GESIS Study Number (EVS Longitudinal File)",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "StudyNoC": {
+    "label": "GESIS Study Number (EVS National datasets)",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "StudyNoW": {
+    "label": "GESIS Study Number (EVS Wave)",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "survself": {
+    "label": "SURVIVAL/SELF-EXPRESSION VALUES",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "tradrat5": {
+    "label": "TRADITIONAL/SECULAR RATIONAL VALUES",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "u001a": {
+    "label": "Experienced: death of own children",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "u001b": {
+    "label": "Age experienced: death of own children",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "u002a": {
+    "label": "Experienced: divorce of own children",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "u002b": {
+    "label": "Age experienced: divorce of own children",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "u003a": {
+    "label": "Experienced: divorce of parents",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "u003b": {
+    "label": "Age experienced: divorce of parents",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "u004a": {
+    "label": "Experienced: divorce of relative",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "u004b": {
+    "label": "Age experienced: divorce of relative",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "u005a": {
+    "label": "Experienced: death of father",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "u005b": {
+    "label": "Age experienced: death of father",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "u006a": {
+    "label": "Experienced: death of mother",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "u006b": {
+    "label": "Age experienced: death of mother",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "v001": {
+    "label": "Father born in [country]",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "v001a": {
+    "label": "Fathers country of birth - ISO 3166-1 code",
+    "theme": "Structure of the file",
+    "scale": "4000000-915000000"
+  },
+  "v002": {
+    "label": "Mother born in [country]",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "v002a": {
+    "label": "Mothers country of birth - ISO 3166-1 code",
+    "theme": "Structure of the file",
+    "scale": "4000000-915000000"
+  },
+  "v003": {
+    "label": "Lived with parents at the age of 14",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v004a": {
+    "label": "Educational level father [mother]: ISCED-code one digit",
+    "theme": "Structure of the file",
+    "scale": "0-6"
+  },
+  "v004b": {
+    "label": "Educational level father [mother]: ISCED-code two digits",
+    "theme": "Structure of the file",
+    "scale": "0-60"
+  },
+  "v004c": {
+    "label": "Educational level father [mother]: ISCED-code three digits",
+    "theme": "Structure of the file",
+    "scale": "0-602"
+  },
+  "v004d": {
+    "label": "Country specific: Educational level father [mother]",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "v005": {
+    "label": "Father/mother employed at respondents age of 14",
+    "theme": "Structure of the file",
+    "scale": "1-3"
+  },
+  "v006": {
+    "label": "Job profession/industry father/mother (4 digit isco88)",
+    "theme": "Structure of the file",
+    "scale": "110-9333"
+  },
+  "v007a": {
+    "label": "Occupational status father/mother - SIOPS",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "v007b": {
+    "label": "Occupational status father/mother - ISEI",
+    "theme": "Structure of the file",
+    "scale": ""
+  },
+  "v007c": {
+    "label": "Occupational status father/mother - European ESeC",
+    "theme": "Structure of the file",
+    "scale": "1-9"
+  },
+  "v007d": {
+    "label": "Occupational status father/mother - egp11",
+    "theme": "Structure of the file",
+    "scale": "1-11"
+  },
+  "v008": {
+    "label": "Father/mother had how many employees",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v009": {
+    "label": "Did father/mother supervise someone",
+    "theme": "Structure of the file",
+    "scale": "0-1"
+  },
+  "v010": {
+    "label": "How many people did she/he supervise",
+    "theme": "Structure of the file",
+    "scale": "1-3"
+  },
+  "v011": {
+    "label": "Mother liked to read books",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v012": {
+    "label": "Discussed politics with mother",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v013": {
+    "label": "Mother liked to follow the news",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v014": {
+    "label": "Parent(s) had problems making ends meet",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v015": {
+    "label": "Father liked to read books",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v016": {
+    "label": "Discussed politics with father",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v017": {
+    "label": "Father liked to follow the news",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "v018": {
+    "label": "Parent(s) had problems replacing broken things",
+    "theme": "Structure of the file",
+    "scale": "1-4"
+  },
+  "X001": {
+    "label": "Sex",
+    "theme": "Socio-demographics",
+    "scale": "1-2"
+  },
+  "X002": {
+    "label": "Year of birth",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x002_01": {
+    "label": "Having [countrys] nationality",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x002_01a": {
+    "label": "Respondents nationality - ISO 3166-1 code",
+    "theme": "Socio-demographics",
+    "scale": "4000000-915000000"
+  },
+  "x002_02": {
+    "label": "Respondent born in [country]",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x002_02a": {
+    "label": "Respondents country of birth - ISO 3166-1 code",
+    "theme": "Socio-demographics",
+    "scale": "4000000-915000000"
+  },
+  "x002_03": {
+    "label": "Year in which respondent came to live in [country]",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X003": {
+    "label": "Age",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X003R": {
+    "label": "Age recoded",
+    "theme": "Socio-demographics",
+    "scale": "1-6"
+  },
+  "X003R2": {
+    "label": "Age recoded (3 intervals)",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X004": {
+    "label": "Stable relationship",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X005": {
+    "label": "Legally married to partner",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X006": {
+    "label": "Stable relationship before",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x006_01": {
+    "label": "Married to this partner or in registered partnership",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "x006_02": {
+    "label": "Lived with this partner before marriage/registration of partnership",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X007": {
+    "label": "Marital status",
+    "theme": "Socio-demographics",
+    "scale": "1-8"
+  },
+  "x007_01": {
+    "label": "Lived with partner before marriage",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x007_02": {
+    "label": "Living with partner",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X008": {
+    "label": "Have you been married before",
+    "theme": "Socio-demographics",
+    "scale": "0-2"
+  },
+  "X009": {
+    "label": "Been divorced",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x009_01": {
+    "label": "End of relationship because of separation or partners death",
+    "theme": "Socio-demographics",
+    "scale": "1-2"
+  },
+  "X010": {
+    "label": "Where r lived after married",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X011": {
+    "label": "How many children do you have",
+    "theme": "Socio-demographics",
+    "scale": "0-8"
+  },
+  "x011_01": {
+    "label": "How many children do you have - deceased children not included",
+    "theme": "Socio-demographics",
+    "scale": "0-0"
+  },
+  "x011_02": {
+    "label": "Year in which firstborn child was born",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X011A": {
+    "label": "Have you had any children",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X012": {
+    "label": "How many are still living at home",
+    "theme": "Socio-demographics",
+    "scale": "0-7"
+  },
+  "X013": {
+    "label": "Number of people in household",
+    "theme": "Socio-demographics",
+    "scale": "0-9"
+  },
+  "X014": {
+    "label": "Number of people in household of 18+",
+    "theme": "Socio-demographics",
+    "scale": "0-0"
+  },
+  "X015": {
+    "label": "Number of people in household aged 13-17",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X016": {
+    "label": "Number of people in household aged 5-12",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X017": {
+    "label": "Number of people in household under age of 5",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X018": {
+    "label": "Number of people in household aged 16-17",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X019": {
+    "label": "Number of people in household aged 11-15",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X020": {
+    "label": "Number of people in household aged 5-10",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X021": {
+    "label": "Number of people in household aged 1-4",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "X022": {
+    "label": "Number of people in household under age of 1",
+    "theme": "Socio-demographics",
+    "scale": "0-19"
+  },
+  "x022_01": {
+    "label": "Living in household: partner, husband or wife",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x022_02a": {
+    "label": "Living in household: children",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x022_02b": {
+    "label": "Living in household: number of children",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x022_03a": {
+    "label": "Living in household: parents",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x022_03b": {
+    "label": "Living in household: number of parents",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x022_04a": {
+    "label": "Living in household: grandparents",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x022_04b": {
+    "label": "Living in household: number of grandparents",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x022_05a": {
+    "label": "Living in household: relatives",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x022_05b": {
+    "label": "Living in household: number of relatives",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x022_06a": {
+    "label": "Living in household: non relatives",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x022_06b": {
+    "label": "Living in household: number of non relatives",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X023": {
+    "label": "What age did you complete your education",
+    "theme": "Socio-demographics",
+    "scale": "0-0"
+  },
+  "X023R": {
+    "label": "What age did you complete your education (recoded in intervals)",
+    "theme": "Socio-demographics",
+    "scale": "1-10"
+  },
+  "X024": {
+    "label": "Had formal education",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X024B": {
+    "label": "Respondent - literate",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X025": {
+    "label": "Highest educational level attained",
+    "theme": "Socio-demographics",
+    "scale": "1-8"
+  },
+  "x025a": {
+    "label": "Educational level respondent: ISCED- code one digit",
+    "theme": "Socio-demographics",
+    "scale": "0-6"
+  },
+  "x025b": {
+    "label": "Educational level respondent: ISCED-code two digits",
+    "theme": "Socio-demographics",
+    "scale": "0-60"
+  },
+  "x025c": {
+    "label": "Educational level respondent: ISCED-code three digits",
+    "theme": "Socio-demographics",
+    "scale": "0-602"
+  },
+  "X025CS": {
+    "label": "Education (country specific)",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X025R": {
+    "label": "Education level (recoded)",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X025LIT": {
+    "label": "Was the respondent literate",
+    "theme": "Socio-demographics",
+    "scale": "1-2"
+  },
+  "X026": {
+    "label": "Do you live with your parents",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X027": {
+    "label": "House or apartment",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X028": {
+    "label": "Employment status",
+    "theme": "Socio-demographics",
+    "scale": "1-8"
+  },
+  "x028_01": {
+    "label": "Employment/self-employment: last job",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X029": {
+    "label": "Chief wage earner employed now",
+    "theme": "Socio-demographics",
+    "scale": "1-8"
+  },
+  "X030": {
+    "label": "Do you own your home or rent it",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X031": {
+    "label": "Are you supervising someone",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X032": {
+    "label": "Number of supervised people",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X032R": {
+    "label": "Number of supervised people (recoded)",
+    "theme": "Socio-demographics",
+    "scale": "1-6"
+  },
+  "x032r_01": {
+    "label": "Number of supervised people, 3 cat",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X033": {
+    "label": "Number of others working in the organization",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X033R": {
+    "label": "Number of others working in the organization (recoded)",
+    "theme": "Socio-demographics",
+    "scale": "1-10"
+  },
+  "X034": {
+    "label": "Number of employees",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X034R": {
+    "label": "Number of employees (recoded)",
+    "theme": "Socio-demographics",
+    "scale": "0-6"
+  },
+  "x034r_01": {
+    "label": "Number of employees, 4 cat",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X035_2": {
+    "label": "Job profession/industry (2 digit isco88)",
+    "theme": "Socio-demographics",
+    "scale": "0-99"
+  },
+  "X035_3": {
+    "label": "Job profession/industry (3 digit isco88)",
+    "theme": "Socio-demographics",
+    "scale": "11-996"
+  },
+  "X035_4": {
+    "label": "Job profession/industry (4 digit isco88)",
+    "theme": "Socio-demographics",
+    "scale": "110-9960"
+  },
+  "X036": {
+    "label": "Profession/job",
+    "theme": "Socio-demographics",
+    "scale": "11-81"
+  },
+  "x036a": {
+    "label": "Occupational status respondent - SIOPS",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x036b": {
+    "label": "Occupational status respondent - ISEI",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x036c": {
+    "label": "Occupational status respondent - egp11",
+    "theme": "Socio-demographics",
+    "scale": "1-11"
+  },
+  "x036d": {
+    "label": "Occupational status respondent - European ESeC",
+    "theme": "Socio-demographics",
+    "scale": "1-9"
+  },
+  "X037": {
+    "label": "How long unemployed",
+    "theme": "Socio-demographics",
+    "scale": "1-6"
+  },
+  "x037_01": {
+    "label": "Respondent experienced unemployment longer than 3 months",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "x037_02": {
+    "label": "Dependency on social security during last 5 years respondent",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X038": {
+    "label": "How many people work in your department-organization",
+    "theme": "Socio-demographics",
+    "scale": "1-9"
+  },
+  "X039": {
+    "label": "Do you or your spouse belong to a labour union",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X040": {
+    "label": "Are you the chief wage earner in your house",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X041": {
+    "label": "Is the chief wage earner employed now",
+    "theme": "Socio-demographics",
+    "scale": "0-1"
+  },
+  "X042_2": {
+    "label": "Profession/industry (2 digit isco88)",
+    "theme": "Socio-demographics",
+    "scale": "1-93"
+  },
+  "X042_3": {
+    "label": "Profession/industry (3 digit isco88)",
+    "theme": "Socio-demographics",
+    "scale": "11-933"
+  },
+  "X042_4": {
+    "label": "Profession/industry (4 digit isco88)",
+    "theme": "Socio-demographics",
+    "scale": "110-9333"
+  },
+  "X043": {
+    "label": "Chief wage earner profession/job",
+    "theme": "Socio-demographics",
+    "scale": "11-81"
+  },
+  "X044": {
+    "label": "Family savings during past year",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X045": {
+    "label": "Social class (subjective)",
+    "theme": "Socio-demographics",
+    "scale": "1-5"
+  },
+  "X045B": {
+    "label": "Social class (subjective) with 6 categories",
+    "theme": "Socio-demographics",
+    "scale": "1-6"
+  },
+  "X046": {
+    "label": "Socio-economic status of respondent",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X047": {
+    "label": "Scale of incomes",
+    "theme": "Socio-demographics",
+    "scale": "1-11"
+  },
+  "x047a": {
+    "label": "Weekly household income",
+    "theme": "Socio-demographics",
+    "scale": "1-12"
+  },
+  "x047a_01": {
+    "label": "Country specific: Weekly household income",
+    "theme": "Socio-demographics",
+    "scale": "8001-915015"
+  },
+  "x047b": {
+    "label": "Monthly household income",
+    "theme": "Socio-demographics",
+    "scale": "1-12"
+  },
+  "x047b_01": {
+    "label": "Country specific:Monthly household income",
+    "theme": "Socio-demographics",
+    "scale": "8001-915015"
+  },
+  "x047c": {
+    "label": "Annual household income",
+    "theme": "Socio-demographics",
+    "scale": "1-12"
+  },
+  "x047c_01": {
+    "label": "Country specific: Annual household income",
+    "theme": "Socio-demographics",
+    "scale": "8001-915015"
+  },
+  "X047CS": {
+    "label": "Income (country specific)",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x047d": {
+    "label": "Monthly household income (x1000), corrected for ppp in euros",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X047R": {
+    "label": "Income level",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X048": {
+    "label": "Region where the interview was conducted",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x048a": {
+    "label": "Region: NUTS-1 code",
+    "theme": "Socio-demographics",
+    "scale": "8000-915000"
+  },
+  "x048b": {
+    "label": "Region: NUTS-2 code",
+    "theme": "Socio-demographics",
+    "scale": "800001-90902300"
+  },
+  "x048c": {
+    "label": "Region: NUTS-3 code",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "x048d": {
+    "label": "Region at age 14: country",
+    "theme": "Socio-demographics",
+    "scale": "4000000-915000000"
+  },
+  "x048e": {
+    "label": "Region at age 14: NUTS-1 code",
+    "theme": "Socio-demographics",
+    "scale": "8000-915000"
+  },
+  "x048f": {
+    "label": "Region at age 14: NUTS-2 code",
+    "theme": "Socio-demographics",
+    "scale": "800001-90902300"
+  },
+  "x048g": {
+    "label": "Region at age 14: NUTS-3 code",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X049": {
+    "label": "Size of town",
+    "theme": "Socio-demographics",
+    "scale": "1-8"
+  },
+  "X049CS": {
+    "label": "Size of town (country specific)",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X050": {
+    "label": "Type of habitat",
+    "theme": "Socio-demographics",
+    "scale": "1-3"
+  },
+  "X051": {
+    "label": "Ethnic group",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X052": {
+    "label": "Institution of occupation",
+    "theme": "Socio-demographics",
+    "scale": "1-4"
+  },
+  "X053": {
+    "label": "Nature of tasks: manual vs. Cognitive",
+    "theme": "Socio-demographics",
+    "scale": "1-10"
+  },
+  "X054": {
+    "label": "Nature of tasks: routine vs. Creative",
+    "theme": "Socio-demographics",
+    "scale": "1-10"
+  },
+  "X055": {
+    "label": "Nature of tasks: independence",
+    "theme": "Socio-demographics",
+    "scale": "1-10"
+  },
+  "Y001": {
+    "label": "Post-Materialist index 12-item",
+    "theme": "Special Indexes",
+    "scale": "0-5"
+  },
+  "Y002": {
+    "label": "Post-Materialist index 4-item",
+    "theme": "Special Indexes",
+    "scale": "1-3"
+  },
+  "Y003": {
+    "label": "Autonomy Index",
+    "theme": "Special Indexes",
+    "scale": "0-2"
+  },
+  "ZMEN_001": {
+    "label": "Approximately, total hours a month were you active in voluntary organizations",
+    "theme": "Sylatech module",
+    "scale": "0-4"
+  },
+  "ZMEN_002": {
+    "label": "Most people view those between the ages of 18 to 29: as friendly",
+    "theme": "Sylatech module",
+    "scale": "1-5"
+  },
+  "ZMEN_003": {
+    "label": "Most people view those between the ages of 18 to 29: as competent",
+    "theme": "Sylatech module",
+    "scale": "1-5"
+  },
+  "ZMEN_004": {
+    "label": "Most people view those between the ages of 18 to 29: with respect",
+    "theme": "Sylatech module",
+    "scale": "1-5"
+  },
+  "ZMEN_005": {
+    "label": "In the city or area where you live, satisfaction with quality of: The public transportation systems",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_006": {
+    "label": "In the city or area where you live, satisfaction with quality of: The roads and highways",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_007": {
+    "label": "In the city or area where you live, satisfaction with the quality: The schools",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_008": {
+    "label": "In the city or area where you live, satisfaction with the quality of: The quality of air",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_009": {
+    "label": "In the city or area where you live, satisfaction with the quality of: The quality of water",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_010": {
+    "label": "In the city or area where you live, satisfaction with the quality of: The quality of health care",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_011": {
+    "label": "In the city or area where you live, satisfaction with the quality of: The quality of housing",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_012": {
+    "label": "In the city or area where you live, satisfaction with the quality of: The beauty or physical setting",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_013": {
+    "label": "Satisfaction with: salary and benefits of your current primary job",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_014": {
+    "label": "Satisfaction with: opportunities for professional development and promotion in your current primary job",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_015": {
+    "label": "Own business or have taken tangible steps to start a business during past 12 months",
+    "theme": "Sylatech module",
+    "scale": "1-3"
+  },
+  "ZMEN_016": {
+    "label": "Over the past year, did you or a member of your family living with you borrow money",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "ZMEN_017": {
+    "label": "Borrow from any of the following places: Microfinance Institution",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_018": {
+    "label": "Borrow money from any of the following places: Commercial Bank",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_019": {
+    "label": "Borrow money from any of the following places:  Public Bank",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_020": {
+    "label": "Borrow money from any of the following places:  Friends or Family",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_021": {
+    "label": "Borrow money from any of the following places: Informal Savings & Lending Association",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_022": {
+    "label": "Borrow money from any of the following places: Credit Supplier",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_023": {
+    "label": "Borrow money from any of the following places: Other",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_024": {
+    "label": "The loan used for: Starting or Growing a Business",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_025": {
+    "label": "Tthe loan used for: Buying or Improving a Home",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_026": {
+    "label": "The loan used for: Getting Married",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_027": {
+    "label": "The loan used for: For Household Purchases",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_028": {
+    "label": "The loan used for: For emergencies",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_029": {
+    "label": "The loan used for: Others",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "ZMEN_030": {
+    "label": "Formal education system provides people with skills/training they need to find employment",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "ZMEN_031": {
+    "label": "Formal education system provides people with skills/training they need to perform their jobs well",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "ZMEN_032": {
+    "label": "Formal education system provides people with skills/training they need to start a business",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "ZMEN_033": {
+    "label": "If you had your preference, in which of the following would you prefer to work",
+    "theme": "Sylatech module",
+    "scale": "1-3"
+  },
+  "ZMEN_034": {
+    "label": "How widespread do you think that corruption is within businesses in your country",
+    "theme": "Sylatech module",
+    "scale": "1-10"
+  },
+  "ZMEN_035": {
+    "label": "How widespread do you think that corruption is within the government in your country",
+    "theme": "Sylatech module",
+    "scale": "1-10"
+  },
+  "ZMEN_036": {
+    "label": "Level of corruption in this country respect to five years ago",
+    "theme": "Sylatech module",
+    "scale": "1-10"
+  },
+  "ZMEN_037": {
+    "label": "The government of your country is doing enough to fight corruption",
+    "theme": "Sylatech module",
+    "scale": "1-3"
+  },
+  "ZMEN_038": {
+    "label": "In last 12 months, you faced with: People give a bribe/receive services",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_039": {
+    "label": "Opinion of those who start and run their own businesses",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "ZMEN_040": {
+    "label": "Have you actively looked for work in the past four weeks",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "ZMEN_041": {
+    "label": "Employment opportunity, would you be interested and able to start working",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "ZMEN_042": {
+    "label": "Are you registered through your employer with the Social Security in [country]",
+    "theme": "Sylatech module",
+    "scale": "1-2"
+  },
+  "w001": {
+    "label": "Partner/spouse born in [country]",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "w001a": {
+    "label": "Spouse/partners country of birth - ISO 3166-1code",
+    "theme": "Sylatech module",
+    "scale": "4000000-915000000"
+  },
+  "w002a": {
+    "label": "Educational level partner: ISCED-code one digit",
+    "theme": "Sylatech module",
+    "scale": "0-6"
+  },
+  "w002b": {
+    "label": "Educational level partner: ISCED-code two digits",
+    "theme": "Sylatech module",
+    "scale": "0-60"
+  },
+  "w002c": {
+    "label": "Educational level partner: ISCED-code three digits",
+    "theme": "Sylatech module",
+    "scale": "0-602"
+  },
+  "w002d": {
+    "label": "Country specific: Education level partner",
+    "theme": "Sylatech module",
+    "scale": ""
+  },
+  "w003": {
+    "label": "Paid employment/no paid employment spouse/partner",
+    "theme": "Sylatech module",
+    "scale": "1-10"
+  },
+  "w004": {
+    "label": "Employment/self-employment: last job",
+    "theme": "Sylatech module",
+    "scale": "1-3"
+  },
+  "w005": {
+    "label": "Job profession/industry spouse/partner (4 digit isco88)",
+    "theme": "Sylatech module",
+    "scale": "110-9333"
+  },
+  "w006a": {
+    "label": "Occupational status spouse/partner - SIOPS",
+    "theme": "Sylatech module",
+    "scale": ""
+  },
+  "w006b": {
+    "label": "Occupational status spouse/partner - ISEI",
+    "theme": "Sylatech module",
+    "scale": ""
+  },
+  "w006c": {
+    "label": "Occupational status spouse/partner - European ESeC",
+    "theme": "Sylatech module",
+    "scale": "1-9"
+  },
+  "w006d": {
+    "label": "Occupational status spouse/partner - egp11",
+    "theme": "Sylatech module",
+    "scale": "1-11"
+  },
+  "w007": {
+    "label": "Spouse/partner had/has how many employees",
+    "theme": "Sylatech module",
+    "scale": "1-4"
+  },
+  "w008": {
+    "label": "Does spouse/partner supervise someone",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "w009": {
+    "label": "How many people does she/he supervise",
+    "theme": "Sylatech module",
+    "scale": "1-3"
+  },
+  "w010": {
+    "label": "Spouse/partner experienced unemployment longer than 3 months",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "w011": {
+    "label": "Dependency on social security during last 5 years spouse/partner",
+    "theme": "Sylatech module",
+    "scale": "0-1"
+  },
+  "TRADRAT5": {
+    "label": "Traditional/Secular-Rational Values (Inglehart-Welzel index)",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y010": {
+    "label": "Post-materialist index (4-item)",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y011": {
+    "label": "Post-materialist index (12-item): materialist",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y012": {
+    "label": "Post-materialist index (12-item): mixed",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y013": {
+    "label": "Post-materialist index (12-item): post-materialist",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y014": {
+    "label": "Post-materialist index (12-item): percentage index",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y020": {
+    "label": "Autonomy index: obedience vs. independence (children)",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y021": {
+    "label": "Autonomy index: autonomy",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y022": {
+    "label": "Autonomy index: conformity",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y023": {
+    "label": "Autonomy index: openness",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "Y024": {
+    "label": "Autonomy index: self-direction",
+    "theme": "Special Indexes",
+    "scale": ""
+  },
+  "E179WVS": {
+    "label": "Party preference: first choice (WVS-specific coding)",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "E180WVS": {
+    "label": "Party preference: second choice (WVS-specific coding)",
+    "theme": "Politics and Society",
+    "scale": ""
+  },
+  "X025CSWVS": {
+    "label": "Education, country-specific (WVS-specific coding)",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "X048WVS": {
+    "label": "Region of interview (WVS-specific coding)",
+    "theme": "Socio-demographics",
+    "scale": ""
+  },
+  "B030": {
+    "label": "Trust in charitable/humanitarian organizations",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "B031": {
+    "label": "Trust in universities",
+    "theme": "Perceptions of life",
+    "scale": "1-4"
+  },
+  "S007_01": {
+    "label": "Unified respondent number",
+    "theme": "Structure of the file",
+    "scale": ""
+  }
+}
