@@ -192,8 +192,11 @@ def generate_images_task(self, job_id):
         # Evict the prompt enhancer LLM from VRAM before loading diffusion model
         _evict_enhancer()
 
-        # Load the model using the factory pattern from lib
-        model = _load_model_instance(job.diffusion_model)
+        # Load the model — use ControlNet variant if job has a ControlNet model
+        if job.controlnet_model:
+            model = _load_controlnet_model_instance(job.diffusion_model, job.controlnet_model)
+        else:
+            model = _load_model_instance(job.diffusion_model)
 
         # Always unload any existing LoRA first to ensure clean state
         if model.current_lora is not None:
@@ -221,6 +224,23 @@ def generate_images_task(self, job_id):
             "seed": params.get("seed"),
             "scheduler": params.get("scheduler"),
         }
+
+        # ControlNet: preprocess reference image and inject control parameters
+        if job.controlnet_model and params.get("reference_image_path"):
+            control_image = _preprocess_controlnet_image(
+                params["reference_image_path"],
+                params["preprocessing_type"],
+                target_width=params["width"],
+                target_height=params["height"],
+            )
+            gen_params["control_image"] = control_image
+            gen_params["conditioning_scale"] = params.get("conditioning_scale")
+            gen_params["guidance_end"] = params.get("guidance_end")
+            logger.info(
+                f"ControlNet active: {job.controlnet_model.label}, "
+                f"preprocessing={params['preprocessing_type']}, "
+                f"scale={params.get('conditioning_scale')}"
+            )
 
         # Debug logging
         logger.debug(f"Input prompt: '{gen_params['prompt']}'")
@@ -502,6 +522,17 @@ def _build_generation_metadata(job, params, gen_params, images_metadata):
             if job.lora_model
             else None
         ),
+        "controlnet": (
+            {
+                "label": job.controlnet_model.label,
+                "path": job.controlnet_model.path,
+                "control_type": params.get("preprocessing_type"),
+                "conditioning_scale": params.get("conditioning_scale"),
+                "guidance_end": params.get("guidance_end"),
+            }
+            if job.controlnet_model
+            else None
+        ),
         "prompt": {
             "source": job.prompt.source_prompt,
             "enhanced": job.prompt.enhanced_prompt,
@@ -604,3 +635,128 @@ def _load_model_instance(diffusion_model):
 
     _model_cache[slug] = model_instance
     return model_instance
+
+
+def _load_controlnet_model_instance(diffusion_model, controlnet_model):
+    """
+    Load a ControlNet model instance, with warm caching.
+
+    Uses a composite cache key (base_slug + controlnet_slug) so that
+    the same base model paired with different ControlNets is cached separately.
+
+    Args:
+        diffusion_model: DiffusionModel Django object (base model)
+        controlnet_model: ControlNetModel Django object
+
+    Returns:
+        Loaded model instance with ControlNet (SDXLControlNetModel or SD15ControlNetModel)
+    """
+    # Composite cache key: base + controlnet
+    cache_key = f"{diffusion_model.slug}+cn:{controlnet_model.slug}"
+
+    if cache_key in _model_cache:
+        cached = _model_cache[cache_key]
+        if cached.pipeline is not None:
+            logger.debug(f"Using warm ControlNet model '{cache_key}'")
+            return cached
+        else:
+            del _model_cache[cache_key]
+
+    # Evict any previously cached model (one model at a time for memory)
+    for old_slug, old_model in list(_model_cache.items()):
+        logger.debug(f"Evicting model '{old_slug}' to load '{cache_key}'")
+        try:
+            if hasattr(old_model, "pipeline") and old_model.pipeline is not None:
+                del old_model.pipeline
+            import torch
+
+            if hasattr(torch, "mps") and hasattr(torch.mps, "empty_cache"):
+                torch.mps.empty_cache()
+            elif torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
+        del _model_cache[old_slug]
+
+    from cw.lib.models import ModelFactory
+
+    # Determine the ControlNet pipeline type from base architecture
+    arch = diffusion_model.base_architecture
+    if arch == "sdxl":
+        pipeline_name = "StableDiffusionXLControlNetPipeline"
+    elif arch == "sd15":
+        pipeline_name = "StableDiffusionControlNetPipeline"
+    else:
+        raise ValueError(
+            f"ControlNet not supported for architecture '{arch}'. "
+            f"Supported: sdxl, sd15"
+        )
+
+    # Build config with ControlNet path injected into settings
+    model_settings = diffusion_model.get_settings_dict()
+    model_settings["controlnet_path"] = controlnet_model.path
+
+    model_config = {
+        "label": f"{diffusion_model.label} + {controlnet_model.label}",
+        "slug": cache_key,
+        "path": diffusion_model.path,
+        "pipeline": pipeline_name,
+        "settings": model_settings,
+    }
+
+    logger.info(
+        f"Loading ControlNet model '{cache_key}' (cold start) - "
+        f"base={diffusion_model.path}, controlnet={controlnet_model.path}"
+    )
+    model_instance = ModelFactory.create_model(model_config, diffusion_model.path)
+
+    def log_progress(progress=None, desc=None):
+        if desc:
+            logger.info(f"Model '{cache_key}': {desc}")
+        elif progress is not None:
+            logger.info(f"Model '{cache_key}': {progress}")
+
+    result = model_instance.load_pipeline(progress_callback=log_progress)
+    logger.info(f"ControlNet model '{cache_key}' loaded: {result}")
+
+    if model_instance.pipeline is None:
+        raise RuntimeError(f"Failed to load ControlNet model '{cache_key}': {result}")
+
+    _model_cache[cache_key] = model_instance
+    return model_instance
+
+
+def _preprocess_controlnet_image(reference_image_path, control_type, target_width, target_height):
+    """
+    Load and preprocess a reference image for ControlNet conditioning.
+
+    Args:
+        reference_image_path: Absolute path to the source image
+        control_type: Preprocessing type ('canny', 'lineart', 'depth', etc.)
+        target_width: Target output width
+        target_height: Target output height
+
+    Returns:
+        Preprocessed PIL Image for ControlNet conditioning
+    """
+    from PIL import Image
+
+    from cw.lib.controlnet_preprocessing import preprocess_image
+
+    logger.info(f"Preprocessing reference image: {reference_image_path} ({control_type})")
+
+    source_image = Image.open(reference_image_path).convert("RGB")
+    control_image = preprocess_image(
+        source_image,
+        control_type,
+        image_resolution=max(target_width, target_height),
+    )
+
+    # Resize to exact target dimensions
+    if control_image.size != (target_width, target_height):
+        control_image = control_image.resize(
+            (target_width, target_height), Image.Resampling.LANCZOS
+        )
+
+    logger.info(f"Control image ready: {control_image.size}")
+    return control_image

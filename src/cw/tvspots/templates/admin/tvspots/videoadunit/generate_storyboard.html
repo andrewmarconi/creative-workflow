@@ -24,6 +24,38 @@
         <form method="post" class="space-y-6">
             {% csrf_token %}
 
+            {# Source Type Toggle #}
+            <div>
+                <label class="block text-sm font-medium mb-2">{% trans "Source Type" %}</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20">
+                        <input type="radio" name="source_type" value="text" checked
+                               class="text-primary-600 focus:ring-primary-500"
+                               onchange="toggleSourceType()">
+                        <div>
+                            <span class="font-medium text-sm">{% trans "Text (Script Rows)" %}</span>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{% trans "Generate from visual descriptions" %}</p>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50 dark:has-[:checked]:bg-primary-900/20 {% if not has_keyframes %}opacity-50{% endif %}">
+                        <input type="radio" name="source_type" value="keyframe"
+                               {% if not has_keyframes %}disabled{% endif %}
+                               class="text-primary-600 focus:ring-primary-500"
+                               onchange="toggleSourceType()">
+                        <div>
+                            <span class="font-medium text-sm">{% trans "Keyframe (Wireframe)" %}</span>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                {% if has_keyframes %}
+                                    {% trans "ControlNet-guided from video keyframes" %}
+                                {% else %}
+                                    {% trans "No keyframes available — upload and process video first" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div>
                 <label for="id_diffusion_model" class="block text-sm font-medium mb-2">
                     {% trans "Diffusion Model" %}
@@ -78,17 +110,121 @@
                 </p>
             </div>
 
-            <div class="flex items-center">
-                <input
-                    type="checkbox"
-                    name="enhance_prompts"
-                    id="enhance_prompts"
-                    checked
-                    class="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500"
-                >
-                <label for="enhance_prompts" class="ml-2 text-sm">
-                    {% trans "Enhance prompts with LLM" %}
-                </label>
+            {# Text-only options #}
+            <div id="text-options">
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        name="enhance_prompts"
+                        id="enhance_prompts"
+                        checked
+                        class="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500"
+                    >
+                    <label for="enhance_prompts" class="ml-2 text-sm">
+                        {% trans "Enhance prompts with LLM" %}
+                    </label>
+                </div>
+            </div>
+
+            {# Wireframe / ControlNet options #}
+            <div id="wireframe-options" class="hidden space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                <h3 class="font-medium text-sm">{% trans "ControlNet Settings" %}</h3>
+
+                <div>
+                    <label for="id_controlnet_model" class="block text-sm font-medium mb-2">
+                        {% trans "ControlNet Model" %}
+                    </label>
+                    <select
+                        name="controlnet_model"
+                        id="id_controlnet_model"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                        <option value="">{% trans "— Select ControlNet —" %}</option>
+                        {% for cn in controlnets %}
+                        <option value="{{ cn.id }}"
+                                data-architecture="{{ cn.base_architecture }}"
+                                data-control-type="{{ cn.control_type }}"
+                                data-conditioning-scale="{{ cn.default_conditioning_scale }}"
+                                data-guidance-end="{{ cn.default_guidance_end }}">
+                            {{ cn.label }} ({{ cn.get_base_architecture_display }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="id_preprocessing_type" class="block text-sm font-medium mb-2">
+                        {% trans "Preprocessing Override" %}
+                    </label>
+                    <select
+                        name="preprocessing_type"
+                        id="id_preprocessing_type"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                        <option value="">{% trans "— Use ControlNet default —" %}</option>
+                        <option value="canny">{% trans "Canny Edge" %}</option>
+                        <option value="lineart">{% trans "Line Art" %}</option>
+                        <option value="lineart_anime">{% trans "Line Art (Anime)" %}</option>
+                        <option value="depth">{% trans "Depth (MiDaS)" %}</option>
+                        <option value="softedge">{% trans "Soft Edge (HED)" %}</option>
+                        <option value="openpose">{% trans "OpenPose" %}</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="id_conditioning_scale" class="block text-sm font-medium mb-2">
+                            {% trans "Conditioning Scale" %}
+                        </label>
+                        <input
+                            type="number"
+                            name="conditioning_scale"
+                            id="id_conditioning_scale"
+                            step="0.05"
+                            min="0"
+                            max="2"
+                            placeholder="Use default"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            {% trans "Higher = stricter adherence to reference" %}
+                        </p>
+                    </div>
+                    <div>
+                        <label for="id_control_guidance_end" class="block text-sm font-medium mb-2">
+                            {% trans "Guidance End" %}
+                        </label>
+                        <input
+                            type="number"
+                            name="control_guidance_end"
+                            id="id_control_guidance_end"
+                            step="0.05"
+                            min="0"
+                            max="1"
+                            placeholder="Use default"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        >
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            {% trans "When to stop ControlNet (0.0-1.0)" %}
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_style_prompt" class="block text-sm font-medium mb-2">
+                        {% trans "Style Prompt" %}
+                    </label>
+                    <textarea
+                        name="style_prompt"
+                        id="id_style_prompt"
+                        rows="3"
+                        placeholder="clean line drawing, wireframe storyboard cel, black and white, professional illustration"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg p-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    ></textarea>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        {% trans "Leave empty for default wireframe style" %}
+                    </p>
+                </div>
             </div>
 
             {% if existing_storyboards %}
@@ -97,7 +233,7 @@
                 <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 text-sm">
                     {% for storyboard in existing_storyboards %}
                     <li>
-                        {{ storyboard.diffusion_model.label }} - {{ storyboard.status }}
+                        {{ storyboard.diffusion_model.label }} - {{ storyboard.get_source_type_display }} - {{ storyboard.status }}
                         ({{ storyboard.images.count }} images)
                     </li>
                     {% endfor %}
@@ -126,10 +262,51 @@
                 <li>{% trans "Total images: " %}{{ video_ad_unit.script_rows.count }} {% trans "rows" %} &times; {% trans "images per row" %}</li>
             </ul>
         </div>
+
+        {% if has_keyframes %}
+        <div class="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+            <h3 class="text-purple-800 dark:text-purple-300 font-medium mb-2">{% trans "Wireframe Mode" %}</h3>
+            <ul class="list-disc list-inside text-purple-700 dark:text-purple-400 text-sm space-y-1">
+                <li>{% trans "Uses extracted video keyframes as ControlNet reference images" %}</li>
+                <li>{% trans "ControlNet provides structural guidance (edges, depth, line art)" %}</li>
+                <li>{% trans "Results in wireframe/line-drawing storyboard cels" %}</li>
+                <li>{% trans "No LLM prompt enhancement needed — structure comes from the keyframes" %}</li>
+            </ul>
+        </div>
+        {% endif %}
     </div>
 </div>
 <script>
     window.__lora_compat_url__ = "{{ lora_compat_url }}";
+
+    function toggleSourceType() {
+        const sourceType = document.querySelector('input[name="source_type"]:checked').value;
+        const textOptions = document.getElementById('text-options');
+        const wireframeOptions = document.getElementById('wireframe-options');
+
+        if (sourceType === 'keyframe') {
+            textOptions.classList.add('hidden');
+            wireframeOptions.classList.remove('hidden');
+        } else {
+            textOptions.classList.remove('hidden');
+            wireframeOptions.classList.add('hidden');
+        }
+    }
+
+    // Auto-fill defaults when ControlNet model changes
+    document.getElementById('id_controlnet_model').addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        const condScale = document.getElementById('id_conditioning_scale');
+        const guidanceEnd = document.getElementById('id_control_guidance_end');
+
+        if (selected.value) {
+            condScale.placeholder = selected.dataset.conditioningScale || 'Use default';
+            guidanceEnd.placeholder = selected.dataset.guidanceEnd || 'Use default';
+        } else {
+            condScale.placeholder = 'Use default';
+            guidanceEnd.placeholder = 'Use default';
+        }
+    });
 </script>
 <script src="{% static 'diffusion/js/filter_loras.js' %}"></script>
 {% endblock %}

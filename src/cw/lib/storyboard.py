@@ -303,3 +303,219 @@ def create_storyboard_jobs(
             )
 
     return created_jobs
+
+
+class WireframePromptBuilder:
+    """Builds image prompts for wireframe/line-drawing storyboard generation.
+
+    Unlike :class:`StoryboardGenerator` which creates prompts from script text,
+    this builder creates simple style-focused prompts designed to work with
+    ControlNet structural guidance from video keyframes.
+    """
+
+    DEFAULT_STYLE = (
+        "clean line drawing, wireframe storyboard cel, black and white, "
+        "professional illustration, architectural sketch style"
+    )
+    DEFAULT_NEGATIVE = (
+        "photorealistic, photograph, blurry, low quality, watermark, "
+        "text overlay, color photograph, 3D render"
+    )
+
+    def __init__(self, style_prompt: str = ""):
+        """
+        Args:
+            style_prompt: Custom style prompt. Falls back to DEFAULT_STYLE if empty.
+        """
+        self.style_prompt = style_prompt or self.DEFAULT_STYLE
+
+    def build_prompt(
+        self,
+        visual_text: str = "",
+        scene_number: int | None = None,
+    ) -> dict:
+        """Build a wireframe generation prompt for a single keyframe.
+
+        The prompt emphasises the desired visual *style* rather than content
+        description — the content comes from the ControlNet reference image.
+
+        Args:
+            visual_text: Optional script-row description for extra context.
+            scene_number: Optional scene number for logging.
+
+        Returns:
+            Dict with ``prompt`` and ``negative_prompt`` keys.
+        """
+        parts = [self.style_prompt]
+        if visual_text:
+            # Add a short content hint from the script
+            parts.append(visual_text.strip())
+        prompt = ", ".join(parts)
+
+        logger.debug(
+            f"Built wireframe prompt for scene {scene_number}: {prompt[:80]}..."
+        )
+        return {
+            "prompt": prompt,
+            "negative_prompt": self.DEFAULT_NEGATIVE,
+        }
+
+
+def create_wireframe_storyboard_jobs(storyboard) -> list:
+    """Create ControlNet-guided DiffusionJobs from video keyframes.
+
+    Matches keyframes (by ``scene_number``) to script rows and creates one
+    :class:`~cw.diffusion.models.DiffusionJob` per keyframe per ``images_per_row``.
+    Each DiffusionJob is configured with the storyboard's ControlNet settings
+    and the keyframe image as the reference input.
+
+    Args:
+        storyboard: :class:`~cw.tvspots.models.Storyboard` with
+            ``source_type="keyframe"`` and a ``controlnet_model`` set.
+
+    Returns:
+        List of created :class:`~cw.diffusion.models.DiffusionJob` instances.
+
+    Raises:
+        ValueError: If the VideoAdUnit has no source media or keyframes.
+    """
+    from django.core.files import File
+
+    from cw.diffusion.models import DiffusionJob, Prompt
+    from cw.tvspots.models import StoryboardImage
+
+    video_ad_unit = storyboard.video_ad_unit
+    campaign = video_ad_unit.campaign
+
+    # Resolve ControlNet settings with fallback to model defaults
+    controlnet = storyboard.controlnet_model
+    preprocessing = (
+        storyboard.preprocessing_type or controlnet.control_type
+    )
+    cond_scale = (
+        storyboard.conditioning_scale
+        if storyboard.conditioning_scale is not None
+        else controlnet.default_conditioning_scale
+    )
+    guidance_end = (
+        storyboard.control_guidance_end
+        if storyboard.control_guidance_end is not None
+        else controlnet.default_guidance_end
+    )
+
+    # Get keyframes via VideoAdUnit → source_media → result → key_frames
+    source_media = getattr(video_ad_unit, "source_media", None)
+    if not source_media or not source_media.result:
+        raise ValueError(
+            f"VideoAdUnit {video_ad_unit.code} has no source media with "
+            "processing results. Upload and process a video first."
+        )
+
+    key_frames = list(
+        source_media.result.key_frames.all().order_by("scene_number")
+    )
+    if not key_frames:
+        raise ValueError(
+            f"No keyframes found for VideoAdUnit {video_ad_unit.code}. "
+            "Ensure video analysis completed successfully."
+        )
+
+    # Build scene_number → script_row mapping
+    script_rows_by_scene = {}
+    for row in video_ad_unit.script_rows.all():
+        # shot_number often matches scene_number; fall back to order_index + 1
+        try:
+            scene_num = int(row.shot_number)
+        except (ValueError, TypeError):
+            scene_num = row.order_index + 1
+        script_rows_by_scene[scene_num] = row
+
+    prompt_builder = WireframePromptBuilder(style_prompt=storyboard.style_prompt)
+
+    created_jobs = []
+
+    for key_frame in key_frames:
+        script_row = script_rows_by_scene.get(key_frame.scene_number)
+        if not script_row:
+            logger.warning(
+                f"No script row for scene {key_frame.scene_number}, skipping keyframe"
+            )
+            continue
+
+        visual_hint = script_row.visual_text if script_row else ""
+        prompt_data = prompt_builder.build_prompt(
+            visual_text=visual_hint,
+            scene_number=key_frame.scene_number,
+        )
+
+        shot_number = script_row.shot_number or f"{script_row.order_index + 1:02d}"
+
+        for img_idx in range(storyboard.images_per_row):
+            identifier = (
+                f"{campaign.job_id}_{video_ad_unit.code}"
+                f"_wf-{shot_number}_img-{img_idx + 1:02d}"
+            )
+
+            prompt_record = Prompt.objects.create(
+                source_prompt=prompt_data["prompt"],
+                enhanced_prompt=prompt_data["prompt"],
+                negative_prompt=prompt_data["negative_prompt"],
+                enhancement_method="none",
+            )
+
+            # Create DiffusionJob with ControlNet settings and keyframe reference
+            diffusion_job = DiffusionJob.objects.create(
+                diffusion_model=storyboard.diffusion_model,
+                lora_model=storyboard.lora_model,
+                prompt=prompt_record,
+                identifier=identifier,
+                status="pending",
+                width=1280,
+                height=720,
+                controlnet_model=controlnet,
+                preprocessing_type=preprocessing,
+                conditioning_scale=cond_scale,
+                control_guidance_end=guidance_end,
+            )
+
+            # Copy the keyframe image to the DiffusionJob's reference_image field
+            if key_frame.image:
+                with open(key_frame.image.path, "rb") as f:
+                    diffusion_job.reference_image.save(
+                        f"ref_scene_{key_frame.scene_number:03d}.jpg",
+                        File(f),
+                        save=True,
+                    )
+
+            # Create StoryboardImage linking everything
+            StoryboardImage.objects.create(
+                storyboard=storyboard,
+                script_row=script_row,
+                diffusion_job=diffusion_job,
+                key_frame=key_frame,
+                image_index=img_idx,
+            )
+
+            created_jobs.append(diffusion_job)
+
+            logger.info(
+                f"Created wireframe DiffusionJob: {identifier}",
+                extra={
+                    "storyboard_id": storyboard.pk,
+                    "diffusion_job_id": diffusion_job.pk,
+                    "key_frame_id": key_frame.pk,
+                    "scene_number": key_frame.scene_number,
+                    "image_index": img_idx,
+                },
+            )
+
+    logger.info(
+        f"Created {len(created_jobs)} wireframe DiffusionJobs for storyboard {storyboard.pk}",
+        extra={
+            "storyboard_id": storyboard.pk,
+            "num_jobs": len(created_jobs),
+            "num_keyframes": len(key_frames),
+        },
+    )
+
+    return created_jobs

@@ -46,8 +46,6 @@ def transcribe_audio(
         FileNotFoundError: If audio file doesn't exist
         Exception: If transcription fails
     """
-    logger.info(f"Loading Whisper model: {model_size}")
-
     # Determine device (CUDA > CPU)
     # Note: MPS support in Whisper is unstable and causes NaN values, so we skip it
     if torch.cuda.is_available():
@@ -55,10 +53,32 @@ def transcribe_audio(
     else:
         device = "cpu"
 
-    logger.info(f"Using device: {device}")
+    # Load Whisper model, falling back to a smaller variant on OOM
+    model = None
+    for size in [model_size, "medium", "base"]:
+        try:
+            logger.info(f"Loading Whisper model: {size} on {device}")
+            model = whisper.load_model(size, device=device)
+            if size != model_size:
+                logger.warning(
+                    f"Fell back from '{model_size}' to '{size}' due to VRAM constraints"
+                )
+            break
+        except (torch.cuda.OutOfMemoryError, RuntimeError) as e:
+            if "out of memory" not in str(e).lower() and "CUDA" not in str(e):
+                raise
+            logger.warning(f"Whisper '{size}' OOM on {device}, trying smaller model")
+            # Clear failed allocation before retrying
+            import gc
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
-    # Load Whisper model
-    model = whisper.load_model(model_size, device=device)
+    if model is None:
+        raise RuntimeError(
+            f"Could not load any Whisper model on {device}. "
+            "Free GPU memory or use a smaller model."
+        )
 
     logger.info(f"Transcribing audio from: {audio_path}")
 
@@ -108,5 +128,9 @@ def transcribe_audio(
             for seg in result["segments"]
         ],
     }
+
+    # Explicitly free Whisper model VRAM
+    del model
+    del result
 
     return transcription

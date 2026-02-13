@@ -1357,12 +1357,15 @@ class VideoAdUnitAdmin(ModelAdmin):
         return False
 
     def generate_storyboard_view(self, request, object_id):
-        """Handle generating a storyboard for a video ad unit."""
+        """Handle generating a storyboard for a video ad unit.
+
+        Supports two modes:
+        - **text** (default): generates from script row descriptions with optional LLM enhancement
+        - **keyframe**: uses ControlNet with extracted video keyframes for wireframe generation
+        """
         from django.template.response import TemplateResponse
 
-        from cw.diffusion.models import DiffusionModel, LoraModel
-
-        from .tasks import generate_storyboard_task
+        from cw.diffusion.models import ControlNetModel, DiffusionModel, LoraModel
 
         video_ad_unit = VideoAdUnit.objects.get(pk=object_id)
 
@@ -1370,41 +1373,89 @@ class VideoAdUnitAdmin(ModelAdmin):
             messages.error(request, "No script rows found for this video ad unit.")
             return redirect("admin:tvspots_videoadunit_change", object_id)
 
+        # Check if keyframes are available (for wireframe mode)
+        source_media = getattr(video_ad_unit, "source_media", None)
+        has_keyframes = (
+            source_media
+            and source_media.result
+            and source_media.result.key_frames.exists()
+        )
+
         if request.method == "POST":
+            source_type = request.POST.get("source_type", "text")
             model_id = request.POST.get("diffusion_model")
             lora_id = request.POST.get("lora_model") or None
             images_per_row = int(request.POST.get("images_per_row", 1))
-            enhance_prompts = request.POST.get("enhance_prompts") == "on"
 
             if not model_id:
                 messages.error(request, "Please select a diffusion model.")
                 return redirect("admin:tvspots_videoadunit_generate_storyboard", object_id)
 
-            # Create Storyboard
-            storyboard = Storyboard.objects.create(
-                video_ad_unit=video_ad_unit,
-                diffusion_model_id=model_id,
-                lora_model_id=lora_id,
-                images_per_row=images_per_row,
-                status="pending",
-            )
+            # Build storyboard creation kwargs
+            storyboard_kwargs = {
+                "video_ad_unit": video_ad_unit,
+                "diffusion_model_id": model_id,
+                "lora_model_id": lora_id,
+                "images_per_row": images_per_row,
+                "source_type": source_type,
+                "status": "pending",
+            }
 
-            # Queue the storyboard generation task
-            generate_storyboard_task.apply_async(
-                args=[storyboard.pk, enhance_prompts], queue="default"
-            )
+            if source_type == "keyframe":
+                # ControlNet wireframe mode
+                controlnet_id = request.POST.get("controlnet_model")
+                if not controlnet_id:
+                    messages.error(request, "Please select a ControlNet model for wireframe mode.")
+                    return redirect("admin:tvspots_videoadunit_generate_storyboard", object_id)
 
-            total_images = video_ad_unit.script_rows.count() * images_per_row
-            messages.success(
-                request,
-                f"Storyboard generation queued ({total_images} images). "
-                f"Check the Storyboard page for progress.",
-            )
+                storyboard_kwargs["controlnet_model_id"] = controlnet_id
+                storyboard_kwargs["preprocessing_type"] = request.POST.get(
+                    "preprocessing_type", ""
+                )
+                cond_scale = request.POST.get("conditioning_scale")
+                if cond_scale:
+                    storyboard_kwargs["conditioning_scale"] = float(cond_scale)
+                guidance_end = request.POST.get("control_guidance_end")
+                if guidance_end:
+                    storyboard_kwargs["control_guidance_end"] = float(guidance_end)
+                storyboard_kwargs["style_prompt"] = request.POST.get("style_prompt", "")
+
+            storyboard = Storyboard.objects.create(**storyboard_kwargs)
+
+            # Queue the appropriate task
+            if source_type == "keyframe":
+                from .tasks import generate_wireframe_storyboard_task
+
+                generate_wireframe_storyboard_task.apply_async(
+                    args=[storyboard.pk], queue="default"
+                )
+                keyframe_count = source_media.result.key_frames.count()
+                total_images = keyframe_count * images_per_row
+                messages.success(
+                    request,
+                    f"Wireframe storyboard queued ({total_images} images from "
+                    f"{keyframe_count} keyframes). Check the Storyboard page for progress.",
+                )
+            else:
+                from .tasks import generate_storyboard_task
+
+                enhance_prompts = request.POST.get("enhance_prompts") == "on"
+                generate_storyboard_task.apply_async(
+                    args=[storyboard.pk, enhance_prompts], queue="default"
+                )
+                total_images = video_ad_unit.script_rows.count() * images_per_row
+                messages.success(
+                    request,
+                    f"Storyboard generation queued ({total_images} images). "
+                    f"Check the Storyboard page for progress.",
+                )
+
             return redirect("admin:tvspots_storyboard_change", storyboard.pk)
 
-        # Get available models and LoRAs
+        # Get available models, LoRAs, and ControlNets
         models = DiffusionModel.objects.filter(is_active=True)
         loras = LoraModel.objects.filter(is_active=True)
+        controlnets = ControlNetModel.objects.filter(is_active=True)
 
         existing_storyboards = video_ad_unit.storyboards.all().select_related("diffusion_model")
 
@@ -1418,6 +1469,8 @@ class VideoAdUnitAdmin(ModelAdmin):
                 "video_ad_unit": video_ad_unit,
                 "models": models,
                 "loras": loras,
+                "controlnets": controlnets,
+                "has_keyframes": has_keyframes,
                 "existing_storyboards": existing_storyboards,
                 "lora_compat_url": reverse("admin:diffusion_diffusionjob_compatible_loras"),
             },
@@ -1444,7 +1497,7 @@ class VideoAdUnitAdmin(ModelAdmin):
         if storyboard:
             for image in (
                 storyboard.images.all()
-                .select_related("script_row", "diffusion_job")
+                .select_related("script_row", "diffusion_job", "key_frame")
                 .order_by("script_row__order_index", "image_index")
             ):
                 diffusion_job = image.diffusion_job
@@ -1456,6 +1509,11 @@ class VideoAdUnitAdmin(ModelAdmin):
                     # Get the first image path
                     img_path = diffusion_job.result_images[0]
                     image_url = os.path.join(django_settings.MEDIA_URL, img_path)
+
+                # Get keyframe thumbnail URL (for wireframe storyboards)
+                keyframe_url = None
+                if image.key_frame and image.key_frame.image:
+                    keyframe_url = image.key_frame.image.url
 
                 # Track status counts
                 if diffusion_job.status == "completed":
@@ -1472,6 +1530,7 @@ class VideoAdUnitAdmin(ModelAdmin):
                         "visual_text": script_row.visual_text,
                         "audio_text": script_row.audio_text,
                         "image_url": image_url,
+                        "keyframe_url": keyframe_url,
                         "status": diffusion_job.status,
                         "image_index": image.image_index,
                     }
@@ -1509,12 +1568,14 @@ class StoryboardImageInline(TabularInline):
     fields = [
         "script_row",
         "image_index",
+        "show_key_frame_thumbnail",
         "diffusion_job",
         "show_status",
     ]
     readonly_fields = [
         "script_row",
         "image_index",
+        "show_key_frame_thumbnail",
         "diffusion_job",
         "show_status",
     ]
@@ -1528,18 +1589,28 @@ class StoryboardImageInline(TabularInline):
     def show_status(self, obj):
         return obj.diffusion_job.get_status_display() if obj.diffusion_job else "—"
 
+    @display(description=_("Source Keyframe"))
+    def show_key_frame_thumbnail(self, obj):
+        if obj.key_frame and obj.key_frame.image:
+            return format_html(
+                '<img src="{}" style="max-width: 80px; max-height: 50px; border-radius: 4px;">',
+                obj.key_frame.image.url,
+            )
+        return "—"
+
 
 @admin.register(Storyboard)
 class StoryboardAdmin(ModelAdmin):
     list_display = [
         "show_id",
         "show_video_ad_unit",
+        "show_source_type",
         "diffusion_model",
         "lora_model",
         "images_per_row",
         "show_status",
     ]
-    list_filter = ["status", "diffusion_model", "video_ad_unit__campaign"]
+    list_filter = ["status", "source_type", "diffusion_model", "video_ad_unit__campaign"]
     search_fields = ["video_ad_unit__campaign__script_title", "video_ad_unit__code"]
     readonly_fields = ["created_at", "completed_at"]
     inlines = [StoryboardImageInline]
@@ -1551,8 +1622,23 @@ class StoryboardAdmin(ModelAdmin):
                 "classes": ["tab"],
                 "fields": (
                     "video_ad_unit",
+                    "source_type",
                     ("diffusion_model", "lora_model"),
                     "images_per_row",
+                ),
+            },
+        ),
+        (
+            _("ControlNet"),
+            {
+                "classes": ["tab"],
+                "description": "Settings for keyframe-based wireframe generation. "
+                "Only used when Source Type is 'Keyframe (ControlNet)'.",
+                "fields": (
+                    "controlnet_model",
+                    "preprocessing_type",
+                    ("conditioning_scale", "control_guidance_end"),
+                    "style_prompt",
                 ),
             },
         ),
@@ -1581,6 +1667,16 @@ class StoryboardAdmin(ModelAdmin):
         return f"{obj.video_ad_unit.campaign.script_title} / {obj.video_ad_unit.code}"
 
     @display(
+        description=_("Source"),
+        label={
+            "Text (Script Rows)": "info",
+            "Keyframe (ControlNet)": "warning",
+        },
+    )
+    def show_source_type(self, obj):
+        return obj.get_source_type_display()
+
+    @display(
         description=_("Status"),
         label={
             "Pending": "info",
@@ -1592,16 +1688,30 @@ class StoryboardAdmin(ModelAdmin):
     def show_status(self, obj):
         return obj.get_status_display()
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """Filter ControlNet models to only show active ones."""
+        if db_field.name == "controlnet_model":
+            from cw.diffusion.models import ControlNetModel
+            kwargs["queryset"] = ControlNetModel.objects.filter(is_active=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     def save_model(self, request, obj, form, change):
         """Auto-queue new storyboards on save."""
         is_new = obj.pk is None
         super().save_model(request, obj, form, change)
         if is_new and obj.status == "pending":
-            from .tasks import generate_storyboard_task
+            if obj.source_type == "keyframe":
+                from .tasks import generate_wireframe_storyboard_task
 
-            generate_storyboard_task.apply_async(
-                args=[obj.pk, True], queue="default"  # enhance_prompts=True by default
-            )
+                generate_wireframe_storyboard_task.apply_async(
+                    args=[obj.pk], queue="default"
+                )
+            else:
+                from .tasks import generate_storyboard_task
+
+                generate_storyboard_task.apply_async(
+                    args=[obj.pk, True], queue="default"
+                )
 
 
 # ---------------------------------------------------------------------------

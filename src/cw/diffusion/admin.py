@@ -26,6 +26,8 @@ from unfold.decorators import action, display
 
 from .models import (
     BASE_ARCHITECTURE_CHOICES,
+    CONTROL_TYPE_CHOICES,
+    ControlNetModel,
     DiffusionJob,
     DiffusionModel,
     LoraModel,
@@ -194,6 +196,83 @@ class DiffusionModelAdmin(ModelAdmin):
             # Shorten common scheduler names for display
             name = obj.scheduler.replace("Scheduler", "").replace("Discrete", "")
             return name
+        return "—"
+
+
+# ---------------------------------------------------------------------------
+# ControlNetModel
+# ---------------------------------------------------------------------------
+
+
+@admin.register(ControlNetModel)
+class ControlNetModelAdmin(ModelAdmin):
+    list_display = [
+        "label",
+        "control_type",
+        "base_architecture",
+        "show_conditioning_scale",
+        "show_downloaded",
+        "show_active",
+        "show_compatible_models",
+    ]
+    list_filter = ["is_active", "base_architecture", "control_type"]
+    search_fields = ["label", "slug", "path"]
+    readonly_fields = ["created_at", "updated_at"]
+
+    fieldsets = (
+        (
+            _("ControlNet"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "label",
+                    ("slug", "path"),
+                    ("control_type", "base_architecture", "is_active"),
+                ),
+            },
+        ),
+        (
+            _("Conditioning"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    ("default_conditioning_scale", "default_guidance_end"),
+                ),
+            },
+        ),
+        (
+            _("Metadata"),
+            {
+                "classes": ["tab"],
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+
+    @display(description=_("Scale"))
+    def show_conditioning_scale(self, obj):
+        return f"{obj.default_conditioning_scale:.1f}"
+
+    @display(description=_("Downloaded"), boolean=True)
+    def show_downloaded(self, obj):
+        """Check if ControlNet model exists in the HuggingFace cache."""
+        try:
+            cache_info = scan_cache_dir()
+            return any(repo.repo_id == obj.path for repo in cache_info.repos)
+        except Exception:
+            return False
+
+    @display(description=_("Active"), boolean=True)
+    def show_active(self, obj):
+        return obj.is_active
+
+    @display(description=_("Compatible Models"))
+    def show_compatible_models(self, obj):
+        models = DiffusionModel.objects.filter(
+            base_architecture=obj.base_architecture, is_active=True
+        )
+        if models.exists():
+            return ", ".join(m.label for m in models[:3])
         return "—"
 
 
@@ -984,23 +1063,34 @@ class DiffusionJobAdmin(ModelAdmin):
         return super().changeform_view(request, object_id, form_url, extra_context)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        """Filter LoRA choices based on the selected model's architecture."""
-        if db_field.name == "lora_model":
+        """Filter LoRA and ControlNet choices based on the selected model's architecture."""
+        if db_field.name in ("lora_model", "controlnet_model"):
             # Get the job being edited (if any)
             object_id = request.resolver_match.kwargs.get("object_id")
+            arch = None
             if object_id:
                 try:
                     job = DiffusionJob.objects.get(pk=object_id)
                     if job.diffusion_model:
-                        # Filter LoRAs to match the job's model architecture
-                        kwargs["queryset"] = LoraModel.objects.filter(
-                            is_active=True, base_architecture=job.diffusion_model.base_architecture
-                        )
+                        arch = job.diffusion_model.base_architecture
                 except DiffusionJob.DoesNotExist:
                     pass
-            # For new jobs, show only active LoRAs (JavaScript will filter dynamically)
-            if "queryset" not in kwargs:
-                kwargs["queryset"] = LoraModel.objects.filter(is_active=True)
+
+            if db_field.name == "lora_model":
+                if arch:
+                    kwargs["queryset"] = LoraModel.objects.filter(
+                        is_active=True, base_architecture=arch
+                    )
+                elif "queryset" not in kwargs:
+                    kwargs["queryset"] = LoraModel.objects.filter(is_active=True)
+            elif db_field.name == "controlnet_model":
+                if arch:
+                    kwargs["queryset"] = ControlNetModel.objects.filter(
+                        is_active=True, base_architecture=arch
+                    )
+                elif "queryset" not in kwargs:
+                    kwargs["queryset"] = ControlNetModel.objects.filter(is_active=True)
+
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     list_display = [
@@ -1049,6 +1139,22 @@ class DiffusionJobAdmin(ModelAdmin):
                     ("seed", "num_images"),
                 ),
                 "description": _("Leave blank to use model/LoRA defaults."),
+            },
+        ),
+        (
+            _("ControlNet"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "controlnet_model",
+                    "reference_image",
+                    "preprocessing_type",
+                    ("conditioning_scale", "control_guidance_end"),
+                ),
+                "description": _(
+                    "Optional: attach a ControlNet and reference image for "
+                    "structure-guided generation (wireframe storyboards, etc.)."
+                ),
             },
         ),
         (

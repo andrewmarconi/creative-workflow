@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "sdxl-canny",
+    "label": "SDXL Canny",
+    "path": "diffusers/controlnet-canny-sdxl-1.0",
+    "control_type": "canny",
+    "base_architecture": "sdxl",
+    "default_conditioning_scale": 0.5,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  },
+  {
+    "slug": "sdxl-depth",
+    "label": "SDXL Depth",
+    "path": "diffusers/controlnet-depth-sdxl-1.0-small",
+    "control_type": "depth",
+    "base_architecture": "sdxl",
+    "default_conditioning_scale": 0.5,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  },
+  {
+    "slug": "sdxl-lineart",
+    "label": "SDXL Line Art",
+    "path": "ShermanG/ControlNet-Standard-Lineart-for-SDXL",
+    "control_type": "lineart",
+    "base_architecture": "sdxl",
+    "default_conditioning_scale": 0.5,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  },
+  {
+    "slug": "sd15-canny",
+    "label": "SD 1.5 Canny",
+    "path": "lllyasviel/control_v11p_sd15_canny",
+    "control_type": "canny",
+    "base_architecture": "sd15",
+    "default_conditioning_scale": 1.0,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  },
+  {
+    "slug": "sd15-depth",
+    "label": "SD 1.5 Depth",
+    "path": "lllyasviel/control_v11f1p_sd15_depth",
+    "control_type": "depth",
+    "base_architecture": "sd15",
+    "default_conditioning_scale": 1.0,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  },
+  {
+    "slug": "sd15-lineart",
+    "label": "SD 1.5 Line Art",
+    "path": "lllyasviel/control_v11p_sd15_lineart",
+    "control_type": "lineart",
+    "base_architecture": "sd15",
+    "default_conditioning_scale": 1.0,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  },
+  {
+    "slug": "sd15-lineart-anime",
+    "label": "SD 1.5 Line Art (Anime)",
+    "path": "lllyasviel/control_v11p_sd15s2_lineart_anime",
+    "control_type": "lineart_anime",
+    "base_architecture": "sd15",
+    "default_conditioning_scale": 1.0,
+    "default_guidance_end": 1.0,
+    "is_active": true
+  }
+]

@@ -363,6 +363,11 @@ class Storyboard(models.Model):
 
     One Storyboard creates one DiffusionJob per script row (times images_per_row).
     Multiple Storyboards can exist per VideoAdUnit (different configs).
+
+    Supports two source types:
+    - ``text``: Generates images from script row visual descriptions (default)
+    - ``keyframe``: Uses extracted keyframes as ControlNet reference images
+      to generate wireframe/line-drawing storyboard cels
     """
 
     STATUS_CHOICES = [
@@ -370,6 +375,11 @@ class Storyboard(models.Model):
         ("processing", "Processing"),
         ("completed", "Completed"),
         ("failed", "Failed"),
+    ]
+
+    SOURCE_TYPE_CHOICES = [
+        ("text", "Text (Script Rows)"),
+        ("keyframe", "Keyframe (ControlNet)"),
     ]
 
     video_ad_unit = models.ForeignKey(
@@ -393,6 +403,45 @@ class Storyboard(models.Model):
         default=1,
         help_text="Number of images to generate per script row",
     )
+
+    # Source type: text-based (default) or keyframe-based (wireframe)
+    source_type = models.CharField(
+        max_length=20,
+        choices=SOURCE_TYPE_CHOICES,
+        default="text",
+        help_text="Generate from script text or from video keyframes via ControlNet",
+    )
+
+    # ControlNet settings (for keyframe source_type)
+    controlnet_model = models.ForeignKey(
+        "diffusion.ControlNetModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="storyboards",
+        help_text="ControlNet model for keyframe-based wireframe generation",
+    )
+    preprocessing_type = models.CharField(
+        max_length=20,
+        blank=True,
+        help_text="Override ControlNet's default preprocessing type",
+    )
+    conditioning_scale = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Override ControlNet conditioning scale (0.0-2.0)",
+    )
+    control_guidance_end = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Override when to stop applying ControlNet (0.0-1.0)",
+    )
+    style_prompt = models.TextField(
+        blank=True,
+        help_text="Visual style prompt for wireframe generation "
+        "(e.g., 'clean line drawing, architectural wireframe, black and white')",
+    )
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -435,6 +484,7 @@ class StoryboardImage(models.Model):
     """Links storyboard to individual diffusion jobs.
 
     Allows multiple images per row and multiple storyboard runs per video ad unit.
+    For wireframe storyboards, also references the source keyframe.
     """
 
     storyboard = models.ForeignKey(
@@ -451,6 +501,14 @@ class StoryboardImage(models.Model):
         "diffusion.DiffusionJob",
         on_delete=models.CASCADE,
         related_name="storyboard_image",
+    )
+    key_frame = models.ForeignKey(
+        "KeyFrame",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="storyboard_images",
+        help_text="Source keyframe (for wireframe/ControlNet storyboards)",
     )
     image_index = models.IntegerField(
         help_text="Image number for this script row (0-based)",
