@@ -38,6 +38,12 @@
             {% if storyboard.lora_model %}
             <span class="text-sm">+ {{ storyboard.lora_model.label }}</span>
             {% endif %}
+            {% if storyboard.source_type == 'keyframe' %}
+            <span class="text-sm text-purple-300 ml-2">
+                {% trans "Wireframe" %}
+                {% if storyboard.controlnet_model %}({{ storyboard.controlnet_model.label }}){% endif %}
+            </span>
+            {% endif %}
         </div>
         <div>
             <span class="inline-flex items-center px-1 py-0.5 rounded-lg text-xs font-medium
@@ -63,7 +69,106 @@
         </a>
     </div>
     {% else %}
-    <!-- Storyboard Grid -->
+
+    {% if storyboard.source_type == 'keyframe' %}
+    {# ── Wireframe Mode: side-by-side (source keyframe → wireframe cel) ── #}
+    <div class="space-y-6">
+        {% for frame in frames %}
+        <div class="bg-white dark:bg-gray-800 border border-gray-300 rounded-lg shadow overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                {# Source Keyframe #}
+                <div class="relative aspect-video bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+                    {% if frame.keyframe_url %}
+                    <a href="{{ frame.keyframe_url }}" target="_blank">
+                        <img src="{{ frame.keyframe_url }}" alt="Source frame {{ frame.shot_number }}"
+                             class="w-full h-full object-cover">
+                    </a>
+                    {% else %}
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-gray-400 text-sm">{% trans "No source frame" %}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded">
+                        {{ frame.shot_number }}
+                    </div>
+                    <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        {% trans "Source" %}
+                    </div>
+                </div>
+
+                {# Wireframe Result #}
+                <div class="relative aspect-video bg-gray-100 dark:bg-gray-900">
+                    {% if frame.image_url %}
+                    <a href="{{ frame.image_url }}" target="_blank">
+                        <img src="{{ frame.image_url }}" alt="Wireframe {{ frame.shot_number }}"
+                             class="w-full h-full object-cover">
+                    </a>
+                    {% else %}
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        {% if frame.status == 'processing' %}
+                        <div class="text-center">
+                            <svg class="animate-spin h-8 w-8 text-gray-400 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="text-xs text-gray-500">{% trans "Processing..." %}</span>
+                        </div>
+                        {% elif frame.status == 'queued' or frame.status == 'pending' %}
+                        <div class="text-center">
+                            <svg class="h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-xs text-gray-500">{% trans "Queued" %}</span>
+                        </div>
+                        {% elif frame.status == 'failed' %}
+                        <div class="text-center">
+                            <svg class="h-8 w-8 text-red-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-xs text-red-500">{% trans "Failed" %}</span>
+                        </div>
+                        {% else %}
+                        <span class="text-gray-400">{% trans "No image" %}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if frame.status and frame.status != 'completed' %}
+                    <div class="absolute top-2 right-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                            {% if frame.status == 'processing' %}bg-yellow-500 text-white
+                            {% elif frame.status == 'failed' %}bg-red-500 text-white
+                            {% else %}bg-gray-500 text-white{% endif %}">
+                            {{ frame.status }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    <div class="absolute bottom-2 left-2 bg-purple-700/80 text-white text-xs px-2 py-1 rounded">
+                        {% trans "Wireframe" %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script content -->
+            <div class="p-4 space-y-3">
+                <div>
+                    <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{% trans "Video" %}</h4>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">{{ frame.visual_text }}</p>
+                </div>
+                {% if frame.audio_text %}
+                <div>
+                    <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">{% trans "Audio" %}</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 italic">{{ frame.audio_text }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    {# ── Text Mode: existing grid layout ── #}
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {% for frame in frames %}
         <div class="bg-white dark:bg-gray-800 border border-gray-300 rounded-lg shadow overflow-hidden">
@@ -136,6 +241,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
     <!-- Stats -->
     <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">

@@ -233,6 +233,67 @@ class LoraModel(models.Model):
         return settings
 
 
+CONTROL_TYPE_CHOICES = [
+    ("canny", "Canny Edge"),
+    ("lineart", "Line Art"),
+    ("lineart_anime", "Line Art (Anime)"),
+    ("depth", "Depth (MiDaS)"),
+    ("softedge", "Soft Edge (HED)"),
+    ("openpose", "OpenPose"),
+]
+
+
+class ControlNetModel(models.Model):
+    """Represents a ControlNet conditioning model.
+
+    ControlNet models provide structural guidance (edges, depth, poses)
+    for image generation. Must be paired with a base diffusion model
+    of the same architecture.
+    """
+
+    label = models.CharField(max_length=255, help_text="Display name for the ControlNet")
+    slug = models.SlugField(max_length=100, unique=True, help_text="Unique identifier")
+    path = models.CharField(
+        max_length=500,
+        help_text="HuggingFace model ID (e.g., 'diffusers/controlnet-canny-sdxl-1.0')",
+    )
+    control_type = models.CharField(
+        max_length=20,
+        choices=CONTROL_TYPE_CHOICES,
+        help_text="Type of structural control this model provides",
+    )
+    base_architecture = models.CharField(
+        max_length=20,
+        choices=BASE_ARCHITECTURE_CHOICES,
+        default="sdxl",
+        help_text="Base model architecture (must match paired DiffusionModel)",
+    )
+    default_conditioning_scale = models.FloatField(
+        default=0.5,
+        validators=[MinValueValidator(0.0), MaxValueValidator(2.0)],
+        help_text="Default conditioning scale (0.5 for SDXL, 1.0 for SD1.5). "
+        "Higher values follow the control image more strictly.",
+    )
+    default_guidance_end = models.FloatField(
+        default=1.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="When to stop applying ControlNet (fraction of total steps, 0.0-1.0). "
+        "Lower values give the model more creative freedom in later steps.",
+    )
+
+    is_active = models.BooleanField(default=True, help_text="Enable/disable this ControlNet")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "ControlNet Model"
+        verbose_name_plural = "ControlNet Models"
+        ordering = ["base_architecture", "control_type"]
+
+    def __str__(self):
+        return self.label
+
+
 class Prompt(models.Model):
     """Stores prompts with enhancement tracking."""
 
@@ -379,6 +440,44 @@ class DiffusionJob(models.Model):
         help_text="Number of images to generate",
     )
 
+    # ControlNet parameters (optional — used for structure-guided generation)
+    controlnet_model = models.ForeignKey(
+        ControlNetModel,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="jobs",
+        help_text="Optional ControlNet for structure-guided generation",
+    )
+    reference_image = models.ImageField(
+        upload_to="diffusion/reference/%Y/%m/",
+        null=True,
+        blank=True,
+        help_text="Source image for ControlNet conditioning (e.g., extracted keyframe)",
+    )
+    preprocessing_type = models.CharField(
+        max_length=20,
+        choices=CONTROL_TYPE_CHOICES,
+        blank=True,
+        default="",
+        help_text="Preprocessing to apply to reference image. "
+        "Leave blank to use ControlNet model's default control type.",
+    )
+    conditioning_scale = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0.0), MaxValueValidator(2.0)],
+        help_text="ControlNet conditioning scale (uses ControlNet default if not set). "
+        "Higher values follow the control image more strictly.",
+    )
+    control_guidance_end = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="When to stop applying ControlNet (fraction of steps). "
+        "Uses ControlNet default if not set.",
+    )
+
     # Job status
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="pending", help_text="Current job status"
@@ -440,5 +539,25 @@ class DiffusionJob(models.Model):
         if self.lora_model:
             params["lora_path"] = self.lora_model.path
             params["lora_strength"] = self.lora_strength or self.lora_model.default_strength
+
+        # ControlNet parameters
+        if self.controlnet_model:
+            params["controlnet_path"] = self.controlnet_model.path
+            params["controlnet_slug"] = self.controlnet_model.slug
+            params["preprocessing_type"] = (
+                self.preprocessing_type or self.controlnet_model.control_type
+            )
+            params["conditioning_scale"] = (
+                self.conditioning_scale
+                if self.conditioning_scale is not None
+                else self.controlnet_model.default_conditioning_scale
+            )
+            params["guidance_end"] = (
+                self.control_guidance_end
+                if self.control_guidance_end is not None
+                else self.controlnet_model.default_guidance_end
+            )
+            if self.reference_image:
+                params["reference_image_path"] = self.reference_image.path
 
         return params

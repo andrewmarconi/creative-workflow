@@ -6,12 +6,29 @@ These tasks integrate with cw.lib modules:
 - cw.lib.storyboard (StoryboardGenerator)
 """
 
+import gc
 import logging
 
+import torch
 from celery import shared_task
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+
+
+def _clear_gpu_memory():
+    """Force-clear GPU memory between heavy model loads.
+
+    Calls gc.collect() to release Python references, then empties the
+    device-specific cache (CUDA or MPS).
+    """
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        logger.debug("Cleared CUDA cache")
+    elif torch.backends.mps.is_available():
+        torch.mps.empty_cache()
+        logger.debug("Cleared MPS cache")
 
 
 # ---------------------------------------------------------------------------
@@ -194,6 +211,104 @@ def generate_storyboard_task(self, storyboard_id, enhance_prompts=True):
         }
 
 
+@shared_task(bind=True, name="cw.tvspots.tasks.generate_wireframe_storyboard_task")
+def generate_wireframe_storyboard_task(self, storyboard_id):
+    """
+    Generate wireframe storyboard cels from video keyframes via ControlNet.
+
+    Uses extracted keyframes as ControlNet reference images to produce
+    line-drawing / wireframe storyboard frames. No LLM prompt enhancement
+    is needed — the structural content comes from the ControlNet input.
+
+    Args:
+        storyboard_id: ID of a Storyboard with source_type="keyframe"
+
+    Returns:
+        Dict with generation results
+    """
+    from cw.diffusion.tasks import generate_images_task
+    from cw.lib.storyboard import create_wireframe_storyboard_jobs
+    from cw.tvspots.models import Storyboard
+
+    storyboard = Storyboard.objects.get(id=storyboard_id)
+    video_ad_unit = storyboard.video_ad_unit
+    campaign = video_ad_unit.campaign
+
+    logger.info(
+        f"Starting wireframe storyboard for '{campaign.script_title}' / {video_ad_unit.code}",
+        extra={
+            "storyboard_id": storyboard_id,
+            "campaign_id": campaign.pk,
+            "video_ad_unit_id": video_ad_unit.pk,
+            "controlnet": storyboard.controlnet_model.slug if storyboard.controlnet_model else None,
+            "source_type": storyboard.source_type,
+        },
+    )
+
+    try:
+        storyboard.status = "processing"
+        storyboard.save(update_fields=["status"])
+
+        # Evict pipeline LLM from VRAM before loading diffusion model
+        from cw.diffusion.tasks import _evict_pipeline_model
+        _evict_pipeline_model()
+
+        # Create DiffusionJobs from keyframes with ControlNet settings
+        created_jobs = create_wireframe_storyboard_jobs(storyboard)
+
+        logger.info(
+            f"Created {len(created_jobs)} wireframe jobs for storyboard",
+            extra={
+                "storyboard_id": storyboard_id,
+                "num_jobs": len(created_jobs),
+            },
+        )
+
+        # Queue the DiffusionJobs for image generation
+        for job in created_jobs:
+            generate_images_task.apply_async(args=[job.id], queue="default")
+            job.status = "queued"
+            job.save(update_fields=["status"])
+
+        storyboard.status = "completed"
+        storyboard.completed_at = timezone.now()
+        storyboard.save(update_fields=["status", "completed_at"])
+
+        logger.info(
+            f"Wireframe storyboard generation complete: {len(created_jobs)} jobs queued",
+            extra={
+                "storyboard_id": storyboard_id,
+                "num_jobs": len(created_jobs),
+            },
+        )
+
+        return {
+            "status": "success",
+            "storyboard_id": storyboard_id,
+            "num_jobs": len(created_jobs),
+            "job_ids": [job.id for job in created_jobs],
+        }
+
+    except Exception as e:
+        storyboard.status = "failed"
+        storyboard.error_message = str(e)
+        storyboard.save(update_fields=["status", "error_message"])
+
+        logger.error(
+            f"Wireframe storyboard generation failed: {e}",
+            extra={
+                "storyboard_id": storyboard_id,
+                "error": str(e),
+            },
+        )
+
+        return {
+            "status": "failed",
+            "storyboard_id": storyboard_id,
+            "error": str(e),
+        }
+
+
 # ---------------------------------------------------------------------------
 # Video Analysis Tasks (Origin Script Extraction)
 # ---------------------------------------------------------------------------
@@ -240,6 +355,21 @@ def analyze_video_task(self, ad_unit_media_id: int):
         f"Starting video analysis for AdUnitMedia {ad_unit_media_id}",
         extra={"ad_unit_media_id": ad_unit_media_id},
     )
+
+    # Evict any cached diffusion model or LLM to free VRAM before loading
+    # Whisper, YOLO, etc. — the solo worker may have a warm model from a
+    # previous image-generation or adaptation task.
+    from cw.diffusion.tasks import _evict_enhancer, _model_cache
+    for slug, model_obj in list(_model_cache.items()):
+        logger.info(f"Evicting cached diffusion model '{slug}' to free VRAM for video analysis")
+        try:
+            if hasattr(model_obj, "pipeline") and model_obj.pipeline is not None:
+                del model_obj.pipeline
+        except Exception:
+            pass
+        del _model_cache[slug]
+    _evict_enhancer()
+    _clear_gpu_memory()
 
     try:
         media = AdUnitMedia.objects.get(id=ad_unit_media_id)
@@ -331,6 +461,9 @@ def analyze_video_task(self, ad_unit_media_id: int):
             },
         )
 
+        # Free Whisper model VRAM before loading YOLO
+        _clear_gpu_memory()
+
         # Phase 4: Extract keyframes and detect objects (50-70%)
         self.update_state(
             state="PROGRESS",
@@ -366,6 +499,12 @@ def analyze_video_task(self, ad_unit_media_id: int):
             f"Object detection complete: {objects_summary['total_objects']} objects detected",
             extra={"objects_summary": objects_summary},
         )
+
+        # Free YOLO model VRAM before visual analysis and LLM
+        from cw.lib.video_analysis.object_detection import _yolo_model
+        import cw.lib.video_analysis.object_detection as _od_module
+        _od_module._yolo_model = None
+        _clear_gpu_memory()
 
         # Phase 5: Analyze visual style (Phase 2)
         logger.info("Analyzing visual style...")
@@ -453,6 +592,16 @@ def analyze_video_task(self, ad_unit_media_id: int):
             f"Audience insights generation complete",
             extra={"audience_insights": audience_insights},
         )
+
+        # Free LLM VRAM after audience insights
+        try:
+            import cw.lib.pipeline.model_loader as _ml_module
+            if _ml_module._model_loader is not None:
+                _ml_module._model_loader.clear_cache()
+                _ml_module._model_loader = None
+        except Exception:
+            pass
+        _clear_gpu_memory()
 
         # Phase 10: Create result object and save keyframes (95-100%)
         self.update_state(

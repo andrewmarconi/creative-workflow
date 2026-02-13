@@ -70,6 +70,8 @@ uv run manage.py import_brands --dry-run        # Preview without importing
 ### Testing
 ```bash
 uv run python test_admin.py                     # Run admin tests
+uv run manage.py test cw.diffusion.tests -v2    # Diffusion app tests (ControlNet, models)
+uv run manage.py test cw.tvspots.tests -v2      # TV spots tests (requires PostgreSQL)
 ```
 
 ### Documentation
@@ -182,14 +184,14 @@ generative-creative-lab/
 - `max_sequence_length` - Context length for Flux variants
 - `load_in_8bit` - 8-bit quantization for Qwen
 
-**Model Implementations**: ZImageTurboModel, FluxModel, Flux2KleinModel, QwenImageModel, SDXLModel, SDXLTurboModel, SD15Model
+**Model Implementations**: ZImageTurboModel, FluxModel, Flux2KleinModel, QwenImageModel, SDXLModel, SDXLTurboModel, SD15Model, SDXLControlNetModel, SD15ControlNetModel
 
 **Factory**: `ModelFactory.create_model()` in `src/cw/lib/models/__init__.py` dispatches by pipeline type
 
 ### Key Code Paths
 
 **Django app** — `src/cw/diffusion/`:
-- `models.py` — ORM models: `DiffusionModel`, `LoraModel` (with theme field for categorization), `Prompt`, `DiffusionJob`
+- `models.py` — ORM models: `DiffusionModel`, `LoraModel` (with theme field for categorization), `ControlNetModel`, `Prompt`, `DiffusionJob` (with optional ControlNet fields: `controlnet_model`, `reference_image`, `preprocessing_type`, `conditioning_scale`, `control_guidance_end`)
 - `admin.py` — Django Unfold admin (primary UI for creating prompts, queuing jobs, viewing results)
 - `tasks.py` — Celery tasks: `generate_images_task(job_id)`, `enhance_prompt_task(prompt_id)`
 
@@ -200,10 +202,10 @@ generative-creative-lab/
   - `AdUnit` — Polymorphic base class for all ad unit types (VIDEO, AUDIO, PRINT) with multi-agent pipeline support, optional Brand override, and per-node model config (pipeline_model_config JSONField)
   - `VideoAdUnit` — Video-specific ad unit (merges origin creation + adaptation pipeline + script content)
   - `AdUnitScriptRow` — Script rows (shot/visual/audio) linked to any AdUnit
-  - `Storyboard` — Storyboard generation job linking VideoAdUnit to DiffusionModel
-  - `StoryboardImage` — Individual storyboard frames linking script rows to DiffusionJobs
+  - `Storyboard` — Storyboard generation job linking VideoAdUnit to DiffusionModel. Supports `source_type`: `"text"` (from script rows) or `"keyframe"` (ControlNet wireframe from video keyframes). Keyframe mode adds `controlnet_model`, `preprocessing_type`, `conditioning_scale`, `control_guidance_end`, `style_prompt` fields.
+  - `StoryboardImage` — Individual storyboard frames linking script rows to DiffusionJobs (optional `key_frame` FK for wireframe mode)
 - `admin.py` — Django Unfold admin for campaign management, ad unit creation, and storyboard generation
-- `tasks.py` — Celery tasks: `create_adaptation_task(video_ad_unit_id)`, `generate_storyboard_task(storyboard_id)`
+- `tasks.py` — Celery tasks: `create_adaptation_task(video_ad_unit_id)`, `generate_storyboard_task(storyboard_id)`, `generate_wireframe_storyboard_task(storyboard_id)`
 
 **Domain Model Architecture** (Refactored 2026-02):
 ```
@@ -234,6 +236,10 @@ PipelineSettings (singleton: per-node default models + global default)
 - `civitai.py` — Auto-download LoRAs from CivitAI by AIR URN
 - `loras/manager.py` — LoRA filtering by base architecture and optional theme (e.g., 'anime', 'photorealistic', 'fantasy')
 - `wvs.py` — World Values Survey parser: downloads from Kaggle via kagglehub, parses country-level cultural dimension profiles (Inglehart-Welzel axes, trust, tolerance, gender attitudes, civic participation), and transforms them into structured insights for Country records. Data flows automatically into the cultural research pipeline via `compose_insights_as_markdown()`.
+- `controlnet_preprocessing.py` — ControlNet image preprocessing: `preprocess_image(image, control_type)` applies LineArt/Canny/Depth/SoftEdge/OpenPose detection via `controlnet_aux`. Detector instances cached for reuse.
+- `storyboard.py` — `StoryboardGenerator` (text-based prompts), `WireframePromptBuilder` (style-focused prompts for ControlNet), `create_storyboard_jobs()`, `create_wireframe_storyboard_jobs()` (links keyframes → DiffusionJobs with ControlNet settings)
+- `models/sdxl_controlnet.py` — `SDXLControlNetModel` (StableDiffusionXLControlNetPipeline)
+- `models/sd15_controlnet.py` — `SD15ControlNetModel` (StableDiffusionControlNetPipeline)
 - `pipeline/state.py` — `resolve_pipeline_models()` resolves per-node LLM models with fallback chain; `build_initial_state()` builds PipelineState from VideoAdUnit
 - `pipeline/nodes.py` — `_get_generator(state, schema, node_key)` loads node-specific LLM via PipelineModelLoader singleton
 
@@ -264,6 +270,16 @@ PipelineSettings (singleton: per-node default models + global default)
 7. User creates `Storyboard` for the adapted VideoAdUnit
 8. `generate_storyboard_task` generates image prompts and creates `DiffusionJob` records
 9. Storyboard images viewable in admin with inline frame previews
+
+**Wireframe Storyboard Workflow** (ControlNet):
+1. User uploads MP4 video → `analyze_video_task` extracts scenes, keyframes, transcription
+2. Origin `VideoAdUnit` created from video analysis with `AdUnitMedia` linking to `VideoProcessingResult` → `KeyFrame` records
+3. User opens "Generate Storyboard" for the VideoAdUnit, selects "Keyframe (Wireframe)" source type
+4. Selects ControlNet model (architecture must match diffusion model), optional preprocessing override, conditioning scale, guidance end, style prompt
+5. Admin dispatches `generate_wireframe_storyboard_task` instead of text-based task
+6. Task matches KeyFrames (by `scene_number`) to `AdUnitScriptRow` (by `shot_number`), creates `DiffusionJob` records with ControlNet settings and keyframe images as `reference_image`
+7. `generate_images_task` preprocesses reference images (LineArt/Canny/Depth), then generates wireframe cels via ControlNet-guided diffusion
+8. Results stored as `StoryboardImage` records with `key_frame` FK for source tracking
 
 ### Reference Data Architecture
 
@@ -369,6 +385,29 @@ prompt = render_prompt("eval-brand", adapted_script_json=data, ...)
 | Juggernaut XL v9 | StableDiffusionXLPipeline | 30 | 7.0 | Yes | sdxl |
 | DreamShaper XL Lightning | StableDiffusionXLPipeline | 4 | 2.0 | No | sdxl |
 | Realistic Vision v5.1 | StableDiffusionPipeline | 30 | 5.0 | Yes | sd15 |
+| SDXL + ControlNet | StableDiffusionXLControlNetPipeline | 30 | 7.0 | Yes | sdxl |
+| SD1.5 + ControlNet | StableDiffusionControlNetPipeline | 30 | 5.0 | Yes | sd15 |
+
+### ControlNet Integration
+
+**ControlNet** provides structural guidance (edges, depth, poses) for image generation. Used primarily for wireframe storyboard generation from video keyframes.
+
+**Control Types**: `canny` (edge detection), `lineart` (line art), `lineart_anime` (anime-style), `depth` (MiDaS depth), `softedge` (HED), `openpose` (pose estimation)
+
+**Data Flow**: `KeyFrame.image` → `controlnet_preprocessing.preprocess_image()` → ControlNet pipeline → wireframe cel
+
+**Key Files**:
+- `src/cw/diffusion/models.py` — `ControlNetModel` (Django model), `DiffusionJob` ControlNet fields
+- `src/cw/lib/controlnet_preprocessing.py` — Preprocessing via `controlnet_aux`
+- `src/cw/lib/models/sdxl_controlnet.py` / `sd15_controlnet.py` — Pipeline implementations
+- `src/cw/lib/storyboard.py` — `WireframePromptBuilder`, `create_wireframe_storyboard_jobs()`
+- `src/cw/tvspots/tasks.py` — `generate_wireframe_storyboard_task()`
+
+**Management Commands**:
+```bash
+uv run manage.py import_controlnets      # Sync data/controlnets.json → database
+uv run manage.py export_controlnets      # Export ControlNet models to JSON
+```
 
 ### Path Resolution
 - Local models/LoRAs: path ends with `.safetensors` → resolved as `{base_model_path}/{path}`, loaded via `from_single_file()`

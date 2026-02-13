@@ -193,6 +193,7 @@ class BaseModel(ABC):
         clip_skip: Optional[int] = None,
         scheduler: Optional[str] = None,
         progress_callback=None,
+        **extra_params,
     ) -> Tuple[Image.Image, Dict]:
         """
         Template method for image generation (common flow)
@@ -212,6 +213,8 @@ class BaseModel(ABC):
             clip_skip: Number of CLIP layers to skip (if supported)
             scheduler: Scheduler class name to use (overrides default)
             progress_callback: Optional callback for progress updates
+            **extra_params: Additional parameters passed through to hooks
+                (e.g., control_image, conditioning_scale for ControlNet)
 
         Returns:
             Tuple of (generated image, metadata dict)
@@ -240,6 +243,10 @@ class BaseModel(ABC):
         )
         # Track which scheduler is active for metadata
         params["scheduler"] = scheduler_applied or self._get_current_scheduler_name()
+
+        # Merge extra params (e.g., control_image, conditioning_scale, guidance_end)
+        # so they're available to _build_pipeline_kwargs hooks
+        params.update(extra_params)
         logger.debug(
             f"Resolved params: steps={params['steps']}, guidance={params['guidance_scale']}, scheduler={params['scheduler']}"
         )

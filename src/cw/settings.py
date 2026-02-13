@@ -182,6 +182,11 @@ UNFOLD = {
                         "icon": "tune",
                         "link": "/app/diffusion/loramodel/",
                     },
+                    {
+                        "title": "ControlNets",
+                        "icon": "grid_guides",
+                        "link": "/app/diffusion/controlnetmodel/",
+                    },
                 ],
             },
             {

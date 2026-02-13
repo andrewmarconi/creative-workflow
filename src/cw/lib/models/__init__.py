@@ -8,7 +8,9 @@ from .flux import FluxModel
 from .mixins import CLIPTokenLimitMixin, CompelPromptMixin, DebugLoggingMixin
 from .qwen import QwenImageModel
 from .sd15 import SD15Model
+from .sd15_controlnet import SD15ControlNetModel
 from .sdxl import SDXLModel
+from .sdxl_controlnet import SDXLControlNetModel
 from .sdxlturbo import SDXLTurboModel
 from .zimageturbo import ZImageTurboModel
 
@@ -38,8 +40,12 @@ class ModelFactory:
             return QwenImageModel(model_config, model_path)
         elif pipeline_name == "AutoPipelineForText2Image":
             return SDXLTurboModel(model_config, model_path)
+        elif pipeline_name == "StableDiffusionXLControlNetPipeline":
+            return SDXLControlNetModel(model_config, model_path)
         elif pipeline_name == "StableDiffusionXLPipeline":
             return SDXLModel(model_config, model_path)
+        elif pipeline_name == "StableDiffusionControlNetPipeline":
+            return SD15ControlNetModel(model_config, model_path)
         elif pipeline_name == "StableDiffusionPipeline":
             return SD15Model(model_config, model_path)
         else:
@@ -56,6 +62,8 @@ __all__ = [
     "QwenImageModel",
     "SDXLTurboModel",
     "SDXLModel",
+    "SDXLControlNetModel",
     "SD15Model",
+    "SD15ControlNetModel",
     "ModelFactory",
 ]
